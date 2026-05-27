@@ -1,0 +1,10 @@
+{
+  "spectral.rulesetFile": "./.spectral.js",
+  "spectral.validateFiles": [
+    "**/*.yaml",
+    "**/*.json",
+    "!**/node_modules/**",
+    "!**/package.json"
+  ],
+  "spectral.run": "onType"
+}

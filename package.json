@@ -1,0 +1,29 @@
+{
+  "name": "test-spectral",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint:spectral": "spectral lint dist/openapi-bundled.yaml --ruleset .spectral.js --verbose",
+    "validate:api": "redocly lint dist/openapi-bundled.yaml",
+    "bundle:api": "redocly bundle openapi/openapi.yaml -o dist/openapi-bundled.yaml",
+    "build:docs": "node scripts/build-swagger-ui.js",
+    "build:docs:redocly": "redocly build-docs dist/openapi-bundled.yaml --output public/api-docs-redocly.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dinh-Nhan/CI-CD.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dinh-Nhan/CI-CD/issues"
+  },
+  "homepage": "https://github.com/Dinh-Nhan/CI-CD#readme",
+  "devDependencies": {
+    "@redocly/cli": "^2.31.2",
+    "@stoplight/spectral-cli": "^6.15.1",
+    "swagger-ui-dist": "^5.11.0"
+  }
+}

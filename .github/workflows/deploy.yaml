@@ -1,0 +1,135 @@
+name: API Deploy
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "dist/**"
+      - "scripts/**"
+      - "package.json"
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    name: Deploy API Documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # =========================
+      # Build Docs
+      # =========================
+      - name: Build API Documentation
+        run: npm run build:docs
+
+      # =========================
+      # Prepare GitHub Pages
+      # =========================
+      - name: Prepare Deployment Folder
+        run: |
+          mkdir -p _site
+          cp public/api-docs.html _site/index.html
+
+      # =========================
+      # Upload GitHub Pages Artifact
+      # =========================
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      # =========================
+      # Deploy GitHub Pages
+      # =========================
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+  notify:
+    name: Notify Slack
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - name: Lấy danh sách files thay đổi
+        id: changed
+        run: |
+          FILES=$(git diff --name-only HEAD~1 HEAD | sort -u | sed 's/^/• /' | paste -sd '\n')
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "${FILES:-_(không có)_}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Gửi thông báo Slack
+        run: |
+          if [ "${{ needs.deploy.result }}" = "success" ]; then
+            TITLE="✅ Deploy — Passed"
+          else
+            TITLE="❌ Deploy — Failed"
+          fi
+
+          curl -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer ${SLACK_BOT_TOKEN}" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "{
+              \"channel\": \"${SLACK_CHANNEL_ID}\",
+              \"text\": \"${TITLE}\",
+              \"blocks\": [
+                {
+                  \"type\": \"header\",
+                  \"text\": { \"type\": \"plain_text\", \"text\": \"${TITLE}\" }
+                },
+                {
+                  \"type\": \"section\",
+                  \"fields\": [
+                    { \"type\": \"mrkdwn\", \"text\": \"*Repo:*\n${{ github.repository }}\" },
+                    { \"type\": \"mrkdwn\", \"text\": \"*Branch:*\n\`${{ github.ref_name }}\`\" },
+                    { \"type\": \"mrkdwn\", \"text\": \"*Author:*\n${{ github.actor }}\" },
+                    { \"type\": \"mrkdwn\", \"text\": \"*Commit:*\n\`${{ github.sha }}\`\" },
+                    { \"type\": \"mrkdwn\", \"text\": \"*Files changed:*\n${{ steps.changed.outputs.files }}\" }
+                  ]
+                },
+                {
+                  \"type\": \"actions\",
+                  \"elements\": [
+                    {
+                      \"type\": \"button\",
+                      \"text\": { \"type\": \"plain_text\", \"text\": \"Xem CI Run\" },
+                      \"url\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
+                    }
+                  ]
+                }
+              ]
+            }"
