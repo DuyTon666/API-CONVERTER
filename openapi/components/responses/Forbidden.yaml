@@ -1,0 +1,11 @@
+description: IP không hợp lệ - Mã lỗi 4108
+content:
+  application/json:
+    schema:
+      $ref: "../schemas/core/StandardError.yaml"
+    example:
+      success: false
+      error:
+        code: 4108
+        message: "IP không được phép truy cập"
+        data: null

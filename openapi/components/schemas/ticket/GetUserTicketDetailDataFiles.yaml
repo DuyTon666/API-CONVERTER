@@ -1,0 +1,9 @@
+type: object
+properties:
+  url:
+    type: string
+    description: Đường dẫn đến file
+  category:
+    type: string
+    description: 'Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu
+      (PDF, Word, Excel, …)archive: File nénother: Loại khác'

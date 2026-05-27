@@ -1,0 +1,58 @@
+post:
+  summary: Chỉnh sửa phản hồi ticket của khách hàng
+  operationId: updateTicketFeedback
+  description: Cập nhật nội dung phản hồi cho một ticket cụ thể của khách hàng. 
+    API cho phép chỉnh sửa feedback đã tồn tại để cải thiện chất lượng phản hồi 
+    và hỗ trợ khách hàng tốt hơn.
+  tags:
+    - Ticket
+  security:
+    - bearerAuth: []
+  x-permission: CHECK_NEWUPDATE
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: ticket_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/core/StandardSuccess.yaml"
+          example:
+            success: true
+            data: null
+            error: null
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '422':
+      description: 4200 — Dữ liệu request không hợp lệ
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/core/StandardError.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/ticket/UpdateTicketFeedbackRequest.yaml"

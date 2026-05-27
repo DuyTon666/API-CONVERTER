@@ -1,0 +1,50 @@
+get:
+  summary: Lấy danh sách nhân viên hỗ trợ ticket
+  operationId: getTicketSupportStaffs
+  description: Trả về danh sách tất cả nhân viên đang được phân công hỗ trợ xử 
+    lý một ticket cụ thể. API này giúp theo dõi nguồn lực nhân sự được gán cho 
+    từng ticket.
+  tags:
+    - Ticket
+  security:
+    - bearerAuth: []
+  x-permission: CHECK_NEWUPDATE
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../../components/schemas/core/StandardSuccess.yaml"
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/ticket/GetTicketSupportStaffsDataList.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '422':
+      description: 4200 — Dữ liệu request không hợp lệ
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/core/StandardError.yaml"

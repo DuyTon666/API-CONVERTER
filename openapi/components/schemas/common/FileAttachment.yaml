@@ -1,0 +1,19 @@
+# Sử dụng cho các endpoint có file attachment
+# Có file upload - tạo ticket, phản hồi, mở lại ticket, feedback
+type: object
+properties:
+  url:
+    type: string
+    format: uri
+    description: "URL của file đính kèm"
+    example: "https://example.pavietnam.vn/support/files/help.pdf"
+  category:
+    type: string
+    enum:
+      - "image"
+      - "document"
+      - "other"
+      - "video"
+      - "archive"
+    description: "Phân loại file: ảnh, video, tài liệu, archive (nén), hoặc khác."
+    example: "document"

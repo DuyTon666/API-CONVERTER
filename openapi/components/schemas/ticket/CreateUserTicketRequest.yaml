@@ -1,0 +1,25 @@
+type: object
+properties:
+  department_id:
+    type: integer
+    description: Phòng ban muốn được hỗ trợ
+  service_id:
+    type: integer
+    description: Dịch vụ cần hỗ trợ
+  title:
+    type: string
+    description: Tiêu đề
+  descriptions:
+    type: string
+    maxLength: 4000
+    description: Nội dung yêu cầu -  Tối đa 4000 ký tự
+  files:
+    type: array
+    items:
+      $ref: "../common/FileAttachment.yaml"
+    maxItems: 3
+required:
+  - department_id
+  - service_id
+  - title
+  - descriptions

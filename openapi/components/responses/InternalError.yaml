@@ -1,0 +1,12 @@
+description: Lỗi server không mong muốn
+content:
+  application/json:
+    schema:
+      $ref: "../schemas/core/StandardError.yaml"
+    example:
+      success: false
+      error:
+        code: 500
+        message: "Lỗi hệ thống, vui lòng thử lại sau"
+        data: 
+          type: [null]
