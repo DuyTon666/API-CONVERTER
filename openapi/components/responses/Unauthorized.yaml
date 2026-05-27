@@ -1,0 +1,14 @@
+description: Token không hợp lệ hoặc đã hết hạn - Mã lỗi 4102
+content:
+  application/json:
+    schema:
+      $ref: "../schemas/core/StandardError.yaml"
+    example:
+      success: false
+      error:
+        code: 4102
+        message: "Token không hợp lệ hoặc đã hết hạn"
+        data: null
+ 
+    
+      

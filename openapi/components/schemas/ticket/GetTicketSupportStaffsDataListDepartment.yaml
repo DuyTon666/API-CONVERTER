@@ -1,0 +1,9 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: id phòng ban
+    readOnly: true
+  name:
+    type: string
+    description: Tên phòng ban

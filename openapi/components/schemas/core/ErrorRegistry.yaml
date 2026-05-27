@@ -1,0 +1,30 @@
+#Bảng mã lỗi nội bộ của hệ thống, được sử dụng trong phần error của StandardError
+#4 mã đầu được sử dụng cho toàn bộ endpoint
+#các mã trở đi sẽ đi theo từng endpoint khác nhau
+description: "Bảng mã lỗi nội bộ của hệ thống, được sử dụng trong phần error của StandardError"
+x-error-registry:
+  4102:
+    httpStatus: 401
+    message: "Token không hợp lệ hoặc đã hết hạn"
+  4108:
+    httpStatus: 403
+    message: "IP không được phép truy cập"
+  4200:
+    httpStatus: 422
+    message: "Dữ liệu request không hợp lệ"
+  4004:
+    httpStatus: 404
+    message: "Không tìm thấy dữ liệu"
+x-error-registry-by-endpoint:
+  4462:
+   message: "Tạo yêu cầu thất bại"
+  4463:
+   message: "Tạo phản hồi thất bại"
+  4464:
+   message: "Yêu cầu đã đóng, không thực hiện được phản hồi"
+  4466:
+   message: "Quá thời hạn mở lại"
+  4467:
+   message: "Câu hỏi đang được mở"
+  4469:
+   message: "Ticket chưa được hoàn thành." 

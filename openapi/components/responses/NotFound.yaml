@@ -1,0 +1,11 @@
+description: Không tim thấy dữ liệu - Mã lỗi 4004
+content:
+  application/json:
+      schema:
+        $ref: "../schemas/core/StandardError.yaml"
+      example:
+        success: false
+        error:
+          code: 4004
+          message: "Không tìm thấy dữ liệu"
+          data: null
