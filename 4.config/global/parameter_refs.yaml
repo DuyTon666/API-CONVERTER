@@ -1,0 +1,11 @@
+parameter_refs:
+  path:
+    user_id: "../../components/parameters/UserId.yaml"
+    id: "../../components/parameters/TicketId.yaml"
+
+  query:
+    page: "../../components/parameters/PaginationParams.yaml#/page"
+    limit: "../../components/parameters/PaginationParams.yaml#/limit"
+
+  header:
+    X-Request-Id: "../../components/parameters/XRequestId.yaml"

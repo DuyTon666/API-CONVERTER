@@ -32,6 +32,9 @@ def _matches_field(field_data: dict, rule: dict) -> bool:
 
     return False
 
+def _is_request_schema(file_path: Path) -> bool:
+    return file_path.stem.endswith("Request")
+
 def process_file(file_path: Path, registry: dict, yaml: YAML) -> bool:
     """Xử lý 1 file — trả về True nếu có thay đổi"""
     with open(file_path, encoding="utf-8") as f:
@@ -40,10 +43,20 @@ def process_file(file_path: Path, registry: dict, yaml: YAML) -> bool:
     if not data or "properties" not in data:
         return False
 
+    is_request = _is_request_schema(file_path)  # ← THÊM: gọi hàm đã có sẵn
+
     changed = False
     for field_name, rule in registry.items():
         if field_name not in data["properties"]:
             continue
+
+        # ← THÊM: đọc schema_kind từ registry, mặc định "any" nếu không khai báo
+        schema_kind = rule.get("schema_kind", "any")
+        if schema_kind == "response" and is_request:
+            continue   # rule chỉ dành cho response, bỏ qua file *Request.yaml
+        if schema_kind == "request" and not is_request:
+            continue   # rule chỉ dành cho request, bỏ qua file response
+
         field_data = data["properties"][field_name]
         if _matches_field(field_data, rule):
             if rule.get("ref_type") == "array_of":

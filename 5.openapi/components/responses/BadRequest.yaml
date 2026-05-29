@@ -1,0 +1,11 @@
+description: Bad Request
+content:
+  application/json:
+    schema:
+      $ref: "../schemas/common/StandardError.yaml"
+    example:
+      success: false
+      data: null
+      error:
+        code: 400
+        message: "Bad Request"

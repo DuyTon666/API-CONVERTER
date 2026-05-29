@@ -1,8 +1,9 @@
 get:
-  summary: Lấy danh sách ticket của khách hàng
+  summary: Hiển thị danh sách ticket của khách hàng
   operationId: getUserTickets
-  description: Trả về danh sách tất cả các ticket thuộc về một khách hàng cụ 
-    thể. API cho phép khách hàng xem lịch sử các yêu cầu hỗ trợ của mình.
+  description: Lấy danh sách tất cả các ticket thuộc về một khách hàng cụ thể. 
+    API này cho phép khách hàng xem lịch sử và trạng thái các yêu cầu hỗ trợ của
+    mình.
   tags:
     - Ticket
   security:

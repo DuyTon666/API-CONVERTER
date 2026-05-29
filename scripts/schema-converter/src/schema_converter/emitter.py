@@ -48,8 +48,9 @@ def _ref(path: str) -> dict:
     """
     return {"$ref": Q(path)}
 
-REQUEST_AUTO_REMOVE_FIELDS = {"created_at", "updated_at"}
-RESPONSE_READONLY_FIELDS = {"id", "created_at", "updated_at"}
+_SCHEMA_REGISTRY = _load_schema_registry()
+REQUEST_AUTO_REMOVE_FIELDS = set(_SCHEMA_REGISTRY.get("request_auto_remove_fields", []))
+RESPONSE_READONLY_FIELDS   = set(_SCHEMA_REGISTRY.get("response_readonly_fields", []))
 
 def _apply_server_managed_rules(field_name: str, prop: dict, schema_kind: str) -> dict | None:
     """
@@ -216,6 +217,12 @@ def _build_structure(op: ParsedOperation) -> dict:
         "500": _ref("../../components/responses/InternalError.yaml"),
     }
 
+    response_refs = _SCHEMA_REGISTRY.get("response_refs", {})
+
+    for status, ref_path in response_refs.items():
+        if status not in responses:   # không ghi đè 200/401/403/404/500 đã có
+            responses[status] = _ref(ref_path)
+
     if business_codes:
         responses["422"] = _make_422_response(business_codes)
 
@@ -237,21 +244,19 @@ def _build_structure(op: ParsedOperation) -> dict:
     # --- PHẦN 5: THÊM REQUEST BODY NẾU CÓ ---
     # Không phải endpoint nào cũng có request body
     # Ví dụ: close ticket không có, nhưng create ticket có
-    if op.has_request_body:
-        schema_name = op.operation_id[0].upper() + op.operation_id[1:] + "Request" if op.operation_id else ""
-        schema_ref = f"../../components/schemas/{op.service}/{schema_name}.yaml" if schema_name else ""
-    
+    has_body = op.has_request_body or bool(op.request_body_fields)
 
+    if has_body and op.method.upper() not in ("GET", "DELETE"):
+        schema_name = op.operation_id[0].upper() + op.operation_id[1:] + "Request" if op.operation_id else ""
+        schema_ref  = f"../../components/schemas/{op.service}/{schema_name}.yaml" if schema_name else ""
         structure[method_key]["requestBody"] = {
             "required": op.request_body_required,
             "content": {
-                # content_type có thể là "application/json" hoặc "multipart/form-data"
                 op.content_type: {
                     "schema": _ref(schema_ref)
                 }
             }
         }
-
     return structure
 
 def emit_request_schema(op: ParsedOperation, schemas_dir: str):

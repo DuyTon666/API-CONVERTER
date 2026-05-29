@@ -1,0 +1,135 @@
+{
+  "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx": {
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "23/01/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ]
+  },
+  "API Ticket - API đóng ticket của khách hàng.docx": {
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ]
+  },
+  "API Ticket - API tạo ratting ticket cho khách hàng.docx": {
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "23/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ]
+  },
+  "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx": {
+    "version": "1.2",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "09/01/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "05/02/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Thêm query params sort_type"
+      },
+      {
+        "version": "1.2",
+        "date": "23/03/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Thêm query params post_by"
+      }
+    ]
+  },
+  "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx": {
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ]
+  },
+  "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx": {
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "12/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ]
+  },
+  "API Ticket - API tạo phản hồi ticket cho khách hàng.docx": {
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ]
+  },
+  "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx": {
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ]
+  },
+  "API Ticket - API mở lại ticket của khách hàng.docx": {
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ]
+  },
+  "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx": {
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ]
+  },
+  "API Ticket - Tạo ticket cho khách hàng.docx": {
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "12/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ]
+  }
+}
