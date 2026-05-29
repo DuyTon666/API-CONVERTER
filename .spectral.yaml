@@ -1,0 +1,161 @@
+extends: [["spectral:oas", "all"]]
+functions:
+  - enum-has-description
+  - private-must-have-401-403
+  - has-request-body-must-have-400
+  - server-id-must-be-readonly
+  - client-id-must-not-be-readonly
+  - property-must-have-description
+rules:
+  enum-has-description:
+    message: "{{error}}"
+    severity: error
+    given: "$.paths[*][*].parameters[*].schema"
+    then:
+      function: enum-has-description
+
+  private-endpoint-must-have-401-403:
+    message: "{{error}}"
+    severity: error
+    given: "$.paths[*][*]"
+    then: { function: private-must-have-401-403 }
+
+  has-request-body-must-have-400:
+    message: "{{error}}"
+    severity: error
+    given: "$.paths[*][*]"
+    then: { function: has-request-body-must-have-400 }
+
+  server-id-must-be-readonly:
+    message: "{{error}}"
+    severity: error
+    given: "$.paths[*][*].responses[*].content"
+    then:
+      function: server-id-must-be-readonly
+
+  client-id-must-not-be-readonly:
+    message: "{{error}}"
+    severity: error
+    given: "$.paths[*][*].requestBody.content"
+    then:
+      function: client-id-must-not-be-readonly
+  property-must-have-description:
+    message: "{{error}}"
+    severity: warn
+    given:
+      - "$.components.schemas[*]"
+      - "$.components.schemas[*].properties[*]"          # ← thêm dòng này
+      - "$.paths[*][*].requestBody.content[*].schema"
+      - "$.paths[*][*].responses[*].content[*].schema"
+    then:
+      function: property-must-have-description
+# Rule
+  operation-id-verb-noun:
+      message: 'operationId "{{value}}" sai format, operationId phải dùng camelCase và bắt đầu bằng động từ — ví dụ: listUsers, createOrder, reopenTicket.'
+      severity: error
+      given: "$.paths[*][*].operationId"
+      then:
+        function: pattern
+        functionOptions:
+          match: "^[a-z][a-zA-Z0-9]+$"
+
+  operation-must-have-summary:
+    message: 'Operation "{{property}}" phải có summary.'
+    severity: error
+    given: "$.paths[*][get,post,put,patch,delete]"
+    then:
+      field: summary
+      function: truthy
+
+  operation-must-have-description:
+    message: "Operation phải có description."
+    severity: warn
+    given: "$.paths[*][*]"
+    then:
+      field: description
+      function: truthy
+
+  path-params-must-be-required:
+    message: 'Path parameter "{{property}}" phải có required: true.'
+    severity: error
+    given: '$.paths[*][*].parameters[?(@.in == "path")]'
+    then:
+      field: required
+      function: truthy
+
+  path-kebab-case: 
+    message: "Path phải dùng kebab-case." 
+    severity: warn
+    given: "$.paths.*~"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^(/[a-z0-9-]+|/{[a-zA-Z0-9_]+})+$"
+
+  operation-must-have-500:
+    message: "Operation thiếu response 500 (Internal Server Error)."
+    severity: warn
+    given: "$.paths[*][*]"
+    then:
+      field: responses.500
+      function: truthy
+
+  operation-with-id-must-have-404:
+    message: "Operation với path parameter phải có response 404 (Not Found)."
+    severity: warn
+    given: "$.paths[?(@property.match('.*{.*}.*'))][get,put,patch,delete]"
+    then:
+      field: responses.404
+      function: truthy
+
+  response-200-must-have-content:
+    message: "Response 200 phải có content/schema."
+    severity: info
+    given: "$.paths[*][get,put,patch].responses.200"
+    then:
+      field: content
+      function: truthy
+
+  post-create-should-have-201:
+    message: "POST nên trả response 201 Created."
+    severity: info
+    given: "$.paths[*].post.responses"
+    then:
+      field: "201"
+      function: truthy
+
+  must-have-servers:
+    message: "API phải khai báo ít nhất 1 server."
+    severity: warn
+    given: "$"
+    then:
+      field: servers
+      function: truthy
+
+  info-must-have-contact:
+    message: "API phải có thông tin contact."
+    severity: info
+    given: "$.info"
+    then:
+      field: contact
+      function: truthy
+
+  delete-must-have-204:
+    message: "DELETE nên trả 204 No Content."
+    severity: warn
+    given: "$.paths[*].delete"
+    then:
+      field: responses.204
+      function: truthy
+
+  operation-must-have-tags:
+    message: "Operation phải có ít nhất 1 tag."
+    severity: warn
+    given: "$.paths[*][*]"
+    then:
+      field: tags
+      function: schema
+      functionOptions:
+        schema:
+          type: array
+          minItems: 1
