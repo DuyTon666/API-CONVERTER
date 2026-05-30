@@ -1,9 +1,9 @@
 post:
-  summary: Chỉnh sửa phản hồi ticket của khách hàng
+  summary: Chỉnh sửa feedback của ticket
   operationId: updateTicketFeedback
-  description: Cập nhật nội dung phản hồi cho một ticket cụ thể của khách hàng. 
-    API cho phép chỉnh sửa feedback đã tồn tại để cải thiện chất lượng phản hồi 
-    và hỗ trợ khách hàng tốt hơn.
+  description: API cho phép chỉnh sửa feedback đã tồn tại của một ticket cho 
+    khách hàng cụ thể. Yêu cầu có quyền truy cập vào ticket và feedback phải 
+    thuộc về user_id được chỉ định.
   tags:
     - Ticket
   security:
@@ -44,6 +44,8 @@ post:
       $ref: "../../components/responses/NotFound.yaml"
     '500':
       $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
     '422':
       description: 4200 — Dữ liệu request không hợp lệ
       content:

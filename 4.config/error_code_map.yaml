@@ -1,0 +1,41 @@
+error_codes:
+  # Auth
+  '4102':
+    http_status: '401'
+    message: Token không hợp lệ hoặc đã hết hạn
+  '4108':
+    http_status: '401'
+    message: Không có quyền truy cập
+
+  # Not found
+  '4004':
+    http_status: '404'
+    message: Không tìm thấy dữ liệu
+
+  # Validation chung
+  '4200':
+    http_status: '422'
+    message: Dữ liệu request không hợp lệ
+
+  # Nghiệp vụ ticket 
+  '4462':
+    http_status: '422'
+    message: Tạo yêu cầu thất bại
+  '4463':
+    http_status: '422'
+    message: Tạo phản hồi thất bại
+  '4464':
+    http_status: '422'
+    message: Câu hỏi đã đóng
+  '4466':
+    http_status: '422'
+    message: Quá thời hạn cho phép mở lại
+  '4467':
+    http_status: '422'
+    message: Câu hỏi đang được mở
+  '4468':
+    http_status: '422'
+    message: Đang chờ nhân viên tiếp nhận
+  '4469':
+    http_status: '422'
+    message: Ticket chưa được hoàn tất

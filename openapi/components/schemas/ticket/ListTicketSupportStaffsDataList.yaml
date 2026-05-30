@@ -1,0 +1,34 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: id của nhân viên
+    readOnly: true
+  name:
+    type: string
+    description: Tên đầy đủ của nhân viên
+  department:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id phòng ban
+        readOnly: true
+      name:
+        type: string
+        description: Tên phòng ban
+    description: Thông tin phòng ban của nhân viên
+  rating:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id đánh giá
+        readOnly: true
+      stars:
+        type: integer
+        description: Số sao
+      descriptions:
+        type: string
+        description: Nội dung đánh giá
+    description: Thông tin đánh giá của nhân viên

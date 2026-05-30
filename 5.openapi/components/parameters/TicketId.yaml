@@ -1,0 +1,7 @@
+name: id
+in: path
+required: true
+description: ID của ticket cần thao tác
+schema:
+  type: string
+example: "456"

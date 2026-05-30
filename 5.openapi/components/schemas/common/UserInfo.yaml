@@ -1,0 +1,19 @@
+type: ["object", "null"]
+properties:
+  id:
+    type: integer
+    example: 123
+    readOnly: true
+  name:
+    type: string
+    example: "Nguyen Van A"
+  mgroup:
+    type: string
+    description: >
+      Phân loại người dùng:
+      1 = Khách hàng PA,
+      2 = Đại lý / tài khoản trả trước,
+      3 = Nhân viên,
+      4 = Khách hàng đại lý
+    enum: ["1", "2", "3", "4"]
+    example: "1"

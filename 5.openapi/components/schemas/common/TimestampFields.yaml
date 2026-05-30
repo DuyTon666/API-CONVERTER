@@ -1,0 +1,12 @@
+type: object
+properties:
+  created_date:
+    type: string
+    readOnly: true
+    description: "Ngày giờ tạo bản ghi, định dạng Y-m-d H:i:s"
+    example: "2024-06-01 14:30:00"
+  last_updated:
+    type: ["string", "null"]
+    readOnly: true
+    description: "Ngày giờ cập nhật bản ghi, định dạng Y-m-d H:i:s"
+    example: "2024-06-01 15:00:00"

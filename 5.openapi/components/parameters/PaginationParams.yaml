@@ -1,0 +1,19 @@
+page:
+  name: page
+  in: query
+  required: false
+  schema:
+    type: integer
+    minimum: 1
+    default: 1
+  description: Số trang
+
+limit:
+  name: limit
+  in: query
+  required: false
+  schema:
+    type: integer
+    minimum: 1
+    default: 20
+  description: Số lượng bản ghi trên mỗi trang

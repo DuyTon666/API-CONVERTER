@@ -1,0 +1,111 @@
+get:
+  summary: Lấy danh sách ticket của khách hàng
+  operationId: getUserTickets
+  description: Trả về danh sách tất cả các ticket thuộc về một khách hàng cụ 
+    thể. API cho phép khách hàng xem lịch sử và trạng thái các yêu cầu hỗ trợ 
+    của mình.
+  tags:
+    - Ticket
+  security:
+    - bearerAuth: []
+  x-permission: CHECK_UPDATE
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
+      description: Số thứ tự trang muốn hiển thị
+    - name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 10
+      description: Tổng số ticket muốn hiển thị trên một trang
+    - name: status
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - CREATED
+          - IN_PROGRESS
+          - PENDING
+          - CLOSED
+      description: 'Tìm kiếm theo trạng thái:CREATED: Mới tạoIN_PROGRESS: Đang xử
+        lýPENDING: Chờ phản hồiCLOSED: Đóng'
+    - name: keyword
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Nội dung cần tìm kiếm- Tìm kiếm theo: Mã ticket, tiêu đề.- Tối
+        thiểu 4 ký tự'
+    - name: date_from
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: Tìm kiếm từ ngày (Y-m-d H:i:s)- date_to>=data_from
+    - name: date_to
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: Tìm kiếm đến ngày (Y-m-d H:i:s)- date_to>=data_from
+    - name: sort_type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - LAST_UPDATED_DESC
+          - CREATED_DATE_DESC
+      description: 'Kiểu sắp xếp:LAST_UPDATED_DESC:Ngày cập nhật giảm dầnCREATED_DATE_DESC:
+        Ngày tạo giảm dần'
+    - name: post_by
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - USER
+          - SYSTEM
+      description: 'Người tạo ticketUSER: user hiện tại (khách hàng)SYSTEM: hệ thống'
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/ticket/GetUserTicketsData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      description: 4200 — Dữ liệu request không hợp lệ
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/common/StandardError.yaml"
