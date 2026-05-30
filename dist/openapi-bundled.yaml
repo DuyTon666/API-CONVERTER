@@ -22,8 +22,8 @@ paths:
   /v1/users/{user_id}/tickets:
     get:
       summary: Hiển thị danh sách ticket của khách hàng
-      operationId: listUserTickets
-      description: Lấy danh sách tất cả các ticket thuộc về một khách hàng cụ thể. API hỗ trợ phân trang và lọc theo trạng thái ticket.
+      operationId: getUserTickets
+      description: Lấy danh sách tất cả các ticket thuộc về một khách hàng cụ thể. API này cho phép khách hàng xem lịch sử và trạng thái các yêu cầu hỗ trợ của mình.
       tags:
         - Ticket
       security:
@@ -59,13 +59,13 @@ paths:
               - IN_PROGRESS
               - PENDING
               - CLOSED
-          description: "Tìm kiếm theo trạng thái:CREATED: Mới tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng"
+          description: 'Tìm kiếm theo trạng thái:CREATED: Mới tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng'
         - name: keyword
           in: query
           required: false
           schema:
             type: string
-          description: "Nội dung cần tìm kiếm- Tìm kiếm theo: Mã ticket, tiêu đề.- Tối thiểu 4 ký tự"
+          description: 'Nội dung cần tìm kiếm- Tìm kiếm theo: Mã ticket, tiêu đề.- Tối thiểu 4 ký tự'
         - name: date_from
           in: query
           required: false
@@ -88,7 +88,7 @@ paths:
             enum:
               - LAST_UPDATED_DESC
               - CREATED_DATE_DESC
-          description: "Kiểu sắp xếp:LAST_UPDATED_DESC:Ngày cập nhật giảm dầnCREATED_DATE_DESC: Ngày tạo giảm dần"
+          description: 'Kiểu sắp xếp:LAST_UPDATED_DESC:Ngày cập nhật giảm dầnCREATED_DATE_DESC: Ngày tạo giảm dần'
         - name: post_by
           in: query
           required: false
@@ -97,31 +97,37 @@ paths:
             enum:
               - USER
               - SYSTEM
-          description: "Người tạo ticketUSER: user hiện tại (khách hàng)SYSTEM: hệ thống"
+          description: 'Người tạo ticketUSER: user hiện tại (khách hàng)SYSTEM: hệ thống'
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/StandardSuccess"
+                  - $ref: '#/components/schemas/StandardSuccess'
                   - type: object
                     properties:
                       data:
-                        $ref: "#/components/schemas/ListUserTicketsData"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                        $ref: '#/components/schemas/GetUserTicketsData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
     post:
       summary: Tạo ticket hỗ trợ mới cho khách hàng
       operationId: createUserTicket
-      description: Tạo ticket yêu cầu hỗ trợ mới cho khách hàng trong hệ thống. Ticket sẽ được gán cho đội ngũ hỗ trợ để xử lý theo độ ưu tiên và phân loại vấn đề.
+      description: Tạo ticket yêu cầu hỗ trợ mới cho khách hàng trong hệ thống. Ticket sẽ được gán cho bộ phận chăm sóc khách hàng để xử lý theo quy trình.
       tags:
         - Ticket
       security:
@@ -134,35 +140,43 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StandardSuccess"
+                $ref: '#/components/schemas/StandardSuccess'
               example:
                 success: true
                 data: null
                 error: null
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/CreateUserTicketRequest"
+              $ref: '#/components/schemas/CreateUserTicketRequest'
   /v1/users/{user_id}/tickets/{id}:
     get:
       summary: Xem chi tiết ticket của khách hàng
-      operationId: getUserTicketDetail
-      description: Hiển thị thông tin chi tiết của một ticket cụ thể thuộc về khách hàng. API chỉ trả về ticket thuộc quyền sở hữu của user_id được chỉ định.
+      operationId: getUserTicketDetails
+      description: Trả về thông tin chi tiết của một ticket cụ thể thuộc về khách hàng. API chỉ hiển thị ticket thuộc về user_id được chỉ định để đảm bảo khách hàng chỉ xem được ticket của chính mình.
       tags:
         - Ticket
       security:
@@ -180,30 +194,36 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/StandardSuccess"
+                  - $ref: '#/components/schemas/StandardSuccess'
                   - type: object
                     properties:
                       data:
-                        $ref: "#/components/schemas/GetUserTicketDetailData"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                        $ref: '#/components/schemas/GetUserTicketDetailsData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{id}/close:
     put:
       summary: Đóng ticket của khách hàng
       operationId: closeUserTicket
-      description: API cho phép đóng ticket của khách hàng khi vấn đề đã được giải quyết hoặc không cần xử lý thêm. Ticket đã đóng sẽ chuyển trạng thái và không thể thao tác thêm.
+      description: API cho phép đóng ticket hỗ trợ của khách hàng khi vấn đề đã được giải quyết. Chỉ áp dụng cho ticket đang ở trạng thái mở hoặc đang xử lý.
       tags:
         - Ticket
       security:
@@ -221,24 +241,30 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StandardSuccess"
+                $ref: '#/components/schemas/StandardSuccess'
               example:
                 success: true
                 data: null
                 error: null
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{id}/reopen:
     post:
       summary: Mở lại ticket đã đóng của khách hàng
@@ -261,35 +287,46 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StandardSuccess"
+                $ref: '#/components/schemas/StandardSuccess'
               example:
                 success: true
                 data: null
                 error: null
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: |-
+            4200 — Dữ liệu request không hợp lệ
+            4466 — Quá thời hạn cho phép mở lại
+            4467 — Câu hỏi đang được mở
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
       requestBody:
         required: false
         content:
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/ReopenUserTicketRequest"
+              $ref: '#/components/schemas/ReopenUserTicketRequest'
   /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
     post:
-      summary: Chỉnh sửa phản hồi của ticket
+      summary: Chỉnh sửa feedback của ticket
       operationId: updateTicketFeedback
-      description: API cho phép chỉnh sửa nội dung phản hồi (feedback) của một ticket cụ thể cho khách hàng. Yêu cầu quyền truy cập vào ticket và feedback phải tồn tại trước đó.
+      description: API cho phép chỉnh sửa feedback đã tồn tại của một ticket cho khách hàng cụ thể. Yêu cầu có quyền truy cập vào ticket và feedback phải thuộc về user_id được chỉ định.
       tags:
         - Ticket
       security:
@@ -312,35 +349,43 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StandardSuccess"
+                $ref: '#/components/schemas/StandardSuccess'
               example:
                 success: true
                 data: null
                 error: null
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateTicketFeedbackRequest"
+              $ref: '#/components/schemas/UpdateTicketFeedbackRequest'
   /v1/users/{user_id}/tickets/{id}/support-staffs:
     get:
       summary: Lấy danh sách nhân viên hỗ trợ ticket
-      operationId: getTicketSupportStaffs
-      description: Trả về danh sách tất cả nhân viên đang được phân công hỗ trợ một ticket cụ thể. API này giúp theo dõi các thành viên tham gia xử lý ticket của người dùng.
+      operationId: listTicketSupportStaffs
+      description: Trả về danh sách các nhân viên đang được phân công hỗ trợ một ticket cụ thể. API này giúp người dùng biết được những nhân viên nào đang xử lý yêu cầu của mình.
       tags:
         - Ticket
       security:
@@ -358,32 +403,38 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/StandardSuccess"
+                  - $ref: '#/components/schemas/StandardSuccess'
                   - type: object
                     properties:
                       data:
                         type: array
                         items:
-                          $ref: "#/components/schemas/GetTicketSupportStaffsDataList"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                          $ref: '#/components/schemas/ListTicketSupportStaffsDataList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{id}/conversations:
     post:
       summary: Tạo phản hồi ticket khách hàng
       operationId: createTicketConversation
-      description: Tạo phản hồi mới cho ticket của khách hàng. API cho phép nhân viên hỗ trợ hoặc hệ thống gửi tin nhắn trả lời trong cuộc hội thoại ticket.
+      description: Tạo một phản hồi mới trong cuộc hội thoại ticket của khách hàng. API cho phép nhân viên hỗ trợ trả lời và tương tác với khách hàng thông qua hệ thống ticket.
       tags:
         - Ticket
       security:
@@ -401,30 +452,36 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/StandardSuccess"
+                  - $ref: '#/components/schemas/StandardSuccess'
                   - type: object
                     properties:
                       data:
-                        $ref: "#/components/schemas/CreateTicketConversationData"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                        $ref: '#/components/schemas/CreateTicketConversationData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{ticket_id}/ratings:
     post:
-      summary: Tạo đánh giá ticket cho khách hàng
+      summary: Tạo đánh giá cho ticket
       operationId: createTicketRating
-      description: Tạo đánh giá chất lượng xử lý ticket từ khách hàng. Cho phép khách hàng đánh giá mức độ hài lòng và phản hồi về quá trình giải quyết ticket của họ.
+      description: API cho phép khách hàng tạo đánh giá (rating) cho ticket đã được xử lý. Sử dụng để thu thập phản hồi chất lượng dịch vụ hỗ trợ từ khách hàng.
       tags:
         - Ticket
       security:
@@ -442,35 +499,43 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StandardSuccess"
+                $ref: '#/components/schemas/StandardSuccess'
               example:
                 success: true
                 data: null
                 error: null
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateTicketRatingRequest"
+              $ref: '#/components/schemas/CreateTicketRatingRequest'
   /v1/users/{user_id}/tickets/{id}/feedback:
     post:
-      summary: Tiếp nhận phản ánh góp ý cho ticket
+      summary: Tiếp nhận phản ánh góp ý của khách hàng
       operationId: submitTicketFeedback
-      description: API cho phép khách hàng gửi phản ánh, góp ý về ticket đã được xử lý. Thường được sử dụng để đánh giá chất lượng giải quyết hoặc bổ sung thông tin sau khi ticket đã đóng.
+      description: API cho phép khách hàng gửi phản ánh, góp ý về ticket đã được xử lý. Yêu cầu ticket phải tồn tại và thuộc về user_id được chỉ định.
       tags:
         - Ticket
       security:
@@ -488,35 +553,43 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StandardSuccess"
+                $ref: '#/components/schemas/StandardSuccess'
               example:
                 success: true
                 data: null
                 error: null
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/SubmitTicketFeedbackRequest"
+              $ref: '#/components/schemas/SubmitTicketFeedbackRequest'
   /v1/users/{user_id}/tickets/{id}/change-assignee:
     post:
-      summary: Đổi nhân viên được gán xử lý ticket
+      summary: Đổi nhân viên được phân công xử lý ticket
       operationId: changeTicketAssignee
-      description: Thay đổi nhân viên hỗ trợ được phân công xử lý ticket của người dùng. Chỉ cho phép đổi khi ticket đang ở trạng thái mở và nhân viên mới phải có quyền xử lý loại ticket tương ứng.
+      description: Thay đổi nhân viên hỗ trợ được phân công xử lý ticket của người dùng. Chỉ quản lý hoặc người được ủy quyền mới có thể thực hiện thao tác này.
       tags:
         - Ticket
       security:
@@ -534,30 +607,40 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Thành công
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StandardSuccess"
+                $ref: '#/components/schemas/StandardSuccess'
               example:
                 success: true
                 data: null
                 error: null
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: |-
+            4200 — Dữ liệu request không hợp lệ
+            4468 — Đang chờ nhân viên tiếp nhận
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardError'
+        '500':
+          $ref: '#/components/responses/InternalError'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ChangeTicketAssigneeRequest"
+              $ref: '#/components/schemas/ChangeTicketAssigneeRequest'
 components:
   securitySchemes:
     bearerAuth:
@@ -577,11 +660,11 @@ components:
           example: true
         error:
           type:
-            - "null"
+            - 'null'
           example: null
         data:
           description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
-    ListUserTicketsDataData:
+    GetUserTicketsDataData:
       type: object
       properties:
         id:
@@ -605,7 +688,7 @@ components:
           description: Trạng thái thực của ticket
         status:
           type: string
-          description: "Trạng thái dành cho FEGồm 4 trạng thái: CREATED: Vừa tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng"
+          description: 'Trạng thái dành cho FEGồm 4 trạng thái: CREATED: Vừa tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng'
         department:
           type: object
           properties:
@@ -631,7 +714,7 @@ components:
               type: string
               description: Loại dịch vụ
           description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
-    ListUserTicketsData:
+    GetUserTicketsData:
       type: object
       properties:
         current_page:
@@ -658,7 +741,7 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/ListUserTicketsDataData"
+            $ref: '#/components/schemas/GetUserTicketsDataData'
           description: Danh sách các ticket
     StandardError:
       type: object
@@ -677,7 +760,7 @@ components:
           properties:
             code:
               type: integer
-              description: "Mã lỗi nội bộ của hệ thống: 4102: Token không hợp lệ hoặc đã hết hạn 4108: Không có quyền truy cập 4004: Không tìm thấy dữ liệu 4200: Dữ liệu không hợp lệ"
+              description: 'Mã lỗi nội bộ của hệ thống: 4102: Token không hợp lệ hoặc đã hết hạn 4108: Không có quyền truy cập 4004: Không tìm thấy dữ liệu 4200: Dữ liệu không hợp lệ'
               example: 4200
             message:
               type: string
@@ -685,7 +768,25 @@ components:
             data:
               type:
                 - object
-                - "null"
+                - 'null'
+    FileAttachment:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          description: URL của file đính kèm
+          example: https://example.pavietnam.vn/support/files/help.pdf
+        category:
+          type: string
+          enum:
+            - image
+            - document
+            - other
+            - video
+            - archive
+          description: 'Phân loại file: ảnh, video, tài liệu, archive (nén), hoặc khác.'
+          example: document
     CreateUserTicketRequest:
       type: object
       properties:
@@ -705,16 +806,36 @@ components:
         files:
           type: array
           items:
-            type: string
-            format: binary
+            $ref: '#/components/schemas/FileAttachment'
           maxItems: 3
-          description: "Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar"
       required:
         - department_id
         - service_id
         - title
         - descriptions
-    GetUserTicketDetailDataConversations:
+    UserInfo:
+      type:
+        - object
+        - 'null'
+      properties:
+        id:
+          type: integer
+          example: 123
+          readOnly: true
+        name:
+          type: string
+          example: Nguyen Van A
+        mgroup:
+          type: string
+          description: |
+            Phân loại người dùng: 1 = Khách hàng PA, 2 = Đại lý / tài khoản trả trước, 3 = Nhân viên, 4 = Khách hàng đại lý
+          enum:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+          example: '1'
+    GetUserTicketDetailsDataConversations:
       type: object
       properties:
         id:
@@ -734,26 +855,14 @@ components:
                 description: Đường dẫn đến file
               category:
                 type: string
-                description: "Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác"
+                description: 'Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác'
           description: Thông tin các tệp tin (xem thêm bên dưới)
         created_date:
           type: string
           description: Ngày tạo (Y-m-d H:i:s)
         owner:
-          type: object
-          properties:
-            id:
-              type: integer
-              description: Id người tạo
-              readOnly: true
-            name:
-              type: string
-              description: Tên người tạo
-            mgroup:
-              type: integer
-              description: "Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý"
-          description: Thông tin người tạo (xem thêm bên dưới)
-    GetUserTicketDetailData:
+          $ref: '#/components/schemas/UserInfo'
+    GetUserTicketDetailsData:
       type: object
       properties:
         id:
@@ -780,7 +889,7 @@ components:
           description: Trạng thái thực của ticket
         status:
           type: string
-          description: "Trạng thái dành cho FEGồm 4 trạng thái: CREATED: Vừa tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng"
+          description: 'Trạng thái dành cho FEGồm 4 trạng thái: CREATED: Vừa tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng'
         files:
           type: array
           items:
@@ -791,7 +900,7 @@ components:
                 description: Đường dẫn đến file
               category:
                 type: string
-                description: "Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác"
+                description: 'Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác'
           description: Thông tin các tệp tin (xem thêm bên dưới)
         department:
           type: object
@@ -819,23 +928,11 @@ components:
               description: Loại dịch vụ
           description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
         assignee:
-          type: object
-          properties:
-            id:
-              type: integer
-              description: Id của dịch vụ
-              readOnly: true
-            name:
-              type: string
-              description: Tên nhân viên
-            mgroup:
-              type: integer
-              description: "Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý"
-          description: Thông tin về nhân viên hỗ trợ (xem thêm bên dưới)
+          $ref: '#/components/schemas/UserInfo'
         conversations:
           type: array
           items:
-            $ref: "#/components/schemas/GetUserTicketDetailDataConversations"
+            $ref: '#/components/schemas/GetUserTicketDetailsDataConversations'
           description: Danh sách các phản hồi (xem thêm bên dưới)
     ReopenUserTicketRequest:
       type: object
@@ -847,10 +944,8 @@ components:
         files:
           type: array
           items:
-            type: string
-            format: binary
+            $ref: '#/components/schemas/FileAttachment'
           maxItems: 3
-          description: "Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar"
     UpdateTicketFeedbackRequest:
       type: object
       properties:
@@ -867,7 +962,7 @@ components:
         - id
         - review_service
         - review_employee
-    GetTicketSupportStaffsDataList:
+    ListTicketSupportStaffsDataList:
       type: object
       properties:
         id:
@@ -922,25 +1017,13 @@ components:
                 description: Đường dẫn đến file
               category:
                 type: string
-                description: "Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác"
+                description: 'Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác'
           description: Thông tin các tệp tin (xem thêm bên dưới)
         created_date:
           type: string
           description: Ngày tạo (Y-m-d H:i:s)
         owner:
-          type: object
-          properties:
-            id:
-              type: integer
-              description: Id người tạo
-              readOnly: true
-            name:
-              type: string
-              description: Tên người tạo
-            mgroup:
-              type: integer
-              description: "Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý"
-          description: Thông tin người tạo (xem thêm bên dưới)
+          $ref: '#/components/schemas/UserInfo'
     CreateTicketRatingRequest:
       type: object
       properties:
@@ -954,7 +1037,7 @@ components:
                 description: ID nhân viên hỗ trợ
               stars:
                 type: integer
-                description: "Số sao -  Tối thiểu: 1 -  Tối đa: 5"
+                description: 'Số sao -  Tối thiểu: 1 -  Tối đa: 5'
               descriptions:
                 type: string
                 maxLength: 4000
@@ -968,7 +1051,7 @@ components:
           description: ID nhân viên hỗ trợ
         stars:
           type: integer
-          description: "Số sao -  Tối thiểu: 1 -  Tối đa: 5"
+          description: 'Số sao -  Tối thiểu: 1 -  Tối đa: 5'
         descriptions:
           type: string
           maxLength: 4000
@@ -990,10 +1073,8 @@ components:
         files:
           type: array
           items:
-            type: string
-            format: binary
+            $ref: '#/components/schemas/FileAttachment'
           maxItems: 3
-          description: "Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar"
       required:
         - title
         - descriptions
@@ -1012,7 +1093,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/StandardError"
+            $ref: '#/components/schemas/StandardError'
           example:
             success: false
             error:
@@ -1024,7 +1105,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/StandardError"
+            $ref: '#/components/schemas/StandardError'
           example:
             success: false
             error:
@@ -1036,7 +1117,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/StandardError"
+            $ref: '#/components/schemas/StandardError'
           example:
             success: false
             error:
@@ -1048,7 +1129,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/StandardError"
+            $ref: '#/components/schemas/StandardError'
           example:
             success: false
             error:
@@ -1057,3 +1138,15 @@ components:
               data:
                 type:
                   - null
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+          example:
+            success: false
+            data: null
+            error:
+              code: 400
+              message: Bad Request

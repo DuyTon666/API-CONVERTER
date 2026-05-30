@@ -1,9 +1,8 @@
 post:
   summary: Tạo ticket hỗ trợ mới cho khách hàng
   operationId: createUserTicket
-  description: Tạo một ticket hỗ trợ mới cho khách hàng cụ thể trong hệ thống. 
-    API yêu cầu user_id hợp lệ và thông tin ticket bao gồm tiêu đề, mô tả vấn đề
-    cần được xử lý.
+  description: Tạo ticket yêu cầu hỗ trợ mới cho khách hàng trong hệ thống. 
+    Ticket sẽ được gán cho bộ phận chăm sóc khách hàng để xử lý theo quy trình.
   tags:
     - Ticket
   security:
@@ -34,6 +33,8 @@ post:
       $ref: "../../components/responses/NotFound.yaml"
     '500':
       $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
     '422':
       description: 4200 — Dữ liệu request không hợp lệ
       content:

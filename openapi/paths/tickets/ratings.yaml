@@ -1,9 +1,8 @@
 post:
   summary: Tạo đánh giá cho ticket
   operationId: createTicketRating
-  description: Cho phép khách hàng tạo đánh giá chất lượng xử lý cho một ticket 
-    cụ thể. API này giúp thu thập phản hồi từ khách hàng về trải nghiệm sử dụng 
-    dịch vụ hỗ trợ.
+  description: API cho phép khách hàng tạo đánh giá (rating) cho ticket đã được 
+    xử lý. Sử dụng để thu thập phản hồi chất lượng dịch vụ hỗ trợ từ khách hàng.
   tags:
     - Ticket
   security:
@@ -39,6 +38,8 @@ post:
       $ref: "../../components/responses/NotFound.yaml"
     '500':
       $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
     '422':
       description: 4200 — Dữ liệu request không hợp lệ
       content:

@@ -1,8 +1,9 @@
 post:
   summary: Tạo phản hồi ticket khách hàng
   operationId: createTicketConversation
-  description: Tạo phản hồi mới cho ticket của khách hàng. API cho phép nhân 
-    viên hỗ trợ hoặc hệ thống gửi tin nhắn trả lời cho ticket đang mở.
+  description: Tạo một phản hồi mới trong cuộc hội thoại ticket của khách hàng. 
+    API cho phép nhân viên hỗ trợ trả lời và tương tác với khách hàng thông qua 
+    hệ thống ticket.
   tags:
     - Ticket
   security:

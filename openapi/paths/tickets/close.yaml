@@ -1,8 +1,8 @@
 put:
   summary: Đóng ticket của khách hàng
   operationId: closeUserTicket
-  description: API cho phép đóng một ticket cụ thể của khách hàng khi vấn đề đã 
-    được giải quyết. Yêu cầu xác định user_id và ticket id hợp lệ.
+  description: API cho phép đóng ticket hỗ trợ của khách hàng khi vấn đề đã được
+    giải quyết. Chỉ áp dụng cho ticket đang ở trạng thái mở hoặc đang xử lý.
   tags:
     - Ticket
   security:

@@ -1,0 +1,46 @@
+type: object
+required:
+  - current_page
+  - per_page
+  - from
+  - to
+  - first_page_url
+properties:
+  current_page:
+    type: integer
+    readOnly: true
+    description: "Trang hiện tại, bắt đầu từ 1"
+    example: 2
+  per_page:
+    type: integer
+    readOnly: true
+    description: "Số lượng bản ghi trên mỗi trang"
+    example: 20
+  from:
+    type: integer
+    readOnly: true
+    description: "Số thứ tự của bản ghi đầu tiên trên trang hiện tại"
+    example: 21 
+  to:
+    type: integer
+    readOnly: true
+    description: "Số thứ tự của bản ghi cuối cùng trên trang hiện tại"
+    example: 40
+  first_page_url:
+    type: string
+    format: uri
+    readOnly: true
+    description: "URL của trang đầu tiên"
+    example: "https://api.example.com/items?page=1"
+  next_page_url:
+    format: uri
+    readOnly: true
+    description: "URL của trang tiếp theo, null nếu không còn trang nào"
+    example: "https://api.example.com/items?page=3"
+    type: ["string", "null"]
+  prev_page_url:
+    type: ["string", "null"]
+    format: uri
+    readOnly: true
+    description: "URL của trang trước, null nếu không còn trang nào"
+    example: null
