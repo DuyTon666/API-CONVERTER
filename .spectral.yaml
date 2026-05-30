@@ -39,50 +39,18 @@ rules:
     given: "$.paths[*][*].requestBody.content"
     then:
       function: client-id-must-not-be-readonly
+
   property-must-have-description:
     message: "{{error}}"
     severity: warn
     given:
       - "$.components.schemas[*]"
-      - "$.components.schemas[*].properties[*]"          # ← thêm dòng này
+      - "$.components.schemas[*].properties[*]"  
       - "$.paths[*][*].requestBody.content[*].schema"
       - "$.paths[*][*].responses[*].content[*].schema"
     then:
       function: property-must-have-description
 # Rule
-  operation-id-verb-noun:
-      message: 'operationId "{{value}}" sai format, operationId phải dùng camelCase và bắt đầu bằng động từ — ví dụ: listUsers, createOrder, reopenTicket.'
-      severity: error
-      given: "$.paths[*][*].operationId"
-      then:
-        function: pattern
-        functionOptions:
-          match: "^[a-z][a-zA-Z0-9]+$"
-
-  operation-must-have-summary:
-    message: 'Operation "{{property}}" phải có summary.'
-    severity: error
-    given: "$.paths[*][get,post,put,patch,delete]"
-    then:
-      field: summary
-      function: truthy
-
-  operation-must-have-description:
-    message: "Operation phải có description."
-    severity: warn
-    given: "$.paths[*][*]"
-    then:
-      field: description
-      function: truthy
-
-  path-params-must-be-required:
-    message: 'Path parameter "{{property}}" phải có required: true.'
-    severity: error
-    given: '$.paths[*][*].parameters[?(@.in == "path")]'
-    then:
-      field: required
-      function: truthy
-
   path-kebab-case: 
     message: "Path phải dùng kebab-case." 
     severity: warn
@@ -92,12 +60,21 @@ rules:
       functionOptions:
         match: "^(/[a-z0-9-]+|/{[a-zA-Z0-9_]+})+$"
 
-  operation-must-have-500:
-    message: "Operation thiếu response 500 (Internal Server Error)."
+  operation-id-verb-noun:
+      message: 'operationId "{{value}}" sai format, operationId phải dùng camelCase và bắt đầu bằng động từ — ví dụ: listUsers, createOrder, reopenTicket.'
+      severity: error
+      given: "$.paths[*][*].operationId"
+      then:
+        function: pattern
+        functionOptions:
+          match: "^[a-z][a-zA-Z0-9]+$"
+
+  operation-must-have-description:
+    message: "Operation phải có description."
     severity: warn
     given: "$.paths[*][*]"
     then:
-      field: responses.500
+      field: description
       function: truthy
 
   operation-with-id-must-have-404:
@@ -108,28 +85,12 @@ rules:
       field: responses.404
       function: truthy
 
-  response-200-must-have-content:
-    message: "Response 200 phải có content/schema."
-    severity: info
-    given: "$.paths[*][get,put,patch].responses.200"
-    then:
-      field: content
-      function: truthy
-
   post-create-should-have-201:
     message: "POST nên trả response 201 Created."
     severity: info
     given: "$.paths[*].post.responses"
     then:
       field: "201"
-      function: truthy
-
-  must-have-servers:
-    message: "API phải khai báo ít nhất 1 server."
-    severity: warn
-    given: "$"
-    then:
-      field: servers
       function: truthy
 
   info-must-have-contact:

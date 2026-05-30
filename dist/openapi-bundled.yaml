@@ -59,7 +59,7 @@ paths:
               - IN_PROGRESS
               - PENDING
               - CLOSED
-          description: "Tìm kiếm theo trạng thái:CREATED: Mới tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng"
+            description: "Tìm kiếm theo trạng thái:CREATED: Mới tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng"
         - name: keyword
           in: query
           required: false
@@ -88,7 +88,7 @@ paths:
             enum:
               - LAST_UPDATED_DESC
               - CREATED_DATE_DESC
-          description: "Kiểu sắp xếp:LAST_UPDATED_DESC:Ngày cập nhật giảm dầnCREATED_DATE_DESC: Ngày tạo giảm dần"
+            description: "Kiểu sắp xếp:LAST_UPDATED_DESC:Ngày cập nhật giảm dầnCREATED_DATE_DESC: Ngày tạo giảm dần"
         - name: post_by
           in: query
           required: false
@@ -97,7 +97,7 @@ paths:
             enum:
               - USER
               - SYSTEM
-          description: "Người tạo ticketUSER: user hiện tại (khách hàng)SYSTEM: hệ thống"
+            description: "Người tạo ticketUSER: user hiện tại (khách hàng)SYSTEM: hệ thống"
       responses:
         "200":
           description: Thành công
