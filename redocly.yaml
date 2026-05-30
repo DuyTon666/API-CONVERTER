@@ -1,0 +1,23 @@
+apis:
+  main:
+    root: dist/openapi-bundled.yaml
+  test:
+    root: dist/openapi-bundled.yaml
+
+extends:
+  - recommended
+rules:
+  tag-description: off
+  path-parameters-defined: error
+
+  no-unresolved-refs: error
+  no-unused-components: error
+  no-identical-paths: error
+  no-enum-type-mismatch: error
+  no-ambiguous-paths: error
+  no-empty-servers: error
+
+  operation-summary: error
+  operation-2xx-response: error
+  operation-operationId: error
+  operation-singular-tag: error
