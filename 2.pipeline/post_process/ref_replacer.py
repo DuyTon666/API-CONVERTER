@@ -112,7 +112,7 @@ def replace_common_refs_from_registry(schemas_dir: Path, registry: dict) -> int:
     )
 
     changed_count = 0
-    for file_path in sorted(schemas_dir.glob("*.taml")):
+    for file_path in sorted(schemas_dir.glob("*.yaml")):
         if process_file(file_path, registry, yaml):
             changed_count +=1
 

@@ -1,0 +1,19 @@
+reader:
+  # Dòng header/footer lặp lại mỗi trang — sẽ bị skip
+  skip_patterns:
+    - "QUY TRÌNH QUẢN LÝ CHỨC NĂNG CHUYÊN MÔN"
+    - "Dự án xây dựng hệ thống tài liệu P. Lập trình"
+    - "Trang "
+
+  # Số trang đầu bỏ qua (cover + mục lục)
+  skip_first_pages: 2
+
+pipeline:
+  source_dir: 1.docs/source/api_contract
+  output_dir: 5.openapi/paths
+  default_service: unknown
+
+emitter:
+  security_scheme: bearerAuth
+  default_success_description: Success
+  error_description_template: "Error {code}"

@@ -1,9 +1,0 @@
-name: X-Request-Id
-in: header
-required: false
-description: >
-  Trace ID để debug request — optional,
-  xuất hiện ở toàn bộ APIs trong hệ thống.
-schema:
-  type: string
-example: "req-abc123"

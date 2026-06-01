@@ -1,9 +1,0 @@
-name: user_id
-in: path
-required: true
-description: >
-  UID của khách hàng. Phải trùng với user_id
-  trong JWT token — hệ thống validate ở middleware.
-schema:
-  type: string
-example: "23"

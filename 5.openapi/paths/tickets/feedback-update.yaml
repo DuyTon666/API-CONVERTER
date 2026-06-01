@@ -1,9 +1,9 @@
 post:
-  summary: Chỉnh sửa feedback ticket của khách hàng
+  summary: Chỉnh sửa phản hồi của ticket
   operationId: updateTicketFeedback
-  description: API cho phép chỉnh sửa thông tin feedback đã tạo cho một ticket 
-    cụ thể của khách hàng. Yêu cầu xác thực quyền truy cập và feedback phải 
-    thuộc về ticket được chỉ định.
+  description: API cho phép chỉnh sửa nội dung feedback đã tạo trước đó cho một 
+    ticket của khách hàng. Yêu cầu quyền truy cập vào ticket và feedback phải 
+    tồn tại.
   tags:
     - Ticket
   security:

@@ -65,22 +65,9 @@ properties:
         description: Loại dịch vụ
     description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
   assignee:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: Id của dịch vụ
-        readOnly: true
-      name:
-        type: string
-        description: Tên nhân viên
-      mgroup:
-        type: integer
-        description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài
-          khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
-    description: Thông tin về nhân viên hỗ trợ (xem thêm bên dưới)
+    $ref: "../common/UserInfo.yaml"
   conversations:
     type: array
     items:
-      $ref: "./GetUserTicketDetailDataConversations.yaml"
+      $ref: ./GetUserTicketDetailDataConversations.yaml
     description: Danh sách các phản hồi (xem thêm bên dưới)
