@@ -2,8 +2,7 @@ get:
   summary: Xem chi tiết ticket của khách hàng
   operationId: getUserTicketDetail
   description: Hiển thị thông tin chi tiết của một ticket cụ thể thuộc về khách 
-    hàng. API chỉ trả về ticket thuộc về user_id được chỉ định để đảm bảo bảo 
-    mật dữ liệu.
+    hàng. API chỉ trả về ticket thuộc về user_id được chỉ định.
   tags:
     - Ticket
   security:

@@ -2,8 +2,8 @@ post:
   summary: Tiếp nhận phản ánh góp ý của khách hàng
   operationId: submitTicketFeedback
   description: API cho phép khách hàng gửi phản ánh, góp ý về ticket đã được xử 
-    lý. Áp dụng cho ticket đã đóng hoặc đã giải quyết, giúp đánh giá chất lượng 
-    dịch vụ hỗ trợ.
+    lý. Phản ánh này giúp đánh giá chất lượng dịch vụ hỗ trợ và cải thiện quy 
+    trình xử lý ticket.
   tags:
     - Ticket
   security:

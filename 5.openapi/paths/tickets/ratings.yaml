@@ -1,8 +1,9 @@
 post:
   summary: Tạo đánh giá cho ticket
   operationId: createTicketRating
-  description: Cho phép khách hàng tạo đánh giá (rating) cho ticket đã xử lý. 
-    API ghi nhận phản hồi chất lượng dịch vụ từ người dùng.
+  description: Cho phép khách hàng tạo đánh giá (rating) cho ticket đã được xử 
+    lý. API này giúp thu thập phản hồi của khách hàng về chất lượng dịch vụ hỗ 
+    trợ.
   tags:
     - Ticket
   security:

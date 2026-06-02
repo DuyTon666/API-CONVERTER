@@ -1,9 +1,8 @@
 post:
   summary: Mở lại ticket đã đóng của khách hàng
   operationId: reopenUserTicket
-  description: API cho phép mở lại ticket đã bị đóng của khách hàng để tiếp tục 
-    xử lý. Chỉ áp dụng cho các ticket ở trạng thái đã đóng và thuộc về user_id 
-    được chỉ định.
+  description: API cho phép mở lại ticket đã bị đóng của khách hàng để xử lý 
+    tiếp. Chỉ áp dụng cho các ticket có trạng thái đã đóng hoặc đã giải quyết.
   tags:
     - Ticket
   security:

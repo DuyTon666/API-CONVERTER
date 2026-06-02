@@ -29,7 +29,7 @@ def _call_llm(title: str, method: str, path: str) -> dict:
 
     try:
         response = _client.messages.create(
-            model="claude-sonnet-4-5",
+            model="claude-sonnet-4-6",
             max_tokens=200,
             messages=[{"role": "user", "content": prompt}]
         )

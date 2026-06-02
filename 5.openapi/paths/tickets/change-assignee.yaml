@@ -1,9 +1,9 @@
 post:
-  summary: Đổi nhân viên được gán xử lý ticket
+  summary: Yêu cầu đổi nhân viên hỗ trợ ticket
   operationId: changeTicketAssignee
-  description: Thay đổi nhân viên hỗ trợ được gán cho một ticket cụ thể của 
-    người dùng. Được sử dụng khi cần chuyển ticket cho nhân viên phù hợp hơn 
-    hoặc khi nhân viên hiện tại không thể xử lý.
+  description: Cho phép người dùng yêu cầu thay đổi nhân viên được phân công hỗ 
+    trợ cho ticket hiện tại. Thường áp dụng khi cần chuyên môn khác hoặc nhân 
+    viên hiện tại không phù hợp.
   tags:
     - Ticket
   security:
