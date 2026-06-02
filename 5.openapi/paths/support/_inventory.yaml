@@ -1,0 +1,91 @@
+paths:
+  /v1/users/{user_id}/tickets:
+    get:
+      summary: 'API lấy danh sách các yêu cều hỗ trợ của một khách hàng (có phân trang)
+
+        API tra cứu câu hỏi support (có thể dùng chung api danh sách yêu cầu)'
+      tags: []
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support
+    post:
+      summary: API tạo support request mới
+      tags: []
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support
+  /v1/users/{user_id}/tickets/{ticket_id}:
+    get:
+      summary: API lấy chi tiết luồng trao đổi của 01 yêu cầu hỗ trợ
+      tags: []
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support
+  /v1/users/{user_id}/tickets/{ticket_id}/conversations:
+    post:
+      summary: API phản hồi 01 yêu cầu hỗ trợ từ khách hàng
+      tags: []
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support
+  /v1/departments:
+    get:
+      summary: API danh sách phòng ban support
+      tags:
+      - Ticket
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support
+  /v1/users/{user_id}/tickets/{ticket_id}/close:
+    put:
+      summary: API close một câu hòi support
+      tags: []
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support
+  /v1/users/{user_id}/tickets/{ticket_id}/change-assignee:
+    post:
+      summary: API yêu cầu đổi nhân viên hỗ trợ
+      tags: []
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support
+  /v1/users/{user_id}/tickets/{ticket_id}/ratings:
+    post:
+      summary: API đánh giá nhân viên hỗ trợ
+      tags: []
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support
+  /v1/users/{user_id}/tickets/{ticket_id}/support-staffs:
+    get:
+      summary: API lấy danh sách nhân viên hỗ trợ
+      tags: []
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support
+  /v1/users/{user_id}/tickets/{ticket_id}/feedback:
+    post:
+      summary: API tiếp nhận phản ánh góp ý khách hàng
+      tags: []
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support
+  /v1/users/{user_id}/tickets/{ticket_id}/reopen:
+    post:
+      summary: API mở lại câu hỏi
+      tags: []
+      x-source:
+        file: null
+        author: Quốc Nguyễn
+        service: Support

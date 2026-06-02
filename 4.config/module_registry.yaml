@@ -1,10 +1,14 @@
 modules:
   ticket:
     status: active
-    registered_at: '2026-05-29'
+    registered_at: '2026-05-30'
     source_dir: 1.docs/source/ticket
     output_dir: 5.openapi/paths/tickets
     schemas_dir: 5.openapi/components/schemas/ticket
-    approved_at: '2026-05-29'
-    approved_by: duy
-
+    approved_at: '2026-05-30'
+    approved_by: test
+  support:
+    status: draft
+    source_dir: 1.docs/source/api_contract/support
+    output_dir: 5.openapi/paths/support
+    schemas_dir: 5.openapi/components/schemas/support

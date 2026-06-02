@@ -224,15 +224,6 @@ def _run_batch(input_dir: str, output_dir: str, schemas_dir: str, domain: str,
             json.dump(needs_review, f, ensure_ascii=False, indent=2)
         print(f"Review queue: {review_path} ({len(needs_review)} items)")
 
-    # Bước 4: post_process — tag readOnly + replace $ref
-    print(f"\n[4/4] Post-processing schemas...")
-    try:
-        from post_process.run import run as run_post_process
-        run_post_process(schemas_dir)
-        print("  ✓ Post-process hoàn thành")
-    except Exception as e:
-        print(f"  [WARN] Post-process lỗi: {e}")
-
 def _scan_new_modules() -> None:
     """
      Scan 1.docs/source/, phát hiện folder chưa có trong registry.
@@ -296,6 +287,10 @@ def main():
                         help="chỉ chạy module active; boootstrap: cho phép draft")
     parser.add_argument("--scan", action="store_true",
                         help="Scan thư mục source, phát hiện module")
+    parser.add_argument("--approve", metavar="MODULE",
+                        help="Xác nhận module từ draft thành active")
+    parser.add_argument("--approved-by", default="",
+                        help="Tên người approve (tùy chọn)")
     args = parser.parse_args()
 
     init_config(str(CONFIG_DIR))
@@ -307,6 +302,13 @@ def main():
     if args.scan:
         _scan_new_modules()
         return
+
+    if args.approve:
+        registry = ModuleRegistry(str(CONFIG_DIR))
+        registry.approve(args.approve, approved_by=args.approved_by)
+        print(f"✓ Module '{args.approve}' đã được approve → status: active")
+        return
+
 
     if args.module:
         if args.module == "all":
