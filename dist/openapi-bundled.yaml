@@ -21,9 +21,9 @@ tags:
 paths:
   /v1/users/{user_id}/tickets:
     get:
-      summary: Hiển thị danh sách ticket của khách hàng
+      summary: Lấy danh sách ticket của khách hàng
       operationId: getUserTickets
-      description: Lấy danh sách tất cả các ticket thuộc về một khách hàng cụ thể. API này cho phép khách hàng xem lịch sử và trạng thái các yêu cầu hỗ trợ của mình.
+      description: Trả về danh sách tất cả các ticket thuộc về một khách hàng cụ thể. API cho phép khách hàng xem lịch sử và trạng thái các yêu cầu hỗ trợ của mình.
       tags:
         - Ticket
       security:
@@ -110,6 +110,8 @@ paths:
                     properties:
                       data:
                         $ref: '#/components/schemas/GetUserTicketsData'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -125,9 +127,9 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
     post:
-      summary: Tạo ticket hỗ trợ mới cho khách hàng
+      summary: Tạo ticket hỗ trợ cho khách hàng
       operationId: createUserTicket
-      description: Tạo ticket yêu cầu hỗ trợ mới cho khách hàng trong hệ thống. Ticket sẽ được gán cho bộ phận chăm sóc khách hàng để xử lý theo quy trình.
+      description: Tạo một ticket hỗ trợ mới cho khách hàng cụ thể trong hệ thống. API yêu cầu user_id hợp lệ và thông tin ticket bao gồm tiêu đề, mô tả vấn đề.
       tags:
         - Ticket
       security:
@@ -159,7 +161,9 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
-          description: 4200 — Dữ liệu request không hợp lệ
+          description: |-
+            4200 — Dữ liệu request không hợp lệ
+            4462 — Tạo yêu cầu thất bại
           content:
             application/json:
               schema:
@@ -175,8 +179,8 @@ paths:
   /v1/users/{user_id}/tickets/{id}:
     get:
       summary: Xem chi tiết ticket của khách hàng
-      operationId: getUserTicketDetails
-      description: Trả về thông tin chi tiết của một ticket cụ thể thuộc về khách hàng. API chỉ hiển thị ticket thuộc về user_id được chỉ định để đảm bảo khách hàng chỉ xem được ticket của chính mình.
+      operationId: getUserTicketDetail
+      description: Hiển thị thông tin chi tiết của một ticket cụ thể thuộc về khách hàng. API chỉ trả về ticket thuộc về user_id được chỉ định để đảm bảo bảo mật dữ liệu.
       tags:
         - Ticket
       security:
@@ -204,7 +208,9 @@ paths:
                   - type: object
                     properties:
                       data:
-                        $ref: '#/components/schemas/GetUserTicketDetailsData'
+                        $ref: '#/components/schemas/GetUserTicketDetailData'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -223,7 +229,7 @@ paths:
     put:
       summary: Đóng ticket của khách hàng
       operationId: closeUserTicket
-      description: API cho phép đóng ticket hỗ trợ của khách hàng khi vấn đề đã được giải quyết. Chỉ áp dụng cho ticket đang ở trạng thái mở hoặc đang xử lý.
+      description: API cho phép đóng ticket hỗ trợ của khách hàng khi vấn đề đã được giải quyết. Chỉ có thể đóng ticket đang ở trạng thái mở hoặc đang xử lý.
       tags:
         - Ticket
       security:
@@ -251,6 +257,8 @@ paths:
                 success: true
                 data: null
                 error: null
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -258,7 +266,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
-          description: 4200 — Dữ liệu request không hợp lệ
+          description: |-
+            4200 — Dữ liệu request không hợp lệ
+            4463 — Tạo phản hồi thất bại
+            4464 — Câu hỏi đã đóng
           content:
             application/json:
               schema:
@@ -269,7 +280,7 @@ paths:
     post:
       summary: Mở lại ticket đã đóng của khách hàng
       operationId: reopenUserTicket
-      description: API cho phép mở lại ticket đã bị đóng của khách hàng để tiếp tục xử lý. Chỉ áp dụng cho các ticket ở trạng thái đã đóng.
+      description: API cho phép mở lại ticket đã bị đóng của khách hàng để tiếp tục xử lý. Chỉ áp dụng cho các ticket ở trạng thái đã đóng và thuộc về user_id được chỉ định.
       tags:
         - Ticket
       security:
@@ -324,9 +335,9 @@ paths:
               $ref: '#/components/schemas/ReopenUserTicketRequest'
   /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
     post:
-      summary: Chỉnh sửa feedback của ticket
+      summary: Chỉnh sửa feedback ticket của khách hàng
       operationId: updateTicketFeedback
-      description: API cho phép chỉnh sửa feedback đã tồn tại của một ticket cho khách hàng cụ thể. Yêu cầu có quyền truy cập vào ticket và feedback phải thuộc về user_id được chỉ định.
+      description: API cho phép chỉnh sửa thông tin feedback đã tạo cho một ticket cụ thể của khách hàng. Yêu cầu xác thực quyền truy cập và feedback phải thuộc về ticket được chỉ định.
       tags:
         - Ticket
       security:
@@ -385,7 +396,7 @@ paths:
     get:
       summary: Lấy danh sách nhân viên hỗ trợ ticket
       operationId: listTicketSupportStaffs
-      description: Trả về danh sách các nhân viên đang được phân công hỗ trợ một ticket cụ thể. API này giúp người dùng biết được những nhân viên nào đang xử lý yêu cầu của mình.
+      description: Trả về danh sách tất cả nhân viên đang được phân công hỗ trợ và xử lý một ticket cụ thể. API này giúp người dùng biết được ai đang phụ trách ticket của mình.
       tags:
         - Ticket
       security:
@@ -416,6 +427,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/ListTicketSupportStaffsDataList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -434,7 +447,7 @@ paths:
     post:
       summary: Tạo phản hồi ticket khách hàng
       operationId: createTicketConversation
-      description: Tạo một phản hồi mới trong cuộc hội thoại ticket của khách hàng. API cho phép nhân viên hỗ trợ trả lời và tương tác với khách hàng thông qua hệ thống ticket.
+      description: Tạo một phản hồi mới trong cuộc hội thoại của ticket hỗ trợ khách hàng. API cho phép nhân viên hoặc hệ thống gửi tin nhắn trả lời cho ticket đang xử lý.
       tags:
         - Ticket
       security:
@@ -463,6 +476,8 @@ paths:
                     properties:
                       data:
                         $ref: '#/components/schemas/CreateTicketConversationData'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -470,7 +485,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
-          description: 4200 — Dữ liệu request không hợp lệ
+          description: |-
+            4200 — Dữ liệu request không hợp lệ
+            4463 — Tạo phản hồi thất bại
+            4464 — Câu hỏi đã đóng
           content:
             application/json:
               schema:
@@ -481,7 +499,7 @@ paths:
     post:
       summary: Tạo đánh giá cho ticket
       operationId: createTicketRating
-      description: API cho phép khách hàng tạo đánh giá (rating) cho ticket đã được xử lý. Sử dụng để thu thập phản hồi chất lượng dịch vụ hỗ trợ từ khách hàng.
+      description: Cho phép khách hàng tạo đánh giá (rating) cho ticket đã xử lý. API ghi nhận phản hồi chất lượng dịch vụ từ người dùng.
       tags:
         - Ticket
       security:
@@ -518,7 +536,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
-          description: 4200 — Dữ liệu request không hợp lệ
+          description: |-
+            4200 — Dữ liệu request không hợp lệ
+            4462 — Tạo yêu cầu thất bại
+            4469 — Ticket chưa được hoàn tất
           content:
             application/json:
               schema:
@@ -535,7 +556,7 @@ paths:
     post:
       summary: Tiếp nhận phản ánh góp ý của khách hàng
       operationId: submitTicketFeedback
-      description: API cho phép khách hàng gửi phản ánh, góp ý về ticket đã được xử lý. Yêu cầu ticket phải tồn tại và thuộc về user_id được chỉ định.
+      description: API cho phép khách hàng gửi phản ánh, góp ý về ticket đã được xử lý. Áp dụng cho ticket đã đóng hoặc đã giải quyết, giúp đánh giá chất lượng dịch vụ hỗ trợ.
       tags:
         - Ticket
       security:
@@ -587,9 +608,9 @@ paths:
               $ref: '#/components/schemas/SubmitTicketFeedbackRequest'
   /v1/users/{user_id}/tickets/{id}/change-assignee:
     post:
-      summary: Đổi nhân viên được phân công xử lý ticket
+      summary: Đổi nhân viên được gán xử lý ticket
       operationId: changeTicketAssignee
-      description: Thay đổi nhân viên hỗ trợ được phân công xử lý ticket của người dùng. Chỉ quản lý hoặc người được ủy quyền mới có thể thực hiện thao tác này.
+      description: Thay đổi nhân viên hỗ trợ được gán cho một ticket cụ thể của người dùng. Được sử dụng khi cần chuyển ticket cho nhân viên phù hợp hơn hoặc khi nhân viên hiện tại không thể xử lý.
       tags:
         - Ticket
       security:
@@ -769,24 +790,6 @@ components:
               type:
                 - object
                 - 'null'
-    FileAttachment:
-      type: object
-      properties:
-        url:
-          type: string
-          format: uri
-          description: URL của file đính kèm
-          example: https://example.pavietnam.vn/support/files/help.pdf
-        category:
-          type: string
-          enum:
-            - image
-            - document
-            - other
-            - video
-            - archive
-          description: 'Phân loại file: ảnh, video, tài liệu, archive (nén), hoặc khác.'
-          example: document
     CreateUserTicketRequest:
       type: object
       properties:
@@ -806,36 +809,16 @@ components:
         files:
           type: array
           items:
-            $ref: '#/components/schemas/FileAttachment'
+            type: string
+            format: binary
           maxItems: 3
+          description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
       required:
         - department_id
         - service_id
         - title
         - descriptions
-    UserInfo:
-      type:
-        - object
-        - 'null'
-      properties:
-        id:
-          type: integer
-          example: 123
-          readOnly: true
-        name:
-          type: string
-          example: Nguyen Van A
-        mgroup:
-          type: string
-          description: |
-            Phân loại người dùng: 1 = Khách hàng PA, 2 = Đại lý / tài khoản trả trước, 3 = Nhân viên, 4 = Khách hàng đại lý
-          enum:
-            - '1'
-            - '2'
-            - '3'
-            - '4'
-          example: '1'
-    GetUserTicketDetailsDataConversations:
+    GetUserTicketDetailDataConversations:
       type: object
       properties:
         id:
@@ -861,8 +844,20 @@ components:
           type: string
           description: Ngày tạo (Y-m-d H:i:s)
         owner:
-          $ref: '#/components/schemas/UserInfo'
-    GetUserTicketDetailsData:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: Id người tạo
+              readOnly: true
+            name:
+              type: string
+              description: Tên người tạo
+            mgroup:
+              type: integer
+              description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
+          description: Thông tin người tạo (xem thêm bên dưới)
+    GetUserTicketDetailData:
       type: object
       properties:
         id:
@@ -928,11 +923,23 @@ components:
               description: Loại dịch vụ
           description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
         assignee:
-          $ref: '#/components/schemas/UserInfo'
+          type: object
+          properties:
+            id:
+              type: integer
+              description: Id của dịch vụ
+              readOnly: true
+            name:
+              type: string
+              description: Tên nhân viên
+            mgroup:
+              type: integer
+              description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
+          description: Thông tin về nhân viên hỗ trợ (xem thêm bên dưới)
         conversations:
           type: array
           items:
-            $ref: '#/components/schemas/GetUserTicketDetailsDataConversations'
+            $ref: '#/components/schemas/GetUserTicketDetailDataConversations'
           description: Danh sách các phản hồi (xem thêm bên dưới)
     ReopenUserTicketRequest:
       type: object
@@ -944,8 +951,10 @@ components:
         files:
           type: array
           items:
-            $ref: '#/components/schemas/FileAttachment'
+            type: string
+            format: binary
           maxItems: 3
+          description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
     UpdateTicketFeedbackRequest:
       type: object
       properties:
@@ -1023,7 +1032,19 @@ components:
           type: string
           description: Ngày tạo (Y-m-d H:i:s)
         owner:
-          $ref: '#/components/schemas/UserInfo'
+          type: object
+          properties:
+            id:
+              type: integer
+              description: Id người tạo
+              readOnly: true
+            name:
+              type: string
+              description: Tên người tạo
+            mgroup:
+              type: integer
+              description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
+          description: Thông tin người tạo (xem thêm bên dưới)
     CreateTicketRatingRequest:
       type: object
       properties:
@@ -1073,8 +1094,10 @@ components:
         files:
           type: array
           items:
-            $ref: '#/components/schemas/FileAttachment'
+            type: string
+            format: binary
           maxItems: 3
+          description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
       required:
         - title
         - descriptions
@@ -1088,6 +1111,18 @@ components:
       required:
         - reason
   responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+          example:
+            success: false
+            data: null
+            error:
+              code: 400
+              message: Bad Request
     Unauthorized:
       description: Token không hợp lệ hoặc đã hết hạn - Mã lỗi 4102
       content:
@@ -1138,15 +1173,3 @@ components:
               data:
                 type:
                   - null
-    BadRequest:
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/StandardError'
-          example:
-            success: false
-            data: null
-            error:
-              code: 400
-              message: Bad Request
