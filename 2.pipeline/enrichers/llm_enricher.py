@@ -7,10 +7,28 @@ _client = anthropic.Anthropic()
 
 def enrich(op: ParsedOperation, title: str = "") -> ParsedOperation:
     metadata = _call_llm(title=title, method=op.method, path=op.path)
-    op.summary = metadata.get("summary", "")
-    op.operation_id = metadata.get("operationId", "")
+    op.summary = metadata.get("summary", "") or title
+    op.operation_id = metadata.get("operationId", "") or _fallback_operation_id(op.method, op.path)
     op.description = metadata.get("description", "")
     return op
+
+def _fallback_operation_id(method: str, path: str) -> str:
+    segments = [s for s in path.split('/') if s and s != 'v1']
+    last = segments[-1] if segments else ""
+    m = (method or '').upper()
+    if last.startswith('{'):
+        # path ends with {id} → operating on existing item
+        resource = segments[-2] if len(segments) >= 2 else "resource"
+        resource = resource.rstrip('s')
+        verb = {'GET': 'get', 'PUT': 'update', 'PATCH': 'update',
+                'DELETE': 'delete', 'POST': 'update'}.get(m, 'do')
+    else:
+        resource = last
+        verb = {'GET': 'list', 'POST': 'create', 'PUT': 'update',
+                'PATCH': 'update', 'DELETE': 'delete'}.get(m, 'do')
+    parts = re.split(r'[-_]', resource)
+    resource_camel = parts[0] + ''.join(p.capitalize() for p in parts[1:])
+    return verb + resource_camel[0].upper() + resource_camel[1:] if resource_camel else verb
 
 def _call_llm(title: str, method: str, path: str) -> dict:
     prompt = (
@@ -24,7 +42,7 @@ def _call_llm(title: str, method: str, path: str) -> dict:
         "- description: 1-2 sentences Vietnamese, include business context and constraints\n"
         "Return JSON only, no explanation.\n"
         "Example: {\"summary\": \"Dong ticket\", \"operationId\": \"closeTicket\"}"
-        "Do not include any text before or after the JSON object"    
+        "Do not include any text before or after the JSON object"
     )
 
     try:
