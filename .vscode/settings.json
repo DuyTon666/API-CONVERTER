@@ -1,10 +1,7 @@
 {
   "spectral.rulesetFile": "./.spectral.yaml",
   "spectral.validateFiles": [
-    "**/*.yaml",
-    "**/*.json",
-    "!**/node_modules/**",
-    "!**/package.json"
+    "dist/openapi-bundled.yaml"
   ],
   "spectral.run": "onType"
 }

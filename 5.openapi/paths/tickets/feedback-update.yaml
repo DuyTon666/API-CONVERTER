@@ -1,9 +1,7 @@
 post:
-  summary: Chỉnh sửa phản hồi của ticket
-  operationId: updateTicketFeedback
-  description: API cho phép chỉnh sửa nội dung feedback đã tạo trước đó cho một 
-    ticket của khách hàng. Yêu cầu quyền truy cập vào ticket và feedback phải 
-    tồn tại.
+  summary: API Ticket - API chỉnh sửa feedback ticket cho khách hàng
+  operationId: createFeedback
+  description: ''
   tags:
     - Ticket
   security:
@@ -57,4 +55,4 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/ticket/UpdateTicketFeedbackRequest.yaml"
+          $ref: "../../components/schemas/ticket/CreateFeedbackRequest.yaml"

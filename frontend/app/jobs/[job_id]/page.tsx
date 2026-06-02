@@ -108,12 +108,19 @@ export default function JobPage() {
   // Mở bundle editor
   const openBundleEditor = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/jobs/${job_id}/bundle-content`);
-      if (!res.ok) { alert("Chưa có bundle, hãy export trước"); return; }
+      const res = await fetch(`http://localhost:8000/jobs/${job_id}/bundle-content`, {
+        cache: "no-store",
+      });
+      if (res.status === 404) { alert("Chưa có bundle, hãy export trước"); return; }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ detail: res.statusText }));
+        alert("Lỗi đọc bundle: " + data.detail);
+        return;
+      }
       const text = await res.text();
       setBundleContent(text);
     } catch (e) {
-      alert("Lỗi khi tải bundle: " + String(e));
+      alert("Lỗi kết nối: " + String(e));
     }
   };
 
@@ -277,7 +284,7 @@ export default function JobPage() {
       {/* Bundle editor modal */}
       {bundleContent !== null && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+          <div className="bg-white rounded-xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden">
             <div className="flex justify-between items-center px-6 py-4 border-b">
               <h2 className="font-semibold text-gray-800">Chỉnh sửa bundle — openapi-bundled.yaml</h2>
               <button onClick={() => setBundleContent(null)} className="text-gray-400 hover:text-gray-600">✕</button>

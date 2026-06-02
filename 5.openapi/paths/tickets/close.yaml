@@ -1,8 +1,7 @@
 put:
-  summary: Đóng ticket của khách hàng
-  operationId: closeUserTicket
-  description: API cho phép đóng ticket hỗ trợ của khách hàng khi vấn đề đã được
-    giải quyết. Chỉ áp dụng cho ticket đang ở trạng thái mở hoặc đang xử lý.
+  summary: API Ticket - API đóng ticket của khách hàng
+  operationId: updateClose
+  description: ''
   tags:
     - Ticket
   security:

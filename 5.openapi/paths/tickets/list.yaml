@@ -1,9 +1,7 @@
 get:
-  summary: Hiển thị danh sách ticket của khách hàng
-  operationId: getUserTickets
-  description: Lấy danh sách tất cả các ticket thuộc về một khách hàng cụ thể. 
-    API này hỗ trợ phân trang và lọc theo trạng thái ticket để khách hàng theo 
-    dõi các yêu cầu hỗ trợ của mình.
+  summary: API Ticket - Hiển thị danh sách ticket cho khách hàng
+  operationId: getTickets
+  description: ''
   tags:
     - Ticket
   security:
@@ -92,7 +90,7 @@ get:
               - type: object
                 properties:
                   data:
-                    $ref: "../../components/schemas/ticket/GetUserTicketsData.yaml"
+                    $ref: "../../components/schemas/ticket/GetTicketsData.yaml"
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':

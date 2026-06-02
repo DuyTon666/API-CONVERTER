@@ -1,8 +1,7 @@
 post:
-  summary: Tạo phản hồi ticket khách hàng
-  operationId: createTicketConversation
-  description: Tạo phản hồi mới cho ticket của khách hàng. API cho phép nhân 
-    viên hỗ trợ gửi tin nhắn trả lời trong chuỗi hội thoại của ticket.
+  summary: API Ticket - API tạo phản hồi ticket cho khách hàng
+  operationId: createConversations
+  description: ''
   tags:
     - Ticket
   security:
@@ -30,7 +29,7 @@ post:
               - type: object
                 properties:
                   data:
-                    $ref: "../../components/schemas/ticket/CreateTicketConversationData.yaml"
+                    $ref: "../../components/schemas/ticket/CreateConversationsData.yaml"
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':

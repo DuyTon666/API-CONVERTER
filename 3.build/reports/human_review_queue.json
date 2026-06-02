@@ -1,0 +1,112 @@
+[
+  {
+    "file": "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/support-staffs.yaml"
+  },
+  {
+    "file": "API Ticket - API đóng ticket của khách hàng.docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/close.yaml"
+  },
+  {
+    "file": "API Ticket - API tạo ratting ticket cho khách hàng.docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/ratings.yaml"
+  },
+  {
+    "file": "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/list.yaml"
+  },
+  {
+    "file": "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/change-assignee.yaml"
+  },
+  {
+    "file": "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/detail.yaml"
+  },
+  {
+    "file": "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/conversations.yaml"
+  },
+  {
+    "file": "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/feedback.yaml"
+  },
+  {
+    "file": "API Ticket - API mở lại ticket của khách hàng.docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/reopen.yaml"
+  },
+  {
+    "file": "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/feedback-update.yaml"
+  },
+  {
+    "file": "API Ticket - Tạo ticket cho khách hàng.docx",
+    "flags": [
+      "operation_id_empty"
+    ],
+    "actions": [
+      "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/tickets/create.yaml"
+  }
+]

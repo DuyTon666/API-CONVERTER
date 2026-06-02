@@ -1,8 +1,7 @@
 post:
-  summary: Mở lại ticket đã đóng của khách hàng
-  operationId: reopenUserTicket
-  description: API cho phép mở lại ticket đã bị đóng của khách hàng để xử lý 
-    tiếp. Chỉ áp dụng cho các ticket có trạng thái đã đóng hoặc đã giải quyết.
+  summary: API Ticket - API mở lại ticket của khách hàng
+  operationId: createReopen
+  description: ''
   tags:
     - Ticket
   security:
@@ -52,4 +51,4 @@ post:
     content:
       multipart/form-data:
         schema:
-          $ref: "../../components/schemas/ticket/ReopenUserTicketRequest.yaml"
+          $ref: "../../components/schemas/ticket/CreateReopenRequest.yaml"

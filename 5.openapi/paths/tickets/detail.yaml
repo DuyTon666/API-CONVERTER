@@ -1,8 +1,7 @@
 get:
-  summary: Xem chi tiết ticket của khách hàng
-  operationId: getUserTicketDetail
-  description: Hiển thị thông tin chi tiết của một ticket cụ thể thuộc về khách 
-    hàng. API chỉ trả về ticket thuộc về user_id được chỉ định.
+  summary: API Ticket - Hiển thị chi tiết ticket cho khách hàng
+  operationId: getTicket
+  description: ''
   tags:
     - Ticket
   security:
@@ -30,7 +29,7 @@ get:
               - type: object
                 properties:
                   data:
-                    $ref: "../../components/schemas/ticket/GetUserTicketDetailData.yaml"
+                    $ref: "../../components/schemas/ticket/GetTicketData.yaml"
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':

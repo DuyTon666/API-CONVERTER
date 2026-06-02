@@ -1,9 +1,7 @@
 post:
-  summary: Tiếp nhận phản ánh góp ý của khách hàng
-  operationId: submitTicketFeedback
-  description: API cho phép khách hàng gửi phản ánh, góp ý về ticket đã được xử 
-    lý. Phản ánh này giúp đánh giá chất lượng dịch vụ hỗ trợ và cải thiện quy 
-    trình xử lý ticket.
+  summary: API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback)
+  operationId: createFeedback
+  description: ''
   tags:
     - Ticket
   security:
@@ -52,4 +50,4 @@ post:
     content:
       multipart/form-data:
         schema:
-          $ref: "../../components/schemas/ticket/SubmitTicketFeedbackRequest.yaml"
+          $ref: "../../components/schemas/ticket/CreateFeedbackRequest.yaml"

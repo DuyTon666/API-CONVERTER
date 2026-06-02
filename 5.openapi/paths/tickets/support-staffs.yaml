@@ -1,9 +1,7 @@
 get:
-  summary: Lấy danh sách nhân viên hỗ trợ ticket
-  operationId: getTicketSupportStaffs
-  description: Lấy danh sách tất cả nhân viên đang được phân công hỗ trợ một 
-    ticket cụ thể. API trả về thông tin các nhân viên hỗ trợ bao gồm vai trò và 
-    trạng thái xử lý của họ đối với ticket.
+  summary: API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket
+  operationId: getSupportStaffs
+  description: ''
   tags:
     - Ticket
   security:
@@ -33,7 +31,7 @@ get:
                   data:
                     type: array
                     items:
-                      $ref: "../../components/schemas/ticket/GetTicketSupportStaffsDataList.yaml"
+                      $ref: "../../components/schemas/ticket/GetSupportStaffsDataList.yaml"
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':

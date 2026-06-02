@@ -1,9 +1,7 @@
 post:
-  summary: Yêu cầu đổi nhân viên hỗ trợ ticket
-  operationId: changeTicketAssignee
-  description: Cho phép người dùng yêu cầu thay đổi nhân viên được phân công hỗ 
-    trợ cho ticket hiện tại. Thường áp dụng khi cần chuyên môn khác hoặc nhân 
-    viên hiện tại không phù hợp.
+  summary: API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket)
+  operationId: createChangeAssignee
+  description: ''
   tags:
     - Ticket
   security:
@@ -53,4 +51,4 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/ticket/ChangeTicketAssigneeRequest.yaml"
+          $ref: "../../components/schemas/ticket/CreateChangeAssigneeRequest.yaml"

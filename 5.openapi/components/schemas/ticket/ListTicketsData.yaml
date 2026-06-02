@@ -1,0 +1,28 @@
+type: object
+properties:
+  current_page:
+    type: integer
+    description: Số thứ tự trang hiện tại
+  next_page_url:
+    type: string
+    description: Link đến trang tiếp theo
+  prev_page_url:
+    type: string
+    description: Link đến trang trước
+  first_page_url:
+    type: string
+    description: Link đến trang đầu tiên
+  per_page:
+    type: integer
+    description: Số record mỗi trang
+  from:
+    type: integer
+    description: Số thứ tự bắt đầu
+  to:
+    type: integer
+    description: Số thứ tự kết thúc
+  data:
+    type: array
+    items:
+      $ref: "./ListTicketsDataData.yaml"
+    description: Danh sách các ticket

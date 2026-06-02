@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-06-01 16:15:24",
+  "timestamp": "2026-06-02 15:19:45",
   "total": 11,
   "success": 11,
   "failed": 0,
-  "skipped": 11,
+  "skipped": 0,
   "needs_review": [],
   "error_groups": {
     "method_missing": [],

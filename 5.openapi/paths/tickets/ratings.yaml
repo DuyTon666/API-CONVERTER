@@ -1,9 +1,7 @@
 post:
-  summary: Tạo đánh giá cho ticket
-  operationId: createTicketRating
-  description: Cho phép khách hàng tạo đánh giá (rating) cho ticket đã được xử 
-    lý. API này giúp thu thập phản hồi của khách hàng về chất lượng dịch vụ hỗ 
-    trợ.
+  summary: API Ticket - API tạo ratting ticket cho khách hàng
+  operationId: createRatings
+  description: ''
   tags:
     - Ticket
   security:
@@ -53,4 +51,4 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/ticket/CreateTicketRatingRequest.yaml"
+          $ref: "../../components/schemas/ticket/CreateRatingsRequest.yaml"

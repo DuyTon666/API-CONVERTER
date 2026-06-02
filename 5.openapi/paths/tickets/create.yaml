@@ -1,9 +1,7 @@
 post:
-  summary: Tạo ticket hỗ trợ mới cho khách hàng
-  operationId: createUserTicket
-  description: Tạo ticket yêu cầu hỗ trợ mới cho khách hàng trong hệ thống. 
-    Ticket sẽ được gán cho đội ngũ hỗ trợ để xử lý theo độ ưu tiên và phân loại 
-    được chỉ định.
+  summary: API Ticket - Tạo ticket cho khách hàng
+  operationId: createTickets
+  description: ''
   tags:
     - Ticket
   security:
@@ -47,4 +45,4 @@ post:
     content:
       multipart/form-data:
         schema:
-          $ref: "../../components/schemas/ticket/CreateUserTicketRequest.yaml"
+          $ref: "../../components/schemas/ticket/CreateTicketsRequest.yaml"
