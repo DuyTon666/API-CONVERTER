@@ -22,7 +22,7 @@ paths:
   /v1/users/{user_id}/tickets:
     get:
       summary: API Ticket - Hiển thị danh sách ticket cho khách hàng
-      operationId: getTickets
+      operationId: listTickets
       description: ''
       tags:
         - Ticket
@@ -109,7 +109,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        $ref: '#/components/schemas/GetTicketsData'
+                        $ref: '#/components/schemas/ListTicketsData'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -336,7 +336,7 @@ paths:
   /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
     post:
       summary: API Ticket - API chỉnh sửa feedback ticket cho khách hàng
-      operationId: createFeedback
+      operationId: updateFeedback
       description: ''
       tags:
         - Ticket
@@ -391,11 +391,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateFeedbackRequest'
+              $ref: '#/components/schemas/UpdateFeedbackRequest'
   /v1/users/{user_id}/tickets/{id}/support-staffs:
     get:
       summary: API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket
-      operationId: getSupportStaffs
+      operationId: listSupportStaffs
       description: ''
       tags:
         - Ticket
@@ -426,7 +426,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/GetSupportStaffsDataList'
+                          $ref: '#/components/schemas/ListSupportStaffsDataList'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -685,7 +685,7 @@ components:
           example: null
         data:
           description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
-    GetTicketsDataData:
+    ListTicketsDataData:
       type: object
       properties:
         id:
@@ -735,7 +735,7 @@ components:
               type: string
               description: Loại dịch vụ
           description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
-    GetTicketsData:
+    ListTicketsData:
       type: object
       properties:
         current_page:
@@ -762,7 +762,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/GetTicketsDataData'
+            $ref: '#/components/schemas/ListTicketsDataData'
           description: Danh sách các ticket
     StandardError:
       type: object
@@ -955,27 +955,23 @@ components:
             format: binary
           maxItems: 3
           description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
-    CreateFeedbackRequest:
+    UpdateFeedbackRequest:
       type: object
       properties:
-        title:
-          type: string
-          description: Vấn đề bạn gặp phải
-        descriptions:
-          type: string
-          maxLength: 4000
-          description: Chi tiết sự việc -  Tối thiểu 20 ký tự -  Tối đa 4000 ký tự
-        files:
-          type: array
-          items:
-            type: string
-            format: binary
-          maxItems: 3
-          description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
+        id:
+          type: integer
+          description: Id của đánh giá
+        review_service:
+          type: integer
+          description: Số sao cho chất lượng dịch vụNhỏ nhất 1Lớn nhất 5
+        review_employee:
+          type: integer
+          description: Số sao cho chất lượng phục vụNhỏ nhất 1Lớn nhất 5
       required:
-        - title
-        - descriptions
-    GetSupportStaffsDataList:
+        - id
+        - review_service
+        - review_employee
+    ListSupportStaffsDataList:
       type: object
       properties:
         id:
@@ -1085,6 +1081,26 @@ components:
         - ratings
         - supporter_id
         - stars
+    CreateFeedbackRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Vấn đề bạn gặp phải
+        descriptions:
+          type: string
+          maxLength: 4000
+          description: Chi tiết sự việc -  Tối thiểu 20 ký tự -  Tối đa 4000 ký tự
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+          maxItems: 3
+          description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
+      required:
+        - title
+        - descriptions
     CreateChangeAssigneeRequest:
       type: object
       properties:

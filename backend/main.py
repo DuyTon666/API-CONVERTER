@@ -14,7 +14,7 @@ from fastapi import Body, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 
-PIPELINE_DIR = Path(__file__).parent.parent / "2.pipeline"
+PIPELINE_DIR = Path(__file__).parent.parent / "2.pipelin"
 OUTPUT_DIR = Path(__file__).parent.parent / "5.openapi"
 DIST_DIR = Path(__file__).parent.parent / "dist"
 CONFIG_DIR = Path(__file__).parent.parent / "4.config"

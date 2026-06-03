@@ -1,6 +1,6 @@
 get:
   summary: API Ticket - Hiển thị danh sách ticket cho khách hàng
-  operationId: getTickets
+  operationId: listTickets
   description: ''
   tags:
     - Ticket
@@ -90,7 +90,7 @@ get:
               - type: object
                 properties:
                   data:
-                    $ref: "../../components/schemas/ticket/GetTicketsData.yaml"
+                    $ref: "../../components/schemas/ticket/ListTicketsData.yaml"
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':

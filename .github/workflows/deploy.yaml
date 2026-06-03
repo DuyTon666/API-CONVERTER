@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - "dist/**"
+      - "5.openapi/**"
       - "scripts/**"
       - "package.json"
 
@@ -41,6 +41,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Bundle OpenAPI
+        run: npm run bundle:api
       # =========================
       # Build Docs
       # =========================

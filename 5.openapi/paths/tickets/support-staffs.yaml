@@ -1,6 +1,6 @@
 get:
   summary: API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket
-  operationId: getSupportStaffs
+  operationId: listSupportStaffs
   description: ''
   tags:
     - Ticket
@@ -31,7 +31,7 @@ get:
                   data:
                     type: array
                     items:
-                      $ref: "../../components/schemas/ticket/GetSupportStaffsDataList.yaml"
+                      $ref: "../../components/schemas/ticket/ListSupportStaffsDataList.yaml"
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':
