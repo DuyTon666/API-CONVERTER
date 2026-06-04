@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint:spectral": "spectral lint dist/openapi-bundled.yaml --ruleset .spectral.yaml --verbose",
-    "validate:api": "redocly lint",
+    "lint:spectral": "spectral lint dist/openapi-bundled.yaml --ruleset .spectral.yaml --format json",
+    "validate:api": "redocly lint dist/openapi-bundled.yaml --config redocly.yaml --format json",
     "bundle:api": "redocly bundle 5.openapi/openapi.yaml -o dist/openapi-bundled.yaml",
     "build:docs": "node scripts/build-swagger-ui.js",
     "build:docs:redocly": "redocly build-docs dist/openapi-bundled.yaml --output public/api-docs-redocly.html"

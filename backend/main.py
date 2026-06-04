@@ -14,7 +14,7 @@ from fastapi import Body, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 
-PIPELINE_DIR = Path(__file__).parent.parent / "2.pipelin"
+PIPELINE_DIR = Path(__file__).parent.parent / "2.pipeline"
 OUTPUT_DIR = Path(__file__).parent.parent / "5.openapi"
 DIST_DIR = Path(__file__).parent.parent / "dist"
 CONFIG_DIR = Path(__file__).parent.parent / "4.config"
@@ -25,6 +25,29 @@ from generator.emitter import init_config as _init_emitter
 _init_emitter(str(CONFIG_DIR))
 
 executor = ThreadPoolExecutor(max_workers=4)
+
+
+def _parse_redocly_output(result: subprocess.CompletedProcess) -> list:
+    raw = result.stdout.strip() or result.stderr.strip()
+    if not raw:
+        return []
+    try:
+        data = json.loads(raw)
+        # Redocly v2: single object {totals, version, problems: [...]}
+        if isinstance(data, dict) and "problems" in data:
+            return data["problems"]
+        # Older format: [{filePath, problems: [...]}, ...]
+        if isinstance(data, list):
+            issues = []
+            for entry in data:
+                if isinstance(entry, dict) and "problems" in entry:
+                    issues.extend(entry["problems"])
+                elif isinstance(entry, dict) and "ruleId" in entry:
+                    issues.append(entry)
+            return issues
+    except Exception:
+        pass
+    return []
 
 
 def _compute_action_name(op, non_resource_actions: set) -> str:
@@ -241,7 +264,7 @@ async def export_bundle(job_id: str):
 
     # Bước 1: Redocly bundle
     bundle_result = subprocess.run(
-        ["npx", "redocly", "bundle", "5.openapi/openapi.yaml", "-o", "dist/openapi-bundled.yaml"],
+        ["npm", "run", "bundle:api"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
@@ -251,35 +274,32 @@ async def export_bundle(job_id: str):
 
     # Bước 2: Spectral lint
     spectral_result = subprocess.run(
-        ["npx", "spectral", "lint", "dist/openapi-bundled.yaml",
-         "--ruleset", ".spectral.yaml", "--format", "json"],
+        ["npm", "run", "--silent", "lint:spectral"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
     )
     try:
         spectral_issues = json.loads(spectral_result.stdout) if spectral_result.stdout.strip() else []
+        if not isinstance(spectral_issues, list):
+            spectral_issues = []
     except Exception:
         spectral_issues = []
 
     # Bước 3: Redocly lint
     redocly_result = subprocess.run(
-        ["npx", "redocly", "lint", "dist/openapi-bundled.yaml", "--format", "json"],
+        ["npm", "run", "--silent", "validate:api"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
     )
-    try:
-        redocly_raw = json.loads(redocly_result.stdout) if redocly_result.stdout.strip() else []
-        redocly_issues = redocly_raw if isinstance(redocly_raw, list) else []
-    except Exception:
-        redocly_issues = []
+    redocly_issues = _parse_redocly_output(redocly_result)
 
     # Bước 4: Build Swagger UI HTML
     html_path = project_root / "public" / "api-docs.html"
     (project_root / "public").mkdir(parents=True, exist_ok=True)
     subprocess.run(
-        ["node", "scripts/build-swagger-ui.js"],
+        ["npm", "run", "build:docs"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
@@ -344,33 +364,30 @@ async def relint(job_id: str):
     project_root = Path(__file__).parent.parent
 
     spectral_result = subprocess.run(
-        ["npx", "spectral", "lint", "dist/openapi-bundled.yaml",
-         "--ruleset", ".spectral.yaml", "--format", "json"],
+        ["npm", "run", "--silent", "lint:spectral"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
     )
     try:
         spectral_issues = json.loads(spectral_result.stdout) if spectral_result.stdout.strip() else []
+        if not isinstance(spectral_issues, list):
+            spectral_issues = []
     except Exception:
         spectral_issues = []
 
     redocly_result = subprocess.run(
-        ["npx", "redocly", "lint", "dist/openapi-bundled.yaml", "--format", "json"],
+        ["npm", "run", "--silent", "validate:api"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
     )
-    try:
-        redocly_raw = json.loads(redocly_result.stdout) if redocly_result.stdout.strip() else []
-        redocly_issues = redocly_raw if isinstance(redocly_raw, list) else []
-    except Exception:
-        redocly_issues = []
+    redocly_issues = _parse_redocly_output(redocly_result)
 
     html_path = project_root / "public" / "api-docs.html"
     (project_root / "public").mkdir(parents=True, exist_ok=True)
     subprocess.run(
-        ["node", "scripts/build-swagger-ui.js"],
+        ["npm", "run", "build:docs"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
