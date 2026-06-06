@@ -1,6 +1,4 @@
-node_modules
-
-__pycache__
+node_modules/
 
 backend/venv
 
@@ -13,3 +11,9 @@ backend/__pycache__
 5.openapi/paths/
 
 5.openapi/components/schemas/
+
+__pycache__/
+
+venv/
+
+CLAUDE.md

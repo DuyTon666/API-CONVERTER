@@ -17,10 +17,61 @@ from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 PIPELINE_DIR = Path(__file__).parent.parent / "2.pipeline"
 OUTPUT_DIR = Path(__file__).parent.parent / "5.openapi"
 DIST_DIR = Path(__file__).parent.parent / "dist"
+CONFIG_DIR = Path(__file__).parent.parent / "4.config"
 
 sys.path.insert(0, str(PIPELINE_DIR))
 
+from generator.emitter import init_config as _init_emitter
+_init_emitter(str(CONFIG_DIR))
+
 executor = ThreadPoolExecutor(max_workers=4)
+
+
+def _parse_redocly_output(result: subprocess.CompletedProcess) -> list:
+    raw = result.stdout.strip() or result.stderr.strip()
+    if not raw:
+        return []
+    try:
+        data = json.loads(raw)
+        # Redocly v2: single object {totals, version, problems: [...]}
+        if isinstance(data, dict) and "problems" in data:
+            return data["problems"]
+        # Older format: [{filePath, problems: [...]}, ...]
+        if isinstance(data, list):
+            issues = []
+            for entry in data:
+                if isinstance(entry, dict) and "problems" in entry:
+                    issues.extend(entry["problems"])
+                elif isinstance(entry, dict) and "ruleId" in entry:
+                    issues.append(entry)
+            return issues
+    except Exception:
+        pass
+    return []
+
+
+def _compute_action_name(op, non_resource_actions: set) -> str:
+    segments = [s for s in op.path.split('/') if s and s != 'v1']
+    last = segments[-1] if segments else ""
+    if not last.startswith('{'):
+        if last in non_resource_actions:
+            return last
+        if op.method == 'GET':
+            return 'list'
+        if op.method == 'POST':
+            return 'create'
+        return last
+    prev = segments[-2] if len(segments) >= 2 else ""
+    prev_clean = prev if not prev.startswith('{') else ""
+    if op.method == 'GET':
+        return 'detail'
+    if op.method in ('PUT', 'PATCH'):
+        return 'update'
+    if op.method == 'DELETE':
+        return 'delete'
+    if op.method == 'POST':
+        return f"{prev_clean}-update" if prev_clean else 'create'
+    return 'action'
 
 @dataclass
 class FileResult:
@@ -30,6 +81,8 @@ class FileResult:
     yaml: str = ""
     flags: list = field(default_factory=list)
     error: str = ""
+    action_name: str = ""
+    schemas: dict = field(default_factory=dict)  # {filename.yaml: content}
 
 @dataclass
 class Job:
@@ -52,19 +105,33 @@ app.add_middleware(
 def health():
     return {"status": "ok"}
 
-def process_file(file_result: FileResult, file_bytes: bytes) -> None:
+def process_file(file_result: FileResult, file_bytes: bytes, domain: str = "ticket") -> None:
     file_result.status = "processing"
     try:
         from pipeline_Ticket import run
+        import yaml as _yaml
+
+        module_config_path = CONFIG_DIR / "modules" / f"{domain}.yaml"
+        non_resource_actions: set = set()
+        if module_config_path.exists():
+            mod_cfg = _yaml.safe_load(module_config_path.read_text(encoding="utf-8")) or {}
+            non_resource_actions = set(mod_cfg.get("action_names", []))
+
         with tempfile.TemporaryDirectory() as tmp:
-            tmp = Path(tmp)
-            input_path = tmp / file_result.filename
-            output_path = tmp / (Path(file_result.filename).stem + ".yaml")
+            tmp_path = Path(tmp)
+            schemas_tmp = tmp_path / "schemas"
+            schemas_tmp.mkdir()
+            input_path = tmp_path / file_result.filename
+            output_path = tmp_path / (Path(file_result.filename).stem + ".yaml")
             input_path.write_bytes(file_bytes)
-            run(str(input_path), str(output_path))
+            op = run(str(input_path), str(output_path), schemas_dir=str(schemas_tmp), domain=domain)
             if output_path.exists():
                 file_result.yaml = output_path.read_text(encoding="utf-8")
                 file_result.status = "done"
+                if op and op.method and op.path:
+                    file_result.action_name = _compute_action_name(op, non_resource_actions)
+                for schema_file in schemas_tmp.glob("*.yaml"):
+                    file_result.schemas[schema_file.name] = schema_file.read_text(encoding="utf-8")
             else:
                 file_result.status = "error"
                 file_result.error = "Pipeline không sinh ra output"
@@ -180,19 +247,24 @@ async def export_bundle(job_id: str):
     if not approved:
         raise HTTPException(status_code=400, detail="Chưa có file nào được approve")
 
-    # Lưu YAML vào 5.openapi/paths
-    paths_dir = OUTPUT_DIR / "paths"
+    # Lưu YAML vào 5.openapi/paths/tickets
+    paths_dir = OUTPUT_DIR / "paths" / "tickets"
     paths_dir.mkdir(parents=True, exist_ok=True)
+    schemas_dir_out = OUTPUT_DIR / "components" / "schemas" / "ticket"
+    schemas_dir_out.mkdir(parents=True, exist_ok=True)
     for f in approved:
-        out_path = paths_dir / f.filename.replace(".docx", ".yaml")
+        out_name = f.action_name if f.action_name else Path(f.filename).stem
+        out_path = paths_dir / f"{out_name}.yaml"
         out_path.write_text(f.yaml, encoding="utf-8")
+        for schema_name, schema_content in f.schemas.items():
+            (schemas_dir_out / schema_name).write_text(schema_content, encoding="utf-8")
 
     project_root = Path(__file__).parent.parent
     DIST_DIR.mkdir(parents=True, exist_ok=True)
 
     # Bước 1: Redocly bundle
     bundle_result = subprocess.run(
-        ["npx", "redocly", "bundle", "5.openapi/openapi.yaml", "-o", "dist/openapi-bundled.yaml"],
+        ["npm", "run", "bundle:api"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
@@ -202,35 +274,32 @@ async def export_bundle(job_id: str):
 
     # Bước 2: Spectral lint
     spectral_result = subprocess.run(
-        ["npx", "spectral", "lint", "dist/openapi-bundled.yaml",
-         "--ruleset", ".spectral.yaml", "--format", "json"],
+        ["npm", "run", "--silent", "lint:spectral"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
     )
     try:
         spectral_issues = json.loads(spectral_result.stdout) if spectral_result.stdout.strip() else []
+        if not isinstance(spectral_issues, list):
+            spectral_issues = []
     except Exception:
         spectral_issues = []
 
     # Bước 3: Redocly lint
     redocly_result = subprocess.run(
-        ["npx", "redocly", "lint", "dist/openapi-bundled.yaml", "--format", "json"],
+        ["npm", "run", "--silent", "validate:api"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
     )
-    try:
-        redocly_raw = json.loads(redocly_result.stdout) if redocly_result.stdout.strip() else []
-        redocly_issues = redocly_raw if isinstance(redocly_raw, list) else []
-    except Exception:
-        redocly_issues = []
+    redocly_issues = _parse_redocly_output(redocly_result)
 
     # Bước 4: Build Swagger UI HTML
     html_path = project_root / "public" / "api-docs.html"
     (project_root / "public").mkdir(parents=True, exist_ok=True)
     subprocess.run(
-        ["node", "scripts/build-swagger-ui.js"],
+        ["npm", "run", "build:docs"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
@@ -263,9 +332,14 @@ def get_bundle_content(job_id: str):
     bundle_path = DIST_DIR / "openapi-bundled.yaml"
     if not bundle_path.exists():
         raise HTTPException(status_code=404, detail="Bundle chưa được tạo, hãy export trước")
+    try:
+        content = bundle_path.read_text(encoding="utf-8")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Không thể đọc file bundle: {e}")
     return PlainTextResponse(
-        content=bundle_path.read_text(encoding="utf-8"),
+        content=content,
         media_type="text/plain; charset=utf-8",
+        headers={"Cache-Control": "no-store"},
     )
 
 
@@ -290,33 +364,30 @@ async def relint(job_id: str):
     project_root = Path(__file__).parent.parent
 
     spectral_result = subprocess.run(
-        ["npx", "spectral", "lint", "dist/openapi-bundled.yaml",
-         "--ruleset", ".spectral.yaml", "--format", "json"],
+        ["npm", "run", "--silent", "lint:spectral"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
     )
     try:
         spectral_issues = json.loads(spectral_result.stdout) if spectral_result.stdout.strip() else []
+        if not isinstance(spectral_issues, list):
+            spectral_issues = []
     except Exception:
         spectral_issues = []
 
     redocly_result = subprocess.run(
-        ["npx", "redocly", "lint", "dist/openapi-bundled.yaml", "--format", "json"],
+        ["npm", "run", "--silent", "validate:api"],
         cwd=str(project_root),
         capture_output=True,
         text=True,
     )
-    try:
-        redocly_raw = json.loads(redocly_result.stdout) if redocly_result.stdout.strip() else []
-        redocly_issues = redocly_raw if isinstance(redocly_raw, list) else []
-    except Exception:
-        redocly_issues = []
+    redocly_issues = _parse_redocly_output(redocly_result)
 
     html_path = project_root / "public" / "api-docs.html"
     (project_root / "public").mkdir(parents=True, exist_ok=True)
     subprocess.run(
-        ["node", "scripts/build-swagger-ui.js"],
+        ["npm", "run", "build:docs"],
         cwd=str(project_root),
         capture_output=True,
         text=True,

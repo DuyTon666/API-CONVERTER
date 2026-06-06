@@ -10,7 +10,11 @@ rules:
   enum-has-description:
     message: "{{error}}"
     severity: error
-    given: "$.paths[*][*].parameters[*].schema"
+    given:
+      - "$.paths[*][*].parameters[*].schema"
+      - "$.paths[*][*].requestBody.content[*].schema.properties[*]"
+      - "$.paths[*][*].responses['200'].content[*].schema.properties[*]"
+      - "$.components.schemas[*].properties[*]"
     then:
       function: enum-has-description
 
@@ -29,7 +33,7 @@ rules:
   server-id-must-be-readonly:
     message: "{{error}}"
     severity: error
-    given: "$.paths[*][*].responses[*].content"
+    given: "$.paths[*][*].responses['200'].content"
     then:
       function: server-id-must-be-readonly
 
@@ -45,9 +49,9 @@ rules:
     severity: warn
     given:
       - "$.components.schemas[*]"
-      - "$.components.schemas[*].properties[*]"  
+      - "$.components.schemas[*].properties[*]"
       - "$.paths[*][*].requestBody.content[*].schema"
-      - "$.paths[*][*].responses[*].content[*].schema"
+      - "$.paths[*][*].responses['200'].content[*].schema"
     then:
       function: property-must-have-description
 # Rule
@@ -85,12 +89,12 @@ rules:
       field: responses.404
       function: truthy
 
-  post-create-should-have-201:
-    message: "POST nên trả response 201 Created."
-    severity: info
-    given: "$.paths[*].post.responses"
+  post-must-have-2xx:
+    message: "POST phải có ít nhất một response 2xx."
+    severity: warn
+    given: "$.paths[*].post"
     then:
-      field: "201"
+      field: responses.200
       function: truthy
 
   info-must-have-contact:

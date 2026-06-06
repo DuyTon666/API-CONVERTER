@@ -33,6 +33,35 @@ type LintResult = {
   redocly: RedoclyIssue[];
 };
 
+type NormalizedIssue = {                                                                                                                                
+  severity: "error" | "warn" | "info";                                                                                                                  
+  source: "Spectral" | "Redocly";                                                                                                                       
+  code: string;                                                                                                                                         
+  message: string;                                                                                                                                      
+  location?: string;                                                                                                                                    
+};                                                                                                                                                      
+                                                                                                                                                            
+function normalizeIssues(                                                                                                                               
+  spectral: SpectralIssue[],                                                                                                                            
+  redocly: RedoclyIssue[]                                                                                                                               
+): NormalizedIssue[] {                                                                                                                                  
+  const s = spectral.map((i) => ({                                                                                                                      
+    severity: (i.severity === 0 ? "error" : i.severity === 1 ? "warn" : "info") as NormalizedIssue["severity"],                                         
+    source: "Spectral" as const,                                                                                                                        
+    code: i.code,                                                                                                                                       
+    message: i.message,                                                                                                                                 
+    location: i.path?.join("."),                                                                                                                        
+  }));                                                                                                                                                  
+  const r = redocly.map((i) => ({                                                                                                                       
+    severity: (i.severity === "error" ? "error" : "warn") as NormalizedIssue["severity"],                                                               
+    source: "Redocly" as const,                                                                                                                         
+    code: i.ruleId,                                                                                                                                     
+    message: i.message,                                                                                                                                 
+  }));                                                                                                                                                  
+      return [...s, ...r];                                                                                                                                  
+    }                                                                                                                                                       
+       
+
 const statusColor: Record<string, string> = {
   pending: "text-gray-400",
   processing: "text-blue-500",
@@ -49,17 +78,6 @@ const statusLabel: Record<string, string> = {
   flagged: "⚠ Cần review",
 };
 
-const spectralColor = (severity: number) => {
-  if (severity === 0) return "bg-red-50 text-red-700";
-  if (severity === 1) return "bg-yellow-50 text-yellow-700";
-  return "bg-blue-50 text-blue-700";
-};
-
-const spectralLabel = (severity: number) => {
-  if (severity === 0) return "error";
-  if (severity === 1) return "warn";
-  return "info";
-};
 
 export default function JobPage() {
   const { job_id } = useParams<{ job_id: string }>();
@@ -72,6 +90,7 @@ export default function JobPage() {
   const [bundleContent, setBundleContent] = useState<string | null>(null);
   const [savingBundle, setSavingBundle] = useState(false);
   const [relinting, setRelinting] = useState(false);
+  const [activeTab, setActiveTab] = useState<"error" | "warn" | "info">("error");
 
   // SSE — theo dõi tiến trình
   useEffect(() => {
@@ -108,12 +127,19 @@ export default function JobPage() {
   // Mở bundle editor
   const openBundleEditor = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/jobs/${job_id}/bundle-content`);
-      if (!res.ok) { alert("Chưa có bundle, hãy export trước"); return; }
+      const res = await fetch(`http://localhost:8000/jobs/${job_id}/bundle-content`, {
+        cache: "no-store",
+      });
+      if (res.status === 404) { alert("Chưa có bundle, hãy export trước"); return; }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ detail: res.statusText }));
+        alert("Lỗi đọc bundle: " + data.detail);
+        return;
+      }
       const text = await res.text();
       setBundleContent(text);
     } catch (e) {
-      alert("Lỗi khi tải bundle: " + String(e));
+      alert("Lỗi kết nối: " + String(e));
     }
   };
 
@@ -199,85 +225,90 @@ export default function JobPage() {
         )}
 
         {/* Lint results */}
-        {lintResult && (
-          <div className="space-y-5">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-gray-700">Kết quả kiểm tra</h2>
-              <div className="flex gap-2">
-                <button
-                  onClick={openBundleEditor}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition"
-                >
-                  Chỉnh sửa bundle
-                </button>
-                {lintResult.html_ready && (
-                  <button
-                    onClick={handleDownloadHtml}
-                    className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition"
-                  >
-                    Tải HTML
-                  </button>
-                )}
-              </div>
-            </div>
+        {lintResult && (() => {
+          const issues = normalizeIssues(lintResult.spectral, lintResult.redocly);
+          const counts = {
+            error: issues.filter((i) => i.severity === "error").length,
+            warn:  issues.filter((i) => i.severity === "warn").length,
+            info:  issues.filter((i) => i.severity === "info").length,
+          };
+          const filtered = issues.filter((i) => i.severity === activeTab);
 
-            {/* Spectral */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-sm font-semibold text-gray-600">Spectral</h3>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${lintResult.spectral.length === 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                  {lintResult.spectral.length} vấn đề
-                </span>
+          const tabStyle = (tab: typeof activeTab) =>
+            `px-4 py-2 text-sm font-medium border-b-2 transition ${
+              activeTab === tab
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-400 hover:text-gray-600"
+            }`;
+
+          const badgeStyle = (tab: typeof activeTab) => {
+            if (tab === "error") return "bg-red-100 text-red-700";
+            if (tab === "warn")  return "bg-yellow-100 text-yellow-700";
+            return "bg-blue-100 text-blue-700";
+          };
+
+          const rowStyle = (severity: NormalizedIssue["severity"]) => {
+            if (severity === "error") return "bg-red-50 text-red-700";
+            if (severity === "warn")  return "bg-yellow-50 text-yellow-700";
+            return "bg-blue-50 text-blue-700";
+          };
+
+          return (
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold text-gray-700">Kết quả kiểm tra</h2>
+                <div className="flex gap-2">
+                  <button onClick={openBundleEditor} className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
+                    Chỉnh sửa bundle
+                  </button>
+                  {lintResult.html_ready && (
+                    <button onClick={handleDownloadHtml} className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition">
+                      Tải HTML
+                    </button>
+                  )}
+                </div>
               </div>
-              {lintResult.spectral.length === 0 ? (
-                <p className="text-green-600 text-sm">Không có lỗi</p>
+
+              {/* Tabs */}
+              <div className="flex gap-1 border-b border-gray-200">
+                {(["error", "warn", "info"] as const).map((tab) => (
+                  <button key={tab} onClick={() => setActiveTab(tab)} className={tabStyle(tab)}>
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    {counts[tab] > 0 && (
+                      <span className={`ml-2 text-xs px-1.5 py-0.5 rounded-full ${badgeStyle(tab)}`}>
+                        {counts[tab]}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Issue list */}
+              {filtered.length === 0 ? (
+                <p className="text-sm text-green-600">Không có vấn đề</p>
               ) : (
-                <ul className="space-y-1 max-h-64 overflow-auto">
-                  {lintResult.spectral.map((issue, i) => (
-                    <li key={i} className={`text-xs px-3 py-2 rounded-lg ${spectralColor(issue.severity)}`}>
-                      <span className="font-semibold uppercase mr-1">[{spectralLabel(issue.severity)}]</span>
+                <ul className="space-y-1 max-h-72 overflow-auto">
+                  {filtered.map((issue, i) => (
+                    <li key={i} className={`text-xs px-3 py-2 rounded-lg ${rowStyle(issue.severity)}`}>
+                      <span className="font-semibold mr-1">[{issue.source}]</span>
                       <span className="font-mono mr-1">[{issue.code}]</span>
                       {issue.message}
-                      {issue.path?.length > 0 && (
-                        <span className="opacity-60 ml-1">— {issue.path.join(".")}</span>
+                      {issue.location && (
+                        <span className="opacity-60 ml-1">— {issue.location}</span>
                       )}
                     </li>
                   ))}
                 </ul>
               )}
             </div>
-
-            {/* Redocly */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-sm font-semibold text-gray-600">Redocly</h3>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${lintResult.redocly.length === 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                  {lintResult.redocly.length} vấn đề
-                </span>
-              </div>
-              {lintResult.redocly.length === 0 ? (
-                <p className="text-green-600 text-sm">Không có lỗi</p>
-              ) : (
-                <ul className="space-y-1 max-h-64 overflow-auto">
-                  {lintResult.redocly.map((issue, i) => (
-                    <li key={i} className={`text-xs px-3 py-2 rounded-lg ${issue.severity === "error" ? "bg-red-50 text-red-700" : "bg-yellow-50 text-yellow-700"}`}>
-                      <span className="font-semibold uppercase mr-1">[{issue.severity}]</span>
-                      <span className="font-mono mr-1">[{issue.ruleId}]</span>
-                      {issue.message}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
       {/* Bundle editor modal */}
       {bundleContent !== null && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+          <div className="bg-white rounded-xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden">
             <div className="flex justify-between items-center px-6 py-4 border-b">
               <h2 className="font-semibold text-gray-800">Chỉnh sửa bundle — openapi-bundled.yaml</h2>
               <button onClick={() => setBundleContent(null)} className="text-gray-400 hover:text-gray-600">✕</button>

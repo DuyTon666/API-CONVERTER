@@ -1,0 +1,12 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: id đánh giá
+    readOnly: true
+  stars:
+    type: integer
+    description: Số sao
+  descriptions:
+    type: string
+    description: Nội dung đánh giá

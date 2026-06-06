@@ -1,8 +1,6 @@
 apis:
   main:
     root: dist/openapi-bundled.yaml
-  test:
-    root: dist/openapi-bundled.yaml
 
 extends:
   - recommended

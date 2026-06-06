@@ -21,9 +21,9 @@ tags:
 paths:
   /v1/users/{user_id}/tickets:
     get:
-      summary: Lấy danh sách ticket của khách hàng
-      operationId: getUserTickets
-      description: Trả về danh sách tất cả các ticket thuộc về một khách hàng cụ thể. API cho phép khách hàng xem lịch sử và trạng thái các yêu cầu hỗ trợ của mình.
+      summary: API Ticket - Hiển thị danh sách ticket cho khách hàng
+      operationId: listTickets
+      description: ''
       tags:
         - Ticket
       security:
@@ -109,7 +109,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        $ref: '#/components/schemas/GetUserTicketsData'
+                        $ref: '#/components/schemas/ListTicketsData'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -127,9 +127,9 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
     post:
-      summary: Tạo ticket hỗ trợ cho khách hàng
-      operationId: createUserTicket
-      description: Tạo một ticket hỗ trợ mới cho khách hàng cụ thể trong hệ thống. API yêu cầu user_id hợp lệ và thông tin ticket bao gồm tiêu đề, mô tả vấn đề.
+      summary: API Ticket - Tạo ticket cho khách hàng
+      operationId: createTickets
+      description: ''
       tags:
         - Ticket
       security:
@@ -175,12 +175,12 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/CreateUserTicketRequest'
+              $ref: '#/components/schemas/CreateTicketsRequest'
   /v1/users/{user_id}/tickets/{id}:
     get:
-      summary: Xem chi tiết ticket của khách hàng
-      operationId: getUserTicketDetail
-      description: Hiển thị thông tin chi tiết của một ticket cụ thể thuộc về khách hàng. API chỉ trả về ticket thuộc về user_id được chỉ định để đảm bảo bảo mật dữ liệu.
+      summary: API Ticket - Hiển thị chi tiết ticket cho khách hàng
+      operationId: getTicket
+      description: ''
       tags:
         - Ticket
       security:
@@ -208,7 +208,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        $ref: '#/components/schemas/GetUserTicketDetailData'
+                        $ref: '#/components/schemas/GetTicketData'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -227,9 +227,9 @@ paths:
           $ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{id}/close:
     put:
-      summary: Đóng ticket của khách hàng
-      operationId: closeUserTicket
-      description: API cho phép đóng ticket hỗ trợ của khách hàng khi vấn đề đã được giải quyết. Chỉ có thể đóng ticket đang ở trạng thái mở hoặc đang xử lý.
+      summary: API Ticket - API đóng ticket của khách hàng
+      operationId: updateClose
+      description: ''
       tags:
         - Ticket
       security:
@@ -278,9 +278,9 @@ paths:
           $ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{id}/reopen:
     post:
-      summary: Mở lại ticket đã đóng của khách hàng
-      operationId: reopenUserTicket
-      description: API cho phép mở lại ticket đã bị đóng của khách hàng để tiếp tục xử lý. Chỉ áp dụng cho các ticket ở trạng thái đã đóng và thuộc về user_id được chỉ định.
+      summary: API Ticket - API mở lại ticket của khách hàng
+      operationId: createReopen
+      description: ''
       tags:
         - Ticket
       security:
@@ -332,12 +332,12 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ReopenUserTicketRequest'
+              $ref: '#/components/schemas/CreateReopenRequest'
   /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
     post:
-      summary: Chỉnh sửa feedback ticket của khách hàng
-      operationId: updateTicketFeedback
-      description: API cho phép chỉnh sửa thông tin feedback đã tạo cho một ticket cụ thể của khách hàng. Yêu cầu xác thực quyền truy cập và feedback phải thuộc về ticket được chỉ định.
+      summary: API Ticket - API chỉnh sửa feedback ticket cho khách hàng
+      operationId: updateFeedback
+      description: ''
       tags:
         - Ticket
       security:
@@ -391,12 +391,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateTicketFeedbackRequest'
+              $ref: '#/components/schemas/UpdateFeedbackRequest'
   /v1/users/{user_id}/tickets/{id}/support-staffs:
     get:
-      summary: Lấy danh sách nhân viên hỗ trợ ticket
-      operationId: listTicketSupportStaffs
-      description: Trả về danh sách tất cả nhân viên đang được phân công hỗ trợ và xử lý một ticket cụ thể. API này giúp người dùng biết được ai đang phụ trách ticket của mình.
+      summary: API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket
+      operationId: listSupportStaffs
+      description: ''
       tags:
         - Ticket
       security:
@@ -426,7 +426,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/ListTicketSupportStaffsDataList'
+                          $ref: '#/components/schemas/ListSupportStaffsDataList'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -445,9 +445,9 @@ paths:
           $ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{id}/conversations:
     post:
-      summary: Tạo phản hồi ticket khách hàng
-      operationId: createTicketConversation
-      description: Tạo một phản hồi mới trong cuộc hội thoại của ticket hỗ trợ khách hàng. API cho phép nhân viên hoặc hệ thống gửi tin nhắn trả lời cho ticket đang xử lý.
+      summary: API Ticket - API tạo phản hồi ticket cho khách hàng
+      operationId: createConversations
+      description: ''
       tags:
         - Ticket
       security:
@@ -475,7 +475,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        $ref: '#/components/schemas/CreateTicketConversationData'
+                        $ref: '#/components/schemas/CreateConversationsData'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -497,9 +497,9 @@ paths:
           $ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{ticket_id}/ratings:
     post:
-      summary: Tạo đánh giá cho ticket
-      operationId: createTicketRating
-      description: Cho phép khách hàng tạo đánh giá (rating) cho ticket đã xử lý. API ghi nhận phản hồi chất lượng dịch vụ từ người dùng.
+      summary: API Ticket - API tạo ratting ticket cho khách hàng
+      operationId: createRatings
+      description: ''
       tags:
         - Ticket
       security:
@@ -551,12 +551,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateTicketRatingRequest'
+              $ref: '#/components/schemas/CreateRatingsRequest'
   /v1/users/{user_id}/tickets/{id}/feedback:
     post:
-      summary: Tiếp nhận phản ánh góp ý của khách hàng
-      operationId: submitTicketFeedback
-      description: API cho phép khách hàng gửi phản ánh, góp ý về ticket đã được xử lý. Áp dụng cho ticket đã đóng hoặc đã giải quyết, giúp đánh giá chất lượng dịch vụ hỗ trợ.
+      summary: API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback)
+      operationId: createFeedback
+      description: ''
       tags:
         - Ticket
       security:
@@ -605,12 +605,12 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/SubmitTicketFeedbackRequest'
+              $ref: '#/components/schemas/CreateFeedbackRequest'
   /v1/users/{user_id}/tickets/{id}/change-assignee:
     post:
-      summary: Đổi nhân viên được gán xử lý ticket
-      operationId: changeTicketAssignee
-      description: Thay đổi nhân viên hỗ trợ được gán cho một ticket cụ thể của người dùng. Được sử dụng khi cần chuyển ticket cho nhân viên phù hợp hơn hoặc khi nhân viên hiện tại không thể xử lý.
+      summary: API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket)
+      operationId: createChangeAssignee
+      description: ''
       tags:
         - Ticket
       security:
@@ -661,7 +661,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChangeTicketAssigneeRequest'
+              $ref: '#/components/schemas/CreateChangeAssigneeRequest'
 components:
   securitySchemes:
     bearerAuth:
@@ -685,7 +685,7 @@ components:
           example: null
         data:
           description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
-    GetUserTicketsDataData:
+    ListTicketsDataData:
       type: object
       properties:
         id:
@@ -735,7 +735,7 @@ components:
               type: string
               description: Loại dịch vụ
           description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
-    GetUserTicketsData:
+    ListTicketsData:
       type: object
       properties:
         current_page:
@@ -762,7 +762,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/GetUserTicketsDataData'
+            $ref: '#/components/schemas/ListTicketsDataData'
           description: Danh sách các ticket
     StandardError:
       type: object
@@ -790,7 +790,7 @@ components:
               type:
                 - object
                 - 'null'
-    CreateUserTicketRequest:
+    CreateTicketsRequest:
       type: object
       properties:
         department_id:
@@ -818,7 +818,7 @@ components:
         - service_id
         - title
         - descriptions
-    GetUserTicketDetailDataConversations:
+    GetTicketDataConversations:
       type: object
       properties:
         id:
@@ -857,7 +857,7 @@ components:
               type: integer
               description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
           description: Thông tin người tạo (xem thêm bên dưới)
-    GetUserTicketDetailData:
+    GetTicketData:
       type: object
       properties:
         id:
@@ -939,9 +939,9 @@ components:
         conversations:
           type: array
           items:
-            $ref: '#/components/schemas/GetUserTicketDetailDataConversations'
+            $ref: '#/components/schemas/GetTicketDataConversations'
           description: Danh sách các phản hồi (xem thêm bên dưới)
-    ReopenUserTicketRequest:
+    CreateReopenRequest:
       type: object
       properties:
         descriptions:
@@ -955,7 +955,7 @@ components:
             format: binary
           maxItems: 3
           description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
-    UpdateTicketFeedbackRequest:
+    UpdateFeedbackRequest:
       type: object
       properties:
         id:
@@ -971,7 +971,7 @@ components:
         - id
         - review_service
         - review_employee
-    ListTicketSupportStaffsDataList:
+    ListSupportStaffsDataList:
       type: object
       properties:
         id:
@@ -1006,7 +1006,7 @@ components:
               type: string
               description: Nội dung đánh giá
           description: Thông tin đánh giá của nhân viên
-    CreateTicketConversationData:
+    CreateConversationsData:
       type: object
       properties:
         id:
@@ -1045,7 +1045,7 @@ components:
               type: integer
               description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
           description: Thông tin người tạo (xem thêm bên dưới)
-    CreateTicketRatingRequest:
+    CreateRatingsRequest:
       type: object
       properties:
         ratings:
@@ -1081,7 +1081,7 @@ components:
         - ratings
         - supporter_id
         - stars
-    SubmitTicketFeedbackRequest:
+    CreateFeedbackRequest:
       type: object
       properties:
         title:
@@ -1101,7 +1101,7 @@ components:
       required:
         - title
         - descriptions
-    ChangeTicketAssigneeRequest:
+    CreateChangeAssigneeRequest:
       type: object
       properties:
         reason:
