@@ -11,22 +11,10 @@ from enrichers.llm_enricher import enrich
 from generator.emitter import emit_yaml, emit_request_schema, emit_response_schemas, init_config
 from utils.module_registry import ModuleRegistry
 from utils.pluralizer import pluralize
+from utils.report_store import load_versions, save_versions, append_version_history, save_review_queue, write_batch_log
 
 CONFIG_DIR = Path(__file__).resolve().parent.parent / "4.config"
 REPORT_DIR = Path(__file__).resolve().parent.parent / "3.build" / "reports"
-
-def _load_versions() -> dict:
-    path = REPORT_DIR / "file_version.json"
-    if path.exists():
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    return {}
-
-def _save_versions(versions: dict) -> None:
-    REPORT_DIR.mkdir(parents=True, exist_ok=True)
-    path = REPORT_DIR / "file_version.json"
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(versions, f, ensure_ascii=False, indent=2)
 
 
 def run(input_path: str, output_path: str, schemas_dir: str = None, domain: str = "", post_enrich_checks: dict = None) -> None:
@@ -112,10 +100,12 @@ def _run_batch(input_dir: str, output_dir: str, schemas_dir: str, domain: str,
     files = list(Path(input_dir).glob("*.docx"))
     print(f"Tìm thấy {len(files)} file\n")
 
-    versions = _load_versions()
+    versions = load_versions()
     needs_review = []
     errors = []
     skipped = []
+    success_files = []
+    source_format = "docx"
 
     module_config_path = CONFIG_DIR / "modules" / f"{domain}.yaml"
     _non_resource_actions = set()
@@ -164,24 +154,59 @@ def _run_batch(input_dir: str, output_dir: str, schemas_dir: str, domain: str,
         out = Path(output_dir) / f"{_action}.yaml"
         print(f"==={f.name}===")
         
-        old_entry = versions.get(f.name, "")
+        version_key = f"{domain}:{f.name}"
+        old_entry = versions.get(version_key, "")
         if isinstance(old_entry, dict):
             old_version = old_entry.get("version", "")
         else:
             old_version = old_entry
         if new_version and new_version == old_version and out.exists():
             print(f"    [SKIP] version {new_version} không đổi")
-            skipped.append(f.name)
+            skipped.append({
+                "file": f.name,
+                "reason": "version_unchanged",
+                "version": new_version,
+
+            })
+            
             print()
             continue
         try:
             op = run(str(f), str(out), schemas_dir, domain, post_enrich_checks=_post_enrich_checks)
             if op and op.version:
-                versions[f.name] = {
+                versions[version_key] = {
+                    "module": domain,
+                    "source_type": "api_contract",
+                    "source_format": source_format,
+                    "file": f.name,
+                    "path": str(f),
+                    "output": str(out),
                     "version": op.version,
-                    "change_history": op.change_history
+                    "change_history": op.change_history,
+                    "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "status": "success",
                 }
-                _save_versions(versions)
+                save_versions(versions)
+
+                append_version_history({
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "version_key": version_key,
+                    "file": f.name,
+                    "module": domain,
+                    "source_format": source_format,
+                    "old_version": old_version,
+                    "new_version": op.version,
+                })
+
+            success_files.append({
+                "file": f.name,
+                "output": str(out),
+                "version": getattr(op, "version", ""),
+                "operation_id": getattr(op, "operation_id", ""),
+                "method": getattr(op, "method", ""),
+                "path": getattr(op, "path", ""),
+            })
+                
             if op and op.review_flags:
                 needs_review.append({
                     "file": f.name,
@@ -197,32 +222,27 @@ def _run_batch(input_dir: str, output_dir: str, schemas_dir: str, domain: str,
 
     print(f"\nHoàn thành: {len(files) - len(errors)}/{len(files)} file")
 
-    # Ghi log ra file
-    log = {
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "total": len(files),
-        "success": len(files) - len(errors), 
-        "failed": len(errors),
-        "skipped": len(skipped),
-        "needs_review": needs_review,
-        "error_groups": {
-            flag: [r["file"] for r in needs_review if flag in r["flags"]]
-            for flag in _review_actions
+    log_path = write_batch_log(
+        module=domain,
+        source_format=source_format,
+        stats={
+            "total": len(files),
+            "success": len(success_files),
+            "failed": len(errors),
+            "skipped": len(skipped),
+            "success_files": success_files,
+            "skipped_files": skipped,
+            "errors": errors,
+            "needs_review": needs_review,
+            "review_actions": _review_actions,            
         },
-        "errors": errors
-    }
-    REPORT_DIR.mkdir(parents=True, exist_ok=True)
-    log_path = REPORT_DIR / "batch_log.json"
-    with open(log_path, "w", encoding="utf-8") as f:
-        json.dump(log, f, ensure_ascii=False, indent=2)
-    print(f"Log ghi tại: {log_path}")
+    )
+
+    print(f"Log theo module ghi tại: {log_path}")
 
     if needs_review:
-        review_path = REPORT_DIR / "human_review_queue.json"
-        REPORT_DIR.mkdir(parents=True, exist_ok=True)
-        with open(review_path, "w", encoding="utf-8") as f:
-            json.dump(needs_review, f, ensure_ascii=False, indent=2)
-        print(f"Review queue: {review_path} ({len(needs_review)} items)")
+        save_review_queue(needs_review)
+        print(f"Review queue: {REPORT_DIR / 'human_review_queue.json'} ({len(needs_review)} items)")
 
 def _scan_new_modules() -> None:
     """

@@ -8,7 +8,16 @@
     "validate:api": "redocly lint dist/openapi-bundled.yaml",
     "bundle:api": "redocly bundle openapi/openapi.yaml -o dist/openapi-bundled.yaml",
     "build:docs": "node scripts/build-swagger-ui.js",
-    "build:docs:redocly": "redocly build-docs dist/openapi-bundled.yaml --output public/api-docs-redocly.html"
+    "build:docs:redocly": "redocly build-docs dist/openapi-bundled.yaml --output public/api-docs-redocly.html",
+    "scan": "python3 2.pipeline/run_api_import.py scan",
+    "suggest:module": "python3 2.pipeline/run_api_import.py suggest-root",
+    "review:suggest": "python3 2.pipeline/run_api_import.py review-suggestions",
+    "approve": "python3 2.pipeline/run_api_import.py approve-suggestions --all",
+    "update:registry": "python3 2.pipeline/run_api_import.py apply-suggestions",
+    "list:module": "python3 2.pipeline/run_api_import.py list-modules",
+    "activate:module": "python3 2.pipeline/run_api_import.py activate-module --module <tên>",
+    "convert:api": "python3 2.pipeline/run_api_import.py import",
+    "verify:stats": "python3 2.pipeline/run_api_import.py list-modules"
   },
   "repository": {
     "type": "git",

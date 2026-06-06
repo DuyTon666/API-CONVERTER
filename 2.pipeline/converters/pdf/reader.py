@@ -21,6 +21,24 @@ def _extract_table_lines(table: list) -> list[str]:
     lines.append("")
     return lines
 
+def _extract_change_history_from_skipped_pages(pdf, skip_pages: int) -> str:
+    """
+    Đọc bảng Lịch sử thay đổi từ các trang bị skip.
+    Chỉ lấy bảng có header chứa 'Phiên bản' và 'Ngày'.
+    Trả về string dạng tab để parser nhận ra được.
+    """
+    for page in pdf.pages[:skip_pages]:
+        for table in page.extract_tables():
+            if not table:
+                continue
+            header = table[0]
+            header_text = "\t".join(str(c or "") for c in header)
+            if "Phiên bản" in header_text and "Ngày" in header_text:
+                lines = ["Lịch sử thay đổi"]
+                lines.extend(_extract_table_lines(table))
+                return "\n".join(lines)
+    return ""
+
 def _extract_page(page, skip_patterns: list[str]) -> list[str]:
     lines = []
 
@@ -76,8 +94,15 @@ def read_pdf(file_path: str, config_path: str) -> str:
 
     all_lines = []
     with pdfplumber.open(file_path) as pdf:
+        change_history_text = _extract_change_history_from_skipped_pages(pdf, skip_pages)
+
         for page in pdf.pages[skip_pages:]:
             all_lines.extend(_extract_page(page, skip_patterns))
             all_lines.append("")
-    
-    return "\n".join(all_lines)
+
+    main_text = "\n".join(all_lines)
+
+    if change_history_text:
+        return change_history_text + "\n\n" + main_text
+
+    return main_text

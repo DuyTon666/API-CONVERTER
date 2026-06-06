@@ -1,0 +1,16 @@
+source_root: "1.docs/source/api_contract"
+output_root: "5.openapi/paths"
+schemas_root: "5.openapi/components/schemas"
+
+supported_extensions:
+  - ".pdf"
+  - ".docx"
+  - ".txt"
+  - ".md"
+
+ignore_dirs:
+  - "_incoming"
+  - "_archive"
+  - "__pycache__"
+
+default_source_type: "api_contract"

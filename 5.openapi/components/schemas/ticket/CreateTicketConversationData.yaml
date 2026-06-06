@@ -24,4 +24,17 @@ properties:
     type: string
     description: Ngày tạo (Y-m-d H:i:s)
   owner:
-    $ref: "../common/UserInfo.yaml"
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Id người tạo
+        readOnly: true
+      name:
+        type: string
+        description: Tên người tạo
+      mgroup:
+        type: integer
+        description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài
+          khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
+    description: Thông tin người tạo (xem thêm bên dưới)

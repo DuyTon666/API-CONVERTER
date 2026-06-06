@@ -1,7 +1,7 @@
 import json
 import re
 import anthropic
-from converters.docx.parser import ParsedOperation
+from converters.models import ParsedOperation
 
 _client = anthropic.Anthropic()
 
@@ -29,7 +29,7 @@ def _call_llm(title: str, method: str, path: str) -> dict:
 
     try:
         response = _client.messages.create(
-            model="claude-sonnet-4-6",
+            model="cc/claude-sonnet-4-6",
             max_tokens=200,
             messages=[{"role": "user", "content": prompt}]
         )

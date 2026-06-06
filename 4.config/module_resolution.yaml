@@ -1,0 +1,44 @@
+module_resolution:
+  default_strategy: endpoint_first
+  require_approval: true
+  min_confidence_auto_approve: 0.9
+
+endpoint_rules:
+  ticket:
+    patterns:
+      - "/tickets"
+      - "/ticket"
+
+  service:
+    patterns:
+      - "/services"
+      - "/service"
+
+  department:
+    patterns:
+      - "/departments"
+      - "/department"
+
+  statistic:
+    patterns:
+      - "/statistics"
+      - "/dashboard"
+
+ignored_segments:
+  - v1
+  - v2
+  - v3
+  - users
+  - customers
+  - clients
+  - me
+  - admin
+
+service_field:
+  use_as_metadata: true
+  conflict_action: needs_review
+
+observation:
+  enabled: true
+  output_file: "3.build/reports/module_observations.json"
+  module_approval_queue_file: "3.build/reports/module_approval_queue.json"

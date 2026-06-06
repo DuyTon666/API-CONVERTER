@@ -6,7 +6,7 @@ from ruamel.yaml import YAML
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString as Q
 from pathlib import Path
 import yaml
-from converters.docx.parser import ParsedOperation
+from converters.models import ParsedOperation
 from validators.yaml_validator import validate_yaml_file
 
 def emit_yaml(op: ParsedOperation, output_path: str):
@@ -452,9 +452,29 @@ def _build_properties(fields: list, parent_path: str = "", all_schemas: dict = N
 
     return properties
 
+def _is_referenced_schema(path: str, all_schemas: dict) -> bool:
+    """
+    Trả về True nếu path này sẽ được $ref trong parent.
+    Một path được $ref khi:
+    1. Là top-level: "data", "data[]", "data.data", "data.data[]"
+       → được $ref từ path YAML (resolve_response_schema)
+    2. Có nested thêm: any(k.startswith(path + ".") for k in all_schemas)
+       → _build_properties() sẽ dùng $ref đến file này
+    """
+    # Top-level paths luôn được tạo
+    top_level = {"data", "data[]", "data.data", "data.data[]"}
+    if path in top_level:
+        return True
+
+    # Có nested thêm → _build_properties dùng $ref
+    return any(k.startswith(path + ".") or k.startswith(path + "[].")
+               for k in all_schemas if k != path)
+
+
 def emit_response_schemas(op: ParsedOperation, schemas_dir: str):
     if not op.response_schemas or not op.operation_id:
         return
+
     yaml = YAML()
     yaml.default_flow_style = False
     yaml.indent(mapping=2, sequence=4, offset=2)
@@ -462,16 +482,29 @@ def emit_response_schemas(op: ParsedOperation, schemas_dir: str):
     prefix = op.operation_id[0].upper() + op.operation_id[1:]
 
     for path, fields in op.response_schemas.items():
-        parts = path.split(".")
+
+        # ── Chỉ tạo file khi path này thực sự được $ref ──────────
+        if not _is_referenced_schema(path, op.response_schemas):
+            continue
+
+        parts    = path.split(".")
         sub_name = prefix + "".join(p.capitalize() for p in parts)
-        sub_name = sub_name.replace("[]", "List") 
+        sub_name = sub_name.replace("[]", "List")
         sub_path = Path(schemas_dir) / f"{sub_name}.yaml"
+
         sub_data = {
             "type": "object",
-            "properties": _build_properties(fields, parent_path=path, all_schemas=op.response_schemas, prefix=prefix)
+            "properties": _build_properties(
+                fields,
+                parent_path=path,
+                all_schemas=op.response_schemas,
+                prefix=prefix,
+            )
         }
+
         sub_path.parent.mkdir(parents=True, exist_ok=True)
         with open(sub_path, "w", encoding="utf-8") as f:
             yaml.dump(sub_data, f)
+
         validate_yaml_file(sub_path)
         print(f"      Response schema: {sub_path}")
