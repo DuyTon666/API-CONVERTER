@@ -7,3 +7,5 @@ node_modules
 5.openapi/paths/
 
 5.openapi/components/schemas/
+
+__pycache__
