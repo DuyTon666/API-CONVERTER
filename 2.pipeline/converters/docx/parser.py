@@ -2,28 +2,7 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 from typing import Optional
-
-@dataclass
-class ParsedOperation:
-    summary: str = ""
-    operation_id: str = ""
-    description: str = ""
-    method: str = ""
-    path: str = ""
-    service: str = ""
-    content_type: str = "application/json"
-    permission: str = ""
-    parameters: list = field(default_factory=list)
-    has_request_body: bool = False
-    request_body_required: bool = True
-    request_body_fields: list = field(default_factory=list)      
-    error_codes: list = field(default_factory=list)
-    response_schemas: dict = field(default_factory=dict)
-    request_body_children: dict = field(default_factory=dict)
-    review_flags: list = field(default_factory=list)
-    version: str = ""
-    query_parameters: list = field(default_factory=list)
-    change_history: list = field(default_factory=list)
+from converters.models import ParsedOperation
 
 def parse_text(text: str) -> ParsedOperation:
     text = unicodedata.normalize('NFC', text)
@@ -57,11 +36,17 @@ def _parse_path(text: str) -> str:
     return match.group(1) if match else ""
 
 def _parse_service(text: str) -> str:
-    match = re.search(r'Endpoint Service.*?\n.*?(/\S+)\s+(\S+)\s+(https?://\S+)\s+(\w+)', text, re.DOTALL)
+    # Case 1 — dòng "Service\t<value>" (format bảng có tab)
+    match = re.search(r'Service\t(\S+)', text)
     if match:
-        return match.group(2)
-    match2 = re.search(r'(account|ticket|user|payment)\s+apigateway', text, re.IGNORECASE)
-    return match2.group(1) if match2 else ""
+        return match.group(1).strip()
+    
+    # Case 2 — dòng "Service <value>" (format PDF không có tab)
+    match = re.search(r'^Service\s+(\S+)$', text, re.MULTILINE)
+    if match:
+        return match.group(1).strip()
+    
+    return ""
 
 def _parse_content_type(text: str) -> str:
     # Đọc section 4.3 Request Body

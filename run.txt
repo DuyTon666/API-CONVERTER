@@ -1,1 +1,77 @@
 export ANTHROPIC_API_KEY=""
+echo $ANTHROPIC_API_KEY
+
+## Bảng lệnh flow đầy đủ (version mới)
+
+| Bước | Lệnh | Mục đích | Output |
+|------|-------|----------|--------|
+| 1 | `python3 2.pipeline/run_api_import.py scan` | Xem hiện trạng folder và file | In ra màn hình |
+| 2 | `python3 2.pipeline/run_api_import.py suggest-root` | Phân tích file ở root, gợi ý module | `import_suggestions.json` |
+| 3 | `python3 2.pipeline/run_api_import.py review-suggestions` | Xem bảng gợi ý, kiểm tra module và approval status | In ra màn hình |
+| 4 | `python3 2.pipeline/run_api_import.py approve-suggestions --all` | Approve tất cả item pending | `import_suggestions.json` (cập nhật) |
+| 5 | `python3 2.pipeline/run_api_import.py apply-suggestions` | Copy file vào folder module, update registry | `module_registry.yaml` + `import_applied_suggestions.json` |
+| 6 | `python3 2.pipeline/run_api_import.py list-modules` | Xem danh sách module và status | In ra màn hình |
+| 7 | `python3 2.pipeline/run_api_import.py activate-module --module <tên>` | Activate module sau khi verify paths | `module_registry.yaml` (cập nhật) |
+| 8 | `python3 2.pipeline/run_api_import.py import` | Convert tất cả module active sang OpenAPI YAML | `5.openapi/paths/` + `5.openapi/components/schemas/` |
+| 9 | `python3 2.pipeline/run_api_import.py list-modules` | Verify stats sau import | In ra màn hình |
+
+---
+
+## Variants
+
+```bash
+# Approve theo module cụ thể
+python3 2.pipeline/run_api_import.py approve-suggestions --module ticket
+
+# Approve 1 file, override module
+python3 2.pipeline/run_api_import.py approve-suggestions --file "tên_file.pdf" --module service
+
+# Import 1 module cụ thể
+python3 2.pipeline/run_api_import.py import --module ticket
+
+# Import tất cả, bỏ qua registry status
+python3 2.pipeline/run_api_import.py import --all
+
+# Apply + convert luôn (bỏ qua bước 8)
+python3 2.pipeline/run_api_import.py apply-suggestions --convert
+
+# Move thay vì copy
+python3 2.pipeline/run_api_import.py apply-suggestions --move-files
+```
+
+---
+
+## Module lifecycle
+
+```bash
+# draft → active
+python3 2.pipeline/run_api_import.py activate-module --module <tên>
+
+# active → deprecated
+python3 2.pipeline/run_api_import.py deactivate-module --module <tên>
+
+# deprecated → active
+python3 2.pipeline/run_api_import.py reactivate-module --module <tên>
+```
+
+---
+
+## Reset sạch từ đầu
+
+```bash
+# Xóa folder module đã tạo
+rm -rf 1.docs/source/api_contract/ticket \
+       1.docs/source/api_contract/service \
+       1.docs/source/api_contract/department \
+       1.docs/source/api_contract/statistic
+
+# Xóa report cũ
+rm -f 3.build/reports/import_suggestions.json \
+      3.build/reports/import_applied_suggestions.json
+
+# Xóa registry
+echo "modules: {}" > 4.config/module_registry.yaml
+
+# Chạy lại từ bước 1
+python3 2.pipeline/run_api_import.py scan
+```
