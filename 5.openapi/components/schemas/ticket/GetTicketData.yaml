@@ -16,16 +16,12 @@ properties:
   created_date:
     type: string
     description: Ngày ticket được tạo (Y-m-d H:i:s)
-  last_updated:
-    type: string
-    description: Ngày cập nhật gần nhất (Y-m-d H:i:s)
   trangthai:
     type: integer
     description: Trạng thái thực của ticket
   status:
     type: string
-    description: 'Trạng thái dành cho FEGồm 4 trạng thái: CREATED: Vừa tạoIN_PROGRESS:
-      Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng'
+    description: Trạng thái dành cho FE
   files:
     type: array
     items:
@@ -36,8 +32,7 @@ properties:
           description: Đường dẫn đến file
         category:
           type: string
-          description: 'Phân loại:image:Các file ảnhvideo: Các file videodocument:
-            Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác'
+          description: 'Phân loại:'
     description: Thông tin các tệp tin (xem thêm bên dưới)
   department:
     type: object
@@ -76,8 +71,7 @@ properties:
         description: Tên nhân viên
       mgroup:
         type: integer
-        description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài
-          khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
+        description: 'Phân loại người dùng:'
     description: Thông tin về nhân viên hỗ trợ (xem thêm bên dưới)
   conversations:
     type: array

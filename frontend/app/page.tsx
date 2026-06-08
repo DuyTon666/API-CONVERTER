@@ -1,97 +1,405 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import ImportCard from "./_dashboard/ImportCard";
+import ScanCard from "./_dashboard/ScanCard";
+import SuggestCard from "./_dashboard/SuggestCard";
+import ModuleRegistryCard from "./_dashboard/ModuleRegistryCard";
+import SwaggerDocsCard from "./_dashboard/SwaggerDocsCard";
+import BundleEditorModal from "./_dashboard/BundleEditorModal";
+import { isSupportedFile } from "./_dashboard/format";
+import {
+  ApplyResult,
+  DocsBuildResult,
+  ImportModuleProgress,
+  ModuleListResult,
+  ScanResult,
+  SuggestionsResult,
+} from "./_dashboard/types";
 
 export default function Home() {
-  const [files, setFiles] = useState<File[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  const [scan, setScan] = useState<ScanResult | null>(null);
+  const [scanLoading, setScanLoading] = useState(true);
+  const [scanError, setScanError] = useState("");
 
-  const handleFiles = (selected: FileList | null) => {
-    if (!selected) return;
-    const docx = Array.from(selected).filter((f) => f.name.endsWith(".docx"));
-    setFiles((prev) => [...prev, ...docx]);
+  const [moduleList, setModuleList] = useState<ModuleListResult | null>(null);
+  const [modulesLoading, setModulesLoading] = useState(true);
+  const [modulesError, setModulesError] = useState("");
+
+  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const [uploadMessage, setUploadMessage] = useState("");
+
+  const [suggestions, setSuggestions] = useState<SuggestionsResult | null>(null);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(true);
+  const [suggestionsError, setSuggestionsError] = useState("");
+  const [suggestRunning, setSuggestRunning] = useState(false);
+  const [approving, setApproving] = useState<string | null>(null);
+  const [applying, setApplying] = useState(false);
+  const [applyResult, setApplyResult] = useState<ApplyResult | null>(null);
+  const [suggestActionError, setSuggestActionError] = useState("");
+  const [overrideInputs, setOverrideInputs] = useState<Record<string, string>>({});
+
+  const [activatingModule, setActivatingModule] = useState<string | null>(null);
+  const [activateError, setActivateError] = useState("");
+
+  const [importRunning, setImportRunning] = useState(false);
+  const [importTarget, setImportTarget] = useState<string | null>(null);
+  const [importModules, setImportModules] = useState<ImportModuleProgress[]>([]);
+  const [importDone, setImportDone] = useState(false);
+  const [importError, setImportError] = useState("");
+
+  const [docsBuilding, setDocsBuilding] = useState(false);
+  const [docsResult, setDocsResult] = useState<DocsBuildResult | null>(null);
+  const [docsError, setDocsError] = useState("");
+
+  const [bundleContent, setBundleContent] = useState<string | null>(null);
+  const [savingBundle, setSavingBundle] = useState(false);
+  const [relinting, setRelinting] = useState(false);
+
+  const fetchScan = () => {
+    return fetch("http://localhost:8000/modules/scan")
+      .then((res) => {
+        if (!res.ok) throw new Error("Không thể tải dữ liệu scan");
+        return res.json();
+      })
+      .then((data) => {
+        setScan(data);
+        setScanError("");
+      })
+      .catch((e) => setScanError(e instanceof Error ? e.message : "Lỗi kết nối backend"))
+      .finally(() => setScanLoading(false));
   };
 
-  const handleRun = async () => {
-    if (files.length === 0) return;
-    setLoading(true);
-    setError("");
+  const fetchModules = () => {
+    return fetch("http://localhost:8000/modules")
+      .then((res) => {
+        if (!res.ok) throw new Error("Không thể tải danh sách module");
+        return res.json();
+      })
+      .then((data) => {
+        setModuleList(data);
+        setModulesError("");
+      })
+      .catch((e) => setModulesError(e instanceof Error ? e.message : "Lỗi kết nối backend"))
+      .finally(() => setModulesLoading(false));
+  };
+
+  const fetchSuggestions = () => {
+    return fetch("http://localhost:8000/modules/suggestions")
+      .then((res) => {
+        if (!res.ok) throw new Error("Không thể tải suggestions");
+        return res.json();
+      })
+      .then((data) => {
+        setSuggestions(data);
+        setSuggestionsError("");
+      })
+      .catch((e) => setSuggestionsError(e instanceof Error ? e.message : "Lỗi kết nối backend"))
+      .finally(() => setSuggestionsLoading(false));
+  };
+
+  useEffect(() => {
+    fetchScan();
+    fetchModules();
+    fetchSuggestions();
+  }, []);
+
+  const handleSelectFiles = (selected: FileList | null) => {
+    if (!selected) return;
+    const valid = Array.from(selected).filter((f) => isSupportedFile(f.name));
+    setUploadFiles((prev) => [...prev, ...valid]);
+    setUploadMessage("");
+    setUploadError("");
+  };
+
+  const handleRemoveUploadFile = (index: number) => {
+    setUploadFiles((prev) => prev.filter((_, j) => j !== index));
+  };
+
+  const handleUpload = async () => {
+    if (uploadFiles.length === 0) return;
+    setUploading(true);
+    setUploadError("");
+    setUploadMessage("");
     const form = new FormData();
-    files.forEach((f) => form.append("files", f));
+    uploadFiles.forEach((f) => form.append("files", f));
     try {
-      const res = await fetch("http://localhost:8000/jobs", {
+      const res = await fetch("http://localhost:8000/source/upload", {
         method: "POST",
         body: form,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.detail);
-      router.push(`/jobs/${data.job_id}`);
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi upload");
+      setUploadMessage(`Đã lưu ${data.total} file vào 1.docs/source/api_contract/`);
+      setUploadFiles([]);
+      setScanLoading(true);
+      fetchScan();
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-      setLoading(false);
+      setUploadError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRunSuggest = async () => {
+    setSuggestRunning(true);
+    setSuggestActionError("");
+    try {
+      const res = await fetch("http://localhost:8000/modules/suggest", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi chạy suggest-root");
+      setSuggestions(data);
+    } catch (e: unknown) {
+      setSuggestActionError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+    } finally {
+      setSuggestRunning(false);
+    }
+  };
+
+  const handleApprove = async (
+    body: { mode: string; module?: string; file?: string; override_module?: string },
+    key: string
+  ) => {
+    setApproving(key);
+    setSuggestActionError("");
+    try {
+      const res = await fetch("http://localhost:8000/modules/suggestions/approve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi duyệt suggestion");
+      setSuggestions(data);
+    } catch (e: unknown) {
+      setSuggestActionError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+    } finally {
+      setApproving(null);
+    }
+  };
+
+  const handleApply = async () => {
+    setApplying(true);
+    setSuggestActionError("");
+    try {
+      const res = await fetch("http://localhost:8000/modules/apply", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi apply suggestions");
+      setApplyResult(data);
+      setScanLoading(true);
+      setModulesLoading(true);
+      await Promise.all([fetchScan(), fetchModules(), fetchSuggestions()]);
+    } catch (e: unknown) {
+      setSuggestActionError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+    } finally {
+      setApplying(false);
+    }
+  };
+
+  const handleActivate = async (name: string) => {
+    setActivatingModule(name);
+    setActivateError("");
+    try {
+      const res = await fetch(`http://localhost:8000/modules/${encodeURIComponent(name)}/activate`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi activate module");
+      setModuleList(data);
+    } catch (e: unknown) {
+      setActivateError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+    } finally {
+      setActivatingModule(null);
+    }
+  };
+
+  const handleImport = async (moduleName: string | null) => {
+    setImportError("");
+    setImportModules([]);
+    setImportDone(false);
+    setImportRunning(true);
+    setImportTarget(moduleName);
+    try {
+      const url = moduleName
+        ? `http://localhost:8000/modules/import?module=${encodeURIComponent(moduleName)}`
+        : `http://localhost:8000/modules/import`;
+      const res = await fetch(url, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi khởi chạy import");
+
+      const es = new EventSource(`http://localhost:8000/modules/import/${data.job_id}/stream`);
+      es.onmessage = (e) => {
+        const payload = JSON.parse(e.data);
+        if (payload.event === "done") {
+          setImportDone(true);
+          setImportRunning(false);
+          es.close();
+          fetchModules();
+          return;
+        }
+        setImportModules((prev) => {
+          const exists = prev.find((m) => m.name === payload.name);
+          if (exists) return prev.map((m) => (m.name === payload.name ? payload : m));
+          return [...prev, payload];
+        });
+      };
+      es.onerror = () => {
+        es.close();
+        setImportRunning(false);
+        setImportError("Mất kết nối stream import");
+      };
+    } catch (e: unknown) {
+      setImportError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+      setImportRunning(false);
+    }
+  };
+
+  const handleBuildDocs = async () => {
+    setDocsError("");
+    setDocsBuilding(true);
+    try {
+      const res = await fetch("http://localhost:8000/docs/build", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi build tài liệu");
+      setDocsResult(data);
+    } catch (e: unknown) {
+      setDocsError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+    } finally {
+      setDocsBuilding(false);
+    }
+  };
+
+  const handleDownloadDocsHtml = () => {
+    window.open("http://localhost:8000/docs/download-html", "_blank");
+  };
+
+  const openBundleEditor = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/docs/bundle-content", { cache: "no-store" });
+      if (res.status === 404) { alert("Chưa có bundle, hãy build tài liệu trước"); return; }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ detail: res.statusText }));
+        alert("Lỗi đọc bundle: " + data.detail);
+        return;
+      }
+      const text = await res.text();
+      setBundleContent(text);
+    } catch (e) {
+      alert("Lỗi kết nối: " + String(e));
+    }
+  };
+
+  const saveBundle = async () => {
+    if (bundleContent === null) return;
+    setSavingBundle(true);
+    try {
+      await fetch("http://localhost:8000/docs/bundle-content", {
+        method: "PUT",
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+        body: bundleContent,
+      });
+    } finally {
+      setSavingBundle(false);
+    }
+  };
+
+  const saveAndRelint = async () => {
+    if (bundleContent === null) return;
+    setSavingBundle(true);
+    try {
+      await fetch("http://localhost:8000/docs/bundle-content", {
+        method: "PUT",
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+        body: bundleContent,
+      });
+      setRelinting(true);
+      const res = await fetch("http://localhost:8000/docs/relint", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) { alert("Lỗi kiểm tra lại: " + data.detail); return; }
+      setDocsResult(data);
+      setBundleContent(null);
+    } finally {
+      setSavingBundle(false);
+      setRelinting(false);
     }
   };
 
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col items-center py-16 px-4">
-      <div className="w-full max-w-2xl">
-        <h1 className="text-3xl font-bold text-gray-800 mb-1">API Converter</h1>
-        <p className="text-gray-400 mb-8">Upload tài liệu .docx để chuyển đổi sang OpenAPI</p>
-
-        {/* Drop zone */}
-        <div
-          className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition"
-          onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); }}
-        >
-          <input
-            ref={inputRef}
-            type="file"
-            accept=".docx"
-            multiple
-            className="hidden"
-            onChange={(e) => handleFiles(e.target.files)}
-          />
-          <p className="text-gray-400 text-lg">Kéo thả hoặc click để chọn file</p>
-          <p className="text-gray-300 text-sm mt-1">Hỗ trợ nhiều file .docx cùng lúc</p>
+      <div className="w-full max-w-3xl space-y-10">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-1">API Converter</h1>
+          <p className="text-gray-400">Theo dõi luồng import module từ 1.docs/source/api_contract/</p>
         </div>
 
-        {/* Danh sách file đã chọn */}
-        {files.length > 0 && (
-          <ul className="mt-4 space-y-2">
-            {files.map((f, i) => (
-              <li key={i} className="flex justify-between items-center bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm">
-                <span className="text-gray-700">{f.name}</span>
-                <button
-                  onClick={() => setFiles(files.filter((_, j) => j !== i))}
-                  className="text-gray-300 hover:text-red-400 transition"
-                >
-                  ✕
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+        <ImportCard
+          files={uploadFiles}
+          uploading={uploading}
+          error={uploadError}
+          message={uploadMessage}
+          onSelectFiles={handleSelectFiles}
+          onRemoveFile={handleRemoveUploadFile}
+          onUpload={handleUpload}
+        />
 
-        {error && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-            {error}
-          </div>
-        )}
+        <ScanCard scan={scan} loading={scanLoading} error={scanError} />
 
-        <button
-          onClick={handleRun}
-          disabled={files.length === 0 || loading}
-          className="mt-6 w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
-        >
-          {loading ? "Đang gửi..." : `Chạy pipeline (${files.length} file)`}
-        </button>
+        <SuggestCard
+          suggestions={suggestions}
+          loading={suggestionsLoading}
+          error={suggestionsError}
+          actionError={suggestActionError}
+          suggestRunning={suggestRunning}
+          approving={approving}
+          applying={applying}
+          applyResult={applyResult}
+          overrideInputs={overrideInputs}
+          onOverrideChange={(file, value) => setOverrideInputs((prev) => ({ ...prev, [file]: value }))}
+          onRunSuggest={handleRunSuggest}
+          onApprove={handleApprove}
+          onApply={handleApply}
+        />
+
+        <ModuleRegistryCard
+          moduleList={moduleList}
+          loading={modulesLoading}
+          error={modulesError}
+          activatingModule={activatingModule}
+          activateError={activateError}
+          onActivate={handleActivate}
+          importRunning={importRunning}
+          importTarget={importTarget}
+          importModules={importModules}
+          importDone={importDone}
+          importError={importError}
+          onImport={handleImport}
+        />
+
+        <SwaggerDocsCard
+          docsBuilding={docsBuilding}
+          docsResult={docsResult}
+          docsError={docsError}
+          onBuildDocs={handleBuildDocs}
+          onOpenBundleEditor={openBundleEditor}
+          onDownloadHtml={handleDownloadDocsHtml}
+        />
       </div>
+
+      {bundleContent !== null && (
+        <BundleEditorModal
+          content={bundleContent}
+          onChange={setBundleContent}
+          spectralIssues={docsResult?.spectral ?? []}
+          redoclyIssues={docsResult?.redocly ?? []}
+          saving={savingBundle}
+          relinting={relinting}
+          onClose={() => setBundleContent(null)}
+          onSave={saveBundle}
+          onSaveAndRelint={saveAndRelint}
+        />
+      )}
     </main>
   );
 }
