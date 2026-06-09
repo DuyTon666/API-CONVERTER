@@ -68,8 +68,8 @@ export default function EndpointDetailDrawer({
 
       <Tabs defaultValue="api">
         <TabsList>
-          <TabsTrigger className="text-gray-700 hover:text-gray-700" value="api">Endpoint</TabsTrigger>
-          <TabsTrigger className="text-gray-700 hover:text-gray-700" value="guide">Hướng dẫn sử dụng</TabsTrigger>
+          <TabsTrigger value="api">Endpoint</TabsTrigger>
+          <TabsTrigger value="guide">Hướng dẫn sử dụng</TabsTrigger>
         </TabsList>
 
         <TabsContent value="api">

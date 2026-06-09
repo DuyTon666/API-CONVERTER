@@ -2,13 +2,10 @@ type: object
 properties:
   descriptions:
     type: string
-    maxLength: 4000
-    description: Nội dung -  Tối đa 4000 ký tự
+    description: Nội dung
   files:
     type: array
     items:
       type: string
       format: binary
-    maxItems: 3
-    description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp
-      nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
+    description: Tệp đính kèm
