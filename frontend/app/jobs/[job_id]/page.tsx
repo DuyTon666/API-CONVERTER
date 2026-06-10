@@ -80,6 +80,8 @@ const statusLabel: Record<string, string> = {
 
 
 export default function JobPage() {
+  const backend = process.env.NEXT_PUBLIC_API_URL;  
+
   const { job_id } = useParams<{ job_id: string }>();
   const [files, setFiles] = useState<FileResult[]>([]);
   const [done, setDone] = useState(false);
@@ -94,7 +96,7 @@ export default function JobPage() {
 
   // SSE — theo dõi tiến trình
   useEffect(() => {
-    const es = new EventSource(`http://localhost:8000/jobs/${job_id}/stream`);
+    const es = new EventSource(`${backend}/jobs/${job_id}/stream`);
     es.onmessage = (e) => {
       const data = JSON.parse(e.data);
       if (data.event === "done") {
@@ -115,7 +117,7 @@ export default function JobPage() {
   const handleExport = async () => {
     setExporting(true);
     try {
-      const res = await fetch(`http://localhost:8000/jobs/${job_id}/export`, { method: "POST" });
+      const res = await fetch(`${backend}/jobs/${job_id}/export`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) { alert("Lỗi export: " + data.detail); return; }
       setLintResult(data);
@@ -127,7 +129,7 @@ export default function JobPage() {
   // Mở bundle editor
   const openBundleEditor = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/jobs/${job_id}/bundle-content`, {
+      const res = await fetch(`${backend}/jobs/${job_id}/bundle-content`, {
         cache: "no-store",
       });
       if (res.status === 404) { alert("Chưa có bundle, hãy export trước"); return; }
@@ -148,7 +150,7 @@ export default function JobPage() {
     if (bundleContent === null) return;
     setSavingBundle(true);
     try {
-      await fetch(`http://localhost:8000/jobs/${job_id}/bundle-content`, {
+      await fetch(`${backend}/jobs/${job_id}/bundle-content`, {
         method: "PUT",
         headers: { "Content-Type": "text/plain; charset=utf-8" },
         body: bundleContent,
@@ -163,13 +165,13 @@ export default function JobPage() {
     if (bundleContent === null) return;
     setSavingBundle(true);
     try {
-      await fetch(`http://localhost:8000/jobs/${job_id}/bundle-content`, {
+      await fetch(`${backend}/jobs/${job_id}/bundle-content`, {
         method: "PUT",
         headers: { "Content-Type": "text/plain; charset=utf-8" },
         body: bundleContent,
       });
       setRelinting(true);
-      const res = await fetch(`http://localhost:8000/jobs/${job_id}/relint`, { method: "POST" });
+      const res = await fetch(`${backend}/jobs/${job_id}/relint`, { method: "POST" });
       const data = await res.json();
       setLintResult(data);
       setBundleContent(null);
@@ -180,7 +182,7 @@ export default function JobPage() {
   };
 
   const handleDownloadHtml = () => {
-    window.open(`http://localhost:8000/jobs/${job_id}/download-html`, "_blank");
+    window.open(`${backend}/jobs/${job_id}/download-html`, "_blank");
   };
 
   const doneCount = files.filter((f) => f.status === "done").length;

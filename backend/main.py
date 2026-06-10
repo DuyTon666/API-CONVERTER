@@ -768,4 +768,3 @@ async def relint(job_id: str):
 
     project_root = Path(__file__).parent.parent
     return _bundle_lint_build_docs(project_root, do_bundle=False)
-

@@ -30,25 +30,18 @@ components:
       bearerFormat: JWT
 paths:
   /v1/users/{user_id}/tickets:
-    get:
-      $ref: "./paths/tickets/list.yaml#/get"
-    post:
-      $ref: "./paths/tickets/create.yaml#/post"
+    $ref: "./paths/ticket/create_tickets.yaml#/post"
   /v1/users/{user_id}/tickets/{id}:
-    $ref: "./paths/tickets/detail.yaml"
+    $ref: "./paths/ticket/get_ticket.yaml"
   /v1/users/{user_id}/tickets/{id}/close:
-    $ref: "./paths/tickets/close.yaml"
+    $ref: "./paths/ticket/update_close.yaml"
   /v1/users/{user_id}/tickets/{id}/reopen:
-    $ref: "./paths/tickets/reopen.yaml"
-  /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
-    $ref: "paths/tickets/feedback-update.yaml"
-  /v1/users/{user_id}/tickets/{id}/support-staffs:
-    $ref: "paths/tickets/support-staffs.yaml"
+    $ref: "./paths/ticket/create_reopen.yaml"
   /v1/users/{user_id}/tickets/{id}/conversations:
-    $ref: "paths/tickets/conversations.yaml"
+    $ref: "./paths/ticket/create_conversations.yaml"
   /v1/users/{user_id}/tickets/{ticket_id}/ratings:
-    $ref: "paths/tickets/ratings.yaml"
+    $ref: "./paths/ticket/create_ratings.yaml"
   /v1/users/{user_id}/tickets/{id}/feedback:
-    $ref: "paths/tickets/feedback.yaml"
+    $ref: "./paths/ticket/create_feedback.yaml"
   /v1/users/{user_id}/tickets/{id}/change-assignee:
-    $ref: "paths/tickets/change-assignee.yaml"
+    $ref: "./paths/ticket/create_change_assignee.yaml"

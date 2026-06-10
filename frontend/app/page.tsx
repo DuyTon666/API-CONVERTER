@@ -18,6 +18,8 @@ import {
 } from "./_dashboard/types";
 
 export default function Home() {
+  const backend = process.env.NEXT_PUBLIC_API_URL;
+
   const [scan, setScan] = useState<ScanResult | null>(null);
   const [scanLoading, setScanLoading] = useState(true);
   const [scanError, setScanError] = useState("");
@@ -59,7 +61,7 @@ export default function Home() {
   const [relinting, setRelinting] = useState(false);
 
   const fetchScan = () => {
-    return fetch("http://localhost:8000/modules/scan")
+    return fetch(`${backend}/modules/scan`)
       .then((res) => {
         if (!res.ok) throw new Error("Không thể tải dữ liệu scan");
         return res.json();
@@ -73,7 +75,7 @@ export default function Home() {
   };
 
   const fetchModules = () => {
-    return fetch("http://localhost:8000/modules")
+    return fetch(`${backend}/modules`)
       .then((res) => {
         if (!res.ok) throw new Error("Không thể tải danh sách module");
         return res.json();
@@ -87,7 +89,7 @@ export default function Home() {
   };
 
   const fetchSuggestions = () => {
-    return fetch("http://localhost:8000/modules/suggestions")
+    return fetch(`${backend}/modules/suggestions`)
       .then((res) => {
         if (!res.ok) throw new Error("Không thể tải suggestions");
         return res.json();
@@ -126,7 +128,7 @@ export default function Home() {
     const form = new FormData();
     uploadFiles.forEach((f) => form.append("files", f));
     try {
-      const res = await fetch("http://localhost:8000/source/upload", {
+      const res = await fetch(`${backend}/source/upload`, {
         method: "POST",
         body: form,
       });
@@ -147,7 +149,7 @@ export default function Home() {
     setSuggestRunning(true);
     setSuggestActionError("");
     try {
-      const res = await fetch("http://localhost:8000/modules/suggest", { method: "POST" });
+      const res = await fetch(`${backend}/modules/suggest`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ?? "Lỗi chạy suggest-root");
       setSuggestions(data);
@@ -165,7 +167,7 @@ export default function Home() {
     setApproving(key);
     setSuggestActionError("");
     try {
-      const res = await fetch("http://localhost:8000/modules/suggestions/approve", {
+      const res = await fetch(`${backend}/modules/suggestions/approve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -184,7 +186,7 @@ export default function Home() {
     setApplying(true);
     setSuggestActionError("");
     try {
-      const res = await fetch("http://localhost:8000/modules/apply", { method: "POST" });
+      const res = await fetch(`${backend}/modules/apply`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ?? "Lỗi apply suggestions");
       setApplyResult(data);
@@ -202,7 +204,7 @@ export default function Home() {
     setActivatingModule(name);
     setActivateError("");
     try {
-      const res = await fetch(`http://localhost:8000/modules/${encodeURIComponent(name)}/activate`, {
+      const res = await fetch(`${backend}/modules/${encodeURIComponent(name)}/activate`, {
         method: "POST",
       });
       const data = await res.json();
@@ -223,13 +225,13 @@ export default function Home() {
     setImportTarget(moduleName);
     try {
       const url = moduleName
-        ? `http://localhost:8000/modules/import?module=${encodeURIComponent(moduleName)}`
-        : `http://localhost:8000/modules/import`;
+        ? `${backend}/modules/import?module=${encodeURIComponent(moduleName)}`
+        : `${backend}/modules/import`;
       const res = await fetch(url, { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ?? "Lỗi khởi chạy import");
 
-      const es = new EventSource(`http://localhost:8000/modules/import/${data.job_id}/stream`);
+      const es = new EventSource(`${backend}/modules/import/${data.job_id}/stream`);
       es.onmessage = (e) => {
         const payload = JSON.parse(e.data);
         if (payload.event === "done") {
@@ -260,7 +262,7 @@ export default function Home() {
     setDocsError("");
     setDocsBuilding(true);
     try {
-      const res = await fetch("http://localhost:8000/docs/build", { method: "POST" });
+      const res = await fetch(`${backend}/docs/build`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ?? "Lỗi build tài liệu");
       setDocsResult(data);
@@ -272,12 +274,12 @@ export default function Home() {
   };
 
   const handleDownloadDocsHtml = () => {
-    window.open("http://localhost:8000/docs/download-html", "_blank");
+    window.open(`${backend}/docs/download-html`, "_blank");
   };
 
   const openBundleEditor = async () => {
     try {
-      const res = await fetch("http://localhost:8000/docs/bundle-content", { cache: "no-store" });
+      const res = await fetch(`${backend}/docs/bundle-content`, { cache: "no-store" });
       if (res.status === 404) { alert("Chưa có bundle, hãy build tài liệu trước"); return; }
       if (!res.ok) {
         const data = await res.json().catch(() => ({ detail: res.statusText }));
@@ -295,7 +297,7 @@ export default function Home() {
     if (bundleContent === null) return;
     setSavingBundle(true);
     try {
-      await fetch("http://localhost:8000/docs/bundle-content", {
+      await fetch(`${backend}/docs/bundle-content`, {
         method: "PUT",
         headers: { "Content-Type": "text/plain; charset=utf-8" },
         body: bundleContent,
@@ -309,13 +311,13 @@ export default function Home() {
     if (bundleContent === null) return;
     setSavingBundle(true);
     try {
-      await fetch("http://localhost:8000/docs/bundle-content", {
+      await fetch(`${backend}/docs/bundle-content`, {
         method: "PUT",
         headers: { "Content-Type": "text/plain; charset=utf-8" },
         body: bundleContent,
       });
       setRelinting(true);
-      const res = await fetch("http://localhost:8000/docs/relint", { method: "POST" });
+      const res = await fetch(`${backend}/docs/relint`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) { alert("Lỗi kiểm tra lại: " + data.detail); return; }
       setDocsResult(data);

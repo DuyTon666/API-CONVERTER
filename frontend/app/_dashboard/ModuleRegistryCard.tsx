@@ -38,7 +38,7 @@ export default function ModuleRegistryCard({
         <h2 className="text-lg font-semibold text-gray-700">Module registry</h2>
         <button
           onClick={() => onImport(null)}
-          disabled={importRunning || !moduleList?.modules.some((m) => m.status === "active")}
+          disabled={importRunning || loading || !moduleList?.modules.some((m) => m.status === "active")}
           className="px-4 py-2 bg-emerald-100 text-emerald-700 text-sm font-semibold rounded-lg hover:bg-emerald-200 disabled:opacity-40 disabled:cursor-not-allowed transition"
         >
           {importRunning && importTarget === null ? "Đang import..." : "Import tất cả module active"}
