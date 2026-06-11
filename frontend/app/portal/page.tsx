@@ -74,14 +74,8 @@ export default function PortalPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Developer Portal</h1>
-        <p className="text-gray-400 mb-8">
-          {operations.length} endpoints
-        </p>
-        <PortalSearch operations={operations} />
-      </div>
-    </main>
+    <div className="flex h-screen overflow-hidden bg-gray-50">
+      <PortalSearch operations={operations} />
+    </div>
   );
 }

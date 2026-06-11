@@ -26,18 +26,18 @@ export default function EndpointCard({
           : "border-gray-200 hover:shadow-sm"
       }`}
     >
-      <div className="flex items-center gap-3 flex-wrap mb-2">
+      <div className="flex items-center gap-2 overflow-hidden">
         <span className={`text-xs font-bold px-2 py-0.5 rounded ${METHOD_COLOR[op.method] ?? "bg-gray-100 text-gray-600"}`}>
           {op.method}
         </span>
-        <code className="text-sm text-gray-700 font-mono">{op.path}</code>
+        <code className="truncate text-sm text-gray-700 font-mono">{op.path}</code>
         {op.tags.map((tag) => (
           <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
             {tag}
           </span>
         ))}
       </div>
-      <p className="text-sm font-medium text-gray-800">{op.summary}</p>
+      {/* <p className="text-sm font-medium text-gray-800">{op.summary}</p> */}
       {op.operationId && (
         <p className="text-xs text-gray-400 mt-1 font-mono">{op.operationId}</p>
       )}

@@ -38,6 +38,7 @@ export default function Home() {
   const [suggestionsError, setSuggestionsError] = useState("");
   const [suggestRunning, setSuggestRunning] = useState(false);
   const [approving, setApproving] = useState<string | null>(null);
+  const [approvingMulti, setApprovingMulti] = useState(false);
   const [applying, setApplying] = useState(false);
   const [applyResult, setApplyResult] = useState<ApplyResult | null>(null);
   const [suggestActionError, setSuggestActionError] = useState("");
@@ -157,6 +158,31 @@ export default function Home() {
       setSuggestActionError(e instanceof Error ? e.message : "Lỗi kết nối backend");
     } finally {
       setSuggestRunning(false);
+    }
+  };
+
+  const handleApproveSelected = async (
+    items: Array<{ file: string; override_module?: string }>
+  ) => {
+    setApprovingMulti(true);
+    setSuggestActionError("");
+    try {
+      let latestData = suggestions;
+      for (const item of items) {
+        const res = await fetch(`${backend}/modules/suggestions/approve`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mode: "file", file: item.file, override_module: item.override_module }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail ?? "Lỗi duyệt suggestion");
+        latestData = data;
+      }
+      if (latestData) setSuggestions(latestData);
+    } catch (e: unknown) {
+      setSuggestActionError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+    } finally {
+      setApprovingMulti(false);
     }
   };
 
@@ -329,13 +355,28 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col items-center py-16 px-4">
-      <div className="w-full max-w-3xl space-y-10">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-1">API Converter</h1>
-          <p className="text-gray-400">Theo dõi luồng import module từ 1.docs/source/api_contract/</p>
+    <>
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-blue-500" />
+            <span className="text-base font-bold text-gray-800">API Converter</span>
+          </div>
+          <a
+            href="/portal"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-blue-600 border border-blue-200 rounded-full hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-200"
+          >
+            Developer Portal
+            <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
         </div>
-
+      </nav>
+    <main className="min-h-screen bg-gray-50 flex flex-col items-center py-16 px-4">
+      <div className="w-full max-w-5xl space-y-10">
         <ImportCard
           files={uploadFiles}
           uploading={uploading}
@@ -355,12 +396,14 @@ export default function Home() {
           actionError={suggestActionError}
           suggestRunning={suggestRunning}
           approving={approving}
+          approvingMulti={approvingMulti}
           applying={applying}
           applyResult={applyResult}
           overrideInputs={overrideInputs}
           onOverrideChange={(file, value) => setOverrideInputs((prev) => ({ ...prev, [file]: value }))}
           onRunSuggest={handleRunSuggest}
           onApprove={handleApprove}
+          onApproveSelected={handleApproveSelected}
           onApply={handleApply}
         />
 
@@ -403,5 +446,6 @@ export default function Home() {
         />
       )}
     </main>
+    </>
   );
 }

@@ -36,6 +36,7 @@ export type SuggestionItem = {
   confidence_label?: string;
   approval_status: string;
   approved_module?: string | null;
+  conflict?: boolean;
 };
 
 export type SuggestionsResult = {

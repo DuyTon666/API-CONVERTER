@@ -34,7 +34,7 @@ export default function ModuleRegistryCard({
 }: Props) {
   return (
     <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-1">
         <h2 className="text-lg font-semibold text-gray-700">Module registry</h2>
         <button
           onClick={() => onImport(null)}
@@ -44,6 +44,10 @@ export default function ModuleRegistryCard({
           {importRunning && importTarget === null ? "Đang import..." : "Import tất cả module active"}
         </button>
       </div>
+      <p className="text-xs text-gray-400 mb-4">
+        <span className="font-medium text-indigo-500">Activate</span>: chuyển module draft → active để cho phép chạy import.{" "}
+        <span className="font-medium text-emerald-600">Import</span>: chạy pipeline convert tài liệu thành OpenAPI YAML.
+      </p>
 
       {loading && <p className="text-sm text-gray-400">Đang tải...</p>}
       {error && (
@@ -94,6 +98,7 @@ export default function ModuleRegistryCard({
                             onClick={() => onActivate(m.name)}
                             disabled={activatingModule !== null}
                             className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-medium rounded hover:bg-indigo-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            title="Chuyển module từ trạng thái draft sang active, sau đó mới có thể chạy Import"
                           >
                             {activatingModule === m.name ? "Đang kích hoạt..." : "Activate"}
                           </button>
@@ -102,6 +107,7 @@ export default function ModuleRegistryCard({
                             onClick={() => onImport(m.name)}
                             disabled={importRunning}
                             className="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-medium rounded hover:bg-emerald-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            title="Chạy pipeline convert tài liệu trong module thành OpenAPI YAML"
                           >
                             {importRunning && importTarget === m.name ? "Đang import..." : "Import"}
                           </button>
