@@ -47,6 +47,12 @@ export function formatExtensions(byExt: Record<string, number>): string {
     .join(", ");
 }
 
+export function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function formatDate(value: string | null): string {
   if (!value) return "-";
   try {
@@ -54,4 +60,18 @@ export function formatDate(value: string | null): string {
   } catch {
     return value;
   }
+}
+
+export function formatRelativeTime(value: string | null): string {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (isNaN(date.getTime())) return value;
+  const minutes = Math.floor((Date.now() - date.getTime()) / 60000);
+  if (minutes < 1) return "vừa xong";
+  if (minutes < 60) return `${minutes} phút trước`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} giờ trước`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} ngày trước`;
+  return date.toLocaleDateString("vi-VN");
 }

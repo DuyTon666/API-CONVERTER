@@ -3,7 +3,12 @@
 import { ApplyResult, SuggestionsResult } from "./types";
 import { useEffect, useState } from "react";
 
-type ApproveBody = { mode: string; module?: string; file?: string; override_module?: string };
+type ApproveBody = {
+  mode: string;
+  module?: string;
+  file?: string;
+  override_module?: string;
+};
 
 type ApproveItem = {
   file: string;
@@ -28,6 +33,17 @@ type Props = {
   onApply: () => void;
 };
 
+function ElapsedTimer() {
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setElapsed((s) => s + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return <>({elapsed}s)</>;
+}
+
 export default function SuggestCard({
   suggestions,
   loading,
@@ -45,13 +61,29 @@ export default function SuggestCard({
   onApply,
 }: Props) {
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
-  const [elapsed, setElapsed] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<
+    "pending" | "approved" | "all"
+  >("pending");
 
-  const allFiles = suggestions?.items.map((i) => i.file) ?? [];
-  const allSelected = allFiles.length > 0 && allFiles.every((f) => selectedFiles.has(f));
+  const visibleItems = (suggestions?.items ?? []).filter(
+    (i) => statusFilter === "all" || i.approval_status === statusFilter,
+  );
+
+  // Chỉ hàng pending mới chọn được — duyệt lại item đã duyệt là no-op phía backend
+  const selectableFiles = visibleItems
+    .filter((i) => i.approval_status === "pending")
+    .map((i) => i.file);
+  const allSelected =
+    selectableFiles.length > 0 &&
+    selectableFiles.every((f) => selectedFiles.has(f));
 
   const toggleAll = () =>
-    setSelectedFiles(allSelected ? new Set() : new Set(allFiles));
+    setSelectedFiles(allSelected ? new Set() : new Set(selectableFiles));
+
+  const changeFilter = (f: "pending" | "approved" | "all") => {
+    setStatusFilter(f);
+    setSelectedFiles(new Set());
+  };
 
   const toggleFile = (file: string) =>
     setSelectedFiles((prev) => {
@@ -71,69 +103,64 @@ export default function SuggestCard({
     setSelectedFiles(new Set());
   };
 
-  useEffect(() => {
-    if (!suggestRunning) { setElapsed(0); return; }
-    setElapsed(0);
-    const id = setInterval(() => setElapsed((s) => s + 1), 1000);
-    return () => clearInterval(id);
-  }, [suggestRunning]);
-
   return (
     <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-      <h2 className="text-lg font-semibold text-gray-700 mb-3">Gợi ý &amp; duyệt module</h2>
+      <h2 className="font-semibold text-gray-900 mb-4">
+        Gợi ý &amp; duyệt module
+      </h2>
 
-      {/* Step-by-step actions */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        {/* Step 1 */}
         <button
           onClick={onRunSuggest}
           disabled={suggestRunning}
-          className="px-4 py-2 bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-lg hover:bg-indigo-200 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-2"
+          className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-2"
         >
           {suggestRunning ? (
             <>
-              <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+              <svg
+                className="animate-spin h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                />
               </svg>
-              Đang phân tích... ({elapsed}s)
+              Đang phân tích...
+              <ElapsedTimer />
             </>
           ) : (
             "Gợi ý module"
           )}
         </button>
 
-        {/* Step 2 — hiện sau khi có suggestions */}
-        {suggestions?.exists && suggestions.items.length > 0 && (
-          <>
-            <span className="text-gray-300 text-lg">→</span>
-            <button
-              onClick={handleApproveSelected}
-              disabled={busy || selectedFiles.size === 0}
-              className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
-            >
-              {approvingMulti
-                ? "Đang duyệt..."
-                : selectedFiles.size > 0
-                ? `Duyệt (${selectedFiles.size}) file`
-                : "Chọn file để duyệt"}
-            </button>
-          </>
-        )}
+        <button
+          onClick={handleApproveSelected}
+          disabled={busy || selectedFiles.size === 0}
+          className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition"
+        >
+          {approvingMulti
+            ? "Đang duyệt..."
+            : `Duyệt (${selectedFiles.size}) file`}
+        </button>
 
-        {/* Step 3 — hiện sau khi có ít nhất 1 item approved */}
-        {(suggestions?.summary?.approved ?? 0) > 0 && (
-          <>
-            <span className="text-gray-300 text-lg">→</span>
-            <button
-              onClick={onApply}
-              disabled={applying}
-              className="px-4 py-2 bg-emerald-100 text-emerald-700 text-sm font-semibold rounded-lg hover:bg-emerald-200 disabled:opacity-40 disabled:cursor-not-allowed transition"
-            >
-              {applying ? "Đang apply..." : "Apply suggestions"}
-            </button>
-          </>
-        )}
+        <button
+          onClick={onApply}
+          disabled={applying || (suggestions?.summary?.approved ?? 0) === 0}
+          className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+        >
+          {applying ? "Đang apply..." : "Apply suggestions"}
+        </button>
       </div>
 
       {suggestRunning && (
@@ -143,33 +170,71 @@ export default function SuggestCard({
       )}
 
       {actionError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{actionError}</div>
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+          {actionError}
+        </div>
       )}
-      {loading && <p className="text-sm text-gray-400">Đang tải suggestions...</p>}
+      {loading && (
+        <p className="text-sm text-gray-400">Đang tải suggestions...</p>
+      )}
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{error}</div>
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+          {error}
+        </div>
       )}
 
       {suggestions && !suggestions.exists && (
-        <p className="text-sm text-gray-400">Chưa có suggestions — hãy chạy &quot;Gợi ý module&quot;.</p>
+        <p className="text-sm text-gray-400">
+          Chưa có suggestions — hãy chạy &quot;Gợi ý module&quot;.
+        </p>
       )}
 
-      {suggestions && suggestions.exists && (
-        suggestions.items.length === 0 ? (
+      {suggestions &&
+        suggestions.exists &&
+        (suggestions.items.length === 0 ? (
           <p className="text-sm text-gray-400">Không có suggestion nào.</p>
         ) : (
           <div className="space-y-3">
-            <div className="overflow-x-auto bg-white border border-gray-200 rounded-lg">
+            <div className="flex gap-1 border-b border-gray-200">
+              {(
+                [
+                  [
+                    "pending",
+                    `Chờ duyệt (${suggestions.summary.pending ?? 0})`,
+                  ],
+                  [
+                    "approved",
+                    `Đã duyệt (${suggestions.summary.approved ?? 0})`,
+                  ],
+                  ["all", "Tất cả"],
+                ] as const
+              ).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => changeFilter(key)}
+                  className={`px-4 py-2 text-sm font-medium -mb-px border-b-2 transition ${
+                    statusFilter === key
+                      ? "border-indigo-600 text-indigo-600"
+                      : "border-transparent text-gray-400 hover:text-gray-600"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-gray-400 border-b border-gray-200">
+                  <tr className="text-left text-xs uppercase text-gray-400 border-b border-gray-200">
                     <th className="px-3 py-2">
                       <input
                         type="checkbox"
                         checked={allSelected}
                         onChange={toggleAll}
-                        className="accent-indigo-600 cursor-pointer"
-                        title="Chọn tất cả"
+                        disabled={selectableFiles.length === 0}
+                        className="accent-indigo-600 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                        title="Chọn tất cả file chờ duyệt"
                       />
                     </th>
                     <th className="px-4 py-2 font-medium">File</th>
@@ -180,11 +245,25 @@ export default function SuggestCard({
                   </tr>
                 </thead>
                 <tbody>
-                  {suggestions.items.map((item) => (
+                  {visibleItems.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="px-4 py-6 text-center text-sm text-gray-400"
+                      >
+                        {statusFilter === "pending"
+                          ? "Không còn item chờ duyệt 🎉"
+                          : "Không có item nào."}
+                      </td>
+                    </tr>
+                  )}
+                  {visibleItems.map((item) => (
                     <tr
                       key={item.file}
-                      className={`border-b border-gray-100 last:border-0 align-top ${
-                        selectedFiles.has(item.file) ? "bg-indigo-50" : ""
+                      className={`border-b border-gray-100 last:border-0 align-top transition ${
+                        item.approval_status === "approved"
+                          ? "opacity-50"
+                          : "hover:bg-gray-50"
                       }`}
                     >
                       <td className="px-3 py-2">
@@ -192,7 +271,13 @@ export default function SuggestCard({
                           type="checkbox"
                           checked={selectedFiles.has(item.file)}
                           onChange={() => toggleFile(item.file)}
-                          className="accent-indigo-600 cursor-pointer"
+                          disabled={item.approval_status !== "pending"}
+                          className="accent-indigo-600 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                          title={
+                            item.approval_status !== "pending"
+                              ? "Đã duyệt — không cần duyệt lại"
+                              : undefined
+                          }
                         />
                       </td>
                       <td className="px-4 py-2 text-gray-700 font-medium max-w-[180px] truncate">
@@ -202,48 +287,61 @@ export default function SuggestCard({
                         <span className="font-medium text-gray-700">
                           {item.final_module ?? item.suggested_module ?? "-"}
                         </span>
-                        {item.approved_module && item.approved_module !== item.suggested_module && (
-                          <span className="text-gray-400 text-xs ml-1">(duyệt: {item.approved_module})</span>
-                        )}
+                        {item.approved_module &&
+                          item.approved_module !== item.suggested_module && (
+                            <span className="text-gray-400 text-xs ml-1">
+                              (duyệt: {item.approved_module})
+                            </span>
+                          )}
                       </td>
                       <td className="px-4 py-2">
                         <div className="text-xs space-y-1.5">
                           <code className="block bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded w-fit">
                             {item.method && (
-                              <span className="text-indigo-500 mr-1">{item.method}</span>
+                              <span className="text-indigo-500 mr-1">
+                                {item.method}
+                              </span>
                             )}
                             {item.endpoint ?? "-"}
                           </code>
                           {item.service_in_doc ? (
                             <div className="flex items-center gap-1 text-gray-500">
                               <span>service:</span>
-                              <span className="font-medium text-gray-700">{item.service_in_doc}</span>
+                              <span className="font-medium text-gray-700">
+                                {item.service_in_doc}
+                              </span>
                               {item.conflict ? (
                                 <span className="text-amber-500 font-medium">
                                   ≠ {item.final_module ?? item.suggested_module}
                                 </span>
                               ) : (
-                                <span className="text-emerald-500 font-medium">✓</span>
+                                <span className="text-emerald-500 font-medium">
+                                  ✓
+                                </span>
                               )}
                             </div>
                           ) : (
-                            <span className="text-gray-400 italic">service không xác định</span>
+                            <span className="text-gray-400 italic">
+                              service không xác định
+                            </span>
                           )}
                         </div>
                       </td>
                       <td className="px-4 py-2">
-                        <span className={`inline-flex whitespace-nowrap px-2 py-0.5 rounded-full text-xs font-medium ${
-                          item.approval_status === "approved"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : item.approval_status === "pending"
-                            ? "bg-amber-100 text-amber-600"
-                            : "bg-gray-100 text-gray-500"
-                        }`}>
+                        <span
+                          className={`inline-flex whitespace-nowrap px-2 py-0.5 rounded-full text-xs font-medium ${
+                            item.approval_status === "approved"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : item.approval_status === "pending"
+                                ? "bg-amber-100 text-amber-600"
+                                : "bg-gray-100 text-gray-500"
+                          }`}
+                        >
                           {item.approval_status === "approved"
                             ? "Đã duyệt"
                             : item.approval_status === "pending"
-                            ? "Chờ duyệt"
-                            : item.approval_status}
+                              ? "Chờ duyệt"
+                              : item.approval_status}
                         </span>
                       </td>
                       <td className="px-4 py-2">
@@ -251,8 +349,16 @@ export default function SuggestCard({
                           type="text"
                           placeholder={item.suggested_module ?? "module"}
                           value={overrideInputs[item.file] ?? ""}
-                          onChange={(e) => onOverrideChange(item.file, e.target.value)}
-                          className="w-28 px-2 py-1 border border-gray-200 rounded text-xs text-gray-700"
+                          onChange={(e) =>
+                            onOverrideChange(item.file, e.target.value)
+                          }
+                          disabled={item.approval_status !== "pending"}
+                          title={
+                            item.approval_status !== "pending"
+                              ? "Đã duyệt — override không còn tác dụng"
+                              : undefined
+                          }
+                          className="w-28 px-2 py-1 border border-gray-200 rounded text-xs text-gray-700 disabled:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       </td>
                     </tr>
@@ -260,16 +366,8 @@ export default function SuggestCard({
                 </tbody>
               </table>
             </div>
-            <p className="text-sm text-gray-400">
-              Tổng: {suggestions.total ?? suggestions.items.length} (
-              {Object.entries(suggestions.summary)
-                .map(([s, c]) => `${s}=${c}`)
-                .join(", ")}
-              )
-            </p>
           </div>
-        )
-      )}
+        ))}
 
       {applyResult && (
         <div className="mt-4 space-y-3">
@@ -278,7 +376,9 @@ export default function SuggestCard({
               Đã apply ({applyResult.applied.length})
             </h3>
             {applyResult.applied.length === 0 ? (
-              <p className="text-sm text-gray-400">Không có file nào được apply.</p>
+              <p className="text-sm text-gray-400">
+                Không có file nào được apply.
+              </p>
             ) : (
               <ul className="space-y-1 max-h-48 overflow-auto">
                 {applyResult.applied.map((a, i) => (
@@ -287,7 +387,9 @@ export default function SuggestCard({
                     className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-700 flex justify-between"
                   >
                     <span className="truncate mr-4">{a.file}</span>
-                    <span className="text-gray-400 shrink-0">{a.module} · {a.action}</span>
+                    <span className="text-gray-400 shrink-0">
+                      {a.module} · {a.action}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -305,7 +407,9 @@ export default function SuggestCard({
                     className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-700 flex justify-between"
                   >
                     <span className="truncate mr-4">{s.file}</span>
-                    <span className="text-gray-400 shrink-0">{s.skip_reason}</span>
+                    <span className="text-gray-400 shrink-0">
+                      {s.skip_reason}
+                    </span>
                   </li>
                 ))}
               </ul>

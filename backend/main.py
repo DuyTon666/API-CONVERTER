@@ -411,6 +411,15 @@ def build_docs():
     return _bundle_lint_build_docs(project_root, do_bundle=True)
 
 
+@app.get("/docs/status")
+def docs_status():
+    """Trạng thái tài liệu hiện tại: bundle và HTML đã tồn tại trên đĩa chưa."""
+    project_root = Path(__file__).parent.parent
+    bundle_path = DIST_DIR / "openapi-bundled.yaml"
+    html_path = project_root / "public" / "api-docs.html"
+    return {"bundle_ready": bundle_path.exists(), "html_ready": html_path.exists()}
+
+
 @app.get("/docs/download-html")
 def download_docs_html():
     project_root = Path(__file__).parent.parent

@@ -84,3 +84,8 @@ export type DocsBuildResult = {
   spectral: SpectralIssue[];
   redocly: RedoclyIssue[];
 };
+
+export type DocsStatus = {
+  bundle_ready: boolean;
+  html_ready: boolean;
+};
