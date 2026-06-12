@@ -1,0 +1,60 @@
+response_modes:
+  json_wrapper:
+    indicators:
+      content_types:
+        - application/json
+      text_keywords:
+        - '"success": true'
+        - '"error": null'
+        - '"data"'
+    schema_ref: "../../components/schemas/common/StandardSuccess.yaml"
+
+  binary_file:
+    indicators:
+      content_types:
+        - application/zip
+        - application/octet-stream
+      text_keywords:
+        - "binary"
+        - "ZIP"
+        - "streamDownload"
+        - "attachment"
+        - "file ZIP"
+        - "download"
+    schema_ref: "../../components/schemas/common/BinaryFile.yaml"
+
+  multi_format:
+    indicators:
+      query_params:
+        - name: format
+      text_keywords:
+        - "format=json"
+        - "format=zip"
+        - "zip (default)"
+        - "trả JSON"
+        - "trả file"
+
+content_type_source_priority:
+  - response_headers
+  - explicit_response_section
+  - query_format_description
+  - api_info_content_type
+  - fallback
+
+response_headers:
+  content_type_header:
+    name: Content-Type
+    map_to: response.content
+    emit_as_header: false
+
+  emit_headers:
+    Content-Disposition:
+      ref: "../../components/headers/ContentDisposition.yaml"
+    Cache-Control:
+      ref: "../../components/headers/CacheControl.yaml"
+    X-Content-Type-Options:
+      ref: "../../components/headers/XContentTypeOptions.yaml"
+
+fallback:
+  default_json_ref: "../../components/schemas/common/StandardSuccess.yaml"
+  default_error_ref: "../../components/schemas/common/StandardError.yaml"

@@ -1,0 +1,12 @@
+path_folder: tickets
+schema_folder: ticket
+default_tag: Ticket
+
+action_names:
+  - close
+  - reopen
+  - ratings
+  - feedback
+  - conversations
+  - support-staffs
+  - change-assignee

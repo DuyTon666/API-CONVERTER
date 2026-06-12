@@ -1,0 +1,14 @@
+# Tool đọc file này để đoán tên folder khi phát hiện module mới.
+# Thứ tự quan trọng — rule đầu tiên khớp sẽ được dùng.
+# Người dùng có thể thêm rule khi gặp trường hợp đặc biệt.
+
+rules:
+  - suffix: "y"
+    replace: "ies"
+  - suffix: "s"
+    replace: "ses"
+  - suffix: "x"
+    replace: "xes"
+  - suffix: "z"
+    replace: "zes"
+  - default: "s"

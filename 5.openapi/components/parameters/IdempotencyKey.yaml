@@ -1,0 +1,7 @@
+name: Idempotency-Key
+in: header
+required: false
+description: Chống double submit. Strongly recommended cho POST/PATCH/DELETE.
+schema:
+  type: string
+  format: uuid

@@ -1,0 +1,19 @@
+# Khai báo rule để post_process replace common fields thành $ref.
+# schema_kind: any/request/response — giới hạn rule chỉ áp dụng cho loại schema nào.
+fields:
+  assignee:
+    match_type: object
+    match_properties: [id, name]
+    schema_kind: any
+    ref: "../common/UserInfo.yaml"
+  owner:
+    match_type: object
+    match_properties: [id, name]
+    schema_kind: any
+    ref: "../common/UserInfo.yaml"
+  files:
+    match_type: array
+    match_item_format: binary
+    schema_kind: response
+    ref_type: array_of
+    ref: "../common/FileAttachment.yaml"

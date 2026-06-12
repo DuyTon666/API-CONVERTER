@@ -1,0 +1,466 @@
+# Rule-based inference cho x-side-effects
+# Tool đọc file này trước, chỉ gọi Claude khi rule không đủ chắc
+
+confidence_thresholds:
+  emit_yaml:    0.75
+  human_review: 0.40
+
+action_verbs:
+  - close
+  - reopen
+  - change
+  - submit
+  - send
+  - resend
+  - activate
+  - deactivate
+  - trigger
+  - cancel
+  - approve
+  - reject
+  - verify
+  - confirm
+  - lock
+  - unlock
+  - open
+
+notification_keywords:
+  - notify
+  - notification
+  - email
+  - sms
+  - push
+  - broadcast
+  - alert
+
+async_keywords:
+  - import
+  - export
+  - sync
+  - process
+  - generate
+  - bulk
+  - batch
+  - queue
+
+severity_map:
+  action_verbs: medium
+  notification_keywords: high
+  async_keywords: low
+# ─── Effect Templates ────────────────────────────────────────────────────────
+# Enricher đọc section này để build effects[] trong x-side-effects
+# {resource} được resolve theo thứ tự:
+#   http_path → filename → operationId → module name → null
+effect_templates:
+
+  action_verbs:
+
+    close:
+      confidence: 0.85
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: closed
+          description: "{resource} chuyển sang trạng thái closed"
+          confirmed: false
+        - type: write
+          trigger: on_success
+          target:
+            entity: "{resource}_history"
+          description: "Ghi lịch sử thao tác {resource}"
+          confirmed: false
+
+    reopen:
+      confidence: 0.85
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: open
+          description: "{resource} chuyển sang trạng thái open"
+          confirmed: false
+        - type: write
+          trigger: on_success
+          target:
+            entity: "{resource}_history"
+          description: "Ghi lịch sử thao tác {resource}"
+          confirmed: false
+
+    change:
+      confidence: 0.75
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: null
+            from: null
+            to: null
+          description: "Thay đổi thuộc tính của {resource}"
+          confirmed: false
+        - type: write
+          trigger: on_success
+          target:
+            entity: "{resource}_history"
+          description: "Ghi lịch sử thay đổi {resource}"
+          confirmed: false
+
+    approve:
+      confidence: 0.85
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: approved
+          description: "{resource} được phê duyệt"
+          confirmed: false
+
+    reject:
+      confidence: 0.85
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: rejected
+          description: "{resource} bị từ chối"
+          confirmed: false
+
+    cancel:
+      confidence: 0.85
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: cancelled
+          description: "{resource} bị huỷ"
+          confirmed: false
+
+    activate:
+      confidence: 0.85
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: active
+          description: "{resource} được kích hoạt"
+          confirmed: false
+
+    deactivate:
+      confidence: 0.80
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: inactive
+          description: "{resource} bị vô hiệu hoá"
+          confirmed: false
+
+    lock:
+      confidence: 0.85
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: locked
+          description: "{resource} bị khoá"
+          confirmed: false
+
+    unlock:
+      confidence: 0.85
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: unlocked
+          description: "{resource} được mở khoá"
+          confirmed: false
+
+    submit:
+      confidence: 0.75
+      effects:
+        - type: write
+          trigger: on_success
+          target:
+            entity: "{resource}"
+          description: "{resource} được ghi nhận / nộp"
+          confirmed: false
+
+    send:
+      confidence: 0.75
+      effects:
+        - type: notification
+          trigger: on_success
+          target:
+            entity: null
+          channel: null
+          description: "Gửi thông báo liên quan đến {resource}"
+          confirmed: false
+
+    resend:
+      confidence: 0.75
+      effects:
+        - type: notification
+          trigger: on_success
+          target:
+            entity: null
+          channel: null
+          description: "Gửi lại thông báo liên quan đến {resource}"
+          confirmed: false
+
+    verify:
+      confidence: 0.75
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: verified
+          description: "{resource} được xác minh"
+          confirmed: false
+
+    confirm:
+      confidence: 0.75
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: confirmed
+          description: "{resource} được xác nhận"
+          confirmed: false
+
+    trigger:
+      confidence: 0.70
+      effects:
+        - type: async_job
+          trigger: on_success
+          target:
+            entity: null
+          description: "Trigger job/workflow liên quan đến {resource}"
+          confirmed: false
+
+    open:
+      confidence: 0.80
+      effects:
+        - type: state_change
+          trigger: on_success
+          target:
+            entity: "{resource}"
+            field: status
+            from: null
+            to: open
+          description: "{resource} được mở"
+          confirmed: false
+
+  notification_keywords:
+
+    email:
+      confidence: 0.90
+      effects:
+        - type: notification
+          trigger: on_success
+          target:
+            entity: null
+          channel: email
+          description: "Gửi email thông báo"
+          confirmed: false
+
+    sms:
+      confidence: 0.90
+      effects:
+        - type: notification
+          trigger: on_success
+          target:
+            entity: null
+          channel: sms
+          description: "Gửi SMS thông báo"
+          confirmed: false
+
+    push:
+      confidence: 0.90
+      effects:
+        - type: notification
+          trigger: on_success
+          target:
+            entity: null
+          channel: push
+          description: "Gửi push notification"
+          confirmed: false
+
+    notify:
+      confidence: 0.80
+      effects:
+        - type: notification
+          trigger: on_success
+          target:
+            entity: null
+          channel: null
+          description: "Gửi thông báo"
+          confirmed: false
+
+    notification:
+      confidence: 0.80
+      effects:
+        - type: notification
+          trigger: on_success
+          target:
+            entity: null
+          channel: null
+          description: "Gửi thông báo"
+          confirmed: false
+
+    broadcast:
+      confidence: 0.80
+      effects:
+        - type: notification
+          trigger: on_success
+          target:
+            entity: null
+          channel: null
+          description: "Broadcast thông báo tới nhiều receiver"
+          confirmed: false
+
+    alert:
+      confidence: 0.75
+      effects:
+        - type: notification
+          trigger: on_success
+          target:
+            entity: null
+          channel: null
+          description: "Gửi alert"
+          confirmed: false
+
+  async_keywords:
+
+    import:
+      confidence: 0.85
+      effects:
+        - type: async_job
+          trigger: on_success
+          target:
+            entity: null
+          description: "Background import job được trigger"
+          confirmed: false
+
+    export:
+      confidence: 0.85
+      effects:
+        - type: async_job
+          trigger: on_success
+          target:
+            entity: null
+          description: "Background export job được trigger"
+          confirmed: false
+
+    sync:
+      confidence: 0.80
+      effects:
+        - type: async_job
+          trigger: on_success
+          target:
+            entity: null
+          description: "Sync job được trigger"
+          confirmed: false
+
+    process:
+      confidence: 0.75
+      effects:
+        - type: async_job
+          trigger: on_success
+          target:
+            entity: null
+          description: "Background processing được trigger"
+          confirmed: false
+
+    generate:
+      confidence: 0.75
+      effects:
+        - type: async_job
+          trigger: on_success
+          target:
+            entity: null
+          description: "Generation job được trigger"
+          confirmed: false
+
+    bulk:
+      confidence: 0.80
+      effects:
+        - type: async_job
+          trigger: on_success
+          target:
+            entity: null
+          description: "Bulk operation được trigger"
+          confirmed: false
+
+    batch:
+      confidence: 0.80
+      effects:
+        - type: async_job
+          trigger: on_success
+          target:
+            entity: null
+          description: "Batch job được trigger"
+          confirmed: false
+
+    queue:
+      confidence: 0.75
+      effects:
+        - type: async_job
+          trigger: on_success
+          target:
+            entity: null
+          description: "Message được đẩy vào queue"
+          confirmed: false
+
+# ─── Resource Vocabulary ─────────────────────────────────────────────────────
+# Danh sách resource hợp lệ trong domain, dùng để normalize kết quả suy luận
+# từ path/filename/operationId. Key = dạng số ít (dùng trong {resource} placeholder).
+resource_vocabulary:
+  ticket:
+    - tickets
+    - ticket
+  service:
+    - services
+    - service
+  department:
+    - departments
+    - department
+  statistic:
+    - statistics
+    - statistic
+  user:
+    - users
+    - user

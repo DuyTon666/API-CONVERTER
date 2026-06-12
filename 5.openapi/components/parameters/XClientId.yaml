@@ -1,0 +1,6 @@
+name: X-Client-Id
+in: header
+required: false
+description: Client identifier dùng cho audit/logging.
+schema:
+  type: string

@@ -1,0 +1,32 @@
+reader:
+  max_scan_rows: 5
+  header_signals:
+    - endpoint
+    - method
+    - mo ta
+
+  column_map:
+    tac gia:       author
+    thuoc service: service
+    group:         group
+    endpoint:      endpoint
+    method:        method
+    mo ta:         summary
+    file:          source_file
+
+parser:
+  valid_methods:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+  
+emitter:
+  output_dir: 5.openapi/paths
+  inventory_map_path: 3.build/reports/inventory_map.json
+
+pipeline:
+  excel_file: 1.docs/inventory/API-excel.xlsx
+  source_api_contract_dir: 1.docs/source/api_contract
+  source_doc_process_dir: 1.docs/source/doc_process

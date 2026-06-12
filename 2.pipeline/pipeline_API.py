@@ -12,6 +12,7 @@ sys.path.insert(0, "2.pipeline")
 from converters.docx.reader import read_docx, read_text
 from converters.pdf.reader import read_pdf
 from converters.docx.parser import parse_text
+from import_flow.scanner import normalize_http_path
 
 from enrichers.llm_enricher import enrich
 from generator.emitter import (
@@ -234,13 +235,18 @@ def run_batch(
     module: str,
     output_dir: str | None = None,
     schemas_dir: str | None = None,
-) -> None:
+    files_override: list[Path] | None = None,
+) -> int:
+
     input_path = Path(input_dir)
 
     output_path = Path(output_dir) if output_dir else Path("5.openapi/paths") / module
     schemas_path = Path(schemas_dir) if schemas_dir else Path("5.openapi/components/schemas") / module
 
-    files = _supported_files(input_path)
+    if files_override is not None:
+        files = [Path(p) for p in files_override]
+    else:
+        files = _supported_files(input_path)
 
     print(f"Tìm thấy {len(files)} file API Contract (.pdf/.docx/.txt/.md)")
     print(f"Module user chọn: {module}")
@@ -267,6 +273,8 @@ def run_batch(
     skipped = []
     errors = []
     needs_review = []
+    seen_endpoints: dict[str, str] = {}
+    output_collisions = []
 
     for file_path in files:
         print(f"==={file_path.name}===")
@@ -329,6 +337,8 @@ def run_batch(
                 "file": file_path.name,
                 "path": str(file_path),
                 "output": str(out),
+                "method": (getattr(op, "method", "") or "").lower(),
+                "http_path": normalize_http_path(getattr(op, "path", "") or ""),
                 "version": getattr(op, "version", ""),
                 "change_history": getattr(op, "change_history", []),
                 "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -344,6 +354,24 @@ def run_batch(
             }
 
             save_versions(versions)
+
+            _ep_method = (getattr(op, "method", "") or "").lower()
+            _ep_path   = normalize_http_path(getattr(op, "path", "") or "")
+            _ep_key    = f"{_ep_method}:{_ep_path}"
+
+            if _ep_key in seen_endpoints:
+                print(
+                    f"  [WARN] output collision: '{_ep_key}' "
+                    f"đã có từ '{seen_endpoints[_ep_key]}'"
+                )
+                output_collisions.append({
+                    "endpoint_key": _ep_key,
+                    "first_file": seen_endpoints[_ep_key],
+                    "second_file": file_path.name,
+                    "output": str(out),
+                })
+            else:
+                seen_endpoints[_ep_key] = file_path.name
 
             success_files.append({
                 "file":                 file_path.name,
@@ -366,6 +394,8 @@ def run_batch(
                 "file":             file_path.name,
                 "path":             str(file_path),
                 "output":           str(out),
+                "method": (getattr(op, "method", "") or "").lower(),
+                "http_path": normalize_http_path(getattr(op, "path", "") or ""),
                 "status":           "success",
                 "old_version":      old_version,
                 "new_version":      getattr(op, "version", ""),
@@ -414,6 +444,11 @@ def run_batch(
         queue.extend(needs_review)
         save_review_queue(queue)
 
+    if success_files:
+        print("\n[post_process] Tagging readOnly + replacing $ref...")
+        from post_process.run import run as post_process_run
+        post_process_run(str(schemas_path))
+
     log_path = write_batch_log(
         module=module,
         source_format="mixed",
@@ -429,6 +464,7 @@ def run_batch(
             "errors": errors,
             "needs_review": needs_review,
             "review_actions": review_actions,
+            "output_collisions": output_collisions,
         },
     )
 
@@ -439,7 +475,7 @@ def run_batch(
         f"skipped={len(skipped)}"
     )
     print(f"Batch log: {log_path}")
-
+    return len(success_files)
 
 def main():
     parser = argparse.ArgumentParser(

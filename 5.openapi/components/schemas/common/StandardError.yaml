@@ -1,11 +1,12 @@
-# StandardError được sử dụng cho tất cả response.
 type: object
+description: Standard error response wrapper.
 required:
   - success
   - error
 properties:
   success:
     type: boolean
+    const: false
     example: false
   error:
     type: object
@@ -15,15 +16,14 @@ properties:
     properties:
       code:
         type: integer
-        description: >-
-          Mã lỗi nội bộ của hệ thống:
-          4102: Token không hợp lệ hoặc đã hết hạn
-          4108: Không có quyền truy cập
-          4004: Không tìm thấy dữ liệu
-          4200: Dữ liệu không hợp lệ
+        description: Internal application error code.
         example: 4200
       message:
         type: string
-        example: "Dữ liệu không hợp lệ"
+        description: Human-readable error message.
+        example: Dữ liệu không hợp lệ
       data:
-        type: ["object", "null"]
+        type:
+          - object
+          - "null"
+        description: Optional error detail payload.
