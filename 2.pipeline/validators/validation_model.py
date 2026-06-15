@@ -73,4 +73,5 @@ class ValidationResult:
 
     def dedup_key(self) -> tuple[str, str, str]:
         """Key để kiểm tra duplicate: (type, module, file)."""
-        return (self.type, self.module, self.file)
+        extra = self.detail.get("section", "") if self.type == "section_not_detected" else ""
+        return (self.type, self.module, self.file, extra)

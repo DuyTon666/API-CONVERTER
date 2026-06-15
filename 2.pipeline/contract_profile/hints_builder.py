@@ -10,6 +10,13 @@ from contract_profile.response_mode_detector import (
     detect_response_headers,
     detect_response_modes,
 )
+from validators.validation_model import (
+    ValidationResult,
+    SEVERITY_LOW,
+    SOURCE_RULE_BASED,
+    FIX_MANUAL,
+)
+from validators.review_engine import ReviewEngine
 from contract_profile.header_detector import detect_request_headers
 from contract_profile.status_detector import detect_status_codes
 
@@ -51,7 +58,7 @@ def _build_actions(
     return sorted(set(actions))
 
 
-def build_contract_hints(path: str | Path) -> dict:
+def build_contract_hints(path: str | Path, module: str = "unknown", emit_to_queue: bool = True) -> dict:
     path = Path(path)
     config = load_contract_profile()
     text = read_document(path)
@@ -78,7 +85,7 @@ def build_contract_hints(path: str | Path) -> dict:
         status_codes=status_codes,
     )
 
-    return {
+    result = {
         "source_file": str(path),
         "source_format": path.suffix.lower().lstrip("."),
         "text_length": len(text),
@@ -101,3 +108,35 @@ def build_contract_hints(path: str | Path) -> dict:
         "query_enum_candidates": enum_candidates,
         "actions": actions,
     }
+
+    if emit_to_queue:
+        sections_cfg = config.get("section_aliases", {}).get("sections", {})
+        missed = [
+            name for name, info in sections.items()
+            if not info.get("found", False)
+            and sections_cfg.get(name, {}).get("required", False)
+        ]
+        if missed:
+            reviewer = ReviewEngine()
+            reviewer.load()
+            for section_name in missed:
+                result = ValidationResult(
+                    type            = "section_not_detected",
+                    severity        = SEVERITY_LOW,
+                    confidence      = 1.0,
+                    source          = SOURCE_RULE_BASED,
+                    fix_strategy    = FIX_MANUAL,                    
+                    review_required = True,
+                    module          = module,
+                    file            = Path(path).name,
+                    output          = str(path),
+                    detail          = {
+                        "section":    section_name,
+                        "reason":      "Không tìm thấy allias khớp trong tài liệu",
+                        "suggestion": f"Thêm alias Việt/Anh cho section '{section_name}'"
+                    },
+                )
+                reviewer.add(result)
+            reviewer.save()
+            print(f"[hints_builder] {len(missed)} section không detect được → ghi queue.")
+    return result

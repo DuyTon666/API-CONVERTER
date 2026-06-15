@@ -14,6 +14,7 @@ from converters.pdf.reader import read_pdf
 from converters.docx.parser import parse_text
 from import_flow.scanner import normalize_http_path
 
+
 from enrichers.llm_enricher import enrich
 from generator.emitter import (
     emit_yaml,
@@ -26,8 +27,8 @@ from utils.report_store import (
     load_versions,
     save_versions,
     append_version_history,
-    load_review_queue,
-    save_review_queue,
+    load_convert_review_queue,
+    save_convert_review_queue,
     write_batch_log,
 )
 
@@ -440,9 +441,9 @@ def run_batch(
             print()
 
     if needs_review:
-        queue = load_review_queue()
+        queue = load_convert_review_queue()
         queue.extend(needs_review)
-        save_review_queue(queue)
+        save_convert_review_queue(queue)
 
     if success_files:
         print("\n[post_process] Tagging readOnly + replacing $ref...")
