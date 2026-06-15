@@ -12,7 +12,7 @@ modules:
     deprecated_by: null
     file_count: 1
     endpoint_count: 8
-    last_import_at: '2026-06-12T16:45:42'
+    last_import_at: '2026-06-15T11:23:39'
     last_import_status: success
     notes: null
   service:
@@ -28,7 +28,7 @@ modules:
     deprecated_by: null
     file_count: 1
     endpoint_count: 6
-    last_import_at: '2026-06-12T16:45:28'
+    last_import_at: '2026-06-15T11:23:25'
     last_import_status: success
     notes: null
   department:
@@ -44,7 +44,7 @@ modules:
     deprecated_by: null
     file_count: 1
     endpoint_count: 1
-    last_import_at: '2026-06-12T16:45:26'
+    last_import_at: '2026-06-15T11:23:23'
     last_import_status: success
     notes: null
   statistic:
@@ -60,6 +60,6 @@ modules:
     deprecated_by: null
     file_count: 1
     endpoint_count: 1
-    last_import_at: '2026-06-12T16:45:41'
+    last_import_at: '2026-06-15T11:23:38'
     last_import_status: success
     notes: null

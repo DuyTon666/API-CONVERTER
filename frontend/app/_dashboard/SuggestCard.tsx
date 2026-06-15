@@ -260,11 +260,7 @@ export default function SuggestCard({
                   {visibleItems.map((item) => (
                     <tr
                       key={item.file}
-                      className={`border-b border-gray-100 last:border-0 align-top transition ${
-                        item.approval_status === "approved"
-                          ? "opacity-50"
-                          : "hover:bg-gray-50"
-                      }`}
+                      className="border-b border-gray-100 last:border-0 align-top transition hover:bg-gray-50"
                     >
                       <td className="px-3 py-2">
                         <input

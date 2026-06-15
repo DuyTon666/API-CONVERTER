@@ -70,7 +70,7 @@ export default function SwaggerDocsCard({
               disabled={docsBuilding || relinting}
               className="px-3 py-1.5 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
             >
-              {docsBuilding ? "Đang build..." : "Build lại từ 5.openapi/"}
+              {docsBuilding ? "Đang build..." : "Tạo lại tài liệu"}
             </button>
           </>
         ) : (

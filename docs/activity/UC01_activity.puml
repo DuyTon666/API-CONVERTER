@@ -1,0 +1,47 @@
+@startuml UC01_QuanLyTaiLieuDauVao
+skinparam ActivityBackgroundColor #F8FAFC
+skinparam ActivityBorderColor #94A3B8
+skinparam ArrowColor #64748B
+skinparam ActivityDiamondBackgroundColor #FEF9C3
+skinparam ActivityStartColor #4F46E5
+skinparam ActivityEndColor #4F46E5
+skinparam SwimlaneBorderColor #CBD5E1
+skinparam SwimlaneBackgroundColor #FFFFFF
+
+title UC01 — Quản lý tài liệu đầu vào
+
+|Người dùng|
+start
+:Kéo thả hoặc chọn file\n(PDF / DOCX / TXT);
+
+|Hệ thống|
+if (Định dạng hợp lệ?) then (Không)
+  :Hiển thị lỗi\n"Định dạng không hỗ trợ";
+  stop
+else (Có)
+endif
+
+if (File đã tồn tại?) then (Có)
+  :Ghi đè file cũ;
+else (Không)
+endif
+
+:Lưu file vào\n1.docs/source/api_contract/;
+:Hiển thị danh sách file\nkèm tên và dung lượng;
+
+|Người dùng|
+:Bấm "Quét nguồn dữ liệu";
+
+|Hệ thống|
+if (Backend phản hồi?) then (Không)
+  :Hiển thị lỗi kết nối;
+  stop
+else (Có)
+endif
+
+:Quét toàn bộ thư mục nguồn;
+:Phân loại file:\ntrong module folder / chưa gán module;
+:Hiển thị danh sách module folders\nvà file chưa gán lên giao diện;
+
+stop
+@enduml
