@@ -93,3 +93,18 @@ modules:
       reason: noun indicating a collection of services belonging to a user
       classified_by: claude
       classified_at: '2026-06-11'
+  order:
+    action_segments:
+    - segment: download-order-certificate
+      confidence: 0.85
+      reason: download-order-certificate is a verb phrase starting with 'download',
+        indicating a download operation/action rather than a resource entity
+      classified_by: claude
+      classified_at: '2026-06-12'
+    - segment: download
+      confidence: 0.97
+      reason: '''download'' is a verb indicating an operation to retrieve/download
+        the certificate file'
+      classified_by: claude
+      classified_at: '2026-06-16'
+    resource_segments: []

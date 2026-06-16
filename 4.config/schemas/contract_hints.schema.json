@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "contract_hints.schema.json",
+  "title": "Contract Profile Hints",
+  "description": "Schema chuẩn hóa output của hints_builder — tầng trung gian giữa detector và emitter.",
+  "type": "object",
+  "required": ["source_file", "source_format", "actions"],
+  "properties": {
+    "source_file": {
+      "type": "string",
+      "description": "Absolute path đến file tài liệu nguồn (docx/pdf/...)"
+    },
+    "source_format": {
+      "type": "string",
+      "enum": ["docx", "pdf", "txt", "md"],
+      "description": "Format của file nguồn"
+    },
+    "text_length": {
+      "type": "integer",
+      "description": "Số ký tự text đọc được từ file nguồn"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "failed"],
+      "description": "Trạng thái build hints"
+    },
+    "actions": {
+      "type": "array",
+      "description": "Danh sách action patcher sẽ thực hiện trên YAML đích",
+      "items": {
+        "type": "string",
+        "enum": [
+          "add_binary_response",
+          "add_conflict_response",
+          "add_request_headers",
+          "add_response_headers",
+          "ensure_zip_and_json_200_response",
+          "fix_query_enum",
+          "handle_multi_format_response"
+        ]
+      }
+    },
+    "response_contract": {
+      "type": "object",
+      "properties": {
+        "content_types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Danh sách content-type detect được trong response"
+        },
+        "response_headers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Tên các response header detect được"
+        },
+        "response_modes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["mode", "reasons"],
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": ["json_wrapper", "binary_file", "multi_format", "plain_json", "empty"]
+              },
+              "schema_ref": {
+                "type": ["string", "null"],
+                "description": "$ref đến component schema tương ứng"
+              },
+              "reasons": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Lý do detect — keyword/content_type/query_param"
+              }
+            }
+          }
+        }
+      }
+    },
+    "request_contract": {
+      "type": "object",
+      "properties": {
+        "request_headers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "emit"],
+            "properties": {
+              "name":       { "type": "string" },
+              "emit":       { "type": "boolean" },
+              "ref":        { "type": "string" },
+              "handled_by": { "type": "string" },
+              "reason":     { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "error_contract": {
+      "type": "object",
+      "properties": {
+        "status_codes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["status", "ref"],
+            "properties": {
+              "status": { "type": "string" },
+              "ref":    { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "query_enum_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["param", "values", "confidence"],
+        "properties": {
+          "param":      { "type": "string" },
+          "values":     { "type": "array", "items": { "type": "string" } },
+          "default":    { "type": "string" },
+          "source":     { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    }
+  }
+}

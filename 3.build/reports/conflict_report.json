@@ -1,55 +1,14 @@
 {
-  "timestamp": "2026-06-12T17:18:45",
+  "timestamp": "2026-06-16T14:48:48",
   "summary": {
-    "total_conflicts": 2,
+    "total_conflicts": 1,
     "duplicate_import": 1,
-    "endpoint_collision": 1,
+    "endpoint_collision": 0,
     "output_collision": 0,
     "auto_resolvable": 1,
-    "requires_review": 1
+    "requires_review": 0
   },
   "conflicts": [
-    {
-      "conflict_id": "order_get_v1_orders__certificates__download",
-      "conflict_type": "endpoint_collision",
-      "severity": "medium",
-      "module": "order",
-      "method": "get",
-      "path": "/v1/orders/{}/certificates/{}/download",
-      "outputs": [
-        "5.openapi/paths/order/list_download.yaml",
-        "5.openapi/paths/order/download_order_certificate.yaml"
-      ],
-      "sources": [
-        {
-          "file": "API_cert_download.docx",
-          "path": "1.docs/source/api_contract/order/API_cert_download.docx",
-          "source_format": "docx",
-          "version": "1.0",
-          "output": "5.openapi/paths/order/list_download.yaml",
-          "module": "order",
-          "method": "get",
-          "http_path": "/v1/orders/{}/certificates/{}/download"
-        },
-        {
-          "file": "API_cert_download.docx",
-          "path": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/1.docs/source/api_contract/order/API_cert_download.docx",
-          "source_format": "docx",
-          "version": "1.0",
-          "output": "5.openapi/paths/order/download_order_certificate.yaml",
-          "module": "order",
-          "method": "get",
-          "http_path": "/v1/orders/{}/certificates/{}/download"
-        }
-      ],
-      "confidence_score": 1.0,
-      "suggested_winner": "API_cert_download.docx",
-      "reason": [
-        "same version"
-      ],
-      "requires_review": true,
-      "recommended_action": "review_suggested_winner"
-    },
     {
       "conflict_id": "dup_api_cert_download",
       "conflict_type": "duplicate_import",
@@ -61,7 +20,7 @@
           "path": "1.docs/source/api_contract/order/API_cert_download.docx",
           "source_format": "docx",
           "version": "1.0",
-          "output": "5.openapi/paths/order/list_download.yaml",
+          "output": "5.openapi/paths/order/download_order_certificate.yaml",
           "module": "order",
           "method": "get",
           "http_path": "/v1/orders/{}/certificates/{}/download"

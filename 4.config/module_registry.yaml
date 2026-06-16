@@ -15,7 +15,7 @@ modules:
     selected_files_count: 11
     skipped_duplicate_count: 8
     endpoint_count: 11
-    last_import_at: '2026-06-12T17:17:43'
+    last_import_at: '2026-06-16T14:48:31'
     last_import_status: success
     notes: null
   service:
@@ -34,7 +34,7 @@ modules:
     selected_files_count: 6
     skipped_duplicate_count: 0
     endpoint_count: 6
-    last_import_at: '2026-06-12T17:16:25'
+    last_import_at: '2026-06-16T14:48:02'
     last_import_status: success
     notes: null
   department:
@@ -53,7 +53,7 @@ modules:
     selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
-    last_import_at: '2026-06-12T17:16:12'
+    last_import_at: '2026-06-16T14:47:53'
     last_import_status: success
     notes: null
   statistic:
@@ -72,7 +72,7 @@ modules:
     selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
-    last_import_at: '2026-06-12T17:17:32'
+    last_import_at: '2026-06-16T14:48:28'
     last_import_status: success
     notes: null
   order:
@@ -91,6 +91,6 @@ modules:
     selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
-    last_import_at: '2026-06-12T17:16:21'
+    last_import_at: '2026-06-16T14:47:56'
     last_import_status: success
     notes: null
