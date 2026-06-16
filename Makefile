@@ -7,7 +7,7 @@ PYTHON      := python3
 VENV        := .venv
 PIP         := $(VENV)/bin/pip
 PY          := $(VENV)/bin/python
-PIPELINE    := 2.pipeline/pipeline_Ticket.py
+PIPELINE    := 2.pipeline/pipeline_DOCX.py
 
 .PHONY: help setup install env check \
         scan approve run-single run-batch run-module \
@@ -57,30 +57,30 @@ check:
 
 # ── Chạy pipeline ─────────────────────────────────────────
 scan:
-	cd 2.pipeline && $(PY) pipeline_Ticket.py --scan
+	cd 2.pipeline && $(PY) pipeline_DOCX.py --scan
 
 approve:
 	@test -n "$(m)" || (echo "Dùng: make approve m=<module>" && exit 1)
-	cd 2.pipeline && $(PY) pipeline_Ticket.py --approve $(m) --approved-by "$(by)"
+	cd 2.pipeline && $(PY) pipeline_DOCX.py --approve $(m) --approved-by "$(by)"
 
 # make run-module m=ticket
 # make run-module m=ticket mode=bootstrap
 mode ?= strict
 run-module:
 	@test -n "$(m)" || (echo "Dùng: make run-module m=<module>" && exit 1)
-	cd 2.pipeline && $(PY) pipeline_Ticket.py --module $(m) --mode $(mode)
+	cd 2.pipeline && $(PY) pipeline_DOCX.py --module $(m) --mode $(mode)
 
 # make run-batch in=1.docs/source/ticket out=5.openapi/paths/tickets
 run-batch:
 	@test -n "$(in)" || (echo "Dùng: make run-batch in=<dir> out=<dir>" && exit 1)
 	@test -n "$(out)" || (echo "Dùng: make run-batch in=<dir> out=<dir>" && exit 1)
-	cd 2.pipeline && $(PY) pipeline_Ticket.py --batch ../$(in) ../$(out)
+	cd 2.pipeline && $(PY) pipeline_DOCX.py --batch ../$(in) ../$(out)
 
 # make run-single in=1.docs/source/ticket/create.docx out=5.openapi/paths/tickets/create.yaml
 run-single:
 	@test -n "$(in)" || (echo "Dùng: make run-single in=<file> out=<file>" && exit 1)
 	@test -n "$(out)" || (echo "Dùng: make run-single in=<file> out=<file>" && exit 1)
-	cd 2.pipeline && $(PY) pipeline_Ticket.py ../$(in) ../$(out)
+	cd 2.pipeline && $(PY) pipeline_DOCX.py ../$(in) ../$(out)
 
 # ── Test ──────────────────────────────────────────────────
 test:

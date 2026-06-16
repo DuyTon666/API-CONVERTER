@@ -2,8 +2,6 @@ node_modules/
 
 backend/venv
 
-backend/__pycache__
-
 1.docs/source/api_contract/
 
 3.build/reports/

@@ -1,0 +1,44 @@
+@startuml UC08_EnrichMetadataAPI
+skinparam ActivityBackgroundColor #F8FAFC
+skinparam ActivityBorderColor #94A3B8
+skinparam ArrowColor #64748B
+skinparam ActivityDiamondBackgroundColor #FEF9C3
+skinparam ActivityStartColor #4F46E5
+skinparam ActivityEndColor #4F46E5
+
+title UC08 — Enrich metadata API (Claude AI)
+
+|Pipeline|
+start
+if (ANTHROPIC_API_KEY\nđã cấu hình?) then (Không)
+  :Fallback: sinh operationId\ntheo rule-based (method + path)\nĐánh dấu vào human_review_queue;
+  stop
+else (Có)
+endif
+
+:Gửi ParsedOperation lên Claude API\n(method, path, parameters,\nrequest/response body);
+
+|Claude AI|
+if (Claude API phản hồi?) then (Không)
+  |Pipeline|
+  :Fallback: sinh operationId\ntheo rule-based\nĐánh dấu vào human_review_queue;
+  stop
+else (Có)
+endif
+
+:Phân tích ngữ nghĩa endpoint;
+:Sinh summary\n(mô tả ngắn tiếng Việt);
+:Sinh operationId\n(camelCase, bắt đầu bằng động từ\nvd: listTickets, createUser);
+:Sinh description\n(mô tả chi tiết tiếng Việt);
+
+|Pipeline|
+if (Response đúng định dạng?) then (Không)
+  :Fallback: rule-based operationId\nĐánh dấu vào human_review_queue;
+  stop
+else (Có)
+endif
+
+:Gắn summary, operationId, description\nvào ParsedOperation;
+
+stop
+@enduml

@@ -1,0 +1,53 @@
+@startuml UC04_ImportModule
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title UC04 — Import module
+
+actor "Người dùng" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "Pipeline" as PL
+participant "Claude AI" as AI
+
+User -> FE: Bấm "Import module"
+FE -> BE: POST /modules/import\n{ module: "<name>" }
+
+alt Không có module active
+  BE --> FE: 400 Bad Request
+  FE --> User: Hiển thị lỗi
+else Module hợp lệ
+  BE --> FE: 200 OK { job_id }
+  FE -> BE: GET /modules/import/{job_id}/stream\n(SSE)
+  BE -> PL: run_batch(module)
+end
+
+loop Với từng file trong module
+  alt File chưa thay đổi (hash trùng)
+    PL -> PL: Bỏ qua (skipped)
+  else File mới hoặc thay đổi
+    PL -> PL: Parse file → ParsedOperation
+    alt Parse thất bại
+      PL -> PL: Đánh dấu "error"
+    else Parse thành công
+      PL -> AI: Enrich metadata\n(method, path, body)
+      alt Claude AI thành công
+        AI --> PL: { summary, operationId, description }
+      else Claude AI thất bại
+        AI --> PL: Fallback rule-based operationId\nĐánh dấu cần review
+      end
+      PL -> PL: Generate YAML\n→ Post-process
+    end
+  end
+end
+
+PL --> BE: Module done\n{ success, failed, skipped, needs_review }
+BE --> FE: SSE: { name, status, total,\nsuccess, failed, skipped }
+FE --> User: Cập nhật tiến trình
+
+BE --> FE: SSE: { event: "done" }
+FE --> User: Import hoàn thành
+
+@enduml

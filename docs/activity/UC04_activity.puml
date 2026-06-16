@@ -1,0 +1,50 @@
+@startuml UC04_ImportModule
+skinparam ActivityBackgroundColor #F8FAFC
+skinparam ActivityBorderColor #94A3B8
+skinparam ArrowColor #64748B
+skinparam ActivityDiamondBackgroundColor #FEF9C3
+skinparam ActivityStartColor #4F46E5
+skinparam ActivityEndColor #4F46E5
+
+title UC04 — Import module
+
+|Người dùng|
+start
+:Bấm "Import tất cả"\nhoặc "Import" module cụ thể;
+
+|Hệ thống|
+if (Có module active?) then (Không)
+  :Nút Import bị disable;
+  stop
+else (Có)
+endif
+
+:Lấy danh sách file thuộc module;
+
+while (Còn file chưa xử lý?) is (Có)
+  if (Hash file thay đổi?) then (Không)
+    :Bỏ qua file (skipped);
+  else (Có)
+    :Parse file tài liệu\n→ ParsedOperation;
+    if (Parse thành công?) then (Không)
+      :Ghi lỗi batch_log.json\nĐánh dấu file "error";
+    else (Có)
+      if (Claude AI phản hồi?) then (Không)
+        :Fallback: sinh operationId\nrule-based (method + path)\nĐánh dấu vào human_review_queue;
+      else (Có)
+        :Sinh summary / operationId\n/ description (tiếng Việt);
+        :Generate OpenAPI YAML;
+        :Post-process:\nreadOnly tag + thay thế $ref;
+      endif
+    endif
+  endif
+  :Phát SSE event cập nhật tiến trình;
+endwhile (Không)
+
+:Phát SSE event "done"\nHiển thị tổng kết;
+
+|Người dùng|
+:Xem kết quả\n(thành công / lỗi / bỏ qua);
+
+stop
+@enduml
