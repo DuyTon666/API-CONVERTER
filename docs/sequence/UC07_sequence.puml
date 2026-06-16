@@ -1,0 +1,37 @@
+@startuml UC07_XemTaiLieuAPI
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title UC07 — Xem tài liệu API
+
+actor "Người dùng" as User
+participant "Frontend\n(Swagger UI + Fuse.js)" as FE
+participant "Backend" as BE
+participant "File System" as FS
+
+User -> FE: Truy cập trang /swagger
+FE -> BE: GET /bundle-content
+
+alt Bundle chưa tồn tại
+  BE --> FE: 404 Not Found
+  FE --> User: Hiển thị "Chưa có tài liệu\nHãy build trước"
+else Bundle tồn tại
+  BE -> FS: Đọc dist/openapi-bundled.yaml
+  FS --> BE: YAML content
+  BE --> FE: YAML content
+  FE -> FE: Khởi tạo Swagger UI\nvới Fuse.js plugin
+  FE --> User: Render danh sách endpoint\n(method, path, summary, description)
+end
+
+opt Người dùng tìm kiếm
+  User -> FE: Nhập từ khóa vào ô search
+  FE -> FE: Fuse.js fuzzy search\n(operationId, path, summary, description)
+  FE --> User: Hiển thị kết quả\ntheo độ liên quan
+end
+
+User -> FE: Bấm vào endpoint
+FE --> User: Mở rộng chi tiết:\nparameters, request body,\nresponse schema, error codes
+
+@enduml

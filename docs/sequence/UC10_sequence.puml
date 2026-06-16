@@ -1,0 +1,27 @@
+@startuml UC10_LintOpenAPI
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title UC10 — Lint bundle theo chuẩn OpenAPI (Redocly)
+
+participant "Backend" as BE
+participant "Redocly CLI" as Redocly
+participant "File System" as FS
+
+BE -> Redocly: subprocess.run(\n"redocly lint dist/openapi-bundled.yaml"\n)
+
+Redocly -> FS: Đọc dist/openapi-bundled.yaml
+FS --> Redocly: YAML content
+
+alt YAML không parse được
+  Redocly --> BE: exit 1\n{ error: "Parse error" }
+  BE -> BE: Ghi nhận lỗi parse\nHiển thị lỗi tổng quát
+else YAML hợp lệ
+  Redocly -> Redocly: Kiểm tra cấu trúc\ntheo OpenAPI 3.1 spec
+  Redocly --> BE: issues[]\n{ ruleId, message,\n  severity: "error"/"warning" }
+  BE -> BE: Tổng hợp kết quả\nTrả về cho frontend
+end
+
+@enduml

@@ -53,6 +53,8 @@ export default function Home() {
 
   const [activatingModule, setActivatingModule] = useState<string | null>(null);
   const [activateError, setActivateError] = useState("");
+  const [deactivatingModule, setDeactivatingModule] = useState<string | null>(null);
+  const [deactivateError, setDeactivateError] = useState("");
 
   const [importRunning, setImportRunning] = useState(false);
   const [importTarget, setImportTarget] = useState<string | null>(null);
@@ -70,6 +72,8 @@ export default function Home() {
   const [bundleContent, setBundleContent] = useState<string | null>(null);
   const [savingBundle, setSavingBundle] = useState(false);
   const [relinting, setRelinting] = useState(false);
+  
+  const [uploadDomain, setUploadDomain] = useState("");
 
   const fetchScan = () => {
     return fetch(`${backend}/modules/scan`)
@@ -158,10 +162,9 @@ export default function Home() {
     const form = new FormData();
     uploadFiles.forEach((f) => form.append("files", f));
     try {
-      const res = await fetch(`${backend}/source/upload`, {
-        method: "POST",
-        body: form,
-      });
+      const url = `${backend}/jobs?domain=${encodeURIComponent(uploadDomain)}`;
+      const res = await fetch(url, { method: "POST", body: form });
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ?? "Lỗi upload");
       setUploadMessage(
@@ -271,6 +274,24 @@ export default function Home() {
       );
     } finally {
       setApplying(false);
+    }
+  };
+
+  const handleDeactivate = async (name: string) => {
+    setDeactivatingModule(name);
+    setDeactivateError("");
+    try {
+      const res = await fetch(
+        `${backend}/modules/${encodeURIComponent(name)}/deactivate`,
+        { method: "POST" },
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi deactivate module");
+      setModuleList(data);
+    } catch (e: unknown) {
+      setDeactivateError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+    } finally {
+      setDeactivatingModule(null);
     }
   };
 
@@ -518,7 +539,7 @@ export default function Home() {
                 value: activeModules,
                 tone: "success",
                 loading: modulesLoading,
-              },
+                },
               {
                 label: "Module draft",
                 value: draftModules,
@@ -549,6 +570,9 @@ export default function Home() {
                   uploading={uploading}
                   error={uploadError}
                   message={uploadMessage}
+                  domain={uploadDomain}
+                  moduleOptions={moduleList?.modules.map((m) => m.name) ?? []}
+                  onDomainChange={setUploadDomain}
                   onSelectFiles={handleSelectFiles}
                   onRemoveFile={handleRemoveUploadFile}
                   onUpload={handleUpload}
@@ -607,6 +631,9 @@ export default function Home() {
                   activatingModule={activatingModule}
                   activateError={activateError}
                   onActivate={handleActivate}
+                  deactivatingModule={deactivatingModule}
+                  deactivateError={deactivateError}
+                  onDeactivate={handleDeactivate}
                   importRunning={importRunning}
                   importTarget={importTarget}
                   importModules={importModules}

@@ -2,45 +2,45 @@
 
 ## Danh sách UC
 
-| STT | UC | Actor |
-|---|---|---|
-| UC01 | Quản lý tài liệu đầu vào | Người dùng |
-| UC02 | Phân loại file vào module | Người dùng |
-| UC03 | Quản lý module registry | Người dùng |
-| UC04 | Import module | Người dùng |
-| UC05 | Kiểm duyệt & xuất YAML | Người dùng |
-| UC06 | Build & xuất bản tài liệu | Người dùng |
-| UC07 | Xem tài liệu API | Người dùng |
-| UC08 | Enrich metadata API | Claude AI |
-| UC09 | Bundle toàn bộ YAML thành 1 file | Redocly / Spectral |
-| UC10 | Lint bundle theo chuẩn OpenAPI | Redocly / Spectral |
+| STT  | UC                                | Actor              |
+| ---- | --------------------------------- | ------------------ |
+| UC01 | Quản lý tài liệu đầu vào          | Người dùng         |
+| UC02 | Phân loại file vào module         | Người dùng         |
+| UC03 | Quản lý module registry           | Người dùng         |
+| UC04 | Import module                     | Người dùng         |
+| UC05 | Kiểm duyệt & xuất YAML            | Người dùng         |
+| UC06 | Build & xuất bản tài liệu         | Người dùng         |
+| UC07 | Xem tài liệu API                  | Người dùng         |
+| UC08 | Enrich metadata API               | Claude AI          |
+| UC09 | Bundle toàn bộ YAML thành 1 file  | Redocly / Spectral |
+| UC10 | Lint bundle theo chuẩn OpenAPI    | Redocly / Spectral |
 | UC11 | Lint bundle theo governance rules | Redocly / Spectral |
 
 ---
 
 ## UC01 — Quản lý tài liệu đầu vào
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC01 |
-| **Tên UC** | Quản lý tài liệu đầu vào |
-| **Tác nhân chính** | Người dùng (BA / Developer) |
-| **Mô tả** | Người dùng tải tài liệu đặc tả API lên hệ thống và quét thư mục nguồn để phát hiện các file mới chưa được xử lý |
-| **Điều kiện tiên quyết** | Người dùng đã truy cập vào dashboard. Hệ thống backend đang chạy |
-| **Điều kiện hậu** | File được lưu vào thư mục `1.docs/source/api_contract/`. Danh sách file và module hiển thị cập nhật trên giao diện |
+| Trường                   | Nội dung                                                                                                           |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| **Mã UC**                | UC01                                                                                                               |
+| **Tên UC**               | Quản lý tài liệu đầu vào                                                                                           |
+| **Tác nhân chính**       | Người dùng                                                                                                         |
+| **Mô tả**                | Người dùng tải tài liệu đặc tả API lên hệ thống và quét thư mục nguồn để phát hiện các file mới chưa được xử lý    |
+| **Điều kiện tiên quyết** | Người dùng đã truy cập vào dashboard. Hệ thống backend đang chạy                                                   |
+| **Điều kiện hậu**        | File được lưu vào thư mục `1.docs/source/api_contract/`. Danh sách file và module hiển thị cập nhật trên giao diện |
 
 ### Luồng chính
 
-| Bước | Người dùng | Hệ thống |
-|---|---|---|
-| 1 | Kéo thả hoặc chọn file (PDF / DOCX / TXT) vào vùng upload | |
-| 2 | | Kiểm tra định dạng file hợp lệ |
-| 3 | | Lưu file vào `1.docs/source/api_contract/` |
-| 4 | | Trả về danh sách file đã upload kèm tên và dung lượng |
-| 5 | Bấm "Quét nguồn dữ liệu" | |
-| 6 | | Quét toàn bộ thư mục nguồn |
-| 7 | | Phân loại: file nằm trong module folder / file chưa gán module |
-| 8 | | Hiển thị danh sách module folders và file chưa gán lên giao diện |
+| Bước | Người dùng                                                | Hệ thống                                                         |
+| ---- | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| 1    | Kéo thả hoặc chọn file (PDF / DOCX / TXT) vào vùng upload |                                                                  |
+| 2    |                                                           | Kiểm tra định dạng file hợp lệ                                   |
+| 3    |                                                           | Lưu file vào `1.docs/source/api_contract/`                       |
+| 4    |                                                           | Trả về danh sách file đã upload kèm tên và dung lượng            |
+| 5    | Bấm "Quét nguồn dữ liệu"                                  |                                                                  |
+| 6    |                                                           | Quét toàn bộ thư mục nguồn                                       |
+| 7    |                                                           | Phân loại: file nằm trong module folder / file chưa gán module   |
+| 8    |                                                           | Hiển thị danh sách module folders và file chưa gán lên giao diện |
 
 ### Luồng thay thế
 
@@ -60,38 +60,38 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
-| Không có | — |
+| Loại     | UC liên quan |
+| -------- | ------------ |
+| Không có | —            |
 
 ---
 
 ## UC02 — Phân loại file vào module
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC02 |
-| **Tên UC** | Phân loại file vào module |
-| **Tác nhân chính** | Người dùng (BA / Developer) |
-| **Mô tả** | Người dùng yêu cầu hệ thống tự động gợi ý module phù hợp cho từng file tài liệu, sau đó xem xét, duyệt và apply để chuyển file vào đúng thư mục module |
-| **Điều kiện tiên quyết** | Đã có file tài liệu trong thư mục `1.docs/source/api_contract/`. UC01 đã được thực hiện |
-| **Điều kiện hậu** | File được sao chép vào thư mục module tương ứng. Registry cập nhật danh sách file theo module |
+| Trường                   | Nội dung                                                                                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Mã UC**                | UC02                                                                                                                                                   |
+| **Tên UC**               | Phân loại file vào module                                                                                                                              |
+| **Tác nhân chính**       | Người dùng                                                                                                                                             |
+| **Mô tả**                | Người dùng yêu cầu hệ thống tự động gợi ý module phù hợp cho từng file tài liệu, sau đó xem xét, duyệt và apply để chuyển file vào đúng thư mục module |
+| **Điều kiện tiên quyết** | Đã có file tài liệu trong thư mục `1.docs/source/api_contract/`. UC01 đã được thực hiện                                                                |
+| **Điều kiện hậu**        | File được sao chép vào thư mục module tương ứng. Registry cập nhật danh sách file theo module                                                          |
 
 ### Luồng chính
 
-| Bước | Người dùng | Hệ thống |
-|---|---|---|
-| 1 | Bấm "Gợi ý module" | |
-| 2 | | Đọc từng file, trích xuất endpoint path và service field |
-| 3 | | So khớp endpoint với rules trong `module_resolution.yaml` |
-| 4 | | Tính confidence score cho từng gợi ý (high / medium / low) |
-| 5 | | Hiển thị danh sách gợi ý kèm module, lý do, trạng thái chờ duyệt |
-| 6 | Xem xét từng gợi ý, nhập override module nếu muốn thay đổi | |
-| 7 | Chọn các file muốn duyệt, bấm "Duyệt (n) file" | |
-| 8 | | Đánh dấu các file đã chọn là "Đã duyệt", lưu vào `import_suggestions.json` |
-| 9 | Bấm "Apply suggestions" | |
-| 10 | | Sao chép file vào thư mục `1.docs/source/api_contract/<module>/` |
-| 11 | | Cập nhật registry, hiển thị kết quả applied / skipped |
+| Bước | Người dùng                                                 | Hệ thống                                                                   |
+| ---- | ---------------------------------------------------------- | -------------------------------------------------------------------------- |
+| 1    | Bấm "Gợi ý module"                                         |                                                                            |
+| 2    |                                                            | Đọc từng file, trích xuất endpoint path và service field                   |
+| 3    |                                                            | So khớp endpoint với rules trong `module_resolution.yaml`                  |
+| 4    |                                                            | Tính confidence score cho từng gợi ý (high / medium / low)                 |
+| 5    |                                                            | Hiển thị danh sách gợi ý kèm module, lý do, trạng thái chờ duyệt           |
+| 6    | Xem xét từng gợi ý, nhập override module nếu muốn thay đổi |                                                                            |
+| 7    | Chọn các file muốn duyệt, bấm "Duyệt (n) file"             |                                                                            |
+| 8    |                                                            | Đánh dấu các file đã chọn là "Đã duyệt", lưu vào `import_suggestions.json` |
+| 9    | Bấm "Apply suggestions"                                    |                                                                            |
+| 10   |                                                            | Sao chép file vào thư mục `1.docs/source/api_contract/<module>/`           |
+| 11   |                                                            | Cập nhật registry, hiển thị kết quả applied / skipped                      |
 
 ### Luồng thay thế
 
@@ -117,33 +117,33 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
-| Không có | — |
+| Loại     | UC liên quan |
+| -------- | ------------ |
+| Không có | —            |
 
 ---
 
 ## UC03 — Quản lý module registry
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC03 |
-| **Tên UC** | Quản lý module registry |
-| **Tác nhân chính** | Người dùng (BA / Developer) |
-| **Mô tả** | Người dùng xem danh sách module trong hệ thống cùng trạng thái vòng đời, và kích hoạt module từ draft lên active để cho phép chạy pipeline convert |
-| **Điều kiện tiên quyết** | Đã có ít nhất một module trong `module_registry.yaml`. UC02 đã được thực hiện |
-| **Điều kiện hậu** | Module được cập nhật trạng thái active. Giao diện hiển thị trạng thái mới |
+| Trường                   | Nội dung                                                                                                                                           |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mã UC**                | UC03                                                                                                                                               |
+| **Tên UC**               | Quản lý module registry                                                                                                                            |
+| **Tác nhân chính**       | Người dùng                                                                                                                                         |
+| **Mô tả**                | Người dùng xem danh sách module trong hệ thống cùng trạng thái vòng đời, và kích hoạt module từ draft lên active để cho phép chạy pipeline convert |
+| **Điều kiện tiên quyết** | Đã có ít nhất một module trong `module_registry.yaml`. UC02 đã được thực hiện                                                                      |
+| **Điều kiện hậu**        | Module được cập nhật trạng thái active. Giao diện hiển thị trạng thái mới                                                                          |
 
 ### Luồng chính
 
-| Bước | Người dùng | Hệ thống |
-|---|---|---|
-| 1 | Truy cập dashboard | |
-| 2 | | Đọc `module_registry.yaml`, hiển thị danh sách module kèm trạng thái, số file, số endpoint, thời điểm import gần nhất |
-| 3 | Xem xét module có trạng thái draft cần kích hoạt | |
-| 4 | Bấm "Activate" trên module muốn kích hoạt | |
-| 5 | | Cập nhật trạng thái module từ `draft` → `active` trong registry |
-| 6 | | Hiển thị lại bảng module với trạng thái đã cập nhật |
+| Bước | Người dùng                                       | Hệ thống                                                                                                              |
+| ---- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| 1    | Truy cập dashboard                               |                                                                                                                       |
+| 2    |                                                  | Đọc `module_registry.yaml`, hiển thị danh sách module kèm trạng thái, số file, số endpoint, thời điểm import gần nhất |
+| 3    | Xem xét module có trạng thái draft cần kích hoạt |                                                                                                                       |
+| 4    | Bấm "Activate" trên module muốn kích hoạt        |                                                                                                                       |
+| 5    |                                                  | Cập nhật trạng thái module từ `draft` → `active` trong registry                                                       |
+| 6    |                                                  | Hiển thị lại bảng module với trạng thái đã cập nhật                                                                   |
 
 ### Luồng thay thế
 
@@ -163,36 +163,36 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
-| Không có | — |
+| Loại     | UC liên quan |
+| -------- | ------------ |
+| Không có | —            |
 
 ---
 
 ## UC04 — Import module
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC04 |
-| **Tên UC** | Import module |
-| **Tác nhân chính** | Người dùng (BA / Developer) |
-| **Mô tả** | Người dùng kích hoạt pipeline convert để chuyển đổi tài liệu của một hoặc tất cả module active thành tệp OpenAPI YAML chuẩn hóa, đồng thời theo dõi tiến trình theo thời gian thực |
-| **Điều kiện tiên quyết** | Có ít nhất một module ở trạng thái active. File tài liệu đã được sao chép vào thư mục module (UC02 hoàn tất) |
-| **Điều kiện hậu** | Tệp OpenAPI YAML được tạo ra trong `5.openapi/paths/<module>/` và `5.openapi/schemas/`. Log kết quả được ghi vào `3.build/reports/` |
+| Trường                   | Nội dung                                                                                                                                                                           |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mã UC**                | UC04                                                                                                                                                                               |
+| **Tên UC**               | Import module                                                                                                                                                                      |
+| **Tác nhân chính**       | Người dùng                                                                                                                                                                         |
+| **Mô tả**                | Người dùng kích hoạt pipeline convert để chuyển đổi tài liệu của một hoặc tất cả module active thành tệp OpenAPI YAML chuẩn hóa, đồng thời theo dõi tiến trình theo thời gian thực |
+| **Điều kiện tiên quyết** | Có ít nhất một module ở trạng thái active. File tài liệu đã được sao chép vào thư mục module (UC02 hoàn tất)                                                                       |
+| **Điều kiện hậu**        | Tệp OpenAPI YAML được tạo ra trong `5.openapi/paths/<module>/` và `5.openapi/schemas/`. Log kết quả được ghi vào `3.build/reports/`                                                |
 
 ### Luồng chính
 
-| Bước | Người dùng | Hệ thống |
-|---|---|---|
-| 1 | Bấm "Import tất cả" hoặc "Import" trên một module cụ thể | |
-| 2 | | Lấy danh sách file thuộc module, kiểm tra hash để bỏ qua file chưa thay đổi |
-| 3 | | Parse từng file tài liệu → trích xuất `ParsedOperation` (method, path, parameters, request/response body) |
-| 4 | | Gọi Claude AI để enrich metadata `<<include UC08>>` |
-| 5 | | Generate tệp OpenAPI YAML từ `ParsedOperation` đã enrich |
-| 6 | | Post-process: gắn `readOnly` cho server-managed fields, thay thế trường lặp bằng `$ref` |
-| 7 | | Phát SSE event cập nhật tiến trình (file đang xử lý, số thành công / lỗi / bỏ qua) |
-| 8 | Theo dõi thanh tiến trình trên giao diện | |
-| 9 | | Phát SSE event `done` khi hoàn tất, hiển thị tổng kết |
+| Bước | Người dùng                                               | Hệ thống                                                                                                  |
+| ---- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 1    | Bấm "Import tất cả" hoặc "Import" trên một module cụ thể |                                                                                                           |
+| 2    |                                                          | Lấy danh sách file thuộc module, kiểm tra hash để bỏ qua file chưa thay đổi                               |
+| 3    |                                                          | Parse từng file tài liệu → trích xuất `ParsedOperation` (method, path, parameters, request/response body) |
+| 4    |                                                          | Gọi Claude AI để enrich metadata `<<include UC08>>`                                                       |
+| 5    |                                                          | Generate tệp OpenAPI YAML từ `ParsedOperation` đã enrich                                                  |
+| 6    |                                                          | Post-process: gắn `readOnly` cho server-managed fields, thay thế trường lặp bằng `$ref`                   |
+| 7    |                                                          | Phát SSE event cập nhật tiến trình (file đang xử lý, số thành công / lỗi / bỏ qua)                        |
+| 8    | Theo dõi thanh tiến trình trên giao diện                 |                                                                                                           |
+| 9    |                                                          | Phát SSE event `done` khi hoàn tất, hiển thị tổng kết                                                     |
 
 ### Luồng thay thế
 
@@ -215,39 +215,39 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
+| Loại          | UC liên quan                           |
+| ------------- | -------------------------------------- |
 | `<<include>>` | UC08 — Enrich metadata API (Claude AI) |
 
 ---
 
 ## UC05 — Kiểm duyệt & xuất YAML
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC05 |
-| **Tên UC** | Kiểm duyệt & xuất YAML |
-| **Tác nhân chính** | Người dùng (BA / Developer) |
-| **Mô tả** | Người dùng xem xét các file YAML được pipeline tạo ra, chỉnh sửa thủ công nếu cần, approve hoặc reject từng file, sau đó export toàn bộ file đã duyệt ra thư mục output |
-| **Điều kiện tiên quyết** | UC04 đã hoàn thành. Có ít nhất một file ở trạng thái `flagged` hoặc `done` trong job |
-| **Điều kiện hậu** | File YAML đã duyệt được ghi ra `5.openapi/`. Pipeline bundle và lint được kích hoạt tự động |
+| Trường                   | Nội dung                                                                                                                                                                |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mã UC**                | UC05                                                                                                                                                                    |
+| **Tên UC**               | Kiểm duyệt & xuất YAML                                                                                                                                                  |
+| **Tác nhân chính**       | Người dùng                                                                                                                                                              |
+| **Mô tả**                | Người dùng xem xét các file YAML được pipeline tạo ra, chỉnh sửa thủ công nếu cần, approve hoặc reject từng file, sau đó export toàn bộ file đã duyệt ra thư mục output |
+| **Điều kiện tiên quyết** | UC04 đã hoàn thành. Có ít nhất một file ở trạng thái `flagged` hoặc `done` trong job                                                                                    |
+| **Điều kiện hậu**        | File YAML đã duyệt được ghi ra `5.openapi/`. Pipeline bundle và lint được kích hoạt tự động                                                                             |
 
 ### Luồng chính
 
-| Bước | Người dùng | Hệ thống |
-|---|---|---|
-| 1 | Truy cập trang review job | |
-| 2 | | Hiển thị danh sách file flagged cần review kèm lý do (thiếu trường, lỗi LLM...) |
-| 3 | Chọn file muốn xem xét | |
-| 4 | | Mở Monaco Editor hiển thị nội dung YAML của file |
-| 5 | Đọc và chỉnh sửa YAML trực tiếp nếu cần | |
-| 6 | | Lưu thay đổi vào bộ nhớ tạm (in-memory job state) |
-| 7 | Bấm "Approve" | |
-| 8 | | Đánh dấu file là `done` |
-| 9 | Lặp lại bước 3–8 cho các file còn lại | |
-| 10 | Bấm "Export" | |
-| 11 | | Ghi toàn bộ file đã approve ra `5.openapi/` |
-| 12 | | Tự động kích hoạt bundle → lint `<<include UC09, UC10, UC11>>` |
+| Bước | Người dùng                              | Hệ thống                                                                        |
+| ---- | --------------------------------------- | ------------------------------------------------------------------------------- |
+| 1    | Truy cập trang review job               |                                                                                 |
+| 2    |                                         | Hiển thị danh sách file flagged cần review kèm lý do (thiếu trường, lỗi LLM...) |
+| 3    | Chọn file muốn xem xét                  |                                                                                 |
+| 4    |                                         | Mở Monaco Editor hiển thị nội dung YAML của file                                |
+| 5    | Đọc và chỉnh sửa YAML trực tiếp nếu cần |                                                                                 |
+| 6    |                                         | Lưu thay đổi vào bộ nhớ tạm (in-memory job state)                               |
+| 7    | Bấm "Approve"                           |                                                                                 |
+| 8    |                                         | Đánh dấu file là `done`                                                         |
+| 9    | Lặp lại bước 3–8 cho các file còn lại   |                                                                                 |
+| 10   | Bấm "Export"                            |                                                                                 |
+| 11   |                                         | Ghi toàn bộ file đã approve ra `5.openapi/`                                     |
+| 12   |                                         | Tự động kích hoạt bundle → lint `<<include UC09, UC10, UC11>>`                  |
 
 ### Luồng thay thế
 
@@ -267,36 +267,36 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
-| `<<include>>` | UC09 — Bundle toàn bộ YAML thành 1 file |
-| `<<include>>` | UC10 — Lint bundle theo chuẩn OpenAPI |
+| Loại          | UC liên quan                             |
+| ------------- | ---------------------------------------- |
+| `<<include>>` | UC09 — Bundle toàn bộ YAML thành 1 file  |
+| `<<include>>` | UC10 — Lint bundle theo chuẩn OpenAPI    |
 | `<<include>>` | UC11 — Lint bundle theo governance rules |
 
 ---
 
 ## UC06 — Build & xuất bản tài liệu
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC06 |
-| **Tên UC** | Build & xuất bản tài liệu |
-| **Tác nhân chính** | Người dùng (BA / Developer) |
-| **Mô tả** | Người dùng kích hoạt quá trình bundle, lint và build Swagger UI HTML từ các tệp YAML đã export. Có thể xem, sửa bundle trực tiếp nếu có lỗi và tải HTML về để phân phối |
-| **Điều kiện tiên quyết** | Đã có tệp YAML trong `5.openapi/`. UC05 đã hoàn thành hoặc bundle cũ đã tồn tại |
-| **Điều kiện hậu** | Tệp `dist/openapi-bundled.yaml` và `public/api-docs.html` được tạo ra. Kết quả lint hiển thị trên giao diện |
+| Trường                   | Nội dung                                                                                                                                                                |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mã UC**                | UC06                                                                                                                                                                    |
+| **Tên UC**               | Build & xuất bản tài liệu                                                                                                                                               |
+| **Tác nhân chính**       | Người dùng                                                                                                                                                              |
+| **Mô tả**                | Người dùng kích hoạt quá trình bundle, lint và build Swagger UI HTML từ các tệp YAML đã export. Có thể xem, sửa bundle trực tiếp nếu có lỗi và tải HTML về để phân phối |
+| **Điều kiện tiên quyết** | Đã có tệp YAML trong `5.openapi/`. UC05 đã hoàn thành hoặc bundle cũ đã tồn tại                                                                                         |
+| **Điều kiện hậu**        | Tệp `dist/openapi-bundled.yaml` và `public/api-docs.html` được tạo ra. Kết quả lint hiển thị trên giao diện                                                             |
 
 ### Luồng chính
 
-| Bước | Người dùng | Hệ thống |
-|---|---|---|
-| 1 | Bấm "Build tài liệu Swagger UI" | |
-| 2 | | Bundle toàn bộ YAML → `dist/openapi-bundled.yaml` `<<include UC09>>` |
-| 3 | | Lint bundle `<<include UC10, UC11>>` |
-| 4 | | Build Swagger UI HTML → `public/api-docs.html` |
-| 5 | | Hiển thị kết quả lint (số lỗi error / warning theo Spectral và Redocly) |
-| 6 | Xem kết quả lint trên giao diện | |
-| 7 | Bấm "Developer Portal" xem giao diện | |
+| Bước | Người dùng                           | Hệ thống                                                                |
+| ---- | ------------------------------------ | ----------------------------------------------------------------------- |
+| 1    | Bấm "Build tài liệu Swagger UI"      |                                                                         |
+| 2    |                                      | Bundle toàn bộ YAML → `dist/openapi-bundled.yaml` `<<include UC09>>`    |
+| 3    |                                      | Lint bundle `<<include UC10, UC11>>`                                    |
+| 4    |                                      | Build Swagger UI HTML → `public/api-docs.html`                          |
+| 5    |                                      | Hiển thị kết quả lint (số lỗi error / warning theo Spectral và Redocly) |
+| 6    | Xem kết quả lint trên giao diện      |                                                                         |
+| 7    | Bấm "Developer Portal" xem giao diện |                                                                         |
 
 ### Luồng thay thế
 
@@ -319,37 +319,37 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
-| `<<include>>` | UC09 — Bundle toàn bộ YAML thành 1 file |
-| `<<include>>` | UC10 — Lint bundle theo chuẩn OpenAPI |
+| Loại          | UC liên quan                             |
+| ------------- | ---------------------------------------- |
+| `<<include>>` | UC09 — Bundle toàn bộ YAML thành 1 file  |
+| `<<include>>` | UC10 — Lint bundle theo chuẩn OpenAPI    |
 | `<<include>>` | UC11 — Lint bundle theo governance rules |
 
 ---
 
 ## UC07 — Xem tài liệu API
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC07 |
-| **Tên UC** | Xem tài liệu API |
-| **Tác nhân chính** | Người dùng (BA / Developer) |
-| **Mô tả** | Người dùng xem tài liệu API đã được build dưới dạng Swagger UI tương tác hoặc Developer Portal dạng danh sách, có thể tìm kiếm và lọc endpoint |
-| **Điều kiện tiên quyết** | UC06 đã hoàn thành. Tệp `dist/openapi-bundled.yaml` tồn tại |
-| **Điều kiện hậu** | Không thay đổi dữ liệu. Người dùng đọc được thông tin API cần tìm |
+| Trường                   | Nội dung                                                                                                                                       |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mã UC**                | UC07                                                                                                                                           |
+| **Tên UC**               | Xem tài liệu API                                                                                                                               |
+| **Tác nhân chính**       | Người dùng                                                                                                                                     |
+| **Mô tả**                | Người dùng xem tài liệu API đã được build dưới dạng Swagger UI tương tác hoặc Developer Portal dạng danh sách, có thể tìm kiếm và lọc endpoint |
+| **Điều kiện tiên quyết** | UC06 đã hoàn thành. Tệp `dist/openapi-bundled.yaml` tồn tại                                                                                    |
+| **Điều kiện hậu**        | Không thay đổi dữ liệu. Người dùng đọc được thông tin API cần tìm                                                                              |
 
 ### Luồng chính
 
-| Bước | Người dùng | Hệ thống |
-|---|---|---|
-| 1 | Truy cập trang Swagger UI hoặc Developer Portal | |
-| 2 | | Tải `openapi-bundled.yaml` từ server |
-| 3 | | Render danh sách endpoint với method, path, summary, description |
-| 4 | Nhập từ khóa vào ô tìm kiếm | |
-| 5 | | Fuse.js thực hiện fuzzy search trên operationId, path, summary, description |
-| 6 | | Hiển thị kết quả khớp theo độ liên quan |
-| 7 | Bấm vào endpoint muốn xem chi tiết | |
-| 8 | | Hiển thị parameters, request body schema, response schema, error codes |
+| Bước | Người dùng                                      | Hệ thống                                                                    |
+| ---- | ----------------------------------------------- | --------------------------------------------------------------------------- |
+| 1    | Truy cập trang Swagger UI hoặc Developer Portal |                                                                             |
+| 2    |                                                 | Tải `openapi-bundled.yaml` từ server                                        |
+| 3    |                                                 | Render danh sách endpoint với method, path, summary, description            |
+| 4    | Nhập từ khóa vào ô tìm kiếm                     |                                                                             |
+| 5    |                                                 | Fuse.js thực hiện fuzzy search trên operationId, path, summary, description |
+| 6    |                                                 | Hiển thị kết quả khớp theo độ liên quan                                     |
+| 7    | Bấm vào endpoint muốn xem chi tiết              |                                                                             |
+| 8    |                                                 | Hiển thị parameters, request body schema, response schema, error codes      |
 
 ### Luồng thay thế
 
@@ -366,34 +366,34 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
-| Không có | — |
+| Loại     | UC liên quan |
+| -------- | ------------ |
+| Không có | —            |
 
 ---
 
 ## UC08 — Enrich metadata API
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC08 |
-| **Tên UC** | Enrich metadata API |
-| **Tác nhân chính** | Claude AI (claude-sonnet-4-6) |
-| **Tác nhân phụ** | Hệ thống Pipeline |
-| **Mô tả** | Claude AI nhận dữ liệu `ParsedOperation` từ pipeline và sinh ra `summary`, `operationId`, `description` bằng tiếng Việt cho từng API endpoint |
-| **Điều kiện tiên quyết** | `ParsedOperation` hợp lệ đã được tạo ra từ bước parse. Biến môi trường `ANTHROPIC_API_KEY` đã được cấu hình |
-| **Điều kiện hậu** | `ParsedOperation` được bổ sung đầy đủ `summary`, `operationId`, `description`. Nếu thất bại thì `operationId` được sinh bằng rule-based fallback |
+| Trường                   | Nội dung                                                                                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Mã UC**                | UC08                                                                                                                                             |
+| **Tên UC**               | Enrich metadata API                                                                                                                              |
+| **Tác nhân chính**       | Claude AI (claude-sonnet-4-6)                                                                                                                    |
+| **Tác nhân phụ**         | Hệ thống Pipeline                                                                                                                                |
+| **Mô tả**                | Claude AI nhận dữ liệu `ParsedOperation` từ pipeline và sinh ra `summary`, `operationId`, `description` bằng tiếng Việt cho từng API endpoint    |
+| **Điều kiện tiên quyết** | `ParsedOperation` hợp lệ đã được tạo ra từ bước parse. Biến môi trường `ANTHROPIC_API_KEY` đã được cấu hình                                      |
+| **Điều kiện hậu**        | `ParsedOperation` được bổ sung đầy đủ `summary`, `operationId`, `description`. Nếu thất bại thì `operationId` được sinh bằng rule-based fallback |
 
 ### Luồng chính
 
-| Bước | Pipeline | Claude AI |
-|---|---|---|
-| 1 | Gửi `ParsedOperation` (method, path, parameters, request/response body) lên Claude API | |
-| 2 | | Phân tích ngữ nghĩa endpoint |
-| 3 | | Sinh `summary` — mô tả ngắn bằng tiếng Việt |
-| 4 | | Sinh `operationId` — camelCase, bắt đầu bằng động từ (vd: `listTickets`, `createUser`) |
-| 5 | | Sinh `description` — mô tả chi tiết chức năng endpoint bằng tiếng Việt |
-| 6 | Nhận kết quả, gắn vào `ParsedOperation` | |
+| Bước | Pipeline                                                                               | Claude AI                                                                              |
+| ---- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 1    | Gửi `ParsedOperation` (method, path, parameters, request/response body) lên Claude API |                                                                                        |
+| 2    |                                                                                        | Phân tích ngữ nghĩa endpoint                                                           |
+| 3    |                                                                                        | Sinh `summary` — mô tả ngắn bằng tiếng Việt                                            |
+| 4    |                                                                                        | Sinh `operationId` — camelCase, bắt đầu bằng động từ (vd: `listTickets`, `createUser`) |
+| 5    |                                                                                        | Sinh `description` — mô tả chi tiết chức năng endpoint bằng tiếng Việt                 |
+| 6    | Nhận kết quả, gắn vào `ParsedOperation`                                                |                                                                                        |
 
 ### Luồng ngoại lệ
 
@@ -405,33 +405,33 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
+| Loại         | UC liên quan                         |
+| ------------ | ------------------------------------ |
 | Được gọi bởi | UC04 — Import module (`<<include>>`) |
 
 ---
 
 ## UC09 — Bundle toàn bộ YAML thành 1 file
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC09 |
-| **Tên UC** | Bundle toàn bộ YAML thành 1 file |
-| **Tác nhân chính** | Redocly |
-| **Tác nhân phụ** | Hệ thống Backend |
-| **Mô tả** | Redocly CLI gom toàn bộ tệp YAML phân tán trong `5.openapi/` thành một tệp duy nhất `dist/openapi-bundled.yaml`, giải quyết tất cả `$ref` nội bộ |
-| **Điều kiện tiên quyết** | Có tệp YAML trong `5.openapi/`. Redocly CLI đã được cài đặt |
-| **Điều kiện hậu** | Tệp `dist/openapi-bundled.yaml` được tạo ra hoặc cập nhật |
+| Trường                   | Nội dung                                                                                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Mã UC**                | UC09                                                                                                                                             |
+| **Tên UC**               | Bundle toàn bộ YAML thành 1 file                                                                                                                 |
+| **Tác nhân chính**       | Redocly                                                                                                                                          |
+| **Tác nhân phụ**         | Hệ thống Backend                                                                                                                                 |
+| **Mô tả**                | Redocly CLI gom toàn bộ tệp YAML phân tán trong `5.openapi/` thành một tệp duy nhất `dist/openapi-bundled.yaml`, giải quyết tất cả `$ref` nội bộ |
+| **Điều kiện tiên quyết** | Có tệp YAML trong `5.openapi/`. Redocly CLI đã được cài đặt                                                                                      |
+| **Điều kiện hậu**        | Tệp `dist/openapi-bundled.yaml` được tạo ra hoặc cập nhật                                                                                        |
 
 ### Luồng chính
 
-| Bước | Backend | Redocly |
-|---|---|---|
-| 1 | Gọi lệnh `redocly bundle openapi/openapi.yaml` | |
-| 2 | | Đọc file entry point, duyệt toàn bộ `$ref` |
-| 3 | | Giải quyết và nội tuyến hóa các tham chiếu nội bộ |
-| 4 | | Ghi kết quả ra `dist/openapi-bundled.yaml` |
-| 5 | Nhận exit code 0, tiếp tục sang lint | |
+| Bước | Backend                                        | Redocly                                           |
+| ---- | ---------------------------------------------- | ------------------------------------------------- |
+| 1    | Gọi lệnh `redocly bundle openapi/openapi.yaml` |                                                   |
+| 2    |                                                | Đọc file entry point, duyệt toàn bộ `$ref`        |
+| 3    |                                                | Giải quyết và nội tuyến hóa các tham chiếu nội bộ |
+| 4    |                                                | Ghi kết quả ra `dist/openapi-bundled.yaml`        |
+| 5    | Nhận exit code 0, tiếp tục sang lint           |                                                   |
 
 ### Luồng ngoại lệ
 
@@ -440,33 +440,33 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
-| Được gọi bởi | UC05 — Kiểm duyệt & xuất YAML (`<<include>>`) |
+| Loại         | UC liên quan                                     |
+| ------------ | ------------------------------------------------ |
+| Được gọi bởi | UC05 — Kiểm duyệt & xuất YAML (`<<include>>`)    |
 | Được gọi bởi | UC06 — Build & xuất bản tài liệu (`<<include>>`) |
 
 ---
 
 ## UC10 — Lint bundle theo chuẩn OpenAPI
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC10 |
-| **Tên UC** | Lint bundle theo chuẩn OpenAPI |
-| **Tác nhân chính** | Redocly |
-| **Tác nhân phụ** | Hệ thống Backend |
-| **Mô tả** | Redocly CLI kiểm tra tệp bundle theo chuẩn OpenAPI 3.1 — phát hiện thiếu trường bắt buộc, sai kiểu dữ liệu, `$ref` không hợp lệ |
-| **Điều kiện tiên quyết** | UC09 đã hoàn thành. Tệp `dist/openapi-bundled.yaml` tồn tại |
-| **Điều kiện hậu** | Danh sách lỗi / cảnh báo theo chuẩn OpenAPI được trả về cho backend |
+| Trường                   | Nội dung                                                                                                                        |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Mã UC**                | UC10                                                                                                                            |
+| **Tên UC**               | Lint bundle theo chuẩn OpenAPI                                                                                                  |
+| **Tác nhân chính**       | Redocly                                                                                                                         |
+| **Tác nhân phụ**         | Hệ thống Backend                                                                                                                |
+| **Mô tả**                | Redocly CLI kiểm tra tệp bundle theo chuẩn OpenAPI 3.1 — phát hiện thiếu trường bắt buộc, sai kiểu dữ liệu, `$ref` không hợp lệ |
+| **Điều kiện tiên quyết** | UC09 đã hoàn thành. Tệp `dist/openapi-bundled.yaml` tồn tại                                                                     |
+| **Điều kiện hậu**        | Danh sách lỗi / cảnh báo theo chuẩn OpenAPI được trả về cho backend                                                             |
 
 ### Luồng chính
 
-| Bước | Backend | Redocly |
-|---|---|---|
-| 1 | Gọi lệnh `redocly lint dist/openapi-bundled.yaml` | |
-| 2 | | Kiểm tra cấu trúc theo OpenAPI 3.1 spec |
-| 3 | | Sinh danh sách issues với `ruleId`, `message`, `severity` (error / warning) |
-| 4 | Nhận danh sách issues, trả về cho frontend hiển thị | |
+| Bước | Backend                                             | Redocly                                                                     |
+| ---- | --------------------------------------------------- | --------------------------------------------------------------------------- |
+| 1    | Gọi lệnh `redocly lint dist/openapi-bundled.yaml`   |                                                                             |
+| 2    |                                                     | Kiểm tra cấu trúc theo OpenAPI 3.1 spec                                     |
+| 3    |                                                     | Sinh danh sách issues với `ruleId`, `message`, `severity` (error / warning) |
+| 4    | Nhận danh sách issues, trả về cho frontend hiển thị |                                                                             |
 
 ### Luồng ngoại lệ
 
@@ -475,34 +475,34 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
-| Được gọi bởi | UC05 — Kiểm duyệt & xuất YAML (`<<include>>`) |
+| Loại         | UC liên quan                                     |
+| ------------ | ------------------------------------------------ |
+| Được gọi bởi | UC05 — Kiểm duyệt & xuất YAML (`<<include>>`)    |
 | Được gọi bởi | UC06 — Build & xuất bản tài liệu (`<<include>>`) |
 
 ---
 
 ## UC11 — Lint bundle theo governance rules
 
-| Trường | Nội dung |
-|---|---|
-| **Mã UC** | UC11 |
-| **Tên UC** | Lint bundle theo governance rules của project |
-| **Tác nhân chính** | Spectral |
-| **Tác nhân phụ** | Hệ thống Backend |
-| **Mô tả** | Spectral CLI kiểm tra tệp bundle theo bộ quy tắc tùy chỉnh của project — phát hiện vi phạm convention như schema inline, `operationId` sai định dạng, thiếu error response chuẩn |
-| **Điều kiện tiên quyết** | UC09 đã hoàn thành. Tệp `dist/openapi-bundled.yaml` và file ruleset Spectral tồn tại |
-| **Điều kiện hậu** | Danh sách lỗi / cảnh báo theo governance rules được trả về cho backend |
+| Trường                   | Nội dung                                                                                                                                                                         |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mã UC**                | UC11                                                                                                                                                                             |
+| **Tên UC**               | Lint bundle theo governance rules của project                                                                                                                                    |
+| **Tác nhân chính**       | Spectral                                                                                                                                                                         |
+| **Tác nhân phụ**         | Hệ thống Backend                                                                                                                                                                 |
+| **Mô tả**                | Spectral CLI kiểm tra tệp bundle theo bộ quy tắc tùy chỉnh của project — phát hiện vi phạm convention như schema inline, `operationId` sai định dạng, thiếu error response chuẩn |
+| **Điều kiện tiên quyết** | UC09 đã hoàn thành. Tệp `dist/openapi-bundled.yaml` và file ruleset Spectral tồn tại                                                                                             |
+| **Điều kiện hậu**        | Danh sách lỗi / cảnh báo theo governance rules được trả về cho backend                                                                                                           |
 
 ### Luồng chính
 
-| Bước | Backend | Spectral |
-|---|---|---|
-| 1 | Gọi lệnh `spectral lint dist/openapi-bundled.yaml` | |
-| 2 | | Tải ruleset tùy chỉnh của project |
-| 3 | | Kiểm tra từng rule: operationId camelCase, không dùng inline schema, error response phải dùng $ref chuẩn, server-managed fields phải readOnly |
-| 4 | | Sinh danh sách issues với `code` (tên rule), `message`, `severity` (0=error, 1=warning), `path` |
-| 5 | Nhận danh sách issues, trả về cho frontend hiển thị | |
+| Bước | Backend                                             | Spectral                                                                                                                                      |
+| ---- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | Gọi lệnh `spectral lint dist/openapi-bundled.yaml`  |                                                                                                                                               |
+| 2    |                                                     | Tải ruleset tùy chỉnh của project                                                                                                             |
+| 3    |                                                     | Kiểm tra từng rule: operationId camelCase, không dùng inline schema, error response phải dùng $ref chuẩn, server-managed fields phải readOnly |
+| 4    |                                                     | Sinh danh sách issues với `code` (tên rule), `message`, `severity` (0=error, 1=warning), `path`                                               |
+| 5    | Nhận danh sách issues, trả về cho frontend hiển thị |                                                                                                                                               |
 
 ### Luồng ngoại lệ
 
@@ -511,7 +511,7 @@
 
 ### Quan hệ
 
-| Loại | UC liên quan |
-|---|---|
-| Được gọi bởi | UC05 — Kiểm duyệt & xuất YAML (`<<include>>`) |
+| Loại         | UC liên quan                                     |
+| ------------ | ------------------------------------------------ |
+| Được gọi bởi | UC05 — Kiểm duyệt & xuất YAML (`<<include>>`)    |
 | Được gọi bởi | UC06 — Build & xuất bản tài liệu (`<<include>>`) |

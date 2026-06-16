@@ -10,6 +10,9 @@ type Props = {
   activatingModule: string | null;
   activateError: string;
   onActivate: (name: string) => void;
+  deactivatingModule: string | null;
+  deactivateError: string;
+  onDeactivate: (name: string) => void;
   importRunning: boolean;
   importTarget: string | null;
   importModules: ImportModuleProgress[];
@@ -31,6 +34,9 @@ export default function ModuleRegistryCard({
   activatingModule,
   activateError,
   onActivate,
+  deactivatingModule,
+  deactivateError,
+  onDeactivate,
   importRunning,
   importTarget,
   importModules,
@@ -67,6 +73,11 @@ export default function ModuleRegistryCard({
       {activateError && (
         <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
           {activateError}
+        </div>
+      )}
+      {deactivateError && (
+        <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+          {deactivateError}
         </div>
       )}
       {importError && (
@@ -139,16 +150,28 @@ export default function ModuleRegistryCard({
                             : "Activate"}
                         </button>
                       ) : m.status === "active" ? (
-                        <button
-                          onClick={() => onImport(m.name)}
-                          disabled={importRunning}
-                          className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition"
-                          title="Chạy pipeline convert riêng module này"
-                        >
-                          {importRunning && importTarget === m.name
-                            ? "Đang import..."
-                            : "Import"}
-                        </button>
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={() => onImport(m.name)}
+                            disabled={importRunning}
+                            className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            title="Chạy pipeline convert riêng module này"
+                          >
+                            {importRunning && importTarget === m.name
+                              ? "Đang import..."
+                              : "Import"}
+                          </button>
+                          <button
+                            onClick={() => onDeactivate(m.name)}
+                            disabled={deactivatingModule !== null || importRunning}
+                            className="px-3 py-1 bg-red-50 text-red-600 text-xs font-medium rounded-lg hover:bg-red-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            title="Chuyển module về deprecated"
+                          >
+                            {deactivatingModule === m.name
+                              ? "Đang tắt..."
+                              : "Deactivate"}
+                          </button>
+                        </div>
                       ) : null}
                     </td>
                   </tr>

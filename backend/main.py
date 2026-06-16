@@ -139,6 +139,7 @@ class FileResult:
 @dataclass
 class Job:
     job_id: str
+    domain: str = ""
     files: list[FileResult] = field(default_factory=list)
     status: Literal["running", "done"] = "running"
 
@@ -347,6 +348,28 @@ def activate_module(module: str):
 
     return list_modules()
 
+@app.post("/modules/{module}/deactivate")
+def deactivate_module(module: str):
+    import yaml as _yaml
+    from run_api_import import cmd_deactivate_module
+
+    registry_path = CONFIG_DIR / "module_registry.yaml"
+    if not registry_path.exists():
+        raise HTTPException(status_code=404, detail="Không tìm thấy registry")
+    registry = _yaml.safe_load(registry_path.read_text(encoding="utf-8")) or {}
+    if module not in registry.get("modules", {}):
+        raise HTTPException(status_code=404, detail=f"Module '{module}' không có trong registry")
+
+    try:
+        cmd_deactivate_module(module=module, actor="ui")
+    except SystemExit:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Không thể deactivate module '{module}' — kiểm tra log backend",
+        )
+
+    return list_modules()
+
 
 @app.post("/modules/import")
 def start_import(module: str | None = None):
@@ -494,7 +517,11 @@ def process_file(file_result: FileResult, file_bytes: bytes, domain: str = "tick
             op = run(str(input_path), str(output_path), schemas_dir=str(schemas_tmp), domain=domain)
             if output_path.exists():
                 file_result.yaml = output_path.read_text(encoding="utf-8")
-                file_result.status = "done"
+                if op and op.review_flags:
+                    file_result.flags = op.review_flags
+                    file_result.status = "flagged"
+                else:
+                    file_result.status = "done"
                 if op and op.method and op.path:
                     file_result.action_name = _compute_action_name(op, non_resource_actions)
                 for schema_file in schemas_tmp.glob("*.yaml"):
@@ -603,9 +630,9 @@ def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
 
 
 @app.post("/jobs")
-async def create_job(files: list[UploadFile] = File(...)):
+async def create_job(files: list[UploadFile] = File(...), domain: str=""):
     job_id = str(uuid.uuid4())
-    job = Job(job_id=job_id)
+    job = Job(job_id=job_id, domain=domain)
     jobs[job_id] = job
     SOURCE_DIR.mkdir(parents=True, exist_ok=True)
     for upload in files:
@@ -701,6 +728,17 @@ def approve_file(job_id: str, file_id: str):
     f.status = "done"
     return {"ok": True}
 
+@app.post("/jobs/{job_id}/files/{file_id}/reject")
+def reject_file(job_id: str, file_id: str):
+    job = jobs.get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job không tồn tại")
+    f = next((f for f in job.files if f.file_id == file_id), None)
+    if not f:
+        raise HTTPException(status_code=404, detail="File không tồn tại")
+    f.status = "rejected"
+    return {"ok": True}
+
 @app.post("/jobs/{job_id}/export")
 async def export_bundle(job_id: str):
     job = jobs.get(job_id)
@@ -712,10 +750,11 @@ async def export_bundle(job_id: str):
         raise HTTPException(status_code=400, detail="Chưa có file nào được approve")
 
     # Lưu YAML vào 5.openapi/paths/tickets
-    paths_dir = OUTPUT_DIR / "paths" / "tickets"
+    module_name = job.domain or "default"
+    paths_dir = OUTPUT_DIR / "paths" / module_name
     paths_dir.mkdir(parents=True, exist_ok=True)
-    schemas_dir_out = OUTPUT_DIR / "components" / "schemas" / "ticket"
-    schemas_dir_out.mkdir(parents=True, exist_ok=True)
+    schemas_dir_out = OUTPUT_DIR / "components" / "schemas" / module_name
+
     for f in approved:
         out_name = f.action_name if f.action_name else Path(f.filename).stem
         out_path = paths_dir / f"{out_name}.yaml"
