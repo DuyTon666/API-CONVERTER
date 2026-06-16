@@ -60,15 +60,29 @@ def detect_sections(text: str, config: dict) -> dict:
     for section_name, section_info in sections.items():
         aliases = section_info.get("aliases", [])
         matched = []
+        candidates = []
+        
+        # Extract keywords từ aliases để filter candidate headings
+        alias_keywords = set()
+        for alias in aliases:
+            for word in normalize_text(alias).split():
+                if len(word) > 3:  # bỏ từ ngắn như "the", "cho", "của"
+                    alias_keywords.add(word)
 
         for line in lines:
+            line_matched = False
             for alias in aliases:
                 if _alias_matches_line(alias, line):
                     matched.append(alias)
-
+                    line_matched = True
+            if not line_matched and _is_heading_like(line):
+                line_lower = normalize_text(line)
+                if any(kw in line_lower for kw in alias_keywords):
+                    candidates.append(line)
         results[section_name] = {
-            "found": bool(matched),
-            "matched_aliases": sorted(set(matched)),
+            "found":                bool(matched),
+            "matched_aliases":      sorted(set(matched)),
+            "candidate_headings":   candidates if not matched else [],
         }
 
     return results

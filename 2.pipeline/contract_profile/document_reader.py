@@ -45,26 +45,10 @@ def read_docx(path: Path) -> str:
 
 def read_pdf(path: Path) -> str:
     # Try pypdf first, then PyPDF2
-    try:
-        from pypdf import PdfReader
-    except ImportError:
-        try:
-            from PyPDF2 import PdfReader
-        except ImportError as e:
-            raise RuntimeError(
-                "Missing dependency: pypdf or PyPDF2. Install with: pip install pypdf"
-            ) from e
-
-    reader = PdfReader(str(path))
-    parts: list[str] = []
-
-    for page in reader.pages:
-        text = page.extract_text() or ""
-        if text.strip():
-            parts.append(text.strip())
-
-    return "\n".join(parts)
-
+    from converters.pdf.reader import read_pdf as _pdf_reader
+    _PROJECT_ROOT = Path(__file__).resolve().parents[2]
+    _PDF_CONFIG = _PROJECT_ROOT / "4.config/sources/pdf_sections.yaml"
+    return _pdf_reader(str(path), str(_PDF_CONFIG))
 
 def read_document(path: str | Path) -> str:
     path = Path(path)

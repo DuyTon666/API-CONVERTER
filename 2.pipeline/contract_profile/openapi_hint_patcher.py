@@ -126,7 +126,15 @@ def _patch_request_headers(op: dict, request_headers: list[dict], header_refs: d
         if _parameter_exists(params, header_name, ref):
             continue
 
-        params.append({"$ref": ref})
+        required = header.get("required")
+        if required is True:
+            # Override required — không thể override $ref, phải emit inline
+            params.append({
+                "allOf": [{"$ref": ref}],
+                "required": True,
+            })
+        else:
+            params.append({"$ref": ref})
         changed = True
 
     return changed
@@ -152,9 +160,67 @@ def _patch_status_responses(responses: dict, status_codes: list[dict], status_re
 def _find_target_yaml(source_file: str, module: str) -> Path | None:
     """
     MVP matching:
-    - Tìm trong 5.openapi/paths/<module>
-    - Match theo summary == source filename stem
+    Lookup theo file_versions.json (match tên file, không dùng full path
+    vì path tuyệt đối có thể khác nhau giữa các máy).
+    Fallback về summary-match nếu không tìm thấy trong file_versions.
     """
+    source_name = Path(source_file).name
+    versions_path = PROJECT_ROOT / "3.build/reports/file_versions.json"
+    if versions_path.exists():
+        try:
+            versions = json.loads(versions_path.read_text(encoding="utf-8"))
+            for entry in versions.values():
+                if Path(entry.get("path", "")).name == source_name:
+                    output = entry.get("output", "")
+                    if output:
+                        candidate = Path(output)
+                        if not candidate.is_absolute():
+                            candidate = PROJECT_ROOT / candidate
+                        if candidate.exists():
+                            return candidate
+        except Exception:
+            pass 
+
+    #FALLBACK: match theo http_path trong openapi.yaml
+    openapi_path = PROJECT_ROOT / "5.openapi/openapi.yaml"
+    if openapi_path.exists():
+        try:
+            import re
+            def _norm(p: str) -> str:
+                return re.sub(r"\{[^}]+\}", "{}", p)
+
+            versions = json.loads(versions_path.read_text(encoding="utf-8"))
+            http_path = None
+            method = None
+            for entry in versions.values():
+                if Path(entry.get("path", "")).name == source_name:
+                    http_path = entry.get("http_path", "")
+                    method    = entry.get("method", "").lower()
+                    break
+
+            if http_path and method:
+                openapi_data = _load_yaml(openapi_path)
+                norm_target  = _norm(httpl_path)
+                for raw_path, path_item in openapi_data.get("paths", {}).items():
+                    if _norm(raw_path) != norm_target:
+                        continue
+                    ref_str = ""
+                    if isinstance(path_item, dict):
+                        op = path_item.get(method, {})
+                        if isinstance(op, dict):
+                            ref_str = op.get("$ref", "")
+                        if not ref_str:
+                            ref_str = path_item.get("$ref", "")
+                    if ref_str:
+                        # ref_str dạng "./paths/ticket/close.yaml#/get"
+                        ref_file = ref_str.split("#")[0].lstrip("./")
+                        candidate = PROJECT_ROOT / "5.openapi" / ref_file
+                        if candidate.exists():
+                            return candidate
+        except Exception:
+            pass    
+
+    # FALLBACK: match theo summary == stem
     stem = _source_stem(source_file)
     root = PROJECT_ROOT / "5.openapi/paths" / module
 
@@ -173,7 +239,6 @@ def _find_target_yaml(source_file: str, module: str) -> Path | None:
                 return path
 
     return None
-
 
 def _patch_format_enum(op: dict, enum_candidates: list[dict]) -> bool:
     changed = False
@@ -266,8 +331,46 @@ def _patch_binary_and_json_response(
 
     return changed
 
+def _patch_json_data_schema(
+    resp_200: dict,
+    module: str,
+    schema_name: str,
+) -> bool:
+    """
+    Patch response 200 application/json — thêm allOf extend StandardSuccess
+    với schema data cụ thể của endpoint.
+    """
+    schema_path = PROJECT_ROOT / "5.openapi/components/schemas" / module / f"{schema_name}.yaml"
+    if not schema_path.exists():
+        return False
 
-def patch_yaml_with_hints(yaml_path: Path, hints: dict, config: dict) -> dict:
+    content = resp_200.setdefault("content", {})
+    json_content = content.setdefault("application/json", {})
+    current_schema = json_content.get("schema", {})
+
+    # Đã có allOf rồi thì skip
+    if "allOf" in current_schema:
+        return False
+
+    ref_standard = current_schema.get("$ref", "../../components/schemas/common/StandardSuccess.yaml")
+    data_ref = f"../../components/schemas/{module}/{schema_name}.yaml"
+
+    json_content["schema"] = {
+        "allOf": [
+            {"$ref": ref_standard},
+            {
+                "type": "object",
+                "properties": {
+                    "data": {"$ref": data_ref}
+                }
+            }
+        ]
+    }
+    # Xóa example data: null vì giờ có schema rồi
+    json_content.pop("example", None)
+    return True
+
+def patch_yaml_with_hints(yaml_path: Path, hints: dict, config: dict, module: str = "") -> dict:
     data = _load_yaml(yaml_path)
     changed = False
 
@@ -308,6 +411,11 @@ def patch_yaml_with_hints(yaml_path: Path, hints: dict, config: dict) -> dict:
             or "ensure_zip_and_json_200_response" in actions
         ):
             changed |= _patch_binary_and_json_response(resp_200, content_types, schema_refs)
+
+        if "patch_json_data_schema" in actions:
+            schema_name = hints.get("json_data_schema_name", "")
+            if schema_name:
+                changed |= _patch_json_data_schema(resp_200, module, schema_name)
 
     if changed:
         _write_yaml(yaml_path, data)

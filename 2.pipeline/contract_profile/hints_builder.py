@@ -133,7 +133,8 @@ def build_contract_hints(path: str | Path, module: str = "unknown", emit_to_queu
                     detail          = {
                         "section":    section_name,
                         "reason":      "Không tìm thấy allias khớp trong tài liệu",
-                        "suggestion": f"Thêm alias Việt/Anh cho section '{section_name}'"
+                        "candidate_headings": sections[section_name].get("candidate_headings", []),
+                        "suggestion": f"Thêm alias Việt/Anh cho section '{section_name} dựa trên candidate_headings'",
                     },
                 )
                 reviewer.add(result)

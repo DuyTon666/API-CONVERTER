@@ -9,6 +9,8 @@ from contract_profile.openapi_hint_patcher import (
     _find_target_yaml,
     patch_yaml_with_hints,
 )
+from contract_profile.llm_schema_generator import generate_response_schema
+from contract_profile.document_reader import read_document
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -58,6 +60,34 @@ def cmd_enrich_openapi(
     for source_file in files:
         try:
             hints = build_contract_hints(source_file)
+
+            response_modes = hints.get("response_contract", {}).get("response_modes", [])
+            has_json_wrapper = any(m.get("mode") == "json_wrapper" for m in response_modes)
+            if has_json_wrapper:
+                doc_text   = read_document(source_file)
+                schema_name = Path(source_file).stem + "Data"
+                generate_response_schema(
+                    doc_text     = doc_text,
+                    operation_id = Path(source_file).stem,
+                    module       = module,
+                    schema_name  = schema_name,
+                )
+
+            if has_json_wrapper:
+                doc_text    = read_document(source_file)
+                schema_name = Path(source_file).stem + "Data"
+                result = generate_response_schema(
+                    doc_text     = doc_text,
+                    operation_id = Path(source_file).stem,
+                    module       = module,
+                    schema_name  = schema_name,
+                )
+                if result:
+                    hints["json_data_schema_name"] = schema_name
+                    actions = hints.get("actions", [])
+                    if "patch_json_data_schema" not in actions:
+                        hints["actions"] = actions + ["patch_json_data_schema"]
+
             hints["status"] = "success"
             hints_results.append(hints)
         except Exception as e:
@@ -109,7 +139,7 @@ def cmd_enrich_openapi(
             })
             continue
 
-        patched = patch_yaml_with_hints(target_yaml, hints, config)
+        patched = patch_yaml_with_hints(target_yaml, hints, config, module=module)
         patched["source_file"] = hints["source_file"]
         patched["actions"] = hints.get("actions", [])
         patch_results.append(patched)
