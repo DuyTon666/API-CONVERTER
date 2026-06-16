@@ -1,0 +1,58 @@
+table_types:
+  api_info:
+    required_headers_any:
+      - ["Trường", "Giá trị"]
+      - ["Mã tài liệu", "Endpoint", "Service"]
+    fields:
+      endpoint:
+        aliases: ["Endpoint", "URI", "Path"]
+      method:
+        aliases: ["method", "HTTP Method", "Method"]
+      service:
+        aliases: ["Service"]
+      content_type:
+        aliases: ["Content-Type"]
+      authentication:
+        aliases: ["Authentication"]
+
+  request_headers:
+    required_headers_any:
+      - ["Tên", "Bắt buộc", "Kiểu", "Mô tả"]
+      - ["Header", "Bắt buộc", "Kiểu", "Mô tả"]
+    section_hint:
+      - request_headers
+
+  path_parameters:
+    required_headers_any:
+      - ["Tên", "Bắt buộc", "Kiểu", "Mô tả"]
+      - ["Field", "Kiểu", "Mô tả"]
+    section_hint:
+      - path_parameters
+
+  query_parameters:
+    required_headers_any:
+      - ["Tên", "Bắt buộc", "Kiểu", "Mô tả"]
+    section_hint:
+      - query_parameters
+
+  response_headers:
+    required_headers_any:
+      - ["Header", "Giá trị", "Ghi chú"]
+      - ["Tên", "Giá trị", "Ghi chú"]
+    section_hint:
+      - response_headers
+
+  response_data:
+    required_headers_any:
+      - ["Field", "Kiểu", "Mô tả"]
+      - ["Tên", "Kiểu", "Mô tả"]
+    section_hint:
+      - response_body
+
+  error_codes:
+    required_headers_any:
+      - ["Error Code", "HTTP", "Ngữ cảnh", "Mô tả"]
+      - ["Error Code", "Ngữ cảnh", "Mô tả"]
+      - ["Code", "HTTP", "Message"]
+    section_hint:
+      - error_response

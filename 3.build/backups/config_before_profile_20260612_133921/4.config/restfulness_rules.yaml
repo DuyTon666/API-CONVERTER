@@ -1,0 +1,37 @@
+# 4.config/restfulness_rules.yaml
+# Rules detect vi phạm REST convention.
+# Dev tay ghi — không để tool tự append.
+
+confidence_thresholds:
+  emit_yaml: 0.80
+  human_review: 0.50
+
+crud_verbs_in_operation_id:
+  - create
+  - delete
+  - remove
+  - update
+  - edit
+  - get
+  - fetch
+  - list
+  - detail
+  - add
+
+wrong_method_rules:
+  get:
+    - delete
+    - remove
+    - update
+    - create
+    - close
+    - cancel
+    - approve
+    - reject
+
+max_nesting_depth: 3
+
+severity_map:
+  crud_verbs_in_operation_id:    medium
+  wrong_method_for_state_change:  high
+  over_nested_path:               low

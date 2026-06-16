@@ -1,0 +1,4 @@
+description: Cache policy của response.
+schema:
+  type: string
+example: no-store, no-cache, must-revalidate

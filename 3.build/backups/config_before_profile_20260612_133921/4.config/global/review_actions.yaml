@@ -1,0 +1,15 @@
+# review_actions.yaml
+# Mỗi flag → hướng dẫn cho người review
+# Thêm flag mới vào đây khi pipeline có thêm loại lỗi mới — không sửa code Python
+actions:
+  method_missing:            "Kiểm tra lại docx — không parse được HTTP method"
+  path_missing:              "Kiểm tra lại docx — không parse được endpoint path"
+  permission_missing:        "Tìm CHECK_* trong docx và điền vào x-permission"
+  error_codes_not_parsed:    "Kiểm tra section 5.2.3 trong docx — có mã lỗi nhưng không đọc được"
+  request_body_fields_empty: "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+  operation_id_empty:        "LLM call failed — chạy lại sau khi set ANTHROPIC_API_KEY"
+  summary_empty:              "LLM call failed — summary rỗng, chạy lại sau khi set ANTHROPIC_API_KEY"
+
+post_enrich_checks:
+  operation_id: "operation_id_empty"
+  summary:      "summary_empty"

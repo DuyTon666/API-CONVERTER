@@ -1,0 +1,36 @@
+confidence:
+  emit: 0.75
+  review: 0.4
+
+on_ambiguous:
+  response_content_type: human_review
+  enum_values: human_review
+  nested_schema: human_review
+  business_side_effects: human_review
+  request_content_type_on_get: warning
+
+emit_policy:
+  authorization_header:
+    emit_as_parameter: false
+    use_security_scheme: true
+
+  request_content_type_header:
+    emit_as_parameter: false
+    reason: Content-Type should be represented by requestBody.content.
+
+  response_content_type_header:
+    emit_as_header: false
+    use_response_content: true
+
+  response_headers:
+    emit_known_headers: true
+    unknown_header_action: candidate
+
+  unknown_tables:
+    action: collect_observation
+
+review_queue:
+  path: "3.build/reports/human_review_queue.json"
+
+observation_report:
+  path: "3.build/reports/extraction_observations.json"

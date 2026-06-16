@@ -1,0 +1,31 @@
+enabled: true
+
+sources:
+  - table_description
+  - bullet_list
+  - inline_sentence
+
+patterns:
+  inline_default:
+    - "(?P<value>[A-Za-z0-9_-]+)\\s*\\(default\\)"
+
+  inline_dash_value:
+    - "(?P<value>[A-Za-z0-9_-]+)\\s*[—-]\\s*"
+
+  bullet_value:
+    - "^[●\\-\\*]\\s*(?P<value>[A-Z0-9_\\-]+)\\s*:"
+    - "^[●\\-\\*]\\s*(?P<value>[a-z0-9_\\-]+)\\s*:"
+
+known_param_enums:
+  format:
+    values:
+      - zip
+      - json
+    default: zip
+
+confidence:
+  from_known_param: 0.95
+  from_inline_default: 0.85
+  from_bullet_list: 0.8
+  min_emit: 0.75
+  min_review: 0.4

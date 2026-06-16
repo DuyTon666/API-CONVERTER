@@ -1,0 +1,4 @@
+description: Tên file trả về khi response là attachment/download.
+schema:
+  type: string
+example: attachment; filename="example.zip"

@@ -1,0 +1,74 @@
+type_mapping:
+  integer:
+    aliases:
+      - Integer
+      - int
+      - BIGINT
+    openapi:
+      type: integer
+
+  string:
+    aliases:
+      - String
+      - text
+      - varchar
+    openapi:
+      type: string
+
+  uuid:
+    aliases:
+      - UUID
+      - UUID v4
+      - String (UUID v4)
+    openapi:
+      type: string
+      format: uuid
+
+  boolean:
+    aliases:
+      - Boolean
+      - bool
+    openapi:
+      type: boolean
+
+  object:
+    aliases:
+      - Object
+    openapi:
+      type: object
+
+  array_object:
+    aliases:
+      - Array<Object>
+      - Array Object
+      - array<object>
+    openapi:
+      type: array
+      items:
+        type: object
+
+  nullable_object:
+    aliases:
+      - Object|Null
+      - Object | Null
+      - Object/Null
+    openapi:
+      anyOf:
+        - type: object
+        - type: "null"
+
+  enum:
+    aliases:
+      - Enum
+    openapi:
+      type: string
+
+date_time_hints:
+  patterns:
+    - "Y-m-d H:i:s"
+    - "datetime"
+    - "ngày tạo"
+    - "ngày cập nhật"
+  openapi:
+    type: string
+    format: date-time

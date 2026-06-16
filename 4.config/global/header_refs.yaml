@@ -1,0 +1,22 @@
+request_headers:
+  Authorization:
+    emit: false
+    handled_by: security
+    reason: Authorization header is represented by securitySchemes.
+
+  Content-Type:
+    emit: false
+    handled_by: request_body_content
+    reason: Content-Type should be represented by requestBody.content when request body exists.
+
+  Idempotency-Key:
+    emit: true
+    ref: "../../components/parameters/IdempotencyKey.yaml"
+
+  X-Request-Id:
+    emit: true
+    ref: "../../components/parameters/XRequestId.yaml"
+
+  X-Client-Id:
+    emit: true
+    ref: "../../components/parameters/XClientId.yaml"

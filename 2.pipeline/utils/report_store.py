@@ -81,6 +81,25 @@ def save_review_queue(items: list) -> None:
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(items, f, ensure_ascii=False, indent=2)
+#TEST
+def load_convert_review_queue() -> list:
+    """Đọc convert_review_queue.json — review items từ converter (op.review_flags)."""
+    data = _load_json(REPORT_DIR / "convert_review_queue.json")
+    if isinstance(data, list):
+        return data
+    return []
+
+
+def save_convert_review_queue(items: list) -> None:
+    """
+    Ghi đè toàn bộ convert_review_queue.json.
+    Schema khác human_review_queue.json (ValidationResult) -- entries dạng
+    {type: "convert_review", file, flags, actions, output, source_format, module}.
+    """
+    path = REPORT_DIR / "convert_review_queue.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(items, f, ensure_ascii=False, indent=2)
 
 def write_batch_log(module: str, source_format: str, stats: dict) -> Path:
     path = REPORT_DIR / "batch_log_by_module.json"

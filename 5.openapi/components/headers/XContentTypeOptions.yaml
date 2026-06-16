@@ -1,0 +1,6 @@
+description: Security header chống MIME sniffing.
+schema:
+  type: string
+enum:
+  - nosniff
+example: nosniff

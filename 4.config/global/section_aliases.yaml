@@ -1,0 +1,92 @@
+sections:
+  overview:
+    aliases:
+      - "I. Tổng quan"
+      - "Tổng quan"
+      - "Thông tin chung API"
+      - "Thông tin kỹ thuật cơ bản"
+
+  request:
+    aliases:
+      - "4. API Input"
+      - "API Input"
+      - "Request"
+
+  request_headers:
+    aliases:
+      - "4.1 Request Headers"
+      - "Request Headers"
+      - "Header request"
+
+  path_parameters:
+    aliases:
+      - "Path Parameters"
+      - "a. Path Parameters"
+      - "Path params"
+
+  query_parameters:
+    aliases:
+      - "Query Parameters"
+      - "b. Query Parameters"
+      - "Query params"
+
+  request_body:
+    aliases:
+      - "Request Body"
+      - "4.3 Request Body"
+
+  validation_rules:
+    aliases:
+      - "Quy tắc validate input"
+      - "Validate input"
+      - "Input validation"
+
+  response:
+    aliases:
+      - "5. API Output Contract"
+      - "API Output Contract"
+      - "Response"
+      - "Response thành công"
+
+  response_headers:
+    aliases:
+      - "5.1.2 Response Headers"
+      - "Response Headers"
+      - "Header response"
+
+  response_body:
+    aliases:
+      - "Response Body"
+      - "Response Body – Schema"
+      - "Response Body - Schema"
+      - "Mô tả chi tiết Response data"
+      - "Response data"
+
+  error_response:
+    aliases:
+      - "Response lỗi"
+      - "Schema lỗi"
+      - "Danh sách mã lỗi"
+
+  business_flow:
+    aliases:
+      - "Luồng xử lý nghiệp vụ"
+      - "Logic overview"
+      - "High level"
+
+  system_impact:
+    aliases:
+      - "Tác động hệ thống & dữ liệu"
+      - "System impact"
+
+  appendix:
+    aliases:
+      - "Phụ lục"
+      - "Ví dụ Request"
+      - "Ví dụ Response"
+      - "Sequence Diagram"
+
+  used_interfaces:
+    aliases:
+      - "Các giao diện chức năng có sử dụng API"
+      - "Giao diện chức năng sử dụng API"

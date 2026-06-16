@@ -1,0 +1,17 @@
+# Rule detect multipart/form-data
+binary_formats:
+  - binary
+  - byte
+
+multipart_keywords:
+  - file
+  - files
+  - attachment
+  - attachments
+  - image
+  - images
+  - upload
+  - uploads
+  - avatar
+  - document
+  - documents

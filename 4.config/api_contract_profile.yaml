@@ -1,0 +1,38 @@
+document_profile:
+  name: api_contract_v1
+  description: Generic API Contract profile for DOCX/PDF/TXT/MD documents.
+
+input_formats:
+  supported:
+    - docx
+    - pdf
+    - txt
+    - md
+
+normalization:
+  unicode_normalize: true
+  collapse_whitespace: true
+  remove_control_chars: true
+  fix_common_ocr_errors: true
+
+section_detection:
+  strategy: heading_or_numbered_title
+
+  required_sections:
+    - overview
+    - request
+    - response
+
+  optional_sections:
+    - change_history
+    - business_flow
+    - system_impact
+    - performance_limits
+    - security_compliance
+    - notes_todo
+    - appendix
+    - used_interfaces
+
+fallback:
+  allow_missing_optional_sections: true
+  unknown_section_action: collect_observation

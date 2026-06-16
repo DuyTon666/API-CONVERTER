@@ -1,0 +1,95 @@
+modules:
+  ticket:
+    action_segments:
+    - segment: change-assignee
+      confidence: 0.99
+      reason: verb phrase 'change-assignee' indicates an operation to change the assigned
+        support staff for a ticket
+      classified_by: claude
+      classified_at: '2026-06-11'
+    - segment: close
+      confidence: 0.99
+      reason: '''close'' is a verb indicating an operation to change the ticket state
+        to closed'
+      classified_by: claude
+      classified_at: '2026-06-11'
+    - segment: reopen
+      confidence: 0.99
+      reason: reopen is a verb indicating an operation to change the state of a closed
+        ticket back to open
+      classified_by: claude
+      classified_at: '2026-06-11'
+    resource_segments:
+    - segment: conversations
+      confidence: 0.97
+      reason: noun indicating a collection of conversation entities belonging to a
+        ticket
+      classified_by: claude
+      classified_at: '2026-06-11'
+    - segment: ratings
+      confidence: 0.97
+      reason: ratings is a noun indicating a collection of rating entities associated
+        with a ticket
+      classified_by: claude
+      classified_at: '2026-06-11'
+    - segment: tickets
+      confidence: 0.99
+      reason: tickets is a noun indicating a collection of support ticket entities
+      classified_by: claude
+      classified_at: '2026-06-11'
+    - segment: support-staffs
+      confidence: 0.97
+      reason: noun phrase indicating a collection of support staff entities associated
+        with a ticket
+      classified_by: claude
+      classified_at: '2026-06-11'
+    - segment: feedback
+      confidence: 0.82
+      reason: feedback is a noun representing a resource entity (collection of feedback
+        items) submitted by customers, even though it implies an action, it is primarily
+        used as a noun/resource in REST API design
+      classified_by: claude
+      classified_at: '2026-06-11'
+  department:
+    action_segments: []
+    resource_segments:
+    - segment: departments
+      confidence: 0.99
+      reason: noun indicating a collection of department entities
+      classified_by: claude
+      classified_at: '2026-06-11'
+  statistic:
+    action_segments: []
+    resource_segments:
+    - segment: statistics
+      confidence: 0.85
+      reason: noun indicating a collection of statistical data associated with a user
+        entity
+      classified_by: claude
+      classified_at: '2026-06-11'
+  service:
+    action_segments:
+    - segment: request-upgrade-plans
+      confidence: 0.85
+      reason: verb phrase 'request-upgrade' indicates an operation/action to request
+        a service upgrade, combined with the API summary confirming it creates an
+        upgrade request
+      classified_by: claude
+      classified_at: '2026-06-11'
+    resource_segments:
+    - segment: types
+      confidence: 0.97
+      reason: noun indicating a collection of service types
+      classified_by: claude
+      classified_at: '2026-06-11'
+    - segment: upgrade-plans
+      confidence: 0.92
+      reason: noun phrase indicating a collection of upgrade plans (gói nâng cấp)
+        associated with a service
+      classified_by: claude
+      classified_at: '2026-06-11'
+    - segment: services
+      confidence: 0.99
+      reason: noun indicating a collection of services belonging to a user
+      classified_by: claude
+      classified_at: '2026-06-11'
