@@ -1,0 +1,61 @@
+@startuml UC05_KiemDuyetXuatYAML
+skinparam ActivityBackgroundColor #F8FAFC
+skinparam ActivityBorderColor #94A3B8
+skinparam ArrowColor #64748B
+skinparam ActivityDiamondBackgroundColor #FEF9C3
+skinparam ActivityStartColor #4F46E5
+skinparam ActivityEndColor #4F46E5
+
+title UC05 — Kiểm duyệt & xuất YAML
+
+|Người dùng|
+start
+:Truy cập trang review job;
+
+|Hệ thống|
+if (Có file flagged?) then (Không)
+  :Hiển thị "Không còn file cần review";
+else (Có)
+  :Hiển thị danh sách file flagged\nkèm lý do cần review;
+endif
+
+|Người dùng|
+:Chọn file muốn xem xét;
+
+|Hệ thống|
+:Mở Monaco Editor\nhiển thị nội dung YAML;
+
+|Người dùng|
+:Đọc và chỉnh sửa YAML\nnếu cần;
+
+|Hệ thống|
+if (YAML hợp lệ?) then (Không)
+  :Hiển thị lỗi inline\nKhông cho approve;
+  stop
+else (Có)
+  :Lưu thay đổi vào\nin-memory job state;
+endif
+
+|Người dùng|
+if (Approve hay Reject?) then (Reject)
+  |Hệ thống|
+  :Đánh dấu file là "rejected";
+else (Approve)
+  |Hệ thống|
+  :Đánh dấu file là "done";
+endif
+
+|Người dùng|
+if (Còn file cần review?) then (Có)
+  :Chọn file tiếp theo;
+  detach
+else (Không)
+  :Bấm "Export";
+endif
+
+|Hệ thống|
+:Ghi toàn bộ file đã approve\nra 5.openapi/;
+:Kích hoạt bundle → lint\n(UC09, UC10, UC11);
+
+stop
+@enduml

@@ -1,0 +1,50 @@
+@startuml UC05_KiemDuyetXuatYAML
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title UC05 — Kiểm duyệt & xuất YAML
+
+actor "Người dùng" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "File System" as FS
+
+User -> FE: Truy cập trang review job
+FE -> BE: GET /jobs/{job_id}
+BE --> FE: { files: [{ file_id, filename, status, flags }] }
+FE --> User: Hiển thị danh sách file\n(flagged / done / error)
+
+User -> FE: Chọn file flagged muốn review
+FE -> BE: GET /jobs/{job_id}/file/{file_id}
+BE -> FS: Đọc nội dung YAML
+FS --> BE: YAML content
+BE --> FE: YAML content
+FE --> User: Mở Monaco Editor\nhiển thị YAML
+
+User -> User: Chỉnh sửa YAML (nếu cần)
+
+alt Người dùng Approve
+  User -> FE: Bấm "Approve"
+  FE -> BE: POST /jobs/{job_id}/approve\n{ file_id }
+  BE -> BE: Đánh dấu file là "done"
+  BE --> FE: 200 OK
+  FE --> User: Cập nhật trạng thái ✓ Xong
+else Người dùng Reject
+  User -> FE: Bấm "Reject"
+  FE -> BE: POST /jobs/{job_id}/reject\n{ file_id }
+  BE -> BE: Đánh dấu file là "rejected"
+  BE --> FE: 200 OK
+  FE --> User: Cập nhật trạng thái ✕ Rejected
+end
+
+User -> FE: Bấm "Export"
+FE -> BE: POST /jobs/{job_id}/export
+BE -> FS: Ghi toàn bộ file "done"\nvào 5.openapi/
+FS --> BE: OK
+BE -> BE: Kích hoạt bundle → lint\n(UC09, UC10, UC11)
+BE --> FE: 200 OK\n{ spectral: [...], redocly: [...] }
+FE --> User: Hiển thị kết quả lint
+
+@enduml

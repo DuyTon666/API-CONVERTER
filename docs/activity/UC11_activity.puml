@@ -1,0 +1,31 @@
+@startuml UC11_LintGovernance
+skinparam ActivityBackgroundColor #F8FAFC
+skinparam ActivityBorderColor #94A3B8
+skinparam ArrowColor #64748B
+skinparam ActivityDiamondBackgroundColor #FEF9C3
+skinparam ActivityStartColor #4F46E5
+skinparam ActivityEndColor #4F46E5
+
+title UC11 — Lint bundle theo governance rules (Spectral)
+
+|Backend|
+start
+:Gọi lệnh\nspectral lint dist/openapi-bundled.yaml;
+
+|Spectral|
+if (Ruleset tìm thấy?) then (Không)
+  |Backend|
+  :Ghi nhận lỗi cấu hình\nBỏ qua kết quả Spectral\nChỉ hiển thị kết quả Redocly;
+  stop
+else (Có)
+endif
+
+:Tải ruleset tùy chỉnh\ncủa project;
+:Kiểm tra từng rule:\n- operationId camelCase\n- Không dùng inline schema\n- Error response phải dùng $ref chuẩn\n- Server-managed fields phải readOnly;
+:Sinh danh sách issues:\ncode (tên rule), message,\nseverity (0=error / 1=warning), path;
+
+|Backend|
+:Nhận danh sách issues\nTrả về cho frontend hiển thị;
+
+stop
+@enduml

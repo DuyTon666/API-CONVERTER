@@ -453,165 +453,58 @@ tags:
     description: Các API liên quan đến tài khoản
 paths:
   /v1/users/{user_id}/tickets:
-    get:
-      summary: API Ticket - Hiển thị danh sách ticket cho khách hàng
-      operationId: listTickets
-      description: ''
-      tags:
-        - Ticket
-      security:
-        - bearerAuth: []
-      x-permission: CHECK_UPDATE
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 1
-          description: Số thứ tự trang muốn hiển thị
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 10
-          description: Tổng số ticket muốn hiển thị trên một trang
-        - name: status
-          in: query
-          required: false
-          schema:
-            type: string
-            enum:
-              - CREATED
-              - IN_PROGRESS
-              - PENDING
-              - CLOSED
-          description: 'Tìm kiếm theo trạng thái:CREATED: Mới tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng'
-        - name: keyword
-          in: query
-          required: false
-          schema:
-            type: string
-          description: 'Nội dung cần tìm kiếm- Tìm kiếm theo: Mã ticket, tiêu đề.- Tối thiểu 4 ký tự'
-        - name: date_from
-          in: query
-          required: false
-          schema:
-            type: string
-            format: date-time
-          description: Tìm kiếm từ ngày (Y-m-d H:i:s)- date_to>=data_from
-        - name: date_to
-          in: query
-          required: false
-          schema:
-            type: string
-            format: date-time
-          description: Tìm kiếm đến ngày (Y-m-d H:i:s)- date_to>=data_from
-        - name: sort_type
-          in: query
-          required: false
-          schema:
-            type: string
-            enum:
-              - LAST_UPDATED_DESC
-              - CREATED_DATE_DESC
-          description: 'Kiểu sắp xếp:LAST_UPDATED_DESC:Ngày cập nhật giảm dầnCREATED_DATE_DESC: Ngày tạo giảm dần'
-        - name: post_by
-          in: query
-          required: false
-          schema:
-            type: string
-            enum:
-              - USER
-              - SYSTEM
-          description: 'Người tạo ticketUSER: user hiện tại (khách hàng)SYSTEM: hệ thống'
-      responses:
-        '200':
-          description: Thành công
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - \$ref: '#/components/schemas/StandardSuccess'
-                  - type: object
-                    properties:
-                      data:
-                        \$ref: '#/components/schemas/ListTicketsData'
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
-          description: 4200 — Dữ liệu request không hợp lệ
-          content:
-            application/json:
-              schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
-    post:
-      summary: API Ticket - Tạo ticket cho khách hàng
-      operationId: createTickets
-      description: ''
-      tags:
-        - Ticket
-      security:
-        - bearerAuth: []
-      x-permission: CHECK_NEWUPDATE
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Thành công
-          content:
-            application/json:
-              schema:
-                \$ref: '#/components/schemas/StandardSuccess'
-              example:
-                success: true
-                data: null
-                error: null
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
-          description: |-
-            4200 — Dữ liệu request không hợp lệ
-            4462 — Tạo yêu cầu thất bại
-          content:
-            application/json:
-              schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
-      requestBody:
+    summary: API Contract - API tạo ticket cho khách hàng.docx
+    operationId: createTickets
+    description: ''
+    tags:
+      - Ticket
+    security:
+      - bearerAuth: []
+    x-permission: CHECK_NEWUPDATE
+    parameters:
+      - name: user_id
+        in: path
         required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Thành công
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              \$ref: '#/components/schemas/CreateTicketsRequest'
+              \$ref: ../../components/schemas/common/StandardSuccess.yaml
+            example:
+              success: true
+              data: null
+              error: null
+      '400':
+        \$ref: ../../components/responses/BadRequest.yaml
+      '401':
+        \$ref: ../../components/responses/Unauthorized.yaml
+      '403':
+        \$ref: ../../components/responses/Forbidden.yaml
+      '404':
+        \$ref: ../../components/responses/NotFound.yaml
+      '422':
+        description: |-
+          4200 — Dữ liệu request không hợp lệ
+          4462 — Tạo yêu cầu thất bại
+        content:
+          application/json:
+            schema:
+              \$ref: ../../components/schemas/common/StandardError.yaml
+      '500':
+        \$ref: ../../components/responses/InternalError.yaml
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            \$ref: ../../components/schemas/ticket/CreateTicketsRequest.yaml
   /v1/users/{user_id}/tickets/{id}:
     get:
-      summary: API Ticket - Hiển thị chi tiết ticket cho khách hàng
+      summary: API Contract - API hiển thị chi tiết ticket cho khách hàng.docx
       operationId: getTicket
       description: ''
       tags:
@@ -660,7 +553,7 @@ paths:
           \$ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{id}/close:
     put:
-      summary: API Ticket - API đóng ticket của khách hàng
+      summary: API Contract - API đóng ticket của khách hàng.docx
       operationId: updateClose
       description: ''
       tags:
@@ -711,7 +604,7 @@ paths:
           \$ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{id}/reopen:
     post:
-      summary: API Ticket - API mở lại ticket của khách hàng
+      summary: API Contract - API mở lại ticket của khách hàng.docx
       operationId: createReopen
       description: ''
       tags:
@@ -766,119 +659,9 @@ paths:
           multipart/form-data:
             schema:
               \$ref: '#/components/schemas/CreateReopenRequest'
-  /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
-    post:
-      summary: API Ticket - API chỉnh sửa feedback ticket cho khách hàng
-      operationId: updateFeedback
-      description: ''
-      tags:
-        - Ticket
-      security:
-        - bearerAuth: []
-      x-permission: CHECK_NEWUPDATE
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: ticket_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Thành công
-          content:
-            application/json:
-              schema:
-                \$ref: '#/components/schemas/StandardSuccess'
-              example:
-                success: true
-                data: null
-                error: null
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
-          description: 4200 — Dữ liệu request không hợp lệ
-          content:
-            application/json:
-              schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              \$ref: '#/components/schemas/UpdateFeedbackRequest'
-  /v1/users/{user_id}/tickets/{id}/support-staffs:
-    get:
-      summary: API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket
-      operationId: listSupportStaffs
-      description: ''
-      tags:
-        - Ticket
-      security:
-        - bearerAuth: []
-      x-permission: CHECK_NEWUPDATE
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Thành công
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - \$ref: '#/components/schemas/StandardSuccess'
-                  - type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          \$ref: '#/components/schemas/ListSupportStaffsDataList'
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
-          description: 4200 — Dữ liệu request không hợp lệ
-          content:
-            application/json:
-              schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
   /v1/users/{user_id}/tickets/{id}/conversations:
     post:
-      summary: API Ticket - API tạo phản hồi ticket cho khách hàng
+      summary: API Contract - API phản hồi ticket
       operationId: createConversations
       description: ''
       tags:
@@ -928,9 +711,15 @@ paths:
                 \$ref: '#/components/schemas/StandardError'
         '500':
           \$ref: '#/components/responses/InternalError'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              \$ref: '#/components/schemas/CreateConversationsRequest'
   /v1/users/{user_id}/tickets/{ticket_id}/ratings:
     post:
-      summary: API Ticket - API tạo ratting ticket cho khách hàng
+      summary: API Contract - Tạo rating ticket cho khách hàng.docx
       operationId: createRatings
       description: ''
       tags:
@@ -987,7 +776,7 @@ paths:
               \$ref: '#/components/schemas/CreateRatingsRequest'
   /v1/users/{user_id}/tickets/{id}/feedback:
     post:
-      summary: API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback)
+      summary: API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx
       operationId: createFeedback
       description: ''
       tags:
@@ -1041,7 +830,7 @@ paths:
               \$ref: '#/components/schemas/CreateFeedbackRequest'
   /v1/users/{user_id}/tickets/{id}/change-assignee:
     post:
-      summary: API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket)
+      summary: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx
       operationId: createChangeAssignee
       description: ''
       tags:
@@ -1080,9 +869,7 @@ paths:
         '404':
           \$ref: '#/components/responses/NotFound'
         '422':
-          description: |-
-            4200 — Dữ liệu request không hợp lệ
-            4468 — Đang chờ nhân viên tiếp nhận
+          description: 4200 — Dữ liệu request không hợp lệ
           content:
             application/json:
               schema:
@@ -1118,139 +905,6 @@ components:
           example: null
         data:
           description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
-    ListTicketsDataData:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Id của ticket
-          readOnly: true
-        title:
-          type: string
-          description: Tiêu đề
-        code:
-          type: string
-          description: Mã ticket
-        created_date:
-          type: string
-          description: Ngày ticket được tạo (Y-m-d H:i:s)
-        last_updated:
-          type: string
-          description: Ngày cập nhật gần nhất (Y-m-d H:i:s)
-        trangthai:
-          type: integer
-          description: Trạng thái thực của ticket
-        status:
-          type: string
-          description: 'Trạng thái dành cho FEGồm 4 trạng thái: CREATED: Vừa tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng'
-        department:
-          type: object
-          properties:
-            id:
-              type: integer
-              description: Id của phòng ban
-              readOnly: true
-            name:
-              type: string
-              description: Tên phòng ban
-          description: Thông tin phòng ban xử lý yêu cầu (xem thêm bên dưới)
-        service:
-          type: object
-          properties:
-            id:
-              type: integer
-              description: Id của dịch vụ
-              readOnly: true
-            domain:
-              type: string
-              description: Tên domain
-            type:
-              type: string
-              description: Loại dịch vụ
-          description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
-    ListTicketsData:
-      type: object
-      properties:
-        current_page:
-          type: integer
-          description: Số thứ tự trang hiện tại
-        next_page_url:
-          type: string
-          description: Link đến trang tiếp theo
-        prev_page_url:
-          type: string
-          description: Link đến trang trước
-        first_page_url:
-          type: string
-          description: Link đến trang đầu tiên
-        per_page:
-          type: integer
-          description: Số record mỗi trang
-        from:
-          type: integer
-          description: Số thứ tự bắt đầu
-        to:
-          type: integer
-          description: Số thứ tự kết thúc
-        data:
-          type: array
-          items:
-            \$ref: '#/components/schemas/ListTicketsDataData'
-          description: Danh sách các ticket
-    StandardError:
-      type: object
-      required:
-        - success
-        - error
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: object
-          required:
-            - code
-            - message
-          properties:
-            code:
-              type: integer
-              description: 'Mã lỗi nội bộ của hệ thống: 4102: Token không hợp lệ hoặc đã hết hạn 4108: Không có quyền truy cập 4004: Không tìm thấy dữ liệu 4200: Dữ liệu không hợp lệ'
-              example: 4200
-            message:
-              type: string
-              example: Dữ liệu không hợp lệ
-            data:
-              type:
-                - object
-                - 'null'
-    CreateTicketsRequest:
-      type: object
-      properties:
-        department_id:
-          type: integer
-          description: Phòng ban muốn được hỗ trợ
-        service_id:
-          type: integer
-          description: Dịch vụ cần hỗ trợ
-        title:
-          type: string
-          description: Tiêu đề
-        descriptions:
-          type: string
-          maxLength: 4000
-          description: Nội dung yêu cầu -  Tối đa 4000 ký tự
-        files:
-          type: array
-          items:
-            type: string
-            format: binary
-          maxItems: 3
-          description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
-      required:
-        - department_id
-        - service_id
-        - title
-        - descriptions
     GetTicketDataConversations:
       type: object
       properties:
@@ -1271,7 +925,7 @@ components:
                 description: Đường dẫn đến file
               category:
                 type: string
-                description: 'Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác'
+                description: 'Phân loại:'
           description: Thông tin các tệp tin (xem thêm bên dưới)
         created_date:
           type: string
@@ -1288,7 +942,7 @@ components:
               description: Tên người tạo
             mgroup:
               type: integer
-              description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
+              description: 'Phân loại người dùng:'
           description: Thông tin người tạo (xem thêm bên dưới)
     GetTicketData:
       type: object
@@ -1309,15 +963,12 @@ components:
         created_date:
           type: string
           description: Ngày ticket được tạo (Y-m-d H:i:s)
-        last_updated:
-          type: string
-          description: Ngày cập nhật gần nhất (Y-m-d H:i:s)
         trangthai:
           type: integer
           description: Trạng thái thực của ticket
         status:
           type: string
-          description: 'Trạng thái dành cho FEGồm 4 trạng thái: CREATED: Vừa tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng'
+          description: Trạng thái dành cho FE
         files:
           type: array
           items:
@@ -1328,7 +979,7 @@ components:
                 description: Đường dẫn đến file
               category:
                 type: string
-                description: 'Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác'
+                description: 'Phân loại:'
           description: Thông tin các tệp tin (xem thêm bên dưới)
         department:
           type: object
@@ -1367,78 +1018,65 @@ components:
               description: Tên nhân viên
             mgroup:
               type: integer
-              description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
+              description: 'Phân loại người dùng:'
           description: Thông tin về nhân viên hỗ trợ (xem thêm bên dưới)
         conversations:
           type: array
           items:
             \$ref: '#/components/schemas/GetTicketDataConversations'
           description: Danh sách các phản hồi (xem thêm bên dưới)
+    StandardError:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: integer
+              description: 'Mã lỗi nội bộ của hệ thống: 4102: Token không hợp lệ hoặc đã hết hạn 4108: Không có quyền truy cập 4004: Không tìm thấy dữ liệu 4200: Dữ liệu không hợp lệ'
+              example: 4200
+            message:
+              type: string
+              example: Dữ liệu không hợp lệ
+            data:
+              type:
+                - object
+                - 'null'
     CreateReopenRequest:
       type: object
       properties:
         descriptions:
           type: string
-          maxLength: 4000
-          description: Nội dung -  Tối đa 4000 ký tự
+          description: Nội dung
         files:
           type: array
           items:
             type: string
             format: binary
-          maxItems: 3
-          description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
-    UpdateFeedbackRequest:
+          description: Tệp đính kèm
+    CreateConversationsRequest:
       type: object
       properties:
-        id:
-          type: integer
-          description: Id của đánh giá
-        review_service:
-          type: integer
-          description: Số sao cho chất lượng dịch vụNhỏ nhất 1Lớn nhất 5
-        review_employee:
-          type: integer
-          description: Số sao cho chất lượng phục vụNhỏ nhất 1Lớn nhất 5
-      required:
-        - id
-        - review_service
-        - review_employee
-    ListSupportStaffsDataList:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: id của nhân viên
-          readOnly: true
-        name:
+        descriptions:
           type: string
-          description: Tên đầy đủ của nhân viên
-        department:
-          type: object
-          properties:
-            id:
-              type: integer
-              description: id phòng ban
-              readOnly: true
-            name:
-              type: string
-              description: Tên phòng ban
-          description: Thông tin phòng ban của nhân viên
-        rating:
-          type: object
-          properties:
-            id:
-              type: integer
-              description: id đánh giá
-              readOnly: true
-            stars:
-              type: integer
-              description: Số sao
-            descriptions:
-              type: string
-              description: Nội dung đánh giá
-          description: Thông tin đánh giá của nhân viên
+          description: Nội dung yêu cầu
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: Tệp đính kèm
+      required:
+        - descriptions
     CreateConversationsData:
       type: object
       properties:
@@ -1459,7 +1097,7 @@ components:
                 description: Đường dẫn đến file
               category:
                 type: string
-                description: 'Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác'
+                description: 'Phân loại:'
           description: Thông tin các tệp tin (xem thêm bên dưới)
         created_date:
           type: string
@@ -1476,7 +1114,7 @@ components:
               description: Tên người tạo
             mgroup:
               type: integer
-              description: 'Phân loại người dùng:   1 - Khách hàng PA   2 - Đại lý, tài khoản trả trước   3 - Nhân viên   4 - Khách hàng đại lý'
+              description: 'Phân loại người dùng:'
           description: Thông tin người tạo (xem thêm bên dưới)
     CreateRatingsRequest:
       type: object
@@ -1491,25 +1129,23 @@ components:
                 description: ID nhân viên hỗ trợ
               stars:
                 type: integer
-                description: 'Số sao -  Tối thiểu: 1 -  Tối đa: 5'
+                description: Số sao
               descriptions:
                 type: string
-                maxLength: 4000
-                description: Nội dung đánh giá -  Tối đa 4000 ký tự -  Bắt buộc nếu stars < 3
+                description: Nội dung đánh giá
             required:
               - supporter_id
               - stars
-          description: Danh sách các đánh giáTham khảo bên dưới
+          description: Danh sách các đánh giá
         supporter_id:
           type: integer
           description: ID nhân viên hỗ trợ
         stars:
           type: integer
-          description: 'Số sao -  Tối thiểu: 1 -  Tối đa: 5'
+          description: Số sao
         descriptions:
           type: string
-          maxLength: 4000
-          description: Nội dung đánh giá -  Tối đa 4000 ký tự -  Bắt buộc nếu stars < 3
+          description: Nội dung đánh giá
       required:
         - ratings
         - supporter_id
@@ -1522,15 +1158,13 @@ components:
           description: Vấn đề bạn gặp phải
         descriptions:
           type: string
-          maxLength: 4000
-          description: Chi tiết sự việc -  Tối thiểu 20 ký tự -  Tối đa 4000 ký tự
+          description: Chi tiết sự việc
         files:
           type: array
           items:
             type: string
             format: binary
-          maxItems: 3
-          description: 'Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar'
+          description: Tệp đính kèm
       required:
         - title
         - descriptions
@@ -1539,8 +1173,7 @@ components:
       properties:
         reason:
           type: string
-          maxLength: 4000
-          description: Lý do từ chối.Tối đa 4000 ký tự.
+          description: Lý do từ chối.
       required:
         - reason
   responses:

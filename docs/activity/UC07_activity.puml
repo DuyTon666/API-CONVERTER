@@ -1,0 +1,42 @@
+@startuml UC07_XemTaiLieuAPI
+skinparam ActivityBackgroundColor #F8FAFC
+skinparam ActivityBorderColor #94A3B8
+skinparam ArrowColor #64748B
+skinparam ActivityDiamondBackgroundColor #FEF9C3
+skinparam ActivityStartColor #4F46E5
+skinparam ActivityEndColor #4F46E5
+
+title UC07 — Xem tài liệu API
+
+|Người dùng|
+start
+:Truy cập trang Swagger UI;
+
+|Hệ thống|
+if (Bundle tồn tại?) then (Không)
+  :Hiển thị thông báo\n"Chưa có tài liệu\nHãy build trước";
+  stop
+else (Có)
+endif
+
+:Tải openapi-bundled.yaml từ server;
+:Render danh sách endpoint\nkèm method, path, summary, description;
+
+|Người dùng|
+if (Nhập từ khóa tìm kiếm?) then (Có)
+  :Nhập từ khóa vào ô search;
+  |Hệ thống|
+  :Fuse.js fuzzy search\ntrên operationId, path,\nsummary, description;
+  :Hiển thị kết quả\ntheo độ liên quan;
+  |Người dùng|
+else (Không)
+  :Duyệt toàn bộ danh sách;
+endif
+
+:Bấm vào endpoint muốn xem;
+
+|Hệ thống|
+:Hiển thị chi tiết endpoint:\nparameters, request body schema,\nresponse schema, error codes;
+
+stop
+@enduml
