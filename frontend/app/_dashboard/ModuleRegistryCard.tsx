@@ -1,7 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ImportModuleProgress, ModuleListResult } from "./types";
 import { formatDate, formatRelativeTime } from "./format";
+
+function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  return mounted;
+}
 
 type Props = {
   moduleList: ModuleListResult | null;
@@ -44,6 +51,7 @@ export default function ModuleRegistryCard({
   importError,
   onImport,
 }: Props) {
+  const mounted = useMounted();
   return (
     <section className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5">
       <div className="flex items-center justify-between mb-4">
@@ -51,10 +59,12 @@ export default function ModuleRegistryCard({
         <button
           onClick={() => onImport(null)}
           disabled={
+            !mounted ||
             importRunning ||
             loading ||
-            !moduleList?.modules.some((m) => m.status === "active")
+            !moduleList?.modules?.some((m) => m.status === "active")
           }
+          suppressHydrationWarning
           className="px-4 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
           title="Chạy pipeline convert tài liệu của tất cả module active thành OpenAPI YAML"
         >
@@ -144,6 +154,17 @@ export default function ModuleRegistryCard({
                           disabled={activatingModule !== null}
                           className="px-3 py-1 bg-emerald-500 text-white text-xs font-medium rounded-lg hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
                           title="Chuyển module từ draft sang active để cho phép chạy import"
+                        >
+                          {activatingModule === m.name
+                            ? "Đang kích hoạt..."
+                            : "Activate"}
+                        </button>
+                      ) : m.status === "deprecated" ? (
+                        <button
+                          onClick={() => onActivate(m.name)}
+                          disabled={activatingModule !== null}
+                          className="px-3 py-1 bg-emerald-500 text-white text-xs font-medium rounded-lg hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                          title="Kích hoạt lại module deprecated"
                         >
                           {activatingModule === m.name
                             ? "Đang kích hoạt..."

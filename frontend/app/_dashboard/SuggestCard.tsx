@@ -44,6 +44,12 @@ function ElapsedTimer() {
   return <>({elapsed}s)</>;
 }
 
+function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  return mounted;
+}
+
 export default function SuggestCard({
   suggestions,
   loading,
@@ -60,6 +66,7 @@ export default function SuggestCard({
   onApproveSelected,
   onApply,
 }: Props) {
+  const mounted = useMounted();
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
   const [statusFilter, setStatusFilter] = useState<
     "pending" | "approved" | "all"
@@ -146,17 +153,18 @@ export default function SuggestCard({
 
         <button
           onClick={handleApproveSelected}
-          disabled={busy || selectedFiles.size === 0}
+          disabled={!mounted || busy || loading || !selectedFiles || selectedFiles.size === 0}
+          suppressHydrationWarning
           className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition"
         >
           {approvingMulti
             ? "Đang duyệt..."
-            : `Duyệt (${selectedFiles.size}) file`}
+            : `Duyệt (${selectedFiles ? selectedFiles.size : 0}) file`}
         </button>
 
         <button
           onClick={onApply}
-          disabled={applying || (suggestions?.summary?.approved ?? 0) === 0}
+          disabled={applying || loading || (suggestions?.summary?.approved ?? 0) === 0}
           className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
         >
           {applying ? "Đang apply..." : "Apply suggestions"}

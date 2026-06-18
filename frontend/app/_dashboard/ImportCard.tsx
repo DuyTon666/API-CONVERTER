@@ -8,9 +8,6 @@ type Props = {
   uploading: boolean;
   error: string;
   message: string;
-  domain: string;
-  moduleOptions: string[];
-  onDomainChange: (v: string) => void;
   onSelectFiles: (selected: FileList | null) => void;
   onRemoveFile: (index: number) => void;
   onUpload: () => void;
@@ -21,9 +18,6 @@ export default function ImportCard({
   uploading,
   error,
   message,
-  domain,
-  moduleOptions,
-  onDomainChange,
   onSelectFiles,
   onRemoveFile,
   onUpload,
@@ -105,21 +99,9 @@ export default function ImportCard({
         </div>
       )}
 
-      <select
-        value={domain}
-        onChange={(e) => onDomainChange(e.target.value)}
-        className="mt-4 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700"
-      >
-        <option value="">-- Chọn module --</option>
-        {moduleOptions.map((m) => (
-          <option key={m} value={m}>{m}</option>
-        ))}
-      </select>
-
-
       <button
         onClick={onUpload}
-        disabled={files.length === 0 || uploading || !domain}
+        disabled={files.length === 0 || uploading}
         className="mt-4 w-full bg-indigo-600 text-white text-sm font-medium rounded-lg py-2 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
       >
         {uploading ? "Đang tải lên..." : "Upload"}

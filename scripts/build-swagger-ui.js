@@ -1,13 +1,9 @@
 const fs = require("fs");
-const path = require("path");
 
 // Đọc OpenAPI bundled spec
-const openapiSpec = fs.readFileSync(
-  "dist/openapi-bundled.yaml",
-  "utf8"
-);
+const openapiSpec = fs.readFileSync("dist/openapi-bundled.yaml", "utf8");
+const escapedSpec = openapiSpec.replace(/`/g, "\\`").replace(/\$/g, "\\$");
 
-// HTML template với Swagger UI và Pastel Theme
 const html = `<!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -16,7 +12,6 @@ const html = `<!DOCTYPE html>
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
   <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5.11.0/favicon-32x32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5.11.0/favicon-16x16.png" sizes="16x16" />
-
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -386,9 +381,6 @@ const html = `<!DOCTYPE html>
     .swagger-ui .auth-wrapper {
       background: white;
       border-radius: 12px;
-      /* padding: 24px;
-      border: 2px solid #e9d5ff;
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.08); */
     }
 
     .swagger-ui .auth-btn-wrapper {
@@ -424,27 +416,110 @@ const html = `<!DOCTYPE html>
       border: 2px solid #e9d5ff;
       box-shadow: 0 2px 8px rgba(139, 92, 246, 0.06);
     }
+
+    /* ── Fuse.js: style lại filter input của Swagger UI ── */
+    .swagger-ui .filter-container {
+      padding: 12px 20px;
+      background: white;
+      border-radius: 12px;
+      margin: 0 0 16px 0;
+      border: 2px solid #e9d5ff;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.06);
+    }
+
+    .swagger-ui .operation-filter-input {
+      border: 2px solid #c4b5fd !important;
+      border-radius: 10px !important;
+      padding: 10px 16px !important;
+      font-size: 14px !important;
+      font-family: 'Inter', sans-serif !important;
+      width: 100% !important;
+      background: #faf5ff !important;
+      color: #374151 !important;
+      transition: border-color 0.2s, box-shadow 0.2s !important;
+      box-shadow: none !important;
+    }
+
+    .swagger-ui .operation-filter-input:focus {
+      border-color: #7c3aed !important;
+      background: white !important;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12) !important;
+      outline: none !important;
+    }
+
+    .swagger-ui .operation-filter-input::placeholder {
+      color: #a78bfa;
+    }
   </style>
 </head>
 
 <body>
   <div class="custom-header">
-    <h1>
-      P.A DEV API Documentation
-    </h1>
+    <h1>P.A DEV API Documentation</h1>
     <p>Internal API Documentation - Support Ticket System</p>
   </div>
 
   <div id="swagger-ui"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
   <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js" charset="UTF-8"></script>
   <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js" charset="UTF-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+
   <script>
+    // Plugin thay thuật toán filter mặc định bằng Fuse.js fuzzy search.
+    // Cùng approach với frontend/app/swagger/SwaggerView.tsx.
+    var fuseFilterPlugin = function() {
+      var fuseOptions = {
+        keys: [
+          { name: 'operationId', weight: 0.3 },
+          { name: 'summary',     weight: 0.25 },
+          { name: 'path',        weight: 0.2 },
+          { name: 'method',      weight: 0.05 },
+          { name: 'tag',         weight: 0.1 },
+          { name: 'description', weight: 0.1 }
+        ],
+        threshold: 0.4,
+        ignoreLocation: true,
+        useExtendedSearch: true
+      };
+
+      return {
+        fn: {
+          opsFilter: function(taggedOps, phrase) {
+            return taggedOps
+              .map(function(tagObj, tag) {
+                var ops = tagObj.get('operations');
+                var entries = ops.toArray().map(function(op) {
+                  return {
+                    tag: tag,
+                    path: op.get('path') || '',
+                    method: op.get('method') || '',
+                    operationId: op.getIn(['operation', 'operationId']) || '',
+                    summary: op.getIn(['operation', 'summary']) || '',
+                    description: op.getIn(['operation', 'description']) || ''
+                  };
+                });
+                var fuse = new Fuse(entries, fuseOptions);
+                var matched = new Set(fuse.search(phrase).map(function(r) { return r.refIndex; }));
+                return tagObj.set(
+                  'operations',
+                  ops.filter(function(op, i) { return matched.has(i); })
+                );
+              })
+              .filter(function(tagObj) {
+                return tagObj.get('operations').size > 0;
+              });
+          }
+        }
+      };
+    };
+
     window.onload = function() {
-      const spec = \`${openapiSpec.replace(/`/g, "\\`").replace(/\$/g, "\\$")}\`;
+      var parsedSpec = jsyaml.load(\`${escapedSpec}\`);
 
       window.ui = SwaggerUIBundle({
-        spec: jsyaml.load(spec),
+        spec: parsedSpec,
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
@@ -452,7 +527,8 @@ const html = `<!DOCTYPE html>
           SwaggerUIStandalonePreset
         ],
         plugins: [
-          SwaggerUIBundle.plugins.DownloadUrl
+          SwaggerUIBundle.plugins.DownloadUrl,
+          fuseFilterPlugin
         ],
         layout: "StandaloneLayout",
         defaultModelsExpandDepth: 3,
@@ -471,14 +547,8 @@ const html = `<!DOCTYPE html>
       });
     };
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 </body>
 </html>`;
 
-// Ghi file
-fs.writeFileSync(
-  "public/api-docs.html",
-  html,
-  "utf8"
-);
+fs.writeFileSync("public/api-docs.html", html, "utf8");
 console.log("✅ Swagger UI documentation built successfully: api-docs.html");

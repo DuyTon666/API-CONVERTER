@@ -9,31 +9,31 @@ info:
     name: PA Vietnam
     email: dev@pavietnam.vn
 servers:
-  - url: https://apigateway.pavietnam.vn
-    description: Production
+- url: https://apigateway.pavietnam.vn
+  description: Production
 security:
-  - bearerAuth: []
+- bearerAuth: []
 tags:
-  - name: Ticket
-    description: Các API liên quan đến ticket hỗ trợ khách hàng
-  - name: Account
-    description: Các API liên quan đến tài khoản
+- name: Ticket
+  description: Các API liên quan đến ticket hỗ trợ khách hàng
+- name: Account
+  description: Các API liên quan đến tài khoản
 paths:
   /v1/users/{user_id}/tickets:
     summary: API Contract - API tạo ticket cho khách hàng.docx
     operationId: createTickets
     description: ''
     tags:
-      - Ticket
+    - Ticket
     security:
-      - bearerAuth: []
+    - bearerAuth: []
     x-permission: CHECK_NEWUPDATE
     parameters:
-      - name: user_id
-        in: path
-        required: true
-        schema:
-          type: string
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
     responses:
       '200':
         description: Thành công
@@ -54,9 +54,9 @@ paths:
       '404':
         $ref: ../../components/responses/NotFound.yaml
       '422':
-        description: |-
-          4200 — Dữ liệu request không hợp lệ
-          4462 — Tạo yêu cầu thất bại
+        description: '4200 — Dữ liệu request không hợp lệ
+
+          4462 — Tạo yêu cầu thất bại'
         content:
           application/json:
             schema:
@@ -71,25 +71,25 @@ paths:
             $ref: ../../components/schemas/ticket/CreateTicketsRequest.yaml
   /v1/users/{user_id}/tickets/{id}:
     get:
-      summary: API Contract - API hiển thị chi tiết ticket cho khách hàng.docx
+      summary: Xem chi tiết ticket
       operationId: getTicket
-      description: ''
+      description: Trả về thông tin chi tiết của một ticket.
       tags:
-        - Ticket
+      - Ticket
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       x-permission: CHECK_NEWUPDATE
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Thành công
@@ -97,11 +97,11 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/StandardSuccess'
-                  - type: object
-                    properties:
-                      data:
-                        $ref: '#/components/schemas/GetTicketData'
+                - $ref: '#/components/schemas/StandardSuccess'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/GetTicketData'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -124,21 +124,21 @@ paths:
       operationId: updateClose
       description: ''
       tags:
-        - Ticket
+      - Ticket
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       x-permission: CHECK_NEWUPDATE
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Thành công
@@ -159,10 +159,11 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
-          description: |-
-            4200 — Dữ liệu request không hợp lệ
+          description: '4200 — Dữ liệu request không hợp lệ
+
             4463 — Tạo phản hồi thất bại
-            4464 — Câu hỏi đã đóng
+
+            4464 — Câu hỏi đã đóng'
           content:
             application/json:
               schema:
@@ -175,21 +176,21 @@ paths:
       operationId: createReopen
       description: ''
       tags:
-        - Ticket
+      - Ticket
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       x-permission: CHECK_NEWUPDATE
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Thành công
@@ -210,10 +211,11 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
-          description: |-
-            4200 — Dữ liệu request không hợp lệ
+          description: '4200 — Dữ liệu request không hợp lệ
+
             4466 — Quá thời hạn cho phép mở lại
-            4467 — Câu hỏi đang được mở
+
+            4467 — Câu hỏi đang được mở'
           content:
             application/json:
               schema:
@@ -232,21 +234,21 @@ paths:
       operationId: createConversations
       description: ''
       tags:
-        - Ticket
+      - Ticket
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       x-permission: CHECK_NEWUPDATE
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Thành công
@@ -254,11 +256,11 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/StandardSuccess'
-                  - type: object
-                    properties:
-                      data:
-                        $ref: '#/components/schemas/CreateConversationsData'
+                - $ref: '#/components/schemas/StandardSuccess'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/CreateConversationsData'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -268,10 +270,11 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
-          description: |-
-            4200 — Dữ liệu request không hợp lệ
+          description: '4200 — Dữ liệu request không hợp lệ
+
             4463 — Tạo phản hồi thất bại
-            4464 — Câu hỏi đã đóng
+
+            4464 — Câu hỏi đã đóng'
           content:
             application/json:
               schema:
@@ -290,21 +293,21 @@ paths:
       operationId: createRatings
       description: ''
       tags:
-        - Ticket
+      - Ticket
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       x-permission: CHECK_NEWUPDATE
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: ticket_id
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: ticket_id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Thành công
@@ -325,10 +328,11 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
-          description: |-
-            4200 — Dữ liệu request không hợp lệ
+          description: '4200 — Dữ liệu request không hợp lệ
+
             4462 — Tạo yêu cầu thất bại
-            4469 — Ticket chưa được hoàn tất
+
+            4469 — Ticket chưa được hoàn tất'
           content:
             application/json:
               schema:
@@ -347,21 +351,21 @@ paths:
       operationId: createFeedback
       description: ''
       tags:
-        - Ticket
+      - Ticket
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       x-permission: CHECK_NEWUPDATE
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Thành công
@@ -401,21 +405,21 @@ paths:
       operationId: createChangeAssignee
       description: ''
       tags:
-        - Ticket
+      - Ticket
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       x-permission: CHECK_NEWUPDATE
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Thành công
@@ -459,19 +463,43 @@ components:
     StandardSuccess:
       type: object
       required:
-        - success
-        - error
-        - data
+      - success
+      - error
+      - data
       properties:
         success:
           type: boolean
           example: true
         error:
           type:
-            - 'null'
+          - 'null'
           example: null
         data:
           description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
+    UserInfo:
+      type:
+      - object
+      - 'null'
+      properties:
+        id:
+          type: integer
+          example: 123
+          readOnly: true
+        name:
+          type: string
+          example: Nguyen Van A
+        mgroup:
+          type: string
+          description: 'Phân loại người dùng: 1 = Khách hàng PA, 2 = Đại lý / tài
+            khoản trả trước, 3 = Nhân viên, 4 = Khách hàng đại lý
+
+            '
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          example: '1'
     GetTicketDataConversations:
       type: object
       properties:
@@ -498,19 +526,7 @@ components:
           type: string
           description: Ngày tạo (Y-m-d H:i:s)
         owner:
-          type: object
-          properties:
-            id:
-              type: integer
-              description: Id người tạo
-              readOnly: true
-            name:
-              type: string
-              description: Tên người tạo
-            mgroup:
-              type: integer
-              description: 'Phân loại người dùng:'
-          description: Thông tin người tạo (xem thêm bên dưới)
+          $ref: '#/components/schemas/UserInfo'
     GetTicketData:
       type: object
       properties:
@@ -574,19 +590,7 @@ components:
               description: Loại dịch vụ
           description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
         assignee:
-          type: object
-          properties:
-            id:
-              type: integer
-              description: Id của dịch vụ
-              readOnly: true
-            name:
-              type: string
-              description: Tên nhân viên
-            mgroup:
-              type: integer
-              description: 'Phân loại người dùng:'
-          description: Thông tin về nhân viên hỗ trợ (xem thêm bên dưới)
+          $ref: '#/components/schemas/UserInfo'
         conversations:
           type: array
           items:
@@ -594,30 +598,34 @@ components:
           description: Danh sách các phản hồi (xem thêm bên dưới)
     StandardError:
       type: object
+      description: Standard error response wrapper.
       required:
-        - success
-        - error
+      - success
+      - error
       properties:
         success:
           type: boolean
+          const: false
           example: false
         error:
           type: object
           required:
-            - code
-            - message
+          - code
+          - message
           properties:
             code:
               type: integer
-              description: 'Mã lỗi nội bộ của hệ thống: 4102: Token không hợp lệ hoặc đã hết hạn 4108: Không có quyền truy cập 4004: Không tìm thấy dữ liệu 4200: Dữ liệu không hợp lệ'
+              description: Internal application error code.
               example: 4200
             message:
               type: string
+              description: Human-readable error message.
               example: Dữ liệu không hợp lệ
             data:
               type:
-                - object
-                - 'null'
+              - object
+              - 'null'
+              description: Optional error detail payload.
     CreateReopenRequest:
       type: object
       properties:
@@ -643,7 +651,7 @@ components:
             format: binary
           description: Tệp đính kèm
       required:
-        - descriptions
+      - descriptions
     CreateConversationsData:
       type: object
       properties:
@@ -670,19 +678,7 @@ components:
           type: string
           description: Ngày tạo (Y-m-d H:i:s)
         owner:
-          type: object
-          properties:
-            id:
-              type: integer
-              description: Id người tạo
-              readOnly: true
-            name:
-              type: string
-              description: Tên người tạo
-            mgroup:
-              type: integer
-              description: 'Phân loại người dùng:'
-          description: Thông tin người tạo (xem thêm bên dưới)
+          $ref: '#/components/schemas/UserInfo'
     CreateRatingsRequest:
       type: object
       properties:
@@ -701,8 +697,8 @@ components:
                 type: string
                 description: Nội dung đánh giá
             required:
-              - supporter_id
-              - stars
+            - supporter_id
+            - stars
           description: Danh sách các đánh giá
         supporter_id:
           type: integer
@@ -714,9 +710,9 @@ components:
           type: string
           description: Nội dung đánh giá
       required:
-        - ratings
-        - supporter_id
-        - stars
+      - ratings
+      - supporter_id
+      - stars
     CreateFeedbackRequest:
       type: object
       properties:
@@ -733,8 +729,8 @@ components:
             format: binary
           description: Tệp đính kèm
       required:
-        - title
-        - descriptions
+      - title
+      - descriptions
     CreateChangeAssigneeRequest:
       type: object
       properties:
@@ -742,7 +738,7 @@ components:
           type: string
           description: Lý do từ chối.
       required:
-        - reason
+      - reason
   responses:
     BadRequest:
       description: Bad Request
@@ -805,4 +801,4 @@ components:
               message: Lỗi hệ thống, vui lòng thử lại sau
               data:
                 type:
-                  - null
+                - null

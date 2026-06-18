@@ -9,7 +9,6 @@ import SwaggerDocsCard from "./_dashboard/SwaggerDocsCard";
 import BundleEditorModal from "./_dashboard/BundleEditorModal";
 import StatTiles from "./_dashboard/StatTiles";
 import WorkflowStepper, { toSteps } from "./_dashboard/WorkflowStepper";
-import { isSupportedFile } from "./_dashboard/format";
 import {
   ApplyResult,
   DocsBuildResult,
@@ -73,7 +72,6 @@ export default function Home() {
   const [savingBundle, setSavingBundle] = useState(false);
   const [relinting, setRelinting] = useState(false);
   
-  const [uploadDomain, setUploadDomain] = useState("");
 
   const fetchScan = () => {
     return fetch(`${backend}/modules/scan`)
@@ -144,8 +142,7 @@ export default function Home() {
 
   const handleSelectFiles = (selected: FileList | null) => {
     if (!selected) return;
-    const valid = Array.from(selected).filter((f) => isSupportedFile(f.name));
-    setUploadFiles((prev) => [...prev, ...valid]);
+    setUploadFiles((prev) => [...prev, ...Array.from(selected)]);
     setUploadMessage("");
     setUploadError("");
   };
@@ -162,14 +159,10 @@ export default function Home() {
     const form = new FormData();
     uploadFiles.forEach((f) => form.append("files", f));
     try {
-      const url = `${backend}/jobs?domain=${encodeURIComponent(uploadDomain)}`;
-      const res = await fetch(url, { method: "POST", body: form });
-
+      const res = await fetch(`${backend}/source/upload`, { method: "POST", body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ?? "Lỗi upload");
-      setUploadMessage(
-        `Đã lưu ${data.total} file vào 1.docs/source/api_contract/`,
-      );
+      setUploadMessage(`Đã lưu ${data.total} file vào 1.docs/source/api_contract/`);
       setUploadFiles([]);
       setScanLoading(true);
       fetchScan();
@@ -418,11 +411,15 @@ export default function Home() {
     if (bundleContent === null) return;
     setSavingBundle(true);
     try {
-      await fetch(`${backend}/docs/bundle-content`, {
+      const res = await fetch(`${backend}/docs/bundle-content`, {
         method: "PUT",
         headers: { "Content-Type": "text/plain; charset=utf-8" },
         body: bundleContent,
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ detail: res.statusText }));
+        alert("Lỗi lưu bundle: " + data.detail);
+      }
     } finally {
       setSavingBundle(false);
     }
@@ -432,11 +429,16 @@ export default function Home() {
     if (bundleContent === null) return;
     setSavingBundle(true);
     try {
-      await fetch(`${backend}/docs/bundle-content`, {
+      const saveRes = await fetch(`${backend}/docs/bundle-content`, {
         method: "PUT",
         headers: { "Content-Type": "text/plain; charset=utf-8" },
         body: bundleContent,
       });
+      if (!saveRes.ok) {
+        const data = await saveRes.json().catch(() => ({ detail: saveRes.statusText }));
+        alert("Lỗi lưu bundle: " + data.detail);
+        return;
+      }
       setRelinting(true);
       const res = await fetch(`${backend}/docs/relint`, { method: "POST" });
       const data = await res.json();
@@ -564,15 +566,12 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Cột phụ trợ — bên phải trên desktop; mobile xen kẽ theo order */}
             <div className="contents lg:block lg:order-2 lg:col-span-5 lg:space-y-6">
-              <div id="card-import" className="order-1 scroll-mt-32">
+              <div className="order-1 scroll-mt-32">
                 <ImportCard
                   files={uploadFiles}
                   uploading={uploading}
                   error={uploadError}
                   message={uploadMessage}
-                  domain={uploadDomain}
-                  moduleOptions={moduleList?.modules.map((m) => m.name) ?? []}
-                  onDomainChange={setUploadDomain}
                   onSelectFiles={handleSelectFiles}
                   onRemoveFile={handleRemoveUploadFile}
                   onUpload={handleUpload}

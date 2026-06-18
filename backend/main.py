@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
-from fastapi import Body, FastAPI, File, HTTPException, Request, UploadFile
+from fastapi import Body, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 
@@ -179,17 +179,17 @@ def health():
 
 @app.get("/modules/scan")
 def scan_modules():
-    from run_api_import import(
-        _load_import_config,
-        _get_source_root,
-        _supported_extensions,
-        _ignore_dirs,
-        _scan_source_root,
+    from import_flow.config import (
+        load_import_config,
+        get_source_root,
+        supported_extensions,
+        ignore_dirs,
     )
+    from import_flow.scanner import scan_source_root
 
-    cfg = _load_import_config()
-    source_root = _get_source_root(cfg)
-    result = _scan_source_root(source_root, _supported_extensions(cfg), _ignore_dirs(cfg))
+    cfg = load_import_config()
+    source_root = get_source_root(cfg)
+    result = scan_source_root(source_root, supported_extensions(cfg), ignore_dirs(cfg))
     modules = []
     for m in result["modules"]:
         by_extension: dict[str, int] = {}
@@ -329,7 +329,7 @@ def apply_suggestions():
 @app.post("/modules/{module}/activate")
 def activate_module(module: str):
     import yaml as _yaml
-    from run_api_import import cmd_activate_module
+    from run_api_import import cmd_activate_module, cmd_reactivate_module
 
     registry_path = CONFIG_DIR / "module_registry.yaml"
     if not registry_path.exists():
@@ -338,8 +338,12 @@ def activate_module(module: str):
     if module not in registry.get("modules", {}):
         raise HTTPException(status_code=404, detail=f"Module '{module}' không có trong registry")
 
+    status = registry["modules"][module].get("status")
     try:
-        cmd_activate_module(module=module, actor="ui")
+        if status == "deprecated":
+            cmd_reactivate_module(module=module, actor="ui")
+        else:
+            cmd_activate_module(module=module, actor="ui")
     except SystemExit:
         raise HTTPException(
             status_code=400,
@@ -495,35 +499,98 @@ def relint_docs():
     return _bundle_lint_build_docs(project_root, do_bundle=False)
 
 
+_HTTP_METHODS = {"get", "post", "put", "patch", "delete", "head", "options", "trace"}
+
+
+@app.get("/docs/operations")
+def get_operations():
+    """Trả về danh sách operations từ bundle để hiển thị trong form editor."""
+    import yaml as _yaml
+    bundle_path = DIST_DIR / "openapi-bundled.yaml"
+    if not bundle_path.exists():
+        raise HTTPException(status_code=404, detail="Bundle chưa được tạo, hãy build tài liệu trước")
+    bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
+    ops = []
+    for path, path_item in bundle.get("paths", {}).items():
+        if not isinstance(path_item, dict):
+            continue
+        for method, operation in path_item.items():
+            if method not in _HTTP_METHODS or not isinstance(operation, dict):
+                continue
+            ops.append({
+                "operationId": operation.get("operationId") or "",
+                "method": method.upper(),
+                "path": path,
+                "tags": operation.get("tags") or [],
+                "summary": operation.get("summary") or "",
+                "description": operation.get("description") or "",
+            })
+    return ops
+
+
+@app.patch("/docs/operations")
+async def update_operations(updates: list = Body(...)):
+    """Cập nhật summary/description của một hoặc nhiều operations trong bundle."""
+    import yaml as _yaml
+    bundle_path = DIST_DIR / "openapi-bundled.yaml"
+    if not bundle_path.exists():
+        raise HTTPException(status_code=404, detail="Bundle chưa được tạo, hãy build tài liệu trước")
+
+    bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
+    update_map = {u["operationId"]: u for u in updates if u.get("operationId")}
+
+    updated = 0
+    for path_item in bundle.get("paths", {}).values():
+        if not isinstance(path_item, dict):
+            continue
+        for method, operation in path_item.items():
+            if method not in _HTTP_METHODS or not isinstance(operation, dict):
+                continue
+            op_id = operation.get("operationId", "")
+            if op_id in update_map:
+                upd = update_map[op_id]
+                if "summary" in upd:
+                    operation["summary"] = upd["summary"]
+                if "description" in upd:
+                    operation["description"] = upd["description"]
+                updated += 1
+
+    bundle_path.write_text(
+        _yaml.dump(bundle, allow_unicode=True, sort_keys=False, default_flow_style=False),
+        encoding="utf-8",
+    )
+    return {"ok": True, "updated": updated}
+
+
 def process_file(file_result: FileResult, file_bytes: bytes, domain: str = "ticket") -> None:
     file_result.status = "processing"
     try:
-        from pipeline_DOCX import run
-        import yaml as _yaml
-
-        module_config_path = CONFIG_DIR / "modules" / f"{domain}.yaml"
-        non_resource_actions: set = set()
-        if module_config_path.exists():
-            mod_cfg = _yaml.safe_load(module_config_path.read_text(encoding="utf-8")) or {}
-            non_resource_actions = set(mod_cfg.get("action_names", []))
+        from pipeline_API import run_batch
 
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
+            input_dir = tmp_path / "input"
+            output_dir = tmp_path / "output"
             schemas_tmp = tmp_path / "schemas"
+            input_dir.mkdir()
+            output_dir.mkdir()
             schemas_tmp.mkdir()
-            input_path = tmp_path / file_result.filename
-            output_path = tmp_path / (Path(file_result.filename).stem + ".yaml")
+
+            input_path = input_dir / file_result.filename
             input_path.write_bytes(file_bytes)
-            op = run(str(input_path), str(output_path), schemas_dir=str(schemas_tmp), domain=domain)
-            if output_path.exists():
-                file_result.yaml = output_path.read_text(encoding="utf-8")
-                if op and op.review_flags:
-                    file_result.flags = op.review_flags
-                    file_result.status = "flagged"
-                else:
-                    file_result.status = "done"
-                if op and op.method and op.path:
-                    file_result.action_name = _compute_action_name(op, non_resource_actions)
+
+            run_batch(
+                input_dir=str(input_dir),
+                module=domain or "default",
+                output_dir=str(output_dir),
+                schemas_dir=str(schemas_tmp),
+                files_override=[input_path],
+            )
+
+            output_yamls = list(output_dir.glob("*.yaml"))
+            if output_yamls:
+                file_result.yaml = output_yamls[0].read_text(encoding="utf-8")
+                file_result.status = "done"
                 for schema_file in schemas_tmp.glob("*.yaml"):
                     file_result.schemas[schema_file.name] = schema_file.read_text(encoding="utf-8")
             else:
@@ -539,25 +606,25 @@ def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
     """Chạy cmd_import theo từng module để có thể báo tiến trình per-module qua SSE."""
     import datetime
     import yaml as _yaml
-    from run_api_import import (
-        _load_import_config,
-        _get_source_root,
-        _get_output_root,
-        _get_schemas_root,
-        _supported_extensions,
-        _ignore_dirs,
-        _scan_source_root,
+    from import_flow.config import (
+        load_import_config,
+        get_source_root,
+        get_output_root,
+        get_schemas_root,
+        supported_extensions,
+        ignore_dirs,
         REPORT_DIR,
     )
+    from import_flow.scanner import scan_source_root
     from pipeline_API import run_batch
 
     job = import_jobs[job_id]
 
-    cfg = _load_import_config()
-    source_root = _get_source_root(cfg)
-    output_root = _get_output_root(cfg)
-    schemas_root = _get_schemas_root(cfg)
-    result = _scan_source_root(source_root, _supported_extensions(cfg), _ignore_dirs(cfg))
+    cfg = load_import_config()
+    source_root = get_source_root(cfg)
+    output_root = get_output_root(cfg)
+    schemas_root = get_schemas_root(cfg)
+    result = scan_source_root(source_root, supported_extensions(cfg), ignore_dirs(cfg))
 
     registry_path = CONFIG_DIR / "module_registry.yaml"
     raw = registry_path.read_text(encoding="utf-8").strip()
@@ -630,7 +697,7 @@ def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
 
 
 @app.post("/jobs")
-async def create_job(files: list[UploadFile] = File(...), domain: str=""):
+async def create_job(files: list[UploadFile] = File(...), domain: str = Form(default="")):
     job_id = str(uuid.uuid4())
     job = Job(job_id=job_id, domain=domain)
     jobs[job_id] = job
@@ -644,7 +711,7 @@ async def create_job(files: list[UploadFile] = File(...), domain: str=""):
             status="pending",
         )
         job.files.append(file_result)
-        executor.submit(process_file, file_result, file_bytes)
+        executor.submit(process_file, file_result, file_bytes, job.domain)
     return {"job_id": job_id, "total": len(job.files)}
 
 @app.get("/jobs/{job_id}/stream")
@@ -754,6 +821,7 @@ async def export_bundle(job_id: str):
     paths_dir = OUTPUT_DIR / "paths" / module_name
     paths_dir.mkdir(parents=True, exist_ok=True)
     schemas_dir_out = OUTPUT_DIR / "components" / "schemas" / module_name
+    schemas_dir_out.mkdir(parents=True, exist_ok=True)
 
     for f in approved:
         out_name = f.action_name if f.action_name else Path(f.filename).stem
@@ -763,7 +831,7 @@ async def export_bundle(job_id: str):
             (schemas_dir_out / schema_name).write_text(schema_content, encoding="utf-8")
 
     project_root = Path(__file__).parent.parent
-    return _bundle_lint_build_docs(project_root, do_bundle=True)
+    return await asyncio.to_thread(_bundle_lint_build_docs, project_root, True)
 
 
 @app.get("/jobs/{job_id}/download-html")
@@ -815,4 +883,4 @@ async def relint(job_id: str):
         raise HTTPException(status_code=404, detail="Bundle chưa được tạo, hãy export trước")
 
     project_root = Path(__file__).parent.parent
-    return _bundle_lint_build_docs(project_root, do_bundle=False)
+    return await asyncio.to_thread(_bundle_lint_build_docs, project_root, False)
