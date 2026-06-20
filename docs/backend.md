@@ -2,22 +2,25 @@
 
 ## Tổng quan
 
-FastAPI server đóng vai trò trung gian giữa frontend và pipeline xử lý. Nhận file từ người dùng, chạy pipeline convert sang OpenAPI YAML, cung cấp SSE để stream tiến trình, và orchestrate bundle + lint + build docs khi export.
+FastAPI server (`backend/main.py`, 1 file duy nhất) đóng vai trò trung gian giữa frontend và pipeline xử lý (`2.pipeline/`). Cung cấp 2 nhóm chức năng:
+
+1. **Module workflow** — scan tài liệu nguồn, gợi ý module, duyệt, áp dụng, activate/deactivate, import theo module (dùng cho dashboard chính)
+2. **Docs & Operations** — bundle, lint (Spectral/Redocly), build Swagger UI HTML, và **form editor** chỉnh sửa summary/description trực tiếp trên bundle
+
+> Nhóm "file-upload job" (`POST /jobs` và các endpoint con) đã bị **xóa** — không có UI nào tạo job nên route không bao giờ được dùng tới (xem mục Lịch sử thay đổi).
 
 ---
 
 ## Công nghệ
 
-| Công nghệ | Phiên bản | Vai trò |
-|---|---|---|
-| **Python** | 3.10 | Runtime |
-| **FastAPI** | 0.136.3 | Web framework, định nghĩa API endpoints |
-| **Uvicorn** | 0.48.0 | ASGI server chạy FastAPI |
-| **Starlette** | 1.2.1 | Core của FastAPI — middleware, request/response |
-| **Pydantic** | 2.13.4 | Validation dữ liệu (dùng ngầm bởi FastAPI) |
-| ThreadPoolExecutor | stdlib | Chạy pipeline blocking trên thread riêng |
-| **subprocess** | stdlib | Gọi npm scripts (Redocly, Spectral, build docs) |
-| **tempfile** | stdlib | Tạo thư mục tạm cho từng file khi pipeline chạy |
+| Công nghệ | Vai trò |
+|---|---|
+| **FastAPI** | Web framework, định nghĩa API endpoints |
+| **Uvicorn** | ASGI server chạy FastAPI (`--reload` khi dev) |
+| `ThreadPoolExecutor` (4 workers) | Chạy pipeline (blocking) trên thread riêng, tránh block event loop |
+| `subprocess` | Gọi npm scripts (Redocly bundle/lint, Spectral lint, build docs) |
+| `asyncio.to_thread` | Wrap các handler `async def` có gọi `subprocess.run()` để không block event loop |
+| `pyyaml` (`import yaml`) | Đọc/ghi `module_registry.yaml` và `dist/openapi-bundled.yaml` |
 
 ---
 
@@ -25,252 +28,118 @@ FastAPI server đóng vai trò trung gian giữa frontend và pipeline xử lý.
 
 ```
 backend/
-├── main.py     # Toàn bộ backend — duy nhất 1 file
-└── venv/       # Python virtual environment
+├── main.py     # Toàn bộ backend
+└── venv/       # Python virtual environment riêng (khác .venv root)
 ```
-
-Backend chỉ có 1 file `main.py`. Không tách module vì logic đủ nhỏ.
-
----
 
 ## Khởi động
 
 ```bash
-cd backend
-source venv/bin/activate   # hoặc: backend/venv/bin/activate
-uvicorn backend.main:app --port 8000 --reload
+cd backend && make dev
+# hoặc: source backend/venv/bin/activate && uvicorn main:app --reload --port 8000
 ```
 
-Yêu cầu: `ANTHROPIC_API_KEY` phải có trong environment (dùng bởi pipeline).
+Yêu cầu: `ANTHROPIC_API_KEY` đã export trong environment (dùng bởi pipeline khi enrich).
 
 ---
 
 ## Hằng số đường dẫn
 
 ```python
-PIPELINE_DIR = project_root / "2.pipeline"    # import pipeline_Ticket từ đây
-OUTPUT_DIR   = project_root / "5.openapi"     # nơi ghi YAML output
-DIST_DIR     = project_root / "dist"          # openapi-bundled.yaml
-CONFIG_DIR   = project_root / "4.config"      # module configs
+PIPELINE_DIR = project_root / "2.pipeline"
+OUTPUT_DIR   = project_root / "5.openapi"
+DIST_DIR     = project_root / "dist"
+CONFIG_DIR   = project_root / "4.config"
+SOURCE_DIR   = project_root / "1.docs" / "source" / "api_contract"
 ```
 
-Khi khởi động, backend inject `PIPELINE_DIR` vào `sys.path` và gọi `init_config()` của emitter để load config một lần duy nhất.
+Khi khởi động: inject `PIPELINE_DIR` vào `sys.path`, gọi `init_config()` của `generator.emitter` một lần.
+
+---
+
+## CORS
+
+```python
+allow_origins=["http://localhost:3000"]
+```
+
+Frontend chạy port khác phải sửa tay trong `main.py`.
 
 ---
 
 ## Data Model
 
-### `FileResult` — trạng thái từng file trong job
+### Module import job (`import_jobs: dict[str, ImportJob]`)
 
 ```python
 @dataclass
-class FileResult:
-    file_id: str          # UUID
-    filename: str         # tên file gốc
-    status: Literal["pending", "processing", "done", "error", "flagged"]
-    yaml: str             # nội dung YAML output (string)
-    flags: list           # danh sách cờ cần human review
-    error: str            # thông báo lỗi nếu status == "error"
-    action_name: str      # tên action tính từ method + path (vd: "list", "create")
-    schemas: dict         # { "ticket.yaml": "..." } — schema files đi kèm
-```
+class ImportModuleResult:
+    name: str
+    status: Literal["pending", "running", "done", "error"] = "pending"
+    total: int; success: int; failed: int; skipped: int; needs_review: int
+    error: str = ""
 
-### `Job` — một lần chạy pipeline
-
-```python
 @dataclass
-class Job:
+class ImportJob:
     job_id: str
-    files: list[FileResult]
-    status: Literal["running", "done"]
+    modules: list[ImportModuleResult]
+    status: Literal["running", "done"] = "running"
 ```
 
-### Storage
-
-```python
-jobs: dict[str, Job] = {}   # in-memory, mất khi restart
-```
-
-Không có database. Toàn bộ job state tồn tại trong RAM.
+`import_jobs` là **in-memory only** — mất khi restart server. Không có database.
 
 ---
 
-## Các endpoint API
+## Endpoint — Module Workflow
 
-### `GET /health`
-Kiểm tra server còn sống.
-```json
-{ "status": "ok" }
-```
+| Method | Path | Mô tả |
+|---|---|---|
+| `GET` | `/modules/scan` | Scan `1.docs/source/api_contract/`, trả về modules đã có file + file chưa gán module |
+| `GET` | `/modules` | List module từ `module_registry.yaml` (status, file_count, endpoint_count, last_import) |
+| `POST` | `/source/upload` | Upload file thô vào `SOURCE_DIR` (chưa convert, chỉ lưu) |
+| `GET` | `/modules/suggestions` | Đọc `import_suggestions.json` (nếu có) |
+| `POST` | `/modules/suggest` | Chạy `cmd_suggest_root()` — phân tích file, gợi ý module cho từng endpoint |
+| `POST` | `/modules/suggestions/approve` | Duyệt suggestion — `mode`: `"all"` / `"module"` / `"file"`, có `override_module` |
+| `POST` | `/modules/apply` | Copy file đã duyệt vào `1.docs/source/api_contract/<module>/`. Bỏ qua file đã tồn tại đích (`target_file_exists`) hoặc chưa duyệt (`not_approved`) |
+| `POST` | `/modules/{module}/activate` | draft/deprecated → active |
+| `POST` | `/modules/{module}/deactivate` | active → deprecated |
+| `POST` | `/modules/import?module=<name>` | Chạy `run_batch()` theo từng module active (hoặc tất cả module active nếu không truyền `module`). Trả `job_id` |
+| `GET` | `/modules/import/{job_id}/stream` | SSE — emit khi 1 module xong (chỉ emit lúc transition khỏi `running`, **không** stream per-file) |
 
----
-
-### `POST /jobs`
-Upload file và tạo job mới.
-
-**Request:** `multipart/form-data`, field `files` (nhiều file).
-
-**Xử lý:**
-1. Tạo `Job` với `job_id` mới (UUID)
-2. Với mỗi file: tạo `FileResult` status `pending`, submit `process_file()` vào ThreadPoolExecutor
-3. Return ngay — không chờ pipeline xong
-
-**Response:**
-```json
-{ "job_id": "uuid", "total": 3 }
-```
+**Lưu ý activate/deactivate:** route `POST /modules/{module}/activate` không xung đột với `POST /modules/import` vì FastAPI match theo path segment — `import` (2 segments) khác `{module}/activate` (3 segments).
 
 ---
 
-### `GET /jobs/{job_id}/stream`
-SSE stream — push tiến trình xử lý về frontend theo thời gian thực.
+## Endpoint — Docs & Operations
 
-**Cơ chế:**
-- Vòng lặp poll `jobs[job_id]` mỗi 0.5 giây
-- Khi file chuyển khỏi `pending`/`processing` → gửi 1 event
-- Dùng `seen` set để không gửi lại event đã gửi
-- Khi tất cả file xong → gửi event `done` rồi đóng stream
+| Method | Path | Mô tả |
+|---|---|---|
+| `POST` | `/docs/build` | Bundle (`npm run bundle:api`) → Spectral lint → Redocly lint → build HTML (`npm run build:docs`) |
+| `GET` | `/docs/status` | `{ bundle_ready, html_ready }` — chỉ check file tồn tại trên đĩa |
+| `GET` `/PUT` | `/docs/bundle-content` | Đọc/ghi `dist/openapi-bundled.yaml` plain text |
+| `POST` | `/docs/relint` | Lint lại + build HTML từ bundle hiện tại, không bundle lại |
+| `GET` | `/docs/download-html` | Download `public/api-docs.html` |
+| `GET` | `/docs/operations` | Parse bundle, trả về list operations: `{operationId, method, path, tags, summary, description}` — dùng cho Form Editor |
+| `PATCH` | `/docs/operations` | Nhận `list[{operationId, summary?, description?}]`, chỉ ghi đè 2 field này trong bundle, không đụng path/method/schema/parameters/responses |
 
-**Format event:**
-```
-data: {"file_id": "...", "filename": "...", "status": "done", "error": ""}
-
-data: {"event": "done", "job_id": "..."}
-```
-
----
-
-### `GET /jobs/{job_id}/flags`
-Trả về danh sách file có status `flagged` hoặc `error`.
-
-**Response:**
-```json
-[
-  {
-    "file_id": "...",
-    "filename": "...",
-    "status": "error",
-    "flags": [],
-    "error": "Pipeline không sinh ra output"
-  }
-]
-```
-
----
-
-### `GET /jobs/{job_id}/files/{file_id}/yaml`
-Đọc YAML output của một file cụ thể.
-
-**Response:**
-```json
-{ "file_id": "...", "filename": "...", "yaml": "openapi: ...", "error": "" }
-```
-
----
-
-### `PUT /jobs/{job_id}/files/{file_id}/yaml`
-Lưu YAML đã chỉnh sửa vào `FileResult.yaml` trong memory.
-
-**Request body:** `{ "yaml": "..." }`
-
-**Response:** `{ "ok": true }`
-
----
-
-### `POST /jobs/{job_id}/files/{file_id}/approve`
-Đặt status file thành `done` (dùng khi file đang `flagged`).
-
-**Response:** `{ "ok": true }`
-
----
-
-### `POST /jobs/{job_id}/export`
-Bundle toàn bộ file đã approve → lint → build HTML.
-
-**Điều kiện:** Phải có ít nhất 1 file status `done` và có `yaml`.
-
-**Các bước thực hiện:**
-1. Ghi YAML từng file vào `5.openapi/paths/tickets/{action_name}.yaml`
-2. Ghi schema files vào `5.openapi/components/schemas/ticket/`
-3. `npm run bundle:api` — Redocly bundle thành `dist/openapi-bundled.yaml`
-4. `npm run --silent lint:spectral` — Spectral lint, parse JSON output
-5. `npm run --silent validate:api` — Redocly lint, parse qua `_parse_redocly_output()`
-6. `npm run build:docs` — build Swagger UI HTML vào `public/api-docs.html`
-
-**Response:**
+**`_bundle_lint_build_docs(project_root, do_bundle)`** là hàm core dùng chung bởi `/docs/build`, `/docs/relint`, `/jobs/{id}/export`, `/jobs/{id}/relint`. Trả về:
 ```json
 {
   "bundle_ready": true,
   "html_ready": true,
-  "spectral": [ { "code": "...", "severity": 1, "message": "...", "path": [...], "range": {...} } ],
-  "redocly":  [ { "ruleId": "...", "severity": "warn", "message": "...", "location": [...] } ]
+  "spectral": [ { "code", "severity", "message", "path", "range" } ],
+  "redocly":  [ { "ruleId", "severity", "message", "location" } ]
 }
 ```
 
-Lỗi ở bước 3 (bundle fail) → raise HTTP 500 với stderr.
-
----
-
-### `GET /jobs/{job_id}/bundle-content`
-Đọc nội dung `dist/openapi-bundled.yaml` dưới dạng plain text.
-
-**Response:** `text/plain; charset=utf-8` với header `Cache-Control: no-store`.
-
----
-
-### `PUT /jobs/{job_id}/bundle-content`
-Lưu nội dung bundle đã chỉnh sửa vào `dist/openapi-bundled.yaml`.
-
-**Request body:** plain text (raw YAML string).
-
-**Response:** `{ "ok": true }`
-
----
-
-### `POST /jobs/{job_id}/relint`
-Chạy lại Spectral + Redocly + build HTML **từ bundle hiện tại**, không bundle lại.
-
-Dùng sau khi user chỉnh sửa bundle thủ công và muốn kiểm tra lại.
-
-**Response:** cùng format với `/export`.
-
----
-
-### `GET /jobs/{job_id}/download-html`
-Trả về file `public/api-docs.html` để download.
-
-**Response:** `FileResponse` với `Content-Disposition: attachment`.
-
----
-
-## Luồng xử lý file — `process_file()`
-
-Chạy trên thread pool (không block event loop):
-
-```
-1. Đặt status → "processing"
-2. Load module config (action_names) từ 4.config/modules/{domain}.yaml
-3. Tạo tempdir:
-   ├── input/{filename}.docx   ← ghi file bytes
-   ├── output/{stem}.yaml      ← pipeline ghi ra đây
-   └── schemas/                ← schema files
-4. Gọi pipeline_Ticket.run(input, output, schemas_dir, domain)
-5. Nếu output tồn tại:
-   ├── Đọc YAML → FileResult.yaml
-   ├── Tính action_name từ method + path
-   ├── Đọc schemas → FileResult.schemas
-   └── status → "done"
-6. Nếu không có output → status "error"
-7. Exception bất kỳ → status "error", lưu traceback vào FileResult.error
-```
+**Vùng an toàn khi PATCH operations:** chỉ `summary` + `description`. Không cho sửa `path`, `method`, `parameters`, `requestBody` schema, `responses` codes, `$ref`, `servers`, `security` — các field này client/SDK dùng trực tiếp, sửa sai sẽ break consumer.
 
 ---
 
 ## Hàm tiện ích
 
 ### `_compute_action_name(op, non_resource_actions)`
-
-Tính tên file output từ HTTP method và URL path:
+Tính tên file output từ HTTP method + path (segment `v1` bị bỏ qua khi parse):
 
 | Path | Method | Kết quả |
 |---|---|---|
@@ -279,32 +148,9 @@ Tính tên file output từ HTTP method và URL path:
 | `/v1/tickets/{id}` | GET | `detail` |
 | `/v1/tickets/{id}` | PUT/PATCH | `update` |
 | `/v1/tickets/{id}` | DELETE | `delete` |
-| `/v1/tickets/search` | POST | `search` (nếu có trong non_resource_actions) |
-
-Segment `v1` bị bỏ qua khi parse path.
-
----
 
 ### `_parse_redocly_output(result)`
-
-Parse JSON output của Redocly CLI, xử lý 2 format:
-
-```
-Redocly v2:  { "totals": {...}, "problems": [...] }   → trả về problems[]
-Older:       [{ "filePath": "...", "problems": [...] }] → gộp tất cả problems
-```
-
-Dùng `--silent` khi gọi npm để loại bỏ npm header khỏi stdout trước khi parse.
-
----
-
-## CORS
-
-Chỉ cho phép `http://localhost:3000`. Nếu frontend chạy ở port khác phải sửa:
-
-```python
-allow_origins=["http://localhost:3000"]
-```
+Parse JSON từ Redocly CLI, hỗ trợ 2 format: `{totals, problems: [...]}` (v2) và `[{filePath, problems: [...]}]` (cũ).
 
 ---
 
@@ -313,14 +159,13 @@ allow_origins=["http://localhost:3000"]
 ```
 FastAPI (async event loop)
     │
-    ├── SSE stream         → async generator, await asyncio.sleep(0.5)
-    ├── export/relint      → subprocess.run() blocking — chạy trên event loop (⚠ có thể block)
+    ├── SSE stream (/modules/import/.../stream)
+    │       → async generator, await asyncio.sleep(0.5)
     │
-    └── process_file()     → executor.submit() → ThreadPoolExecutor (4 workers)
-                             Pipeline chạy trên thread riêng, không block event loop
+    ├── /docs/build, /docs/relint  → def (sync) — Starlette tự chạy trong threadpool, an toàn
+    │
+    └── _run_import_job()          → executor.submit() → ThreadPoolExecutor riêng (4 workers)
 ```
-
-**Điểm chú ý:** `subprocess.run()` trong `/export` và `/relint` là blocking call chạy trực tiếp trên async handler — nếu nhiều người dùng export cùng lúc sẽ block lẫn nhau. Nên dùng `asyncio.to_thread()` hoặc `loop.run_in_executor()` để fix về sau.
 
 ---
 
@@ -328,10 +173,17 @@ FastAPI (async event loop)
 
 | Vấn đề | Ghi chú |
 |---|---|
-| State chỉ trong RAM | Restart server mất toàn bộ job |
-| Export hardcode `tickets` | Path `5.openapi/paths/tickets/` và `schemas/ticket/` không lấy từ config |
-| `subprocess.run()` block event loop | Trong `/export` và `/relint` — cần wrap bằng `asyncio.to_thread()` |
-| Không validate file type phía backend | Chỉ frontend filter `.docx`, backend nhận bất kỳ file gì |
-| CORS chỉ cho `localhost:3000` | Dev frontend ở port khác (3001...) bị block |
-| Không có auth | Bất kỳ ai biết `job_id` đều đọc/sửa được job |
-| `flags` field chưa được populate | `FileResult.flags` luôn là `[]`, pipeline chưa ghi vào đây |
+| State chỉ trong RAM | Restart server mất toàn bộ `import_jobs` |
+| Không validate file type phía backend | Backend nhận bất kỳ file gì, chỉ frontend filter theo extension |
+| CORS chỉ cho `localhost:3000` | Dev frontend port khác bị block |
+| Không có auth | Dashboard mở public trong mạng nội bộ |
+| `/docs/operations` PATCH dùng `pyyaml.dump` | Format lại toàn bộ bundle (mất format gốc của Redocly), nhưng vẫn là YAML hợp lệ — không ảnh hưởng Spectral/Redocly |
+| Không có publish/deploy tự động | Tải HTML thủ công, chưa có nút commit+push lên git |
+
+---
+
+## Lịch sử thay đổi đáng chú ý
+
+**Đã xóa nhóm endpoint `/jobs/*`** (12 endpoint: `POST /jobs`, `GET stream`, `GET flags`, `GET/PUT files/{fid}/yaml`, `POST approve`, `POST reject`, `POST export`, `GET download-html`, `GET/PUT bundle-content`, `POST relint`) cùng `FileResult`, `Job` dataclass, `jobs: dict` storage, và hàm `process_file()`.
+
+**Lý do:** không có UI nào gọi `POST /jobs` để tạo job → `jobs` dict luôn trống → route `app/jobs/[job_id]` (frontend) không thể truy cập được trong thực tế. Dashboard chính dùng `/source/upload` + `/modules/import` thay thế hoàn toàn cho chức năng này.

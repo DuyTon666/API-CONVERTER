@@ -5,7 +5,7 @@ import { useState } from "react";
 import { SpectralIssue, RedoclyIssue } from "./types";
 import OperationsFormEditor from "./OperationsFormEditor";
 
-const BundleEditor = dynamic(() => import("../jobs/[job_id]/BundleEditor"), { ssr: false });
+const BundleEditor = dynamic(() => import("./BundleEditor"), { ssr: false });
 
 type Tab = "form" | "yaml";
 

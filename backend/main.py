@@ -2,7 +2,6 @@ import asyncio
 import json
 import subprocess
 import sys
-import tempfile
 import traceback
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -10,7 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
-from fastapi import Body, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import Body, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 
@@ -124,26 +123,6 @@ def _compute_action_name(op, non_resource_actions: set) -> str:
     if op.method == 'POST':
         return f"{prev_clean}-update" if prev_clean else 'create'
     return 'action'
-
-@dataclass
-class FileResult:
-    file_id: str
-    filename: str
-    status: Literal["pending", "processing", "done", "error", "flagged"]
-    yaml: str = ""
-    flags: list = field(default_factory=list)
-    error: str = ""
-    action_name: str = ""
-    schemas: dict = field(default_factory=dict)  # {filename.yaml: content}
-
-@dataclass
-class Job:
-    job_id: str
-    domain: str = ""
-    files: list[FileResult] = field(default_factory=list)
-    status: Literal["running", "done"] = "running"
-
-jobs: dict[str, Job] = {}
 
 @dataclass
 class ImportModuleResult:
@@ -562,46 +541,6 @@ async def update_operations(updates: list = Body(...)):
     return {"ok": True, "updated": updated}
 
 
-def process_file(file_result: FileResult, file_bytes: bytes, domain: str = "ticket") -> None:
-    file_result.status = "processing"
-    try:
-        from pipeline_API import run_batch
-
-        with tempfile.TemporaryDirectory() as tmp:
-            tmp_path = Path(tmp)
-            input_dir = tmp_path / "input"
-            output_dir = tmp_path / "output"
-            schemas_tmp = tmp_path / "schemas"
-            input_dir.mkdir()
-            output_dir.mkdir()
-            schemas_tmp.mkdir()
-
-            input_path = input_dir / file_result.filename
-            input_path.write_bytes(file_bytes)
-
-            run_batch(
-                input_dir=str(input_dir),
-                module=domain or "default",
-                output_dir=str(output_dir),
-                schemas_dir=str(schemas_tmp),
-                files_override=[input_path],
-            )
-
-            output_yamls = list(output_dir.glob("*.yaml"))
-            if output_yamls:
-                file_result.yaml = output_yamls[0].read_text(encoding="utf-8")
-                file_result.status = "done"
-                for schema_file in schemas_tmp.glob("*.yaml"):
-                    file_result.schemas[schema_file.name] = schema_file.read_text(encoding="utf-8")
-            else:
-                file_result.status = "error"
-                file_result.error = "Pipeline không sinh ra output"
-    except Exception as e:
-        traceback.print_exc()
-        file_result.status = "error"
-        file_result.error = str(e)
-
-
 def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
     """Chạy cmd_import theo từng module để có thể báo tiến trình per-module qua SSE."""
     import datetime
@@ -696,191 +635,3 @@ def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
     job.status = "done"
 
 
-@app.post("/jobs")
-async def create_job(files: list[UploadFile] = File(...), domain: str = Form(default="")):
-    job_id = str(uuid.uuid4())
-    job = Job(job_id=job_id, domain=domain)
-    jobs[job_id] = job
-    SOURCE_DIR.mkdir(parents=True, exist_ok=True)
-    for upload in files:
-        file_bytes = await upload.read()
-        (SOURCE_DIR / upload.filename).write_bytes(file_bytes)
-        file_result = FileResult(
-            file_id=str(uuid.uuid4()),
-            filename=upload.filename,
-            status="pending",
-        )
-        job.files.append(file_result)
-        executor.submit(process_file, file_result, file_bytes, job.domain)
-    return {"job_id": job_id, "total": len(job.files)}
-
-@app.get("/jobs/{job_id}/stream")
-async def stream_job(job_id: str):
-    if job_id not in jobs:
-        raise HTTPException(status_code=404, detail="Job không tồn tại")
-
-    async def event_generator():
-        seen = set()
-        while True:
-            job = jobs[job_id]
-            for f in job.files:
-                if f.file_id not in seen and f.status not in ("pending", "processing"):
-                    seen.add(f.file_id)
-                    data = {
-                        "file_id": f.file_id,
-                        "filename": f.filename,
-                        "status": f.status,
-                        "error": f.error,
-                    }
-                    yield f"data: {json.dumps(data)}\n\n"
-            all_done = all(f.status not in ("pending", "processing") for f in job.files)
-            if all_done:
-                job.status = "done"
-                yield f"data: {json.dumps({'event': 'done', 'job_id': job_id})}\n\n"
-                break
-            await asyncio.sleep(0.5)
-
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
-
-
-@app.get("/jobs/{job_id}/flags")
-def get_flags(job_id: str):
-    if job_id not in jobs:
-        raise HTTPException(status_code=404, detail="Job không tồn tại")
-    job = jobs[job_id]
-    return [
-        {
-            "file_id": f.file_id,
-            "filename": f.filename,
-            "status": f.status,
-            "flags": f.flags,
-            "error": f.error,
-        }
-        for f in job.files
-        if f.status in ("flagged", "error")
-    ]
-
-
-@app.get("/jobs/{job_id}/files/{file_id}/yaml")
-def get_yaml(job_id: str, file_id: str):
-    job = jobs.get(job_id)
-    if not job:
-        raise HTTPException(status_code=404, detail="Job không tồn tại")
-    f = next((f for f in job.files if f.file_id == file_id), None)
-    if not f:
-        raise HTTPException(status_code=404, detail="File không tồn tại")
-    return {"file_id": f.file_id, "filename": f.filename, "yaml": f.yaml, "error": f.error}
-
-
-@app.put("/jobs/{job_id}/files/{file_id}/yaml")
-def update_yaml(job_id: str, file_id: str, yaml: str = Body(..., embed=True)):
-    job = jobs.get(job_id)
-    if not job:
-        raise HTTPException(status_code=404, detail="Job không tồn tại")
-    f = next((f for f in job.files if f.file_id == file_id), None)
-    if not f:
-        raise HTTPException(status_code=404, detail="File không tồn tại")
-    f.yaml = yaml
-    return {"ok": True}
-
-
-@app.post("/jobs/{job_id}/files/{file_id}/approve")
-def approve_file(job_id: str, file_id: str):
-    job = jobs.get(job_id)
-    if not job:
-        raise HTTPException(status_code=404, detail="Job không tồn tại")
-    f = next((f for f in job.files if f.file_id == file_id), None)
-    if not f:
-        raise HTTPException(status_code=404, detail="File không tồn tại")
-    f.status = "done"
-    return {"ok": True}
-
-@app.post("/jobs/{job_id}/files/{file_id}/reject")
-def reject_file(job_id: str, file_id: str):
-    job = jobs.get(job_id)
-    if not job:
-        raise HTTPException(status_code=404, detail="Job không tồn tại")
-    f = next((f for f in job.files if f.file_id == file_id), None)
-    if not f:
-        raise HTTPException(status_code=404, detail="File không tồn tại")
-    f.status = "rejected"
-    return {"ok": True}
-
-@app.post("/jobs/{job_id}/export")
-async def export_bundle(job_id: str):
-    job = jobs.get(job_id)
-    if not job:
-        raise HTTPException(status_code=404, detail="Job không tồn tại")
-
-    approved = [f for f in job.files if f.status == "done" and f.yaml]
-    if not approved:
-        raise HTTPException(status_code=400, detail="Chưa có file nào được approve")
-
-    # Lưu YAML vào 5.openapi/paths/tickets
-    module_name = job.domain or "default"
-    paths_dir = OUTPUT_DIR / "paths" / module_name
-    paths_dir.mkdir(parents=True, exist_ok=True)
-    schemas_dir_out = OUTPUT_DIR / "components" / "schemas" / module_name
-    schemas_dir_out.mkdir(parents=True, exist_ok=True)
-
-    for f in approved:
-        out_name = f.action_name if f.action_name else Path(f.filename).stem
-        out_path = paths_dir / f"{out_name}.yaml"
-        out_path.write_text(f.yaml, encoding="utf-8")
-        for schema_name, schema_content in f.schemas.items():
-            (schemas_dir_out / schema_name).write_text(schema_content, encoding="utf-8")
-
-    project_root = Path(__file__).parent.parent
-    return await asyncio.to_thread(_bundle_lint_build_docs, project_root, True)
-
-
-@app.get("/jobs/{job_id}/download-html")
-def download_html(job_id: str):
-    project_root = Path(__file__).parent.parent
-    html_path = project_root / "public" / "api-docs.html"
-    if not html_path.exists():
-        raise HTTPException(status_code=404, detail="HTML chưa được build, hãy export trước")
-    return FileResponse(
-        path=str(html_path),
-        media_type="text/html",
-        filename="api-docs.html",
-    )
-
-
-@app.get("/jobs/{job_id}/bundle-content")
-def get_bundle_content(job_id: str):
-    """Trả về nội dung file bundle dưới dạng plain text."""
-    bundle_path = DIST_DIR / "openapi-bundled.yaml"
-    if not bundle_path.exists():
-        raise HTTPException(status_code=404, detail="Bundle chưa được tạo, hãy export trước")
-    try:
-        content = bundle_path.read_text(encoding="utf-8")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Không thể đọc file bundle: {e}")
-    return PlainTextResponse(
-        content=content,
-        media_type="text/plain; charset=utf-8",
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@app.put("/jobs/{job_id}/bundle-content")
-async def save_bundle_content(job_id: str, request: Request):
-    """Lưu nội dung bundle sau khi user chỉnh sửa (plain text)."""
-    bundle_path = DIST_DIR / "openapi-bundled.yaml"
-    if not bundle_path.exists():
-        raise HTTPException(status_code=404, detail="Bundle chưa được tạo, hãy export trước")
-    content = (await request.body()).decode("utf-8")
-    bundle_path.write_text(content, encoding="utf-8")
-    return {"ok": True}
-
-
-@app.post("/jobs/{job_id}/relint")
-async def relint(job_id: str):
-    """Chạy lại Spectral + Redocly + build HTML từ bundle hiện tại (không bundle lại)."""
-    bundle_path = DIST_DIR / "openapi-bundled.yaml"
-    if not bundle_path.exists():
-        raise HTTPException(status_code=404, detail="Bundle chưa được tạo, hãy export trước")
-
-    project_root = Path(__file__).parent.parent
-    return await asyncio.to_thread(_bundle_lint_build_docs, project_root, False)

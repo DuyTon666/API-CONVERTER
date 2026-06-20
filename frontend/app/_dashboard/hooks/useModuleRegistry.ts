@@ -1,0 +1,135 @@
+import { useState } from "react";
+import { ImportModuleProgress, ModuleListResult } from "../types";
+
+export function useModuleRegistry (backend: string) {
+    
+  const [moduleList, setModuleList] = useState<ModuleListResult | null>(null);
+  const [modulesLoading, setModulesLoading] = useState(true);
+  const [modulesError, setModulesError] = useState("");
+  const [activatingModule, setActivatingModule] = useState<string | null>(null);
+  const [activateError, setActivateError] = useState("");
+  const [deactivatingModule, setDeactivatingModule] = useState<string | null>(null);
+  const [deactivateError, setDeactivateError] = useState("");
+  const [importRunning, setImportRunning] = useState(false);
+  const [importTarget, setImportTarget] = useState<string | null>(null);
+  const [importModules, setImportModules] = useState<ImportModuleProgress[]>(
+    [],
+  );
+  const [importDone, setImportDone] = useState(false);
+  const [importError, setImportError] = useState("");
+
+  const fetchModules = () => {
+    setModulesLoading(true);
+    return fetch(`${backend}/modules`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Không thể tải danh sách module");
+        return res.json();
+      })
+      .then((data) => {
+        setModuleList(data);
+        setModulesError("");
+      })
+      .catch((e) =>
+        setModulesError(e instanceof Error ? e.message : "Lỗi kết nối backend"),
+      )
+      .finally(() => setModulesLoading(false));
+  };
+  const handleActivate = async (name: string) => {
+    setActivatingModule(name);
+    setActivateError("");
+    try {
+      const res = await fetch(
+        `${backend}/modules/${encodeURIComponent(name)}/activate`,
+        {
+          method: "POST",
+        },
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi activate module");
+      setModuleList(data);
+    } catch (e: unknown) {
+      setActivateError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+    } finally {
+      setActivatingModule(null);
+    }
+  };
+  const handleImport = async (moduleName: string | null) => {
+    setImportError("");
+    setImportModules([]);
+    setImportDone(false);
+    setImportRunning(true);
+    setImportTarget(moduleName);
+    try {
+      const url = moduleName
+        ? `${backend}/modules/import?module=${encodeURIComponent(moduleName)}`
+        : `${backend}/modules/import`;
+      const res = await fetch(url, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi khởi chạy import");
+
+      const es = new EventSource(
+        `${backend}/modules/import/${data.job_id}/stream`,
+      );
+      es.onmessage = (e) => {
+        const payload = JSON.parse(e.data);
+        if (payload.event === "done") {
+          setImportDone(true);
+          setImportRunning(false);
+          es.close();
+          fetchModules();
+          return;
+        }
+        setImportModules((prev) => {
+          const exists = prev.find((m) => m.name === payload.name);
+          if (exists)
+            return prev.map((m) => (m.name === payload.name ? payload : m));
+          return [...prev, payload];
+        });
+      };
+      es.onerror = () => {
+        es.close();
+        setImportRunning(false);
+        setImportError("Mất kết nối stream import");
+      };
+    } catch (e: unknown) {
+      setImportError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+      setImportRunning(false);
+    }
+  };
+  const handleDeactivate = async (name: string) => {
+    setDeactivatingModule(name);
+    setDeactivateError("");
+    try {
+      const res = await fetch(
+        `${backend}/modules/${encodeURIComponent(name)}/deactivate`,
+        { method: "POST" },
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail ?? "Lỗi deactivate module");
+      setModuleList(data);
+    } catch (e: unknown) {
+      setDeactivateError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+    } finally {
+      setDeactivatingModule(null);
+    }
+  };
+
+  return {
+    moduleList,
+    modulesLoading,
+    modulesError,
+    activatingModule,
+    activateError,
+    handleActivate,
+    deactivatingModule,
+    deactivateError,
+    handleDeactivate,
+    importRunning,
+    importTarget,
+    importModules,
+    importDone,
+    importError,
+    handleImport,
+    fetchModules,
+  };
+}

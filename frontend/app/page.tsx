@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import ImportCard from "./_dashboard/ImportCard";
 import ScanCard from "./_dashboard/ScanCard";
 import SuggestCard from "./_dashboard/SuggestCard";
@@ -9,129 +9,45 @@ import SwaggerDocsCard from "./_dashboard/SwaggerDocsCard";
 import BundleEditorModal from "./_dashboard/BundleEditorModal";
 import StatTiles from "./_dashboard/StatTiles";
 import WorkflowStepper, { toSteps } from "./_dashboard/WorkflowStepper";
-import {
-  ApplyResult,
-  DocsBuildResult,
-  DocsStatus,
-  ImportModuleProgress,
-  ModuleListResult,
-  ScanResult,
-  SuggestionsResult,
-} from "./_dashboard/types";
+import { useScan } from "./_dashboard/hooks/useScan";
+import { useModuleRegistry } from "./_dashboard/hooks/useModuleRegistry";
+import { useUpload } from "./_dashboard/hooks/useUpload";
+import { useDocsBuilder } from "./_dashboard/hooks/useDocsBuilder";
+import { useSuggestions } from "./_dashboard/hooks/useSuggestions";
 
 export default function Home() {
-  const backend = process.env.NEXT_PUBLIC_API_URL;
+  const backend = process.env.NEXT_PUBLIC_API_URL!;
 
-  const [scan, setScan] = useState<ScanResult | null>(null);
-  const [scanLoading, setScanLoading] = useState(true);
-  const [scanError, setScanError] = useState("");
+  const {scan, scanLoading, scanError, fetchScan} = useScan(backend);
 
-  const [moduleList, setModuleList] = useState<ModuleListResult | null>(null);
-  const [modulesLoading, setModulesLoading] = useState(true);
-  const [modulesError, setModulesError] = useState("");
+  const {
+    moduleList, modulesLoading, modulesError,
+    activatingModule, activateError, handleActivate,
+    deactivatingModule, deactivateError, handleDeactivate,
+    importRunning, importTarget, importModules, importDone, importError, handleImport,
+    fetchModules,
+  } = useModuleRegistry(backend);
 
-  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const [uploadMessage, setUploadMessage] = useState("");
+  const {
+    uploadFiles, uploading, uploadError, uploadMessage,
+    handleSelectFiles, handleRemoveUploadFile, handleUpload,
+  } = useUpload(backend, { onSuccess: fetchScan });
 
-  const [suggestions, setSuggestions] = useState<SuggestionsResult | null>(
-    null,
-  );
-  const [suggestionsLoading, setSuggestionsLoading] = useState(true);
-  const [suggestionsError, setSuggestionsError] = useState("");
-  const [suggestRunning, setSuggestRunning] = useState(false);
-  const [approving, setApproving] = useState<string | null>(null);
-  const [approvingMulti, setApprovingMulti] = useState(false);
-  const [applying, setApplying] = useState(false);
-  const [applyResult, setApplyResult] = useState<ApplyResult | null>(null);
-  const [suggestActionError, setSuggestActionError] = useState("");
-  const [overrideInputs, setOverrideInputs] = useState<Record<string, string>>(
-    {},
-  );
+  const {
+    docsBuilding, docsResult, docsError, docsStatus,
+    bundleContent, setBundleContent, savingBundle, relinting,
+    fetchDocsStatus, handleBuildDocs, handleRelint, handleDownloadDocsHtml,
+    openBundleEditor, saveBundle, saveAndRelint,
+  } = useDocsBuilder(backend);
 
-  const [activatingModule, setActivatingModule] = useState<string | null>(null);
-  const [activateError, setActivateError] = useState("");
-  const [deactivatingModule, setDeactivatingModule] = useState<string | null>(null);
-  const [deactivateError, setDeactivateError] = useState("");
-
-  const [importRunning, setImportRunning] = useState(false);
-  const [importTarget, setImportTarget] = useState<string | null>(null);
-  const [importModules, setImportModules] = useState<ImportModuleProgress[]>(
-    [],
-  );
-  const [importDone, setImportDone] = useState(false);
-  const [importError, setImportError] = useState("");
-
-  const [docsBuilding, setDocsBuilding] = useState(false);
-  const [docsResult, setDocsResult] = useState<DocsBuildResult | null>(null);
-  const [docsError, setDocsError] = useState("");
-  const [docsStatus, setDocsStatus] = useState<DocsStatus | null>(null);
-
-  const [bundleContent, setBundleContent] = useState<string | null>(null);
-  const [savingBundle, setSavingBundle] = useState(false);
-  const [relinting, setRelinting] = useState(false);
-  
-
-  const fetchScan = () => {
-    return fetch(`${backend}/modules/scan`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể tải dữ liệu scan");
-        return res.json();
-      })
-      .then((data) => {
-        setScan(data);
-        setScanError("");
-      })
-      .catch((e) =>
-        setScanError(e instanceof Error ? e.message : "Lỗi kết nối backend"),
-      )
-      .finally(() => setScanLoading(false));
-  };
-
-  const fetchModules = () => {
-    return fetch(`${backend}/modules`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể tải danh sách module");
-        return res.json();
-      })
-      .then((data) => {
-        setModuleList(data);
-        setModulesError("");
-      })
-      .catch((e) =>
-        setModulesError(e instanceof Error ? e.message : "Lỗi kết nối backend"),
-      )
-      .finally(() => setModulesLoading(false));
-  };
-
-  const fetchSuggestions = () => {
-    return fetch(`${backend}/modules/suggestions`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể tải suggestions");
-        return res.json();
-      })
-      .then((data) => {
-        setSuggestions(data);
-        setSuggestionsError("");
-      })
-      .catch((e) =>
-        setSuggestionsError(
-          e instanceof Error ? e.message : "Lỗi kết nối backend",
-        ),
-      )
-      .finally(() => setSuggestionsLoading(false));
-  };
-
-  const fetchDocsStatus = () => {
-    return fetch(`${backend}/docs/status`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể tải trạng thái tài liệu");
-        return res.json();
-      })
-      .then((data) => setDocsStatus(data))
-      .catch(() => setDocsStatus(null));
-  };
+  const {
+    suggestions, suggestionsLoading, suggestionsError, suggestRunning,
+    approving, approvingMulti, applying, applyResult, suggestActionError,
+    overrideInputs, setOverrideInputs, fetchSuggestions, handleRunSuggest,
+    handleApproveSelected, handleApprove, handleApply,
+  } = useSuggestions(backend, {
+    onApplySuccess: () => Promise.all([fetchScan(), fetchModules()]),
+  });
 
   useEffect(() => {
     fetchScan();
@@ -139,320 +55,6 @@ export default function Home() {
     fetchSuggestions();
     fetchDocsStatus();
   }, []);
-
-  const handleSelectFiles = (selected: FileList | null) => {
-    if (!selected) return;
-    setUploadFiles((prev) => [...prev, ...Array.from(selected)]);
-    setUploadMessage("");
-    setUploadError("");
-  };
-
-  const handleRemoveUploadFile = (index: number) => {
-    setUploadFiles((prev) => prev.filter((_, j) => j !== index));
-  };
-
-  const handleUpload = async () => {
-    if (uploadFiles.length === 0) return;
-    setUploading(true);
-    setUploadError("");
-    setUploadMessage("");
-    const form = new FormData();
-    uploadFiles.forEach((f) => form.append("files", f));
-    try {
-      const res = await fetch(`${backend}/source/upload`, { method: "POST", body: form });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi upload");
-      setUploadMessage(`Đã lưu ${data.total} file vào 1.docs/source/api_contract/`);
-      setUploadFiles([]);
-      setScanLoading(true);
-      fetchScan();
-    } catch (e: unknown) {
-      setUploadError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleRunSuggest = async () => {
-    setSuggestRunning(true);
-    setSuggestActionError("");
-    try {
-      const res = await fetch(`${backend}/modules/suggest`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi chạy suggest-root");
-      setSuggestions(data);
-    } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
-    } finally {
-      setSuggestRunning(false);
-    }
-  };
-
-  const handleApproveSelected = async (
-    items: Array<{ file: string; override_module?: string }>,
-  ) => {
-    setApprovingMulti(true);
-    setSuggestActionError("");
-    try {
-      let latestData = suggestions;
-      for (const item of items) {
-        const res = await fetch(`${backend}/modules/suggestions/approve`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            mode: "file",
-            file: item.file,
-            override_module: item.override_module,
-          }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail ?? "Lỗi duyệt suggestion");
-        latestData = data;
-      }
-      if (latestData) setSuggestions(latestData);
-    } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
-    } finally {
-      setApprovingMulti(false);
-    }
-  };
-
-  const handleApprove = async (
-    body: {
-      mode: string;
-      module?: string;
-      file?: string;
-      override_module?: string;
-    },
-    key: string,
-  ) => {
-    setApproving(key);
-    setSuggestActionError("");
-    try {
-      const res = await fetch(`${backend}/modules/suggestions/approve`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi duyệt suggestion");
-      setSuggestions(data);
-    } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
-    } finally {
-      setApproving(null);
-    }
-  };
-
-  const handleApply = async () => {
-    setApplying(true);
-    setSuggestActionError("");
-    try {
-      const res = await fetch(`${backend}/modules/apply`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi apply suggestions");
-      setApplyResult(data);
-      setScanLoading(true);
-      setModulesLoading(true);
-      await Promise.all([fetchScan(), fetchModules(), fetchSuggestions()]);
-    } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
-    } finally {
-      setApplying(false);
-    }
-  };
-
-  const handleDeactivate = async (name: string) => {
-    setDeactivatingModule(name);
-    setDeactivateError("");
-    try {
-      const res = await fetch(
-        `${backend}/modules/${encodeURIComponent(name)}/deactivate`,
-        { method: "POST" },
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi deactivate module");
-      setModuleList(data);
-    } catch (e: unknown) {
-      setDeactivateError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-    } finally {
-      setDeactivatingModule(null);
-    }
-  };
-
-  const handleActivate = async (name: string) => {
-    setActivatingModule(name);
-    setActivateError("");
-    try {
-      const res = await fetch(
-        `${backend}/modules/${encodeURIComponent(name)}/activate`,
-        {
-          method: "POST",
-        },
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi activate module");
-      setModuleList(data);
-    } catch (e: unknown) {
-      setActivateError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-    } finally {
-      setActivatingModule(null);
-    }
-  };
-
-  const handleImport = async (moduleName: string | null) => {
-    setImportError("");
-    setImportModules([]);
-    setImportDone(false);
-    setImportRunning(true);
-    setImportTarget(moduleName);
-    try {
-      const url = moduleName
-        ? `${backend}/modules/import?module=${encodeURIComponent(moduleName)}`
-        : `${backend}/modules/import`;
-      const res = await fetch(url, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi khởi chạy import");
-
-      const es = new EventSource(
-        `${backend}/modules/import/${data.job_id}/stream`,
-      );
-      es.onmessage = (e) => {
-        const payload = JSON.parse(e.data);
-        if (payload.event === "done") {
-          setImportDone(true);
-          setImportRunning(false);
-          es.close();
-          fetchModules();
-          return;
-        }
-        setImportModules((prev) => {
-          const exists = prev.find((m) => m.name === payload.name);
-          if (exists)
-            return prev.map((m) => (m.name === payload.name ? payload : m));
-          return [...prev, payload];
-        });
-      };
-      es.onerror = () => {
-        es.close();
-        setImportRunning(false);
-        setImportError("Mất kết nối stream import");
-      };
-    } catch (e: unknown) {
-      setImportError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-      setImportRunning(false);
-    }
-  };
-
-  const handleBuildDocs = async () => {
-    setDocsError("");
-    setDocsBuilding(true);
-    try {
-      const res = await fetch(`${backend}/docs/build`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi build tài liệu");
-      setDocsResult(data);
-    } catch (e: unknown) {
-      setDocsError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-    } finally {
-      setDocsBuilding(false);
-    }
-  };
-
-  const handleRelint = async () => {
-    setDocsError("");
-    setRelinting(true);
-    try {
-      const res = await fetch(`${backend}/docs/relint`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi kiểm tra bundle");
-      setDocsResult(data);
-    } catch (e: unknown) {
-      setDocsError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-    } finally {
-      setRelinting(false);
-    }
-  };
-
-  const handleDownloadDocsHtml = () => {
-    window.open(`${backend}/docs/download-html`, "_blank");
-  };
-
-  const openBundleEditor = async () => {
-    try {
-      const res = await fetch(`${backend}/docs/bundle-content`, {
-        cache: "no-store",
-      });
-      if (res.status === 404) {
-        alert("Chưa có bundle, hãy build tài liệu trước");
-        return;
-      }
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ detail: res.statusText }));
-        alert("Lỗi đọc bundle: " + data.detail);
-        return;
-      }
-      const text = await res.text();
-      setBundleContent(text);
-    } catch (e) {
-      alert("Lỗi kết nối: " + String(e));
-    }
-  };
-
-  const saveBundle = async () => {
-    if (bundleContent === null) return;
-    setSavingBundle(true);
-    try {
-      const res = await fetch(`${backend}/docs/bundle-content`, {
-        method: "PUT",
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
-        body: bundleContent,
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ detail: res.statusText }));
-        alert("Lỗi lưu bundle: " + data.detail);
-      }
-    } finally {
-      setSavingBundle(false);
-    }
-  };
-
-  const saveAndRelint = async () => {
-    if (bundleContent === null) return;
-    setSavingBundle(true);
-    try {
-      const saveRes = await fetch(`${backend}/docs/bundle-content`, {
-        method: "PUT",
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
-        body: bundleContent,
-      });
-      if (!saveRes.ok) {
-        const data = await saveRes.json().catch(() => ({ detail: saveRes.statusText }));
-        alert("Lỗi lưu bundle: " + data.detail);
-        return;
-      }
-      setRelinting(true);
-      const res = await fetch(`${backend}/docs/relint`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) {
-        alert("Lỗi kiểm tra lại: " + data.detail);
-        return;
-      }
-      setDocsResult(data);
-      setBundleContent(null);
-    } finally {
-      setSavingBundle(false);
-      setRelinting(false);
-    }
-  };
 
   const pendingSuggestions =
     suggestions?.items.filter((i) => i.approval_status === "pending").length ??
