@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiFetch, formatFetchError } from "../api";
 
 type UseUploadOptions = {
   onSuccess?: () => void;
@@ -29,14 +30,15 @@ export function useUpload(backend: string, options: UseUploadOptions = {}) {
     const form = new FormData();
     uploadFiles.forEach((f) => form.append("files", f));
     try {
-      const res = await fetch(`${backend}/source/upload`, { method: "POST", body: form });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi upload");
+      const data = await apiFetch<{ total: number }>(`${backend}/source/upload`, {
+        method: "POST",
+        body: form,
+      });
       setUploadMessage(`Đã lưu ${data.total} file vào 1.docs/source/api_contract/`);
       setUploadFiles([]);
       options.onSuccess?.();
     } catch (e: unknown) {
-      setUploadError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+      setUploadError(formatFetchError(e));
     } finally {
       setUploading(false);
     }

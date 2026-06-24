@@ -45,6 +45,14 @@ export type SuggestionsResult = {
   total?: number;
   items: SuggestionItem[];
   summary: Record<string, number>;
+  // File backend xác định là bị bỏ qua khi duyệt (vd: lỗi parse, thiếu module) — xem
+  // _skip_reason trong backend/routers/modules.py.
+  skipped?: SkippedApproval[];
+};
+
+export type SkippedApproval = {
+  file: string;
+  reason: string;
 };
 
 export type AppliedItem = { file: string; module: string; action: string };
@@ -70,12 +78,23 @@ export type SpectralIssue = {
   message: string;
   code: string;
   path: string[];
+  range?: {
+    start: { line: number; character: number };
+    end: { line: number; character: number };
+  };
 };
 
 export type RedoclyIssue = {
   severity: string;
   message: string;
   ruleId: string;
+  location?: Array<{
+    pointer?: string;
+  }>;
+  // Gắn thêm ở backend (_enrich_redocly_with_line_col) từ kết quả lint --format
+  // checkstyle — không nằm trong location[], nằm trực tiếp trên issue.
+  line?: number;
+  column?: number;
 };
 
 export type DocsBuildResult = {
@@ -89,3 +108,33 @@ export type DocsStatus = {
   bundle_ready: boolean;
   html_ready: boolean;
 };
+
+export type AiFixIssueRef = {
+  source: "spectral" | "redocly";
+  code: string;
+  message: string;
+};
+
+// 1 vị trí lỗi đã được AI đề xuất sửa — đoạn gốc + đoạn đã sửa, để hiển thị
+// diff kiểu conflict (chưa áp dụng, chờ người dùng chọn 1 trong 3 lựa chọn).
+export type AiFixPatch = {
+  id: string;
+  start_line: number;
+  end_line: number;
+  original_text: string;
+  fixed_text: string;
+  issues: AiFixIssueRef[];
+};
+
+// Lỗi không xác định được vị trí để sửa, hoặc AI sửa nhưng không hợp lệ — cần sửa tay.
+export type AiFixUnresolved = AiFixIssueRef & {
+  reason: string;
+};
+
+export type AiFixResult = {
+  patches: AiFixPatch[];
+  unresolved: AiFixUnresolved[];
+  failed: AiFixUnresolved[];
+};
+
+export type AiFixResolution = "original" | "fixed" | "both";

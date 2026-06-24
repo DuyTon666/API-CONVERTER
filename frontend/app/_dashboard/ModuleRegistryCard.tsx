@@ -1,14 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ImportModuleProgress, ModuleListResult } from "./types";
 import { formatDate, formatRelativeTime } from "./format";
-
-function useMounted() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-  return mounted;
-}
+import { useMounted } from "./hooks/useMounted";
+import { ErrorAlert } from "./ErrorAlert";
 
 type Props = {
   moduleList: ModuleListResult | null;
@@ -75,26 +70,10 @@ export default function ModuleRegistryCard({
       </div>
 
       {loading && <p className="text-sm text-gray-400">Đang tải...</p>}
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-          {error}
-        </div>
-      )}
-      {activateError && (
-        <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-          {activateError}
-        </div>
-      )}
-      {deactivateError && (
-        <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-          {deactivateError}
-        </div>
-      )}
-      {importError && (
-        <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-          {importError}
-        </div>
-      )}
+      {error && <ErrorAlert message={error} />}
+      {activateError && <ErrorAlert message={activateError} className="mb-3" />}
+      {deactivateError && <ErrorAlert message={deactivateError} className="mb-3" />}
+      {importError && <ErrorAlert message={importError} className="mb-3" />}
 
       {moduleList &&
         (moduleList.modules.length === 0 ? (

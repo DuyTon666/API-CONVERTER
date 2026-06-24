@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ApplyResult, SuggestionsResult } from "../types";
+import { ApplyResult, SkippedApproval, SuggestionsResult } from "../types";
+import { apiFetch, formatFetchError } from "../api";
 
 type UseSuggestionsOptions = {
   onApplySuccess?: () => void;
@@ -16,23 +17,16 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
   const [applyResult, setApplyResult] = useState<ApplyResult | null>(null);
   const [suggestActionError, setSuggestActionError] = useState("");
   const [overrideInputs, setOverrideInputs] = useState<Record<string, string>>({});
+  const [approveSkipped, setApproveSkipped] = useState<SkippedApproval[]>([]);
 
   const fetchSuggestions = () => {
     setSuggestionsLoading(true);
-    return fetch(`${backend}/modules/suggestions`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể tải suggestions");
-        return res.json();
-      })
+    return apiFetch<SuggestionsResult>(`${backend}/modules/suggestions`)
       .then((data) => {
         setSuggestions(data);
         setSuggestionsError("");
       })
-      .catch((e) =>
-        setSuggestionsError(
-          e instanceof Error ? e.message : "Lỗi kết nối backend",
-        ),
-      )
+      .catch((e) => setSuggestionsError(formatFetchError(e)))
       .finally(() => setSuggestionsLoading(false));
   };
 
@@ -40,14 +34,13 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
     setSuggestRunning(true);
     setSuggestActionError("");
     try {
-      const res = await fetch(`${backend}/modules/suggest`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi chạy suggest-root");
+      const data = await apiFetch<SuggestionsResult>(
+        `${backend}/modules/suggest`,
+        { method: "POST" },
+      );
       setSuggestions(data);
     } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
+      setSuggestActionError(formatFetchError(e));
     } finally {
       setSuggestRunning(false);
     }
@@ -58,27 +51,31 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
   ) => {
     setApprovingMulti(true);
     setSuggestActionError("");
+    setApproveSkipped([]);
     try {
       let latestData = suggestions;
+      // Gọi riêng từng file (mode "file") nên cộng dồn "skipped" qua từng lần gọi —
+      // mỗi response chỉ biết file của chính lần gọi đó có bị bỏ qua hay không.
+      const skipped: SkippedApproval[] = [];
       for (const item of items) {
-        const res = await fetch(`${backend}/modules/suggestions/approve`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            mode: "file",
-            file: item.file,
-            override_module: item.override_module,
-          }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail ?? "Lỗi duyệt suggestion");
-        latestData = data;
+        latestData = await apiFetch<SuggestionsResult>(
+          `${backend}/modules/suggestions/approve`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              mode: "file",
+              file: item.file,
+              override_module: item.override_module,
+            }),
+          },
+        );
+        if (latestData.skipped) skipped.push(...latestData.skipped);
       }
       if (latestData) setSuggestions(latestData);
+      setApproveSkipped(skipped);
     } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
+      setSuggestActionError(formatFetchError(e));
     } finally {
       setApprovingMulti(false);
     }
@@ -96,18 +93,17 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
     setApproving(key);
     setSuggestActionError("");
     try {
-      const res = await fetch(`${backend}/modules/suggestions/approve`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi duyệt suggestion");
+      const data = await apiFetch<SuggestionsResult>(
+        `${backend}/modules/suggestions/approve`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        },
+      );
       setSuggestions(data);
     } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
+      setSuggestActionError(formatFetchError(e));
     } finally {
       setApproving(null);
     }
@@ -117,15 +113,13 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
     setApplying(true);
     setSuggestActionError("");
     try {
-      const res = await fetch(`${backend}/modules/apply`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi apply suggestions");
+      const data = await apiFetch<ApplyResult>(`${backend}/modules/apply`, {
+        method: "POST",
+      });
       setApplyResult(data);
       await Promise.all([fetchSuggestions(), options.onApplySuccess?.()]);
     } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
+      setSuggestActionError(formatFetchError(e));
     } finally {
       setApplying(false);
     }
@@ -143,6 +137,7 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
     suggestActionError,
     overrideInputs,
     setOverrideInputs,
+    approveSkipped,
     fetchSuggestions,
     handleRunSuggest,
     handleApproveSelected,

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ImportModuleProgress, ModuleListResult } from "../types";
+import { apiFetch, formatFetchError } from "../api";
 
 export function useModuleRegistry (backend: string) {
     
@@ -20,35 +21,25 @@ export function useModuleRegistry (backend: string) {
 
   const fetchModules = () => {
     setModulesLoading(true);
-    return fetch(`${backend}/modules`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể tải danh sách module");
-        return res.json();
-      })
+    return apiFetch<ModuleListResult>(`${backend}/modules`)
       .then((data) => {
         setModuleList(data);
         setModulesError("");
       })
-      .catch((e) =>
-        setModulesError(e instanceof Error ? e.message : "Lỗi kết nối backend"),
-      )
+      .catch((e) => setModulesError(formatFetchError(e)))
       .finally(() => setModulesLoading(false));
   };
   const handleActivate = async (name: string) => {
     setActivatingModule(name);
     setActivateError("");
     try {
-      const res = await fetch(
+      const data = await apiFetch<ModuleListResult>(
         `${backend}/modules/${encodeURIComponent(name)}/activate`,
-        {
-          method: "POST",
-        },
+        { method: "POST" },
       );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi activate module");
       setModuleList(data);
     } catch (e: unknown) {
-      setActivateError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+      setActivateError(formatFetchError(e));
     } finally {
       setActivatingModule(null);
     }
@@ -63,9 +54,7 @@ export function useModuleRegistry (backend: string) {
       const url = moduleName
         ? `${backend}/modules/import?module=${encodeURIComponent(moduleName)}`
         : `${backend}/modules/import`;
-      const res = await fetch(url, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi khởi chạy import");
+      const data = await apiFetch<{ job_id: string }>(url, { method: "POST" });
 
       const es = new EventSource(
         `${backend}/modules/import/${data.job_id}/stream`,
@@ -92,7 +81,7 @@ export function useModuleRegistry (backend: string) {
         setImportError("Mất kết nối stream import");
       };
     } catch (e: unknown) {
-      setImportError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+      setImportError(formatFetchError(e));
       setImportRunning(false);
     }
   };
@@ -100,15 +89,13 @@ export function useModuleRegistry (backend: string) {
     setDeactivatingModule(name);
     setDeactivateError("");
     try {
-      const res = await fetch(
+      const data = await apiFetch<ModuleListResult>(
         `${backend}/modules/${encodeURIComponent(name)}/deactivate`,
         { method: "POST" },
       );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi deactivate module");
       setModuleList(data);
     } catch (e: unknown) {
-      setDeactivateError(e instanceof Error ? e.message : "Lỗi kết nối backend");
+      setDeactivateError(formatFetchError(e));
     } finally {
       setDeactivatingModule(null);
     }

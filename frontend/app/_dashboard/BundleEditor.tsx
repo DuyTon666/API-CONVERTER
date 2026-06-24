@@ -2,28 +2,7 @@
 
 import Editor, { OnMount } from "@monaco-editor/react";
 import { useRef } from "react";
-
-type SpectralIssue = {
-  severity: number;
-  message: string;
-  code: string;
-  path: string[];
-  range?: {
-    start: { line: number; character: number };
-    end: { line: number; character: number };
-  };
-};
-
-type RedoclyIssue = {
-  severity: string;
-  message: string;
-  ruleId: string;
-  location?: Array<{
-    pointer?: string;
-    line?: number;
-    column?: number;
-  }>;
-};
+import { SpectralIssue, RedoclyIssue } from "./types";
 
 type Props = {
   content: string;
@@ -34,7 +13,12 @@ type Props = {
 
 type MonacoInstance = Parameters<OnMount>[1];
 
-export default function BundleEditor({ content, onChange, spectralIssues, redoclyIssues }: Props) {
+export default function BundleEditor({
+  content,
+  onChange,
+  spectralIssues,
+  redoclyIssues,
+}: Props) {
   const monacoRef = useRef<MonacoInstance | null>(null);
 
   const handleMount: OnMount = (editor, monaco) => {
@@ -50,18 +34,20 @@ export default function BundleEditor({ content, onChange, spectralIssues, redocl
             issue.severity === 0
               ? monaco.MarkerSeverity.Error
               : issue.severity === 1
-              ? monaco.MarkerSeverity.Warning
-              : monaco.MarkerSeverity.Info,
+                ? monaco.MarkerSeverity.Warning
+                : monaco.MarkerSeverity.Info,
           message: `[Spectral] [${issue.code}] ${issue.message}`,
           startLineNumber: (issue.range?.start.line ?? 0) + 1,
           startColumn: (issue.range?.start.character ?? 0) + 1,
-          endLineNumber: (issue.range?.end.line ?? issue.range?.start.line ?? 0) + 1,
-          endColumn: (issue.range?.end.character ?? (issue.range?.start.character ?? 0) + 10) + 1,
+          endLineNumber:
+            (issue.range?.end.line ?? issue.range?.start.line ?? 0) + 1,
+          endColumn:
+            (issue.range?.end.character ??
+              (issue.range?.start.character ?? 0) + 10) + 1,
         })),
         ...redoclyIssues.map((issue) => {
-          const loc = issue.location?.[0];
-          const line = loc?.line ?? 1;
-          const col = loc?.column ?? 1;
+          const line = (issue.line ?? 0) + 1;
+          const col = (issue.column ?? 0) + 1;
           return {
             severity:
               issue.severity === "error"
@@ -97,7 +83,11 @@ export default function BundleEditor({ content, onChange, spectralIssues, redocl
       value={content}
       onChange={(val) => onChange(val ?? "")}
       onMount={handleMount}
-      loading={<div className="flex items-center justify-center h-full text-gray-400 text-sm">Đang tải editor...</div>}
+      loading={
+        <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+          Đang tải editor...
+        </div>
+      }
       options={{
         fontSize: 13,
         minimap: { enabled: false },

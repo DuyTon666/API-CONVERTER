@@ -2,6 +2,7 @@
 
 import { ScanResult } from "./types";
 import { formatExtensions } from "./format";
+import { ErrorAlert } from "./ErrorAlert";
 
 type Props = {
   scan: ScanResult | null;
@@ -15,11 +16,7 @@ export default function ScanCard({ scan, loading, error }: Props) {
       <h2 className="font-semibold text-gray-900 mb-4">Scan nguồn dữ liệu</h2>
 
       {loading && <p className="text-sm text-gray-400">Đang quét...</p>}
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-          {error}
-        </div>
-      )}
+      {error && <ErrorAlert message={error} />}
 
       {scan && (
         <>

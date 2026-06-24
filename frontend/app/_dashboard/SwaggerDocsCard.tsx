@@ -2,6 +2,7 @@
 
 import { DocsBuildResult } from "./types";
 import { countLintIssues } from "./format";
+import { ErrorAlert } from "./ErrorAlert";
 
 type Props = {
   docsBuilding: boolean;
@@ -84,11 +85,7 @@ export default function SwaggerDocsCard({
         )}
       </div>
 
-      {docsError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-          {docsError}
-        </div>
-      )}
+      {docsError && <ErrorAlert message={docsError} className="mb-4" />}
 
       {bundleReady && !docsResult && (
         <p className="text-sm text-gray-400">

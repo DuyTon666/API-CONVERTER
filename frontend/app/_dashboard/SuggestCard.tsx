@@ -1,7 +1,9 @@
 "use client";
 
-import { ApplyResult, SuggestionsResult } from "./types";
+import { ApplyResult, SkippedApproval, SuggestionsResult } from "./types";
 import { useEffect, useState } from "react";
+import { useMounted } from "./hooks/useMounted";
+import { ErrorAlert } from "./ErrorAlert";
 
 type ApproveBody = {
   mode: string;
@@ -25,6 +27,7 @@ type Props = {
   approvingMulti: boolean;
   applying: boolean;
   applyResult: ApplyResult | null;
+  approveSkipped: SkippedApproval[];
   overrideInputs: Record<string, string>;
   onApproveSelected: (items: ApproveItem[]) => void;
   onOverrideChange: (file: string, value: string) => void;
@@ -44,11 +47,6 @@ function ElapsedTimer() {
   return <>({elapsed}s)</>;
 }
 
-function useMounted() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-  return mounted;
-}
 
 export default function SuggestCard({
   suggestions,
@@ -60,6 +58,7 @@ export default function SuggestCard({
   approvingMulti,
   applying,
   applyResult,
+  approveSkipped,
   overrideInputs,
   onOverrideChange,
   onRunSuggest,
@@ -164,7 +163,13 @@ export default function SuggestCard({
 
         <button
           onClick={onApply}
-          disabled={applying || loading || (suggestions?.summary?.approved ?? 0) === 0}
+          disabled={
+            !mounted ||
+            applying ||
+            loading ||
+            (suggestions?.summary?.approved ?? 0) === 0
+          }
+          suppressHydrationWarning
           className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
         >
           {applying ? "Đang apply..." : "Apply suggestions"}
@@ -177,19 +182,25 @@ export default function SuggestCard({
         </p>
       )}
 
-      {actionError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-          {actionError}
+      {actionError && <ErrorAlert message={actionError} className="mb-4" />}
+      {approveSkipped.length > 0 && (
+        <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm space-y-1">
+          <p className="font-medium">
+            {approveSkipped.length} file bị bỏ qua khi duyệt:
+          </p>
+          <ul className="space-y-0.5">
+            {approveSkipped.map((s, i) => (
+              <li key={i}>
+                <span className="font-medium">{s.file}</span> — {s.reason}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
       {loading && (
         <p className="text-sm text-gray-400">Đang tải suggestions...</p>
       )}
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-          {error}
-        </div>
-      )}
+      {error && <ErrorAlert message={error} className="mb-4" />}
 
       {suggestions && !suggestions.exists && (
         <p className="text-sm text-gray-400">

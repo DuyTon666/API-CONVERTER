@@ -16,9 +16,11 @@ type Props = {
   redoclyIssues: RedoclyIssue[];
   saving: boolean;
   relinting: boolean;
+  aiFixing: boolean;
   onClose: () => void;
   onSave: () => void;
   onSaveAndRelint: () => void;
+  onAiFix: () => void;
 };
 
 export default function BundleEditorModal({
@@ -28,9 +30,11 @@ export default function BundleEditorModal({
   redoclyIssues,
   saving,
   relinting,
+  aiFixing,
   onClose,
   onSave,
   onSaveAndRelint,
+  onAiFix,
 }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("form");
 
@@ -87,6 +91,23 @@ export default function BundleEditorModal({
         {/* Footer — chỉ hiện cho tab YAML */}
         {activeTab === "yaml" && (
           <div className="flex gap-3 px-6 py-4 border-t shrink-0">
+            <button
+              onClick={onAiFix}
+              disabled={
+                aiFixing ||
+                saving ||
+                relinting ||
+                (spectralIssues.length === 0 && redoclyIssues.length === 0)
+              }
+              title={
+                spectralIssues.length === 0 && redoclyIssues.length === 0
+                  ? "Không có lỗi nào để sửa"
+                  : undefined
+              }
+              className="px-4 py-2 bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200 text-sm transition disabled:opacity-40"
+            >
+              {aiFixing ? "AI đang sửa..." : "✨ AI tự fix lỗi"}
+            </button>
             <button
               onClick={onSave}
               disabled={saving}
