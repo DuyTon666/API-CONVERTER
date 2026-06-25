@@ -1,5 +1,6 @@
 import asyncio
 import json
+import time
 import traceback
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -39,10 +40,32 @@ class ImportJob:
     job_id: str
     modules: list[ImportModuleResult] = field(default_factory=list)
     status: Literal["running", "done"] = "running"
+    created_at: float = field(default_factory=time.time)
 
 
 # Lưu mọi job import đang/đã chạy — chỉ ở RAM, mất khi restart backend.
 import_jobs: dict[str, ImportJob] = {}
+
+# Job "done" sống quá lâu hoặc quá nhiều thì bị dọn — tránh import_jobs phình
+# vô hạn nếu /modules/import bị gọi liên tục (DoS bộ nhớ). Job "running" không
+# bao giờ bị xoá dù cũ, tránh làm hỏng job đang chạy thật.
+JOB_TTL_SECONDS = 3600
+MAX_STORED_JOBS = 50
+
+
+def _prune_old_jobs() -> None:
+    now = time.time()
+    for jid, job in list(import_jobs.items()):
+        if job.status == "done" and now - job.created_at > JOB_TTL_SECONDS:
+            del import_jobs[jid]
+
+    if len(import_jobs) > MAX_STORED_JOBS:
+        done_jobs = sorted(
+            (j for j in import_jobs.values() if j.status == "done"),
+            key=lambda j: j.created_at,
+        )
+        for job in done_jobs[: len(import_jobs) - MAX_STORED_JOBS]:
+            del import_jobs[job.job_id]
 
 
 # Quét 1.docs/source/ xem có module/file nào, gom theo phần mở rộng file —
@@ -111,14 +134,45 @@ def list_modules():
 
 
 # Nhận file upload từ ImportCard, lưu thẳng vào 1.docs/source/api_contract/.
+MAX_UPLOAD_SIZE = 20 * 1024 * 1024
+
+
 @router.post("/source/upload")
 async def upload_source_files(files: list[UploadFile] = File(...)):
+    from import_flow.config import load_import_config, supported_extensions
+
+    cfg = load_import_config()
+    allowed_ext = supported_extensions(cfg)
+
     SOURCE_DIR.mkdir(parents=True, exist_ok=True)
+    resolved_source_dir = SOURCE_DIR.resolve()
     saved = []
     for upload in files:
+        safe_name = Path(upload.filename).name
+        if not safe_name or safe_name in (".", ".."):
+            raise http_error(400, ErrorCode.INVALID_FILENAME, "Tên file không hợp lệ")
+
+        if Path(safe_name).suffix.lower() not in allowed_ext:
+            raise http_error(
+                400,
+                ErrorCode.UNSUPPORTED_FILE_TYPE,
+                f"Định dạng file không được hổ trợ: {safe_name}",
+            )
+
+        dest = (SOURCE_DIR / safe_name).resolve()
+        if not dest.is_relative_to(resolved_source_dir):
+            raise http_error(400, ErrorCode.INVALID_FILENAME, "Tên file không hợp lệ")
+
         file_bytes = await upload.read()
-        (SOURCE_DIR / upload.filename).write_bytes(file_bytes)
-        saved.append(upload.filename)
+        if len(file_bytes) > MAX_UPLOAD_SIZE:
+            raise http_error(
+                400,
+                ErrorCode.FILE_TOO_LARGE,
+                f"File quá lớn (tối đa {MAX_UPLOAD_SIZE // (1024 * 1024)} MB): {safe_name}",
+            )
+
+        dest.write_bytes(file_bytes)
+        saved.append(safe_name)
     return {"saved": saved, "total": len(saved)}
 
 
@@ -404,6 +458,7 @@ def start_import(module: str | None = None):
             400, ErrorCode.NO_ACTIVE_MODULE, "Không có module active nào để import"
         )
 
+    _prune_old_jobs()
     job_id = str(uuid.uuid4())
     import_jobs[job_id] = ImportJob(job_id=job_id)
     executor.submit(_run_import_job, job_id, module)
@@ -464,82 +519,93 @@ def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
 
     job = import_jobs[job_id]
 
-    cfg = load_import_config()
-    source_root = get_source_root(cfg)
-    output_root = get_output_root(cfg)
-    schemas_root = get_schemas_root(cfg)
-    result = scan_source_root(source_root, supported_extensions(cfg), ignore_dirs(cfg))
-
-    registry_path = CONFIG_DIR / "module_registry.yaml"
-    raw = registry_path.read_text(encoding="utf-8").strip()
-    registry_data = _yaml.safe_load(raw) if raw else {}
-    registry_modules = registry_data.get("modules", {})
-
-    to_run = []
-    for m in result["modules"]:
-        if not m["files"]:
-            continue
-        if module_filter and m["name"] != module_filter:
-            continue
-        info = registry_modules.get(m["name"])
-        if info is None or info.get("status") != "active":
-            continue
-        to_run.append(m)
-
-    job.modules = [
-        ImportModuleResult(name=m["name"], total=len(m["files"])) for m in to_run
-    ]
-
-    batch_log_path = REPORT_DIR / "batch_log_by_module.json"
-
-    for m, mr in zip(to_run, job.modules):
-        mr.status = "running"
-        now = datetime.datetime.now().isoformat(timespec="seconds")
-        import_status = "success"
-        try:
-            run_batch(
-                input_dir=str(m["path"]),
-                module=m["name"],
-                output_dir=str(output_root / m["name"]),
-                schemas_dir=str(schemas_root / m["name"]),
-            )
-        except Exception as e:
-            traceback.print_exc()
-            mr.status = "error"
-            mr.error = str(e)
-            import_status = "failed"
-        else:
-            mr.status = "done"
-            if batch_log_path.exists():
-                log = json.loads(batch_log_path.read_text(encoding="utf-8"))
-                entry = log.get("modules", {}).get(m["name"], {}).get("mixed", {})
-                mr.success = entry.get("success", 0)
-                mr.failed = entry.get("failed", 0)
-                mr.skipped = entry.get("skipped", 0)
-                mr.needs_review = entry.get("needs_review_count", 0)
-
-        if m["name"] in registry_modules:
-            info = registry_modules[m["name"]]
-            info["last_import_at"] = now
-            info["last_import_status"] = import_status
-
-            out_dir = output_root / m["name"]
-            if out_dir.exists():
-                info["endpoint_count"] = len(
-                    [
-                        f
-                        for f in out_dir.iterdir()
-                        if f.is_file() and f.suffix.lower() in (".yaml", ".yml")
-                    ]
-                )
-
-    if registry_modules:
-        raw_full = registry_path.read_text(encoding="utf-8").strip()
-        reg_full = _yaml.safe_load(raw_full) if raw_full else {}
-        reg_full["modules"] = registry_modules
-        registry_path.write_text(
-            _yaml.safe_dump(reg_full, allow_unicode=True, sort_keys=False),
-            encoding="utf-8",
+    # try/finally bọc toàn bộ phần xử lý — đảm bảo job.status luôn được set về
+    # "done" dù lỗi xảy ra ở đâu (kể cả ngoài phần try/except per-module bên
+    # dưới, ví dụ lỗi đọc registry/scan trước loop hoặc ghi registry sau loop).
+    # Thiếu try/finally này thì job kẹt mãi ở "running", _prune_old_jobs()
+    # không bao giờ dọn được (chỉ dọn job "done"), và SSE (stream_import_job)
+    # cũng treo vô hạn vì chờ job.status == "done" không bao giờ tới.
+    try:
+        cfg = load_import_config()
+        source_root = get_source_root(cfg)
+        output_root = get_output_root(cfg)
+        schemas_root = get_schemas_root(cfg)
+        result = scan_source_root(
+            source_root, supported_extensions(cfg), ignore_dirs(cfg)
         )
 
-    job.status = "done"
+        registry_path = CONFIG_DIR / "module_registry.yaml"
+        raw = registry_path.read_text(encoding="utf-8").strip()
+        registry_data = _yaml.safe_load(raw) if raw else {}
+        registry_modules = registry_data.get("modules", {})
+
+        to_run = []
+        for m in result["modules"]:
+            if not m["files"]:
+                continue
+            if module_filter and m["name"] != module_filter:
+                continue
+            info = registry_modules.get(m["name"])
+            if info is None or info.get("status") != "active":
+                continue
+            to_run.append(m)
+
+        job.modules = [
+            ImportModuleResult(name=m["name"], total=len(m["files"])) for m in to_run
+        ]
+
+        batch_log_path = REPORT_DIR / "batch_log_by_module.json"
+
+        for m, mr in zip(to_run, job.modules):
+            mr.status = "running"
+            now = datetime.datetime.now().isoformat(timespec="seconds")
+            import_status = "success"
+            try:
+                run_batch(
+                    input_dir=str(m["path"]),
+                    module=m["name"],
+                    output_dir=str(output_root / m["name"]),
+                    schemas_dir=str(schemas_root / m["name"]),
+                )
+            except Exception as e:
+                traceback.print_exc()
+                mr.status = "error"
+                mr.error = str(e)
+                import_status = "failed"
+            else:
+                mr.status = "done"
+                if batch_log_path.exists():
+                    log = json.loads(batch_log_path.read_text(encoding="utf-8"))
+                    entry = log.get("modules", {}).get(m["name"], {}).get("mixed", {})
+                    mr.success = entry.get("success", 0)
+                    mr.failed = entry.get("failed", 0)
+                    mr.skipped = entry.get("skipped", 0)
+                    mr.needs_review = entry.get("needs_review_count", 0)
+
+            if m["name"] in registry_modules:
+                info = registry_modules[m["name"]]
+                info["last_import_at"] = now
+                info["last_import_status"] = import_status
+
+                out_dir = output_root / m["name"]
+                if out_dir.exists():
+                    info["endpoint_count"] = len(
+                        [
+                            f
+                            for f in out_dir.iterdir()
+                            if f.is_file() and f.suffix.lower() in (".yaml", ".yml")
+                        ]
+                    )
+
+        if registry_modules:
+            raw_full = registry_path.read_text(encoding="utf-8").strip()
+            reg_full = _yaml.safe_load(raw_full) if raw_full else {}
+            reg_full["modules"] = registry_modules
+            registry_path.write_text(
+                _yaml.safe_dump(reg_full, allow_unicode=True, sort_keys=False),
+                encoding="utf-8",
+            )
+    except Exception:
+        traceback.print_exc()
+    finally:
+        job.status = "done"

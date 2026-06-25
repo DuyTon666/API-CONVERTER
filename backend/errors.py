@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 
+
 # Bảng hằng số mã lỗi dùng chung cho cả backend — không có __init__, không ai tạo
 # instance, class này chỉ đóng vai trò "không gian tên" để gọi ErrorCode.XXX
 # (giống static class chứa const string của C#, hoặc enum chuỗi).
@@ -27,6 +28,10 @@ class ErrorCode:
     EMPTY_BUNDLE = "EMPTY_BUNDLE"
     AI_CALL_FAILED = "AI_CALL_FAILED"
     AI_INVALID_YAML = "AI_INVALID_YAML"
+    INVALID_FILENAME = "INVALID_FILENAME"
+    UNSUPPORTED_FILE_TYPE = "UNSUPPORTED_FILE_TYPE"
+    FILE_TOO_LARGE = "FILE_TOO_LARGE"
+
 
 # Tạo và TRẢ VỀ (không tự raise) 1 HTTPException theo format {code, message} —
 # đúng khớp với phần frontend đọc lỗi (api.ts/parseErrorDetail). Người gọi luôn
@@ -34,4 +39,7 @@ class ErrorCode:
 # Type hint (status_code: int, ...) chỉ là gợi ý cho người đọc/IDE — Python không
 # ép kiểu lúc chạy, gọi sai kiểu vẫn không bị chặn ngay tại đây.
 def http_error(status_code: int, code: str, message: str) -> HTTPException:
-    return HTTPException(status_code=status_code, detail={"code": code, "message": message})
+    return HTTPException(
+        status_code=status_code, detail={"code": code, "message": message}
+    )
+
