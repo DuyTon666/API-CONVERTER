@@ -2,8 +2,15 @@ import { useState } from "react";
 import { ImportModuleProgress, ModuleListResult } from "../types";
 import { apiFetch, formatFetchError } from "../api";
 
-export function useModuleRegistry (backend: string) {
-    
+type UseModuleRegistryOptions = {
+  onImportDone?: () => void;
+};
+
+export function useModuleRegistry(
+  backend: string,
+  options: UseModuleRegistryOptions = {},
+) {
+
   const [moduleList, setModuleList] = useState<ModuleListResult | null>(null);
   const [modulesLoading, setModulesLoading] = useState(true);
   const [modulesError, setModulesError] = useState("");
@@ -66,6 +73,7 @@ export function useModuleRegistry (backend: string) {
           setImportRunning(false);
           es.close();
           fetchModules();
+          options.onImportDone?.();
           return;
         }
         setImportModules((prev) => {

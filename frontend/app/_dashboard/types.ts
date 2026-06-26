@@ -138,3 +138,15 @@ export type AiFixResult = {
 };
 
 export type AiFixResolution = "original" | "fixed" | "both";
+
+// 1 field bị phát hiện xung đột giữa giá trị sửa tay (Form Editor) và giá trị
+// pipeline vừa sinh lại khi import — xem backend/routers/modules.py
+// (_resolve_manual_edits_after_import) và 3.build/reports/manual_edit_conflicts.json.
+export type ManualEditConflict = {
+  operationId: string;
+  module: string;
+  field: string;
+  old_value: string;
+  new_value: string;
+  detected_at: string;
+};

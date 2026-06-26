@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import ImportCard from "./_dashboard/ImportCard";
 import ScanCard from "./_dashboard/ScanCard";
 import SuggestCard from "./_dashboard/SuggestCard";
+import ManualEditConflictsCard from "./_dashboard/ManualEditConflictsCard";
 import ModuleRegistryCard from "./_dashboard/ModuleRegistryCard";
 import SwaggerDocsCard from "./_dashboard/SwaggerDocsCard";
 import BundleEditorModal from "./_dashboard/BundleEditorModal";
@@ -15,11 +16,23 @@ import { useModuleRegistry } from "./_dashboard/hooks/useModuleRegistry";
 import { useUpload } from "./_dashboard/hooks/useUpload";
 import { useDocsBuilder } from "./_dashboard/hooks/useDocsBuilder";
 import { useSuggestions } from "./_dashboard/hooks/useSuggestions";
+import { useManualEditConflicts } from "./_dashboard/hooks/useManualEditConflicts";
 
 export default function Home() {
   const backend = process.env.NEXT_PUBLIC_API_URL!;
 
   const { scan, scanLoading, scanError, fetchScan } = useScan(backend);
+
+  const {
+    conflicts,
+    loading: conflictsLoading,
+    error: conflictsError,
+    resolving: conflictResolving,
+    resolveError: conflictResolveError,
+    conflictKey,
+    fetchConflicts,
+    handleResolve: handleResolveConflict,
+  } = useManualEditConflicts(backend);
 
   const {
     moduleList,
@@ -38,7 +51,7 @@ export default function Home() {
     importError,
     handleImport,
     fetchModules,
-  } = useModuleRegistry(backend);
+  } = useModuleRegistry(backend, { onImportDone: fetchConflicts });
 
   const {
     uploadFiles,
@@ -104,6 +117,7 @@ export default function Home() {
     fetchModules();
     fetchSuggestions();
     fetchDocsStatus();
+    fetchConflicts();
   }, []);
 
   const pendingSuggestions =
@@ -249,6 +263,18 @@ export default function Home() {
 
             {/* Cột thao tác chính — bên trái trên desktop */}
             <div className="contents lg:block lg:order-1 lg:col-span-7 lg:space-y-6">
+              <div className="order-3 scroll-mt-32">
+                <ManualEditConflictsCard
+                  conflicts={conflicts}
+                  loading={conflictsLoading}
+                  error={conflictsError}
+                  resolving={conflictResolving}
+                  resolveError={conflictResolveError}
+                  conflictKey={conflictKey}
+                  onResolve={handleResolveConflict}
+                />
+              </div>
+
               <div id="card-suggest" className="order-3 scroll-mt-32">
                 <SuggestCard
                   suggestions={suggestions}

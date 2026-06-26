@@ -6,7 +6,7 @@ from pathlib import Path
 from fastapi import APIRouter, Body, Request
 from fastapi.responses import FileResponse, PlainTextResponse
 
-from config import DIST_DIR
+from config import DIST_DIR, OUTPUT_DIR
 from errors import ErrorCode, http_error
 
 router = APIRouter()
@@ -248,6 +248,63 @@ def ai_fix_bundle(payload: dict = Body(...)):
 _HTTP_METHODS = {"get", "post", "put", "patch", "delete", "head", "options", "trace"}
 
 
+def _apply_operation_update(operation: dict, upd: dict) -> dict:
+    """Áp update (summary/description/parameters/responses) vào 1 operation dict, trả về field vừa đổi."""
+    touched = {}
+    if "summary" in upd:
+        operation["summary"] = upd["summary"]
+        touched["summary"] = True
+    if "description" in upd:
+        operation["description"] = upd["description"]
+        touched["description"] = True
+    for p_upd in upd.get("parameters") or []:
+        for p in operation.get("parameters") or []:
+            if (
+                isinstance(p, dict)
+                and "$ref" not in p
+                and p.get("name") == p_upd.get("name")
+            ):
+                p["description"] = p_upd.get("description", "")
+                touched.setdefault("parameters", []).append(p_upd.get("name"))
+    for r_upd in upd.get("responses") or []:
+        resp = (operation.get("responses") or {}).get(r_upd.get("code"))
+        if isinstance(resp, dict) and "$ref" not in resp:
+            resp["description"] = r_upd.get("description", "")
+            touched.setdefault("responses", []).append(r_upd.get("code"))
+    return touched
+
+
+def _index_operation_files() -> dict[str, Path]:
+    """Quét toàn bộ file tầng 2 (5.openapi/paths/**), build map operationId -> đường dẫn file."""
+    import yaml as _yaml
+
+    index: dict[str, Path] = {}
+    for file in OUTPUT_DIR.glob("paths/**/*.yaml"):
+        try:
+            doc = _yaml.safe_load(file.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if not isinstance(doc, dict):
+            continue
+        for method, operation in doc.items():
+            if method in _HTTP_METHODS and isinstance(operation, dict):
+                op_id = operation.get("operationId")
+                if op_id:
+                    index[op_id] = file
+    return index
+
+
+def _merge_marker(existing: dict | None, touched: dict) -> dict | None:
+    """Union field vừa sửa vào marker x-manual-edit-fields hiện có (cộng dồn qua nhiều lần sửa)."""
+    merged = dict(existing) if existing else {}
+    for key, value in touched.items():
+        if key in ("parameters", "responses"):
+            merged[key] = sorted(set(merged.get(key, []) + value))
+        else:
+            merged[key] = True
+    return merged or None
+
+
 @router.get("/docs/operations")
 def get_operations():
     """Trả về danh sách operations từ bundle để hiển thị trong form editor."""
@@ -299,8 +356,15 @@ def get_operations():
 
 @router.patch("/docs/operations")
 async def update_operations(updates: list = Body(...)):
-    """Cập nhật summary/description của một hoặc nhiều operations trong bundle."""
+    """Cập nhật summary/description của một hoặc nhiều operations.
+
+    Ghi đồng thời tầng 3 (bundle) và tầng 2 (file fragment riêng dưới
+    5.openapi/paths/), kèm marker x-manual-edit-fields để pipeline biết field
+    nào đã bị sửa tay khi import lại (xem 2.pipeline/pipeline_API.py — không sửa
+    file đó, chỉ đọc/ghi field này từ phía backend).
+    """
     import yaml as _yaml
+    from ruamel.yaml import YAML
 
     bundle_path = DIST_DIR / "openapi-bundled.yaml"
     if not bundle_path.exists():
@@ -312,6 +376,13 @@ async def update_operations(updates: list = Body(...)):
 
     bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
     update_map = {u["operationId"]: u for u in updates if u.get("operationId")}
+    index = _index_operation_files()
+
+    # Style giống 2.pipeline/generator/emitter.py — giữ format file tầng 2
+    # đồng nhất với file do pipeline sinh ra (không tự ý đổi style khi ghi đè).
+    fragment_yaml = YAML()
+    fragment_yaml.default_flow_style = False
+    fragment_yaml.indent(mapping=2, sequence=4, offset=2)
 
     updated = 0
     for path_item in bundle.get("paths", {}).values():
@@ -321,25 +392,35 @@ async def update_operations(updates: list = Body(...)):
             if method not in _HTTP_METHODS or not isinstance(operation, dict):
                 continue
             op_id = operation.get("operationId", "")
-            if op_id in update_map:
-                upd = update_map[op_id]
-                if "summary" in upd:
-                    operation["summary"] = upd["summary"]
-                if "description" in upd:
-                    operation["description"] = upd["description"]
-                for p_upd in upd.get("parameters") or []:
-                    for p in operation.get("parameters") or []:
-                        if (
-                            isinstance(p, dict)
-                            and "$ref" not in p
-                            and p.get("name") == p_upd.get("name")
-                        ):
-                            p["description"] = p_upd.get("description", "")
-                for r_upd in upd.get("responses") or []:
-                    resp = (operation.get("responses") or {}).get(r_upd.get("code"))
-                    if isinstance(resp, dict) and "$ref" not in resp:
-                        resp["description"] = r_upd.get("description", "")
-                updated += 1
+            if op_id not in update_map:
+                continue
+            upd = update_map[op_id]
+
+            # Tầng 3 — operation đang nằm sẵn trong bundle đã load ở trên.
+            touched = _apply_operation_update(operation, upd)
+            operation["x-manual-edit-fields"] = _merge_marker(
+                operation.get("x-manual-edit-fields"), touched
+            )
+
+            # Tầng 2 — chỉ ghi nếu tìm được file tương ứng; không tìm thấy
+            # hoặc đọc/ghi lỗi thì bỏ qua, không fail cả request (tầng 3 vẫn
+            # đã được cập nhật đúng).
+            file_path = index.get(op_id)
+            if file_path is not None:
+                try:
+                    fragment = fragment_yaml.load(file_path.read_text(encoding="utf-8"))
+                    for f_method, f_operation in fragment.items():
+                        if f_method in _HTTP_METHODS and isinstance(f_operation, dict):
+                            f_touched = _apply_operation_update(f_operation, upd)
+                            f_operation["x-manual-edit-fields"] = _merge_marker(
+                                f_operation.get("x-manual-edit-fields"), f_touched
+                            )
+                    with file_path.open("w", encoding="utf-8") as f:
+                        fragment_yaml.dump(fragment, f)
+                except Exception:
+                    pass
+
+            updated += 1
 
     bundle_path.write_text(
         _yaml.dump(
