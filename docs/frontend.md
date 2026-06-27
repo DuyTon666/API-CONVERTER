@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-Dashboard 1 trang (`app/page.tsx`) cho toàn bộ workflow: import tài liệu → scan → gợi ý/duyệt module → import → build tài liệu Swagger → chỉnh sửa nội dung. State được tách thành 5 custom hook (`app/_dashboard/hooks/`), `page.tsx` chỉ compose hook + render layout (~270 dòng); các "card" con chỉ render UI + nhận callback qua props.
+Dashboard 1 trang (`app/page.tsx`) cho toàn bộ workflow: import tài liệu → scan → gợi ý/duyệt module → import → build tài liệu Swagger → chỉnh sửa nội dung → review xung đột sửa tay. State được tách thành 6 custom hook (`app/_dashboard/hooks/`), `page.tsx` chỉ compose hook + render layout; các "card" con chỉ render UI + nhận callback qua props.
 
 > Route `app/jobs/[job_id]/` (upload đơn lẻ, luồng cũ) đã bị **xóa** — không có nơi nào trong UI link tới nó và không có cách tạo job (`POST /jobs` không được gọi từ đâu), nên route này chưa từng truy cập được trong thực tế. Component `BundleEditor.tsx` (Monaco wrapper) đã được di chuyển vào `_dashboard/` vì vẫn được `BundleEditorModal` dùng lại cho tab "YAML thô".
 
@@ -10,13 +10,13 @@ Dashboard 1 trang (`app/page.tsx`) cho toàn bộ workflow: import tài liệu �
 
 ## Công nghệ
 
-| Công nghệ                                  | Vai trò                                                                   |
-| ------------------------------------------ | ------------------------------------------------------------------------- |
-| **Next.js**                                | Framework React, App Router                                               |
+| Công nghệ                                  | Vai trò                                                                                |
+| ------------------------------------------ | -------------------------------------------------------------------------------------- |
+| **Next.js**                                | Framework React, App Router                                                            |
 | **React**                                  | UI, state management qua custom hook (`app/_dashboard/hooks/`), không dùng store ngoài |
-| **TypeScript**                             | Type safety                                                               |
-| **Tailwind CSS**                           | Styling                                                                   |
-| **Monaco Editor** (`@monaco-editor/react`) | Code editor cho tab "YAML thô" trong Bundle Editor                        |
+| **TypeScript**                             | Type safety                                                                            |
+| **Tailwind CSS**                           | Styling                                                                                |
+| **Monaco Editor** (`@monaco-editor/react`) | Code editor cho tab "YAML thô" trong Bundle Editor                                     |
 
 > Next.js version này có breaking changes — đọc `node_modules/next/dist/docs/` trước khi code (xem `frontend/AGENTS.md`).
 
@@ -31,7 +31,7 @@ frontend/
 │   ├── layout.tsx
 │   ├── globals.css
 │   ├── _dashboard/                    # Các card con của dashboard
-│   │   ├── types.ts                   # Type chung: ScanResult, ModuleListResult, SuggestionsResult, ApplyResult, DocsBuildResult, DocsStatus, ImportModuleProgress, SpectralIssue, RedoclyIssue
+│   │   ├── types.ts                   # Type chung: ScanResult, ModuleListResult, SuggestionsResult, ApplyResult, DocsBuildResult, DocsStatus, ImportModuleProgress, SpectralIssue, RedoclyIssue, ManualEditConflict
 │   │   ├── format.ts                  # formatDate, formatRelativeTime, formatBytes, SUPPORTED_EXTENSIONS, countLintIssues
 │   │   ├── api.ts                     # apiFetch/readErrorDetail/formatFetchError dùng chung cho mọi hook + OperationsFormEditor
 │   │   ├── errorMessages.ts           # ERROR_MESSAGES map (code → chữ hiển thị tuỳ chỉnh) + resolveErrorMessage()
@@ -42,11 +42,13 @@ frontend/
 │   │   │   ├── useModuleRegistry.ts   # module list, activate/deactivate, import (SSE)
 │   │   │   ├── useUpload.ts           # upload state, nhận onSuccess callback
 │   │   │   ├── useDocsBuilder.ts      # build/lint/bundle-editor state
-│   │   │   └── useSuggestions.ts      # suggest/approve/apply, nhận onApplySuccess callback
+│   │   │   ├── useSuggestions.ts      # suggest/approve/apply, nhận onApplySuccess callback
+│   │   │   └── useManualEditConflicts.ts  # list/resolve xung đột sửa tay khi import lại
 │   │   ├── ImportCard.tsx             # Upload file vào 1.docs/source/api_contract/
 │   │   ├── ScanCard.tsx               # Hiển thị kết quả /modules/scan
 │   │   ├── SuggestCard.tsx            # Gợi ý/duyệt/apply module assignment
 │   │   ├── ModuleRegistryCard.tsx     # Bảng module + activate/deactivate + import (SSE)
+│   │   ├── ManualEditConflictsCard.tsx # Danh sách field bị conflict giữa sửa tay và import lại, nút "Giữ bản cũ"/"Lấy bản mới"
 │   │   ├── SwaggerDocsCard.tsx        # Build/lint/download tài liệu, mở Bundle Editor
 │   │   ├── BundleEditorModal.tsx      # Modal full-screen, 2 tab: Form Editor + YAML thô
 │   │   ├── BundleEditor.tsx           # Wrapper Monaco Editor (chuyển từ app/jobs/[job_id]/ cũ)
@@ -78,6 +80,8 @@ frontend/
 │  WorkflowStepper: Nguồn → Phân loại → Module → Tài liệu │
 ├─────────────────────────────────────────────┤
 │  StatTiles: module active / draft / file chưa gán / suggestion chờ duyệt │
+├─────────────────────────────────────────────┤
+│  ManualEditConflictsCard (chỉ hiện khi có xung đột) │
 ├──────────────────────┬──────────────────────┤
 │  Cột trái (7/12)      │  Cột phải (5/12)      │
 │  - SuggestCard        │  - ImportCard         │
@@ -86,20 +90,21 @@ frontend/
 └──────────────────────┴──────────────────────┘
 ```
 
-Trên mobile: thứ tự đảo lại theo `order-N` (ImportCard → ScanCard → SuggestCard → ModuleRegistryCard → SwaggerDocsCard).
+Trên mobile: thứ tự đảo lại theo `order-N` (ImportCard → ScanCard → SuggestCard → ModuleRegistryCard → SwaggerDocsCard). `ManualEditConflictsCard` không có `order` riêng — render ở top-level, trước layout 2 cột, ẩn hẳn (return `null`) khi queue rỗng.
 
-### State — 5 custom hook (`app/_dashboard/hooks/`)
+### State — 6 custom hook (`app/_dashboard/hooks/`)
 
-`page.tsx` chỉ gọi 5 hook dưới đây và destructure ra props cho card con — không tự giữ state nào
+`page.tsx` chỉ gọi 6 hook dưới đây và destructure ra props cho card con — không tự giữ state nào
 khác ngoài giá trị dẫn xuất (`pendingSuggestions`, `activeModules`...).
 
-| Hook | Owns | Gọi API |
-|---|---|---|
-| `useScan(backend)` | `scan` / `scanLoading` / `scanError` / `fetchScan` | `GET /modules/scan` |
-| `useModuleRegistry(backend)` | `moduleList`, activate/deactivate state, import state (SSE) | `GET /modules`, `POST /modules/{m}/activate`/`deactivate`, `POST /modules/import` + `GET /modules/import/{id}/stream` |
-| `useUpload(backend, { onSuccess })` | `uploadFiles` / `uploading` / `uploadError` / `uploadMessage` | `POST /source/upload` |
-| `useDocsBuilder(backend)` | `docsBuilding` / `docsResult` / `docsStatus` / `bundleContent` + save/relint/AI-fix state | `POST /docs/build`, `/docs/relint`, `/docs/bundle/ai-fix`, `GET`/`PUT /docs/bundle-content` |
-| `useSuggestions(backend, { onApplySuccess })` | `suggestions` / `suggestRunning` / `approving` / `applying` / `applyResult` | `GET /modules/suggestions`, `POST /modules/suggest`/`suggestions/approve`/`apply` |
+| Hook                                          | Owns                                                                                      | Gọi API                                                                                                               |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `useScan(backend)`                            | `scan` / `scanLoading` / `scanError` / `fetchScan`                                        | `GET /modules/scan`                                                                                                   |
+| `useModuleRegistry(backend)`                  | `moduleList`, activate/deactivate state, import state (SSE)                               | `GET /modules`, `POST /modules/{m}/activate`/`deactivate`, `POST /modules/import` + `GET /modules/import/{id}/stream` |
+| `useUpload(backend, { onSuccess })`           | `uploadFiles` / `uploading` / `uploadError` / `uploadMessage`                             | `POST /source/upload`                                                                                                 |
+| `useDocsBuilder(backend)`                     | `docsBuilding` / `docsResult` / `docsStatus` / `bundleContent` + save/relint/AI-fix state | `POST /docs/build`, `/docs/relint`, `/docs/bundle/ai-fix`, `GET`/`PUT /docs/bundle-content`                           |
+| `useSuggestions(backend, { onApplySuccess })` | `suggestions` / `suggestRunning` / `approving` / `applying` / `applyResult`               | `GET /modules/suggestions`, `POST /modules/suggest`/`suggestions/approve`/`apply`                                     |
+| `useManualEditConflicts(backend)`             | `conflicts` / `loading` / `error` / `resolving` (theo từng entry)                         | `GET /modules/manual-edit-conflicts`, `POST /modules/manual-edit-conflicts/resolve`                                   |
 
 `useUpload` và `useSuggestions` là 2 hook duy nhất có phụ thuộc lẫn hook khác — giải quyết bằng
 **callback injection** (`onSuccess`/`onApplySuccess` truyền từ `page.tsx`), không hook nào import
@@ -151,6 +156,7 @@ Modal full-screen, 2 tab:
 Form editor cho non-dev — không cần biết YAML.
 
 **Luồng:**
+
 ```
 Mount → GET /docs/operations → list operations
 Group theo tags, hiển thị card cho mỗi endpoint:
@@ -190,12 +196,32 @@ Hiển thị kết quả lint (Spectral + Redocly) dạng list, màu đỏ = err
 Bảng module: tên, status (badge màu: active=xanh, draft=vàng, deprecated=xám), file_count, endpoint_count, last_import (relative time + tooltip absolute).
 
 Nút theo status:
+
 - `draft`/`deprecated` → **Activate**
 - `active` → **Import** (riêng module này) + **Deactivate**
 
 Nút "Import tất cả" ở header — disable nếu không có module nào active.
 
 Khi import chạy: hiện progress bar per-module (`importModules` state), % = `(success+failed+skipped)/total`.
+
+---
+
+## `ManualEditConflictsCard.tsx`
+
+Hiện khi có ít nhất 1 field bị xung đột giữa giá trị sửa tay (Form Editor) và giá trị mới do
+`run_batch()` ghi đè trong lần import gần nhất (xem `docs/backend.md` mục **Persist sửa tay qua
+tầng 2**). Ẩn hẳn (`return null`) khi `conflicts` rỗng — kèm 1 lượt "Đang tải..." chớp nhanh lúc
+trang vừa mount, trước khi fetch xong (rough edge nhỏ, chưa fix).
+
+Mỗi entry hiện `operationId` + tên field + giá trị cũ/mới (chuỗi rỗng hiện `<em>(rỗng)</em>` thay vì
+khoảng trắng), 2 nút:
+
+- **"Giữ bản cũ"** → `POST .../resolve` với `choice: "keep_old"` — ghi giá trị cũ lại tầng 2 + tầng 3.
+- **"Lấy bản mới"** → `choice: "accept_new"` — không đổi gì, chỉ xoá khỏi queue.
+
+Resolve xong, entry tự biến mất khỏi danh sách không cần reload trang (cập nhật state local sau khi
+API trả OK). Mất kết nối backend giữa lúc bấm nút → hiện lỗi "Không thể kết nối tới backend...",
+nút trở lại bấm được ngay, entry **không** bị xoá khỏi queue.
 
 ---
 
@@ -243,20 +269,19 @@ Route `/portal` render 1 giao diện xem API docs **tự thiết kế** (không 
 
 **Luồng:** `page.tsx` là Server Component — đọc trực tiếp `dist/openapi-bundled.yaml` bằng `fs.readFileSync` lúc render (không qua backend API), tự resolve `$ref` (`resolveRefs()`, đệ quy tối đa 10 cấp), trích operations rồi truyền cho `PortalSearch` (client component) render + search bằng Fuse.js riêng (keys: `operationId`/`summary`/`path`/`tags`/`description`).
 
-**⚠️ Vấn đề:** không có `href="/portal"` nào trong toàn bộ codebase — route này chỉ truy cập được nếu gõ thẳng URL. Nav hiện tại (`page.tsx`) chỉ link tới `/swagger`. Hai route `/portal` và `/swagger` cùng giải quyết 1 nhu cầu (xem + tìm kiếm API docs) bằng 2 cách implement khác nhau — nhiều khả năng `/portal` là bản dựng trước, bị bỏ lại sau khi chuyển qua dùng Swagger UI chuẩn ở `/swagger`.
-
 ---
 
 ## Giao tiếp với Backend
 
 Base URL: `process.env.NEXT_PUBLIC_API_URL` (set trong `frontend/.env.local`).
 
-| Nhóm        | Endpoint dùng                                                                                                                          |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Scan/Module | `/modules/scan`, `/modules`, `/modules/{m}/activate`, `/modules/{m}/deactivate`, `/modules/import`, `/modules/import/{id}/stream`      |
-| Suggest     | `/modules/suggestions`, `/modules/suggest`, `/modules/suggestions/approve`, `/modules/apply`                                           |
-| Source      | `/source/upload`                                                                                                                       |
-| Docs        | `/docs/build`, `/docs/status`, `/docs/bundle-content` (GET/PUT), `/docs/relint`, `/docs/download-html`, `/docs/operations` (GET/PATCH), `/docs/operations/ai-suggest`, `/docs/bundle/ai-fix` |
+| Nhóm                  | Endpoint dùng                                                                                                                                                                                |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scan/Module           | `/modules/scan`, `/modules`, `/modules/{m}/activate`, `/modules/{m}/deactivate`, `/modules/import`, `/modules/import/{id}/stream`                                                            |
+| Suggest               | `/modules/suggestions`, `/modules/suggest`, `/modules/suggestions/approve`, `/modules/apply`                                                                                                 |
+| Source                | `/source/upload`                                                                                                                                                                             |
+| Docs                  | `/docs/build`, `/docs/status`, `/docs/bundle-content` (GET/PUT), `/docs/relint`, `/docs/download-html`, `/docs/operations` (GET/PATCH), `/docs/operations/ai-suggest`, `/docs/bundle/ai-fix` |
+| Manual edit conflicts | `/modules/manual-edit-conflicts` (GET), `/modules/manual-edit-conflicts/resolve` (POST)                                                                                                      |
 
 Đây là **toàn bộ** endpoint backend hiện có — không còn route `/jobs/*` nào (đã xóa, xem `docs/backend.md` mục Lịch sử thay đổi).
 
@@ -268,9 +293,9 @@ Base URL: `process.env.NEXT_PUBLIC_API_URL` (set trong `frontend/.env.local`).
 `OperationsFormEditor.tsx`:
 
 ```typescript
-export async function readErrorDetail(res: Response): Promise<string>   // đọc + map lỗi → chuỗi hiển thị
-export async function apiFetch<T>(url, init?): Promise<T>                // fetch + throw new Error(readErrorDetail) nếu !res.ok
-export function formatFetchError(e: unknown, fallback?): string          // dùng trong catch (e), không phải trong fetch
+export async function readErrorDetail(res: Response): Promise<string>; // đọc + map lỗi → chuỗi hiển thị
+export async function apiFetch<T>(url, init?): Promise<T>; // fetch + throw new Error(readErrorDetail) nếu !res.ok
+export function formatFetchError(e: unknown, fallback?): string; // dùng trong catch (e), không phải trong fetch
 ```
 
 **Backend trả `detail: {code, message}`** (xem `docs/backend.md` mục Hệ thống mã lỗi).
@@ -281,11 +306,13 @@ không parse được JSON đều fallback về `res.statusText`.
 
 **Tự override chữ hiển thị cho 1 mã lỗi** — chỉ cần sửa `app/_dashboard/errorMessages.ts`, không
 cần đụng tới hook hay component nào khác:
+
 ```typescript
 export const ERROR_MESSAGES: Record<string, string> = {
-  BUNDLE_NOT_FOUND: "Chưa có tài liệu — bấm \"Build tài liệu\" trước nhé",
+  BUNDLE_NOT_FOUND: 'Chưa có tài liệu — bấm "Build tài liệu" trước nhé',
 };
 ```
+
 Hiện để trống — chưa override mã nào, mọi lỗi đang hiển thị đúng `message` gốc từ backend.
 
 **`formatFetchError` phân biệt `TypeError`** — khi `fetch()` tự throw vì mất kết nối hẳn tới
@@ -302,6 +329,7 @@ kết nối tới backend, kiểm tra server có đang chạy không" thay vì m
 **SSE thay vì polling** — `/modules/import/{id}/stream` dùng `EventSource`, đóng khi nhận `event: "done"` hoặc `onerror`.
 
 **Dynamic import Monaco** — lazy load, `ssr: false` vì Monaco chỉ chạy trên browser:
+
 ```typescript
 const BundleEditor = dynamic(() => import("./BundleEditor"), { ssr: false });
 ```
@@ -314,10 +342,10 @@ const BundleEditor = dynamic(() => import("./BundleEditor"), { ssr: false });
 
 ## Thiếu sót hiện tại (Known Gaps)
 
-| Vấn đề                                  | Ghi chú                                                                                                     |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Không có nút Publish                    | Chỉ có "Tải HTML" thủ công, chưa có commit+push tự động                                                     |
-| `useMounted` gây 2 lint error           | `react-hooks/set-state-in-effect` ở `ModuleRegistryCard.tsx` và `SuggestCard.tsx` — không ảnh hưởng runtime |
-| Không có auth                           | Dashboard mở public trong mạng nội bộ                                                                       |
-| `app/portal/` không được link từ nav    | Trùng chức năng với `/swagger`, có khả năng là code mồ côi — cần quyết định giữ hay xóa                     |
-| Form Editor / AI-fix không bền qua "Build tài liệu" | Chỉ ghi vào `dist/openapi-bundled.yaml`; build lại từ `5.openapi/paths/` sẽ mất nội dung đã sửa — xem `docs/backend.md` mục Known Gaps, đang chờ thảo luận thêm |
+| Vấn đề                                                        | Ghi chú                                                                                                                                                                                                                      |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Không có nút Publish                                          | Chỉ có "Tải HTML" thủ công, chưa có commit+push tự động                                                                                                                                                                      |
+| `useMounted` gây 2 lint error                                 | `react-hooks/set-state-in-effect` ở `ModuleRegistryCard.tsx` và `SuggestCard.tsx` — không ảnh hưởng runtime                                                                                                                  |
+| Không có auth                                                 | Dashboard mở public trong mạng nội bộ                                                                                                                                                                                        |
+| `app/portal/` không được link từ nav                          | Trùng chức năng với `/swagger`, vẫn muốn giữ lại để sau này muốn thay đổi dùng giao diện khác swagger thì gọi nó ra.                                                                                                         |
+| AI-fix (`/docs/bundle/ai-fix`) không bền qua "Build tài liệu" | Chỉ trả patch để dev review trong Monaco, ghi tầng 3 sau khi tự bấm lưu — chưa nối vào luồng backup/marker tầng 2 như Form Editor. Form Editor thì đã hết gap này (xem `docs/backend.md` mục **Persist sửa tay qua tầng 2**) |

@@ -4,11 +4,9 @@ info:
   version: 1.0.0
   license:
     name: API
-    url: https://example.com/license
   description: API cho hệ thống ticket hỗ trợ khách hàng
   contact:
     name: PA Vietnam
-    url: https://pavietnam.vn
     email: dev@pavietnam.vn
 servers:
   - url: https://apigateway.pavietnam.vn
@@ -16,113 +14,66 @@ servers:
 security:
   - bearerAuth: []
 tags:
-  - name: Account
-    description: Các API liên quan đến tài khoản
   - name: Ticket
     description: Các API liên quan đến ticket hỗ trợ khách hàng
+  - name: Account
+    description: Các API liên quan đến tài khoản
 paths:
   /v1/users/{user_id}/tickets:
-    get:
-      summary: API Contract - API tạo ticket cho khách hàng.docx
-      operationId: listUserTickets
-      description: Lấy danh sách ticket của người dùng
-      tags:
-        - Ticket
-      security:
-        - bearerAuth: []
-      x-permission: CHECK_NEWUPDATE
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: ID của người dùng
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Thành công
-          content:
-            application/json:
-              schema:
-                $ref: '../../components/schemas/common/StandardSuccess.yaml'
-              example:
-                success: true
-                data: null
-                error: null
-        '400':
-          $ref: '../../components/responses/BadRequest.yaml'
-        '401':
-          $ref: '../../components/responses/Unauthorized.yaml'
-        '403':
-          $ref: '../../components/responses/Forbidden.yaml'
-        '404':
-          $ref: '../../components/responses/NotFound.yaml'
-        '422':
-          description: |-
-            4200 — Dữ liệu request không hợp lệ
-            4462 — Tạo yêu cầu thất bại
-          content:
-            application/json:
-              schema:
-                $ref: '../../components/schemas/common/StandardError.yaml'
-        '500':
-          $ref: '../../components/responses/InternalError.yaml'
-    post:
-      summary: Tạo ticket mới cho người dùng
-      operationId: createTickets
-      description: Tạo ticket hỗ trợ mới cho người dùng
-      tags:
-        - Ticket
-      security:
-        - bearerAuth: []
-      x-permission: CHECK_NEWUPDATE
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: ID của người dùng
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Thành công
-          content:
-            application/json:
-              schema:
-                $ref: '../../components/schemas/common/StandardSuccess.yaml'
-              example:
-                success: true
-                data: null
-                error: null
-        '400':
-          $ref: '../../components/responses/BadRequest.yaml'
-        '401':
-          $ref: '../../components/responses/Unauthorized.yaml'
-        '403':
-          $ref: '../../components/responses/Forbidden.yaml'
-        '404':
-          $ref: '../../components/responses/NotFound.yaml'
-        '422':
-          description: |-
-            4200 — Dữ liệu request không hợp lệ
-            4462 — Tạo yêu cầu thất bại
-          content:
-            application/json:
-              schema:
-                $ref: '../../components/schemas/common/StandardError.yaml'
-        '500':
-          $ref: '../../components/responses/InternalError.yaml'
-      requestBody:
+    summary: Tạo ticket mới cho người dùng
+    operationId: createTickets
+    description: ''
+    tags:
+      - Ticket
+    security:
+      - bearerAuth: []
+    x-permission: CHECK_NEWUPDATE
+    parameters:
+      - name: user_id
+        in: path
         required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Thành công
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              $ref: '../../components/schemas/ticket/CreateTicketsRequest.yaml'
+              $ref: ../../components/schemas/common/StandardSuccess.yaml
+            example:
+              success: true
+              data: null
+              error: null
+      '400':
+        $ref: ../../components/responses/BadRequest.yaml
+      '401':
+        $ref: ../../components/responses/Unauthorized.yaml
+      '403':
+        $ref: ../../components/responses/Forbidden.yaml
+      '404':
+        $ref: ../../components/responses/NotFound.yaml
+      '422':
+        description: |-
+          4200 — Dữ liệu request không hợp lệ
+          4462 — Tạo yêu cầu thất bại
+        content:
+          application/json:
+            schema:
+              $ref: ../../components/schemas/common/StandardError.yaml
+      '500':
+        $ref: ../../components/responses/InternalError.yaml
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: ../../components/schemas/ticket/CreateTicketsRequest.yaml
   /v1/users/{user_id}/tickets/{id}:
     get:
       summary: API Contract - API hiển thị chi tiết ticket cho khách hàng.docx
       operationId: getTicket
-      description: Thực hiện thao tác này
+      description: API này cho phép lấy thông tin chi tiết của một ticket cụ thể thuộc về người dùng. Kết quả trả về bao gồm toàn bộ thông tin liên quan đến ticket được yêu cầu.
       tags:
         - Ticket
       security:
@@ -132,15 +83,15 @@ paths:
         - name: user_id
           in: path
           required: true
-          description: ID của người dùng
           schema:
             type: string
+          description: Mã định danh duy nhất của người dùng sở hữu ticket.
         - name: id
           in: path
           required: true
-          description: ID của tài nguyên
           schema:
             type: string
+          description: Mã định danh duy nhất của ticket cần lấy thông tin chi tiết.
       responses:
         '200':
           description: Thành công
@@ -162,18 +113,27 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
-          description: 4200 — Dữ liệu request không hợp lệ
+          description: '422'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StandardError'
         '500':
           $ref: '#/components/responses/InternalError'
+      x-manual-edit-fields:
+        summary: true
+        description: true
+        parameters:
+          - id
+          - user_id
+        responses:
+          - '200'
+          - '422'
   /v1/users/{user_id}/tickets/{id}/close:
     put:
       summary: API Contract - API đóng ticket của khách hàng.docx
       operationId: updateClose
-      description: Thực hiện thao tác này
+      description: API này cho phép đóng một ticket cụ thể của khách hàng. Thao tác sẽ cập nhật trạng thái ticket sang trạng thái đã đóng.
       tags:
         - Ticket
       security:
@@ -183,15 +143,15 @@ paths:
         - name: user_id
           in: path
           required: true
-          description: ID của người dùng
           schema:
             type: string
+          description: ID định danh duy nhất của người dùng (khách hàng) sở hữu ticket.
         - name: id
           in: path
           required: true
-          description: ID của tài nguyên
           schema:
             type: string
+          description: ID định danh duy nhất của ticket cần được đóng.
       responses:
         '200':
           description: Thành công
@@ -222,11 +182,20 @@ paths:
                 $ref: '#/components/schemas/StandardError'
         '500':
           $ref: '#/components/responses/InternalError'
+      x-manual-edit-fields:
+        summary: true
+        description: true
+        parameters:
+          - id
+          - user_id
+        responses:
+          - '200'
+          - '422'
   /v1/users/{user_id}/tickets/{id}/reopen:
     post:
       summary: API Contract - API mở lại ticket của khách hàng.docx
       operationId: createReopen
-      description: Thực hiện thao tác này
+      description: ''
       tags:
         - Ticket
       security:
@@ -236,13 +205,11 @@ paths:
         - name: user_id
           in: path
           required: true
-          description: ID của người dùng
           schema:
             type: string
         - name: id
           in: path
           required: true
-          description: ID của tài nguyên
           schema:
             type: string
       responses:
@@ -285,7 +252,7 @@ paths:
     post:
       summary: API Contract - API phản hồi ticket
       operationId: createConversations
-      description: Thực hiện thao tác này
+      description: ''
       tags:
         - Ticket
       security:
@@ -295,13 +262,11 @@ paths:
         - name: user_id
           in: path
           required: true
-          description: ID của người dùng
           schema:
             type: string
         - name: id
           in: path
           required: true
-          description: ID của tài nguyên
           schema:
             type: string
       responses:
@@ -345,7 +310,7 @@ paths:
     post:
       summary: API Contract - Tạo rating ticket cho khách hàng.docx
       operationId: createRatings
-      description: Thực hiện thao tác này
+      description: ''
       tags:
         - Ticket
       security:
@@ -355,13 +320,11 @@ paths:
         - name: user_id
           in: path
           required: true
-          description: ID của người dùng
           schema:
             type: string
         - name: ticket_id
           in: path
           required: true
-          description: ID của ticket
           schema:
             type: string
       responses:
@@ -404,7 +367,7 @@ paths:
     post:
       summary: API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx
       operationId: createFeedback
-      description: Thực hiện thao tác này
+      description: ''
       tags:
         - Ticket
       security:
@@ -414,13 +377,11 @@ paths:
         - name: user_id
           in: path
           required: true
-          description: ID của người dùng
           schema:
             type: string
         - name: id
           in: path
           required: true
-          description: ID của tài nguyên
           schema:
             type: string
       responses:
@@ -460,7 +421,7 @@ paths:
     post:
       summary: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx
       operationId: createChangeAssignee
-      description: Thực hiện thao tác này
+      description: ''
       tags:
         - Ticket
       security:
@@ -470,13 +431,11 @@ paths:
         - name: user_id
           in: path
           required: true
-          description: ID của người dùng
           schema:
             type: string
         - name: id
           in: path
           required: true
-          description: ID của tài nguyên
           schema:
             type: string
       responses:
@@ -528,12 +487,10 @@ components:
       properties:
         success:
           type: boolean
-          description: Trạng thái thành công của response
           example: true
         error:
           type:
             - 'null'
-          description: Thông tin lỗi, null khi thành công
           example: null
         data:
           description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
@@ -542,20 +499,12 @@ components:
         - object
         - 'null'
       properties:
-        owner:
-          type: object
-          description: Thông tin chủ sở hữu
-        assignee:
-          type: object
-          description: Thông tin người được giao
         id:
           type: integer
-          description: ID của người dùng
           example: 123
           readOnly: true
         name:
           type: string
-          description: Tên của người dùng
           example: Nguyen Van A
         mgroup:
           type: string
@@ -672,12 +621,10 @@ components:
       properties:
         success:
           type: boolean
-          description: Trạng thái thành công của response, luôn là false khi có lỗi
           const: false
           example: false
         error:
           type: object
-          description: Thông tin chi tiết về lỗi xảy ra
           required:
             - code
             - message
@@ -817,7 +764,7 @@ components:
             $ref: '#/components/schemas/StandardError'
           example:
             success: false
-
+            data: null
             error:
               code: 400
               message: Bad Request
