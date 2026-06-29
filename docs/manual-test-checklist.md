@@ -235,3 +235,98 @@ Cả 2 đều **chưa fix** — ghi nhận lại đây, để quyết định fi
 - `4.config/module_registry.yaml` — revert bằng `git checkout` (chỉ đổi `last_import_at`).
 
 **Kết luận:** 16/18 case pass đúng thiết kế. 2 case lộ bug thật (case 10, case 14) — cả 2 đều là edge case hiếm gặp trong thực tế (double backup cùng giây, operationId biến mất hoàn toàn), không chặn việc dùng tính năng ở luồng chính, nhưng nên fix trước khi coi tính năng là "production-ready" hoàn toàn.
+
+## 8. Đồng bộ tầng 2 + tầng 3 cho AI-fix / YAML thô + generic-hoá marker (2026-06-29)
+
+Theo plan "Đồng bộ tầng 2 + tầng 3 cho AI-fix / sửa tay YAML thô" — fix bug chính: `PUT
+/docs/bundle-content` (YAML thô + AI-fix) trước đây chỉ ghi tầng 3, mất khi "Build tài
+liệu" chạy lại. Viết field-path mini-language dùng chung (`backend/field_paths.py`),
+tách `backend/bundle_sync.py` (diff/sync engine) và `backend/manual_edit_conflicts.py`
+(hệ thống phát hiện conflict khi reimport) ra khỏi `docs.py`/`modules.py`. Marker
+`x-manual-edit-fields` đổi từ dict cố định 4 field sang list field-path tổng quát (bất kỳ
+field nào). Test qua UI thật (Playwright, click nút thật) + Python script cách ly,
+backend `uvicorn` port 8000 + frontend `npm run dev` port 3000.
+
+### Phần 1 — Form Editor với marker format mới
+
+| Test | Cách làm | Kết quả |
+|---|---|---|
+| Sửa `description` của `getTicket` qua Form Editor (UI thật) | Click vào textbox "Mô tả chi tiết", sửa nội dung, bấm "Lưu" | ✅ `PATCH /docs/operations` ghi đúng cả tầng 2 + tầng 3; marker đổi đúng format mới `x-manual-edit-fields: [description]` (list field-path, không còn dict `{summary: true,...}` cũ) |
+
+### Phần 2 — YAML thô / `PUT /docs/bundle-content` (test bug chính)
+
+| Test | Cách làm | Kết quả |
+|---|---|---|
+| Sửa field **ngoài** 4 field cũ của Form Editor | Tab "YAML thô", đổi `required: true → false` của parameter `user_id` trong `updateClose` (qua Monaco model API), bấm "Lưu" | ✅ Tầng 2 (`update_close.yaml`) nhận đúng giá trị mới + marker `parameters[name=user_id].required`; tầng 3 ghi verbatim text (giữ format gốc), marker tầng 3 phản ánh ở lần build kế tiếp đúng như thiết kế |
+| **Test bug chính**: bấm "Tạo lại tài liệu" (`POST /docs/build`) sau khi sửa field trên | Click nút "Tạo lại tài liệu" trên dashboard | ✅ **`required: false` không bị mất** — đây là bug đang fix (trước fix, build lại sẽ đè mất vì tầng 2 không có sửa đó). Marker cũng lên tầng 3 đúng vì giờ build lại từ tầng 2 mới |
+| Paste YAML lỗi cú pháp, bấm Lưu | Thêm dòng `[invalid, yaml,, ,, {{{ ]]]` vào cuối nội dung Monaco, bấm "Lưu" | ✅ Alert "Lỗi lưu bundle: YAML không hợp lệ: ..." (`400 BUNDLE_INVALID_YAML`), checksum cả 2 tầng **không đổi** — không ghi gì khi YAML sai |
+
+### 🐛 Bug thật phát hiện và đã fix ngay trong vòng test này
+
+**`x-manual-edit-fields` tự tham chiếu chính nó khi diff.** Tái hiện: mở modal ở tab Form
+Editor, sửa lưu (marker ghi vào tầng 2+3), chuyển sang tab YAML thô **mà không
+đóng/mở lại modal** — tab này vẫn dùng `bundleContent` đã fetch từ lúc mở modal (trước
+khi marker mới tồn tại). Khi sửa tiếp 1 field khác ở tab này rồi Lưu, `diff_bundle` so
+`old_bundle` (trên đĩa, đã có marker) với `new_bundle` (bản stale, chưa có marker) →
+thấy 2 giá trị marker khác nhau → tự coi `x-manual-edit-fields` là "field user sửa" →
+ghi đè `None` rồi merge lại → marker tự liệt kê chính nó
+(`[description, x-manual-edit-fields]`). **Fix:** thêm `if key ==
+"x-manual-edit-fields": continue` vào đầu loop của `_diff_recursive`
+(`backend/bundle_sync.py`) — loại trừ marker khỏi diff vì nó là bookkeeping nội bộ,
+không phải field thật. Đã unit-test lại 2 case (marker lệch giữa old/new → 0 change;
+field thường vẫn diff đúng) + test lại qua UI thật (tab YAML thô với fetch mới, marker
+cộng dồn đúng `[description, responses[422].description]`, không tự tham chiếu nữa).
+
+### Phần 3 — AI-fix lưu ngay khi bấm "Áp dụng"
+
+| Test | Cách làm | Kết quả |
+|---|---|---|
+| Bấm "Áp dụng" patch AI-fix có lưu ngay không (không cần bấm "Lưu" riêng) | Tạo 1 lượt lỗi lint thật (license/contact/description thiếu...), bấm "AI tự fix lỗi" (26 patch), bấm "Áp dụng" | ✅ `PUT /docs/bundle-content` bắn ngay sau khi bấm Áp dụng (thấy trong Network tab), checksum bundle đổi ngay, không cần thêm hành động nào |
+| Marker + đồng bộ tầng 2 cho field schema (không phải operation) | Soi `5.openapi/components/schemas/common/UserInfo.yaml` sau khi AI-fix thêm `description` cho `properties.id`/`properties.name` | ✅ `sync_schema_fields` ghi đúng cả 2 field + marker `[properties.id.description, properties.name.description]` (dạng dot, không cần bracket vì `properties` không cần match đặc biệt như `parameters`/`responses` — đúng thiết kế generic, không phải thiếu sót) |
+
+### ⚠️ Finding chất lượng AI-fix (không phải bug cơ chế đồng bộ)
+
+Khi 1 lượt AI-fix sửa nhiều lỗi "thiếu description" cùng lúc cho **nhiều operation
+khác nhau** trong 1 batch, AI sinh description **chung chung/sai nghiệp vụ** cho 5
+operation (`createReopen` → "Lấy danh sách tài nguyên." dù đây là API mở lại ticket;
+tương tự sai cho `createChangeAssignee`, `createConversations`, `createFeedback`,
+`createRatings`). Khác với field schema ở Phần 3 (nội dung AI sinh đúng) — có vẻ do
+thiếu context riêng từng operation khi fix dồn nhiều lỗi 1 lượt. Đã revert cả 5 file về
+rỗng như gốc theo quyết định của user (nội dung sai còn tệ hơn để trống). **Chưa fix**
+— ghi nhận lại đây làm input cho việc cải thiện prompt của `backend/ai_fix.py` sau này,
+không thuộc phạm vi bug đồng bộ tầng 2/3 đang test.
+
+### Phần 4 — Duyệt conflict qua UI với marker generic
+
+| Test | Cách làm | Kết quả |
+|---|---|---|
+| Bấm "Giữ bản cũ" cho 1 conflict field tổng quát (`description`) | Bơm tay 1 entry vào `manual_edit_conflicts.json` (field `"description"` — format mới, không phải `"summary"`/`"description"` cố định như trước), reload trang, click "Giữ bản cũ" thật trên UI | ✅ `resolve_manual_edit_conflict` (đã refactor dùng `sync_operation_fields` thay vì loop tay) ghi đúng `old_value` vào cả tầng 2 + tầng 3, entry biến mất khỏi queue |
+
+### Dọn dẹp sau test
+
+- `5.openapi/paths/ticket/get_ticket.yaml`, `update_close.yaml` (gitignore) — khôi phục
+  tay về đúng nội dung gốc (description, `responses['422'].description`,
+  `parameters[].required`), xoá hết marker test.
+- `5.openapi/paths/ticket/create_reopen.yaml`, `create_change_assignee.yaml`,
+  `create_conversations.yaml`, `create_feedback.yaml`, `create_ratings.yaml`
+  (gitignore) — revert `description`/`parameters[].description` về rỗng như gốc (xem
+  finding chất lượng AI-fix ở trên), xoá marker.
+- `5.openapi/components/schemas/common/StandardSuccess.yaml`, `StandardError.yaml`,
+  `UserInfo.yaml` (tracked git) — **giữ lại** theo quyết định của user (nội dung AI sinh
+  đúng, fix đúng lint warning thật).
+- `dist/openapi-bundled.yaml` — build lại lần cuối (`npm run bundle:api`) sau khi dọn
+  xong layer 2, phản ánh đúng trạng thái sạch.
+- `3.build/reports/manual_edit_conflicts.json` — về `[]` sau khi resolve entry test.
+- Backend (`uvicorn`)/frontend (`next dev`) — tắt hẳn sau khi test xong (xác nhận lại
+  bằng `ss -ltnp` không còn process ở port 8000/3000).
+
+### ⚠️ Gap chưa đóng (kế thừa từ mục 6) — chưa test qua pipeline thật với version đổi thật
+
+Giống gap đã ghi nhận ở mục 6 (2026-06-26): nhánh "phát hiện conflict" (`_scan_manual_edits`/`_resolve_manual_edits_after_import`, nay ở `backend/manual_edit_conflicts.py`) vẫn chỉ được test bằng dữ liệu giả lập (Python script cách ly + bơm tay JSON), **chưa** chạy qua `run_batch()` thật với tài liệu nguồn (1.docs/) thật sự đổi version. Lần này user chủ động chọn cách test rẻ hơn (bơm conflict giả, test riêng nhánh duyệt qua UI) để tránh tốn token AI + tránh đụng dữ liệu ticket thật qua pipeline thật — không phải do quên, mà là quyết định đánh đổi có chủ ý. Gap này vẫn cần 1 trong 2 điều kiện nêu ở mục 6 mới test được (đổi nội dung doc nguồn thật, hoặc sửa `file_versions.json` để giả lập).
+
+**Kết luận:** Toàn bộ cơ chế đồng bộ tầng 2+3 (Form Editor, YAML thô, AI-fix, duyệt
+conflict) đã PASS qua UI thật với marker format mới (generic field-path). 1 bug thật
+phát hiện và fix ngay trong lúc test (`x-manual-edit-fields` tự tham chiếu). 1 finding
+về chất lượng AI-fix khi batch nhiều operation (không phải bug đồng bộ, đã xử lý bằng
+cách revert nội dung sai) — đáng cân nhắc cải thiện prompt AI-fix sau này. Gap về test
+version-đổi-thật vẫn còn mở, giống mục 6.

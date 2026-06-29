@@ -31,7 +31,9 @@ export function useDocsBuilder(backend: string) {
   // bản AI sửa/cả hai) — xử lý từ dòng cuối lên đầu để patch chưa xử lý không bị lệch số dòng.
   // Nhận "editedPatches" từ AiFixPanel (đã đọc đúng nội dung người dùng vừa sửa tay
   // trực tiếp từ editor) thay vì dùng aiFixPatches gốc trong state.
-  const applyAiFixResolutions = (editedPatches: AiFixPatch[]) => {
+  // Lưu luôn xuống backend (PUT /docs/bundle-content) ngay sau khi ghép — bấm "Áp dụng"
+  // là lưu, không cần bấm "Lưu" riêng (route đó giờ đã đồng bộ cả tầng 2 + tầng 3).
+  const applyAiFixResolutions = async (editedPatches: AiFixPatch[]) => {
     if (bundleContent === null) return;
     const lines = bundleContent.split("\n");
     const sorted = [...editedPatches].sort((a, b) => b.start_line - a.start_line);
@@ -51,8 +53,16 @@ export function useDocsBuilder(backend: string) {
       );
     }
 
-    setBundleContent(lines.join("\n"));
+    const merged = lines.join("\n");
+    setBundleContent(merged);
     closeAiFixPanel();
+
+    setSavingBundle(true);
+    try {
+      await putBundleContent(merged);
+    } finally {
+      setSavingBundle(false);
+    }
   };
 
   // Đóng panel AI fix mà không áp dụng gì, dọn sạch state để lần mở sau không dính dữ liệu cũ.
@@ -128,18 +138,28 @@ export function useDocsBuilder(backend: string) {
     }
   };
 
+  // Gửi PUT /docs/bundle-content — dùng chung cho saveBundle/saveAndRelint/
+  // applyAiFixResolutions, tránh 3 nơi tự viết lại cùng 1 đoạn fetch rồi lệch dần.
+  // Trả false khi lưu lỗi (đã alert), để caller tự quyết định có nên tiếp tục
+  // (vd saveAndRelint không relint nếu lưu lỗi).
+  const putBundleContent = async (content: string): Promise<boolean> => {
+    const res = await fetch(`${backend}/docs/bundle-content`, {
+      method: "PUT",
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+      body: content,
+    });
+    if (!res.ok) {
+      alert("Lỗi lưu bundle: " + (await readErrorDetail(res)));
+      return false;
+    }
+    return true;
+  };
+
   const saveBundle = async () => {
     if (bundleContent === null) return;
     setSavingBundle(true);
     try {
-      const res = await fetch(`${backend}/docs/bundle-content`, {
-        method: "PUT",
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
-        body: bundleContent,
-      });
-      if (!res.ok) {
-        alert("Lỗi lưu bundle: " + (await readErrorDetail(res)));
-      }
+      await putBundleContent(bundleContent);
     } finally {
       setSavingBundle(false);
     }
@@ -149,15 +169,8 @@ export function useDocsBuilder(backend: string) {
     if (bundleContent === null) return;
     setSavingBundle(true);
     try {
-      const saveRes = await fetch(`${backend}/docs/bundle-content`, {
-        method: "PUT",
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
-        body: bundleContent,
-      });
-      if (!saveRes.ok) {
-        alert("Lỗi lưu bundle: " + (await readErrorDetail(saveRes)));
-        return;
-      }
+      const saved = await putBundleContent(bundleContent);
+      if (!saved) return;
       setRelinting(true);
       const res = await fetch(`${backend}/docs/relint`, { method: "POST" });
       if (!res.ok) {

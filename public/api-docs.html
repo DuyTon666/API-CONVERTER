@@ -625,7 +625,7 @@ paths:
         '404':
           \$ref: '#/components/responses/NotFound'
         '422':
-          description: '422'
+          description: 422 - sua qua YAML tho [TEST 2]
           content:
             application/json:
               schema:
@@ -633,14 +633,8 @@ paths:
         '500':
           \$ref: '#/components/responses/InternalError'
       x-manual-edit-fields:
-        summary: true
-        description: true
-        parameters:
-          - id
-          - user_id
-        responses:
-          - '200'
-          - '422'
+        - description
+        - responses[422].description
   /v1/users/{user_id}/tickets/{id}/close:
     put:
       summary: API Contract - API đóng ticket của khách hàng.docx
@@ -654,7 +648,7 @@ paths:
       parameters:
         - name: user_id
           in: path
-          required: true
+          required: false
           schema:
             type: string
           description: ID định danh duy nhất của người dùng (khách hàng) sở hữu ticket.
@@ -695,14 +689,7 @@ paths:
         '500':
           \$ref: '#/components/responses/InternalError'
       x-manual-edit-fields:
-        summary: true
-        description: true
-        parameters:
-          - id
-          - user_id
-        responses:
-          - '200'
-          - '422'
+        - parameters[name=user_id].required
   /v1/users/{user_id}/tickets/{id}/reopen:
     post:
       summary: API Contract - API mở lại ticket của khách hàng.docx

@@ -8,6 +8,18 @@ from fastapi.responses import FileResponse, PlainTextResponse
 
 from config import DIST_DIR, OUTPUT_DIR
 from errors import ErrorCode, http_error
+from bundle_sync import (
+    _HTTP_METHODS,
+    _is_inline,
+    _apply_operation_update,
+    _index_operation_files,
+    _index_schema_files,
+    diff_bundle,
+    sync_operation_fields,
+    sync_schema_fields
+
+)
+
 
 router = APIRouter()
 
@@ -195,7 +207,10 @@ def get_docs_bundle_content():
 
 @router.put("/docs/bundle-content")
 async def save_docs_bundle_content(request: Request):
-    """Lưu nội dung bundle sau khi user chỉnh sửa (plain text)."""
+    """Lưu nội dung bundle sau khi user chỉnh sửa (plain text). So sánh với bundle cũ
+    để đồng bộ field thay đổi xuống tầng 2 (5.openapi/), tránh mất khi build lại."""
+    import yaml as _yaml
+
     bundle_path = DIST_DIR / "openapi-bundled.yaml"
     if not bundle_path.exists():
         raise http_error(
@@ -203,9 +218,24 @@ async def save_docs_bundle_content(request: Request):
             ErrorCode.BUNDLE_NOT_FOUND,
             "Bundle chưa được tạo, hãy build tài liệu trước",
         )
-    content = (await request.body()).decode("utf-8")
-    bundle_path.write_text(content, encoding="utf-8")
+
+    old_content = bundle_path.read_text(encoding="utf-8")
+    new_content = (await request.body()).decode("utf-8")
+    old_bundle = _yaml.safe_load(old_content) or {}
+    try:
+        new_bundle = _yaml.safe_load(new_content) or {}
+    except Exception as e:
+        raise http_error(400, ErrorCode.BUNDLE_INVALID_YAML, f"YAML không hợp lệ: {e}")
+    if not isinstance(new_bundle, dict):
+        raise http_error(400, ErrorCode.BUNDLE_INVALID_YAML, "Cấu trúc bundle không hợp lệ")
+
+    changes = diff_bundle(old_bundle, new_bundle)
+    sync_operation_fields(new_bundle, changes, _index_operation_files())
+    sync_schema_fields(new_bundle, changes, _index_schema_files())
+
+    bundle_path.write_text(new_content, encoding="utf-8")
     return {"ok": True}
+
 
 
 @router.post("/docs/relint")
@@ -243,68 +273,6 @@ def ai_fix_bundle(payload: dict = Body(...)):
     return ai_fix.run(content, spectral, redocly)
 
 
-# Set các key hợp lệ trong 1 path item của OpenAPI — dùng để lọc bỏ key khác
-# (summary, description, parameters cấp path...) khi loop qua operation thật.
-_HTTP_METHODS = {"get", "post", "put", "patch", "delete", "head", "options", "trace"}
-
-
-def _apply_operation_update(operation: dict, upd: dict) -> dict:
-    """Áp update (summary/description/parameters/responses) vào 1 operation dict, trả về field vừa đổi."""
-    touched = {}
-    if "summary" in upd:
-        operation["summary"] = upd["summary"]
-        touched["summary"] = True
-    if "description" in upd:
-        operation["description"] = upd["description"]
-        touched["description"] = True
-    for p_upd in upd.get("parameters") or []:
-        for p in operation.get("parameters") or []:
-            if (
-                isinstance(p, dict)
-                and "$ref" not in p
-                and p.get("name") == p_upd.get("name")
-            ):
-                p["description"] = p_upd.get("description", "")
-                touched.setdefault("parameters", []).append(p_upd.get("name"))
-    for r_upd in upd.get("responses") or []:
-        resp = (operation.get("responses") or {}).get(r_upd.get("code"))
-        if isinstance(resp, dict) and "$ref" not in resp:
-            resp["description"] = r_upd.get("description", "")
-            touched.setdefault("responses", []).append(r_upd.get("code"))
-    return touched
-
-
-def _index_operation_files() -> dict[str, Path]:
-    """Quét toàn bộ file tầng 2 (5.openapi/paths/**), build map operationId -> đường dẫn file."""
-    import yaml as _yaml
-
-    index: dict[str, Path] = {}
-    for file in OUTPUT_DIR.glob("paths/**/*.yaml"):
-        try:
-            doc = _yaml.safe_load(file.read_text(encoding="utf-8"))
-        except Exception:
-            continue
-        if not isinstance(doc, dict):
-            continue
-        for method, operation in doc.items():
-            if method in _HTTP_METHODS and isinstance(operation, dict):
-                op_id = operation.get("operationId")
-                if op_id:
-                    index[op_id] = file
-    return index
-
-
-def _merge_marker(existing: dict | None, touched: dict) -> dict | None:
-    """Union field vừa sửa vào marker x-manual-edit-fields hiện có (cộng dồn qua nhiều lần sửa)."""
-    merged = dict(existing) if existing else {}
-    for key, value in touched.items():
-        if key in ("parameters", "responses"):
-            merged[key] = sorted(set(merged.get(key, []) + value))
-        else:
-            merged[key] = True
-    return merged or None
-
-
 @router.get("/docs/operations")
 def get_operations():
     """Trả về danh sách operations từ bundle để hiển thị trong form editor."""
@@ -332,12 +300,12 @@ def get_operations():
                     "description": p.get("description") or "",
                 }
                 for p in (operation.get("parameters") or [])
-                if isinstance(p, dict) and "$ref" not in p
+                if _is_inline(p)
             ]
             responses = [
                 {"code": code, "description": resp.get("description") or ""}
                 for code, resp in (operation.get("responses") or {}).items()
-                if isinstance(resp, dict) and "$ref" not in resp
+                if _is_inline(resp)
             ]
             ops.append(
                 {
@@ -353,7 +321,6 @@ def get_operations():
             )
     return ops
 
-
 @router.patch("/docs/operations")
 async def update_operations(updates: list = Body(...)):
     """Cập nhật summary/description của một hoặc nhiều operations.
@@ -363,29 +330,19 @@ async def update_operations(updates: list = Body(...)):
     nào đã bị sửa tay khi import lại (xem 2.pipeline/pipeline_API.py — không sửa
     file đó, chỉ đọc/ghi field này từ phía backend).
     """
+    import copy
     import yaml as _yaml
-    from ruamel.yaml import YAML
 
     bundle_path = DIST_DIR / "openapi-bundled.yaml"
     if not bundle_path.exists():
-        raise http_error(
-            404,
-            ErrorCode.BUNDLE_NOT_FOUND,
-            "Bundle chưa được tạo, hãy build tài liệu trước",
-        )
+        raise http_error(404, ErrorCode.BUNDLE_NOT_FOUND, "Bundle chưa được tạo, hãy build tài liệu trước")
 
-    bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
+    old_bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
     update_map = {u["operationId"]: u for u in updates if u.get("operationId")}
-    index = _index_operation_files()
 
-    # Style giống 2.pipeline/generator/emitter.py — giữ format file tầng 2
-    # đồng nhất với file do pipeline sinh ra (không tự ý đổi style khi ghi đè).
-    fragment_yaml = YAML()
-    fragment_yaml.default_flow_style = False
-    fragment_yaml.indent(mapping=2, sequence=4, offset=2)
-
+    new_bundle = copy.deepcopy(old_bundle)
     updated = 0
-    for path_item in bundle.get("paths", {}).values():
+    for path_item in new_bundle.get("paths", {}).values():
         if not isinstance(path_item, dict):
             continue
         for method, operation in path_item.items():
@@ -394,42 +351,17 @@ async def update_operations(updates: list = Body(...)):
             op_id = operation.get("operationId", "")
             if op_id not in update_map:
                 continue
-            upd = update_map[op_id]
-
-            # Tầng 3 — operation đang nằm sẵn trong bundle đã load ở trên.
-            touched = _apply_operation_update(operation, upd)
-            operation["x-manual-edit-fields"] = _merge_marker(
-                operation.get("x-manual-edit-fields"), touched
-            )
-
-            # Tầng 2 — chỉ ghi nếu tìm được file tương ứng; không tìm thấy
-            # hoặc đọc/ghi lỗi thì bỏ qua, không fail cả request (tầng 3 vẫn
-            # đã được cập nhật đúng).
-            file_path = index.get(op_id)
-            if file_path is not None:
-                try:
-                    fragment = fragment_yaml.load(file_path.read_text(encoding="utf-8"))
-                    for f_method, f_operation in fragment.items():
-                        if f_method in _HTTP_METHODS and isinstance(f_operation, dict):
-                            f_touched = _apply_operation_update(f_operation, upd)
-                            f_operation["x-manual-edit-fields"] = _merge_marker(
-                                f_operation.get("x-manual-edit-fields"), f_touched
-                            )
-                    with file_path.open("w", encoding="utf-8") as f:
-                        fragment_yaml.dump(fragment, f)
-                except Exception:
-                    pass
-
+            _apply_operation_update(operation, update_map[op_id])
             updated += 1
 
+    changes = diff_bundle(old_bundle, new_bundle)
+    sync_operation_fields(new_bundle, changes, _index_operation_files())
+
     bundle_path.write_text(
-        _yaml.dump(
-            bundle, allow_unicode=True, sort_keys=False, default_flow_style=False
-        ),
+        _yaml.dump(new_bundle, allow_unicode=True, sort_keys=False, default_flow_style=False),
         encoding="utf-8",
     )
     return {"ok": True, "updated": updated}
-
 
 @router.post("/docs/operations/ai-suggest")
 def ai_suggest_operation(payload: dict = Body(...)):

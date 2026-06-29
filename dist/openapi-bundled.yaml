@@ -120,15 +120,6 @@ paths:
                 $ref: '#/components/schemas/StandardError'
         '500':
           $ref: '#/components/responses/InternalError'
-      x-manual-edit-fields:
-        summary: true
-        description: true
-        parameters:
-          - id
-          - user_id
-        responses:
-          - '200'
-          - '422'
   /v1/users/{user_id}/tickets/{id}/close:
     put:
       summary: API Contract - API đóng ticket của khách hàng.docx
@@ -182,15 +173,6 @@ paths:
                 $ref: '#/components/schemas/StandardError'
         '500':
           $ref: '#/components/responses/InternalError'
-      x-manual-edit-fields:
-        summary: true
-        description: true
-        parameters:
-          - id
-          - user_id
-        responses:
-          - '200'
-          - '422'
   /v1/users/{user_id}/tickets/{id}/reopen:
     post:
       summary: API Contract - API mở lại ticket của khách hàng.docx
@@ -488,12 +470,17 @@ components:
         success:
           type: boolean
           example: true
+          description: Trạng thái thành công của request.
         error:
           type:
             - 'null'
           example: null
+          description: Thông tin lỗi, null khi thành công.
         data:
           description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
+      x-manual-edit-fields:
+        - properties.error.description
+        - properties.success.description
     UserInfo:
       type:
         - object
@@ -503,9 +490,11 @@ components:
           type: integer
           example: 123
           readOnly: true
+          description: ID định danh duy nhất của người dùng.
         name:
           type: string
           example: Nguyen Van A
+          description: Tên hiển thị của người dùng.
         mgroup:
           type: string
           description: |
@@ -516,6 +505,9 @@ components:
             - '3'
             - '4'
           example: '1'
+      x-manual-edit-fields:
+        - properties.id.description
+        - properties.name.description
     GetTicketDataConversations:
       type: object
       properties:
@@ -623,6 +615,7 @@ components:
           type: boolean
           const: false
           example: false
+          description: Trạng thái thành công của request, luôn là false khi có lỗi.
         error:
           type: object
           required:
@@ -642,6 +635,10 @@ components:
                 - object
                 - 'null'
               description: Optional error detail payload.
+          description: Thông tin chi tiết về lỗi xảy ra.
+      x-manual-edit-fields:
+        - properties.error.description
+        - properties.success.description
     CreateReopenRequest:
       type: object
       properties:
