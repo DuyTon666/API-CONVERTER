@@ -1,14 +1,19 @@
-# Manual Test Checklist — Module Workflow
+# Manual Test Checklist — Backend/Frontend
 
-Checklist test thủ công cho toàn bộ workflow module (scan → suggest → approve → apply →
-activate → import → docs), bao gồm các edge case liên quan tới 2 bản fix bảo mật ở
-`backend/routers/modules.py`:
+Checklist test thủ công cho các tính năng: module workflow (scan → suggest → approve →
+apply → activate → import → docs), upload bảo mật, Form Editor, đồng bộ sửa tay tầng 2+3
+(backup/conflict), Manual Edit Conflicts, YAML thô, và AI-fix.
 
-1. Path traversal khi upload file (`upload_source_files()`).
-2. Thiếu validate extension/size khi upload + `import_jobs` phình vô hạn khi job kẹt
-   `"running"` (`_run_import_job()` / `_prune_old_jobs()`).
+Tài liệu này gồm 3 phần tách biệt:
 
-## 0. Setup môi trường
+- **Phần A — Test Case Design**: checklist cố định, có ID (`TC-xxx`), không gắn ngày —
+  dùng lại được cho mọi lần test sau (kể cả regression test khi sửa code mới).
+- **Phần B — Execution Log**: lịch sử các lần chạy thật theo ngày, ghi dữ liệu cụ thể đã
+  dùng + kết quả thực tế quan sát được, tham chiếu ngược về `TC-xxx` ở Phần A.
+- **Phần C — Defect Log**: danh sách bug/finding phát hiện được qua các lần test, có
+  trạng thái fix.
+
+## Setup môi trường
 
 ```bash
 # Terminal 1 — backend
@@ -23,310 +28,286 @@ cd frontend && npm run dev
 Mở `http://localhost:3000`, mở thêm DevTools (F12) → tab Network + Console để soi
 response/lỗi ẩn.
 
-## 1. Happy path — đi hết workflow 1 lượt
+## Cách ghi kết quả
 
-| Bước | Làm gì | Kỳ vọng |
-|---|---|---|
-| Scan | Click nút scan ở ScanCard | Thấy danh sách module có sẵn dưới `1.docs/source/api_contract/` (ticket, service, statistic, department...) + file `unassigned` (các PDF tên dài chưa gán module) |
-| Suggest | Chạy suggest-root ở SuggestCard | Mỗi file unassigned được gợi ý 1 module |
-| Approve | Approve all suggestion | Suggestion chuyển trạng thái approved |
-| Apply | Apply suggestions | File được copy vào đúng thư mục module trong `1.docs/source/api_contract/<module>/` |
-| Activate | Activate 1 module ở ModuleRegistryCard (vd `ticket`) | Status đổi `draft` → `active` |
-| Import | Trigger import cho module đó | SSE chạy, progress bar cập nhật theo thời gian thực, kết thúc hiện `success/failed/skipped` |
-| Docs | Build docs ở SwaggerDocsCard | Build/lint chạy xong, link xem Swagger UI hoạt động |
+Mỗi `TC-xxx` khi chạy: ✅ pass / ❌ fail / ⚠️ pass với rough edge + mô tả ngắn (response
+thật nhận được, screenshot console error nếu có). Ghi vào Phần B (Execution Log), không
+sửa trực tiếp vào Phần A.
 
-**Ghi lại:** bước nào lag, bước nào UI không tự cập nhật (đặc biệt SSE ở bước Import —
-đây là chỗ vừa sửa lỗi job kẹt `running`).
+---
 
-## 2. Edge case — đúng các lỗ hổng vừa fix
+# Phần A — Test Case Design
 
-Test bằng **ImportCard** (upload UI) và bằng **curl trực tiếp** (để chắc chắn không phải
-frontend tự chặn trước khi tới backend):
+## A1. Module Workflow — happy path
 
-| Test | Cách làm | Kỳ vọng sau fix |
-|---|---|---|
-| Path traversal filename | `curl -X POST http://localhost:8000/source/upload -F 'files=@1.docs/source/api_contract/sample.docx;filename=../../backend/main.py'` | 400 `INVALID_FILENAME`, **không** ghi đè `backend/main.py` |
-| Absolute path filename | `curl -X POST http://localhost:8000/source/upload -F 'files=@1.docs/source/api_contract/sample.docx;filename=/tmp/evil.docx'` | 400 `INVALID_FILENAME` |
-| Sai extension | Upload file `.zip` hoặc `.exe` bất kỳ qua UI | 400 `UNSUPPORTED_FILE_TYPE` |
-| File quá size | Tạo file giả `dd if=/dev/zero of=/tmp/big.pdf bs=1M count=25`, upload qua UI | 400 `FILE_TOO_LARGE` |
-| Import job lỗi giữa đường | Backup `4.config/module_registry.yaml`, sửa tạm thành YAML sai cú pháp, thử import, xem job có báo lỗi rõ ràng hay bị "đứng" mãi không. Nhớ restore file sau khi test | Job phải kết thúc (status `done`), SSE phải đóng kết nối, không treo vô hạn — đây là chỗ vừa thêm `try/finally` |
-| Spam import liên tục | Gọi `POST /modules/import` ~60 lần liên tiếp (script loop) trong vài giây | Server không bị OOM/crash, các job cũ tự bị dọn sau khi `status=done` (không cần restart backend để giảm RAM) |
+| ID       | Mô tả                                               | Tiền điều kiện                              | Các bước                               | Kết quả mong đợi                                                                                                                                    |
+| -------- | --------------------------------------------------- | ------------------------------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TC-WF-01 | Scan phát hiện module có sẵn + file chưa gán module | Có file trong `1.docs/source/api_contract/` | Click nút scan ở ScanCard              | Thấy danh sách module có sẵn + danh sách file `unassigned`                                                                                          |
+| TC-WF-02 | Suggest-root gợi ý module cho file unassigned       | Đã chạy TC-WF-01, có file unassigned        | Chạy suggest-root ở SuggestCard        | Mỗi file unassigned được gợi ý 1 module kèm `confidence_score`                                                                                      |
+| TC-WF-03 | Approve suggestion                                  | Đã có suggestion từ TC-WF-02                | Approve all suggestion                 | Suggestion chuyển trạng thái `approved`                                                                                                             |
+| TC-WF-04 | Apply suggestion                                    | Suggestion đã `approved`                    | Apply suggestions                      | File được copy vào đúng `1.docs/source/api_contract/<module>/`; nếu file đích đã tồn tại thì skip (`skip_reason: target_file_exists`), không ghi đè |
+| TC-WF-05 | Activate module                                     | Module đang `draft`                         | Activate 1 module ở ModuleRegistryCard | Status đổi `draft` → `active`                                                                                                                       |
+| TC-WF-06 | Trigger import cho module                           | Module đang `active`                        | Trigger import                         | SSE chạy, progress cập nhật real-time, kết thúc hiện `success/failed/skipped`; nếu version doc không đổi thì hash-based skip hoạt động              |
+| TC-WF-07 | Build docs                                          | Đã import ít nhất 1 module                  | Build docs ở SwaggerDocsCard           | Build/lint chạy xong (`bundle_ready: true`, `html_ready: true`), link Swagger UI hoạt động                                                          |
 
-## 3. Regression — các luồng khác không bị ảnh hưởng
+## A2. Upload — bảo mật (`POST /source/upload`)
 
-- Module đã import trước đó (nếu có) — mở lại BundleEditorModal, sửa `summary`/
-  `description` ở tab "Chỉnh sửa nội dung" (Form Editor), lưu lại → check file YAML có
-  cập nhật đúng không.
-- Thử "AI Suggest" trong Form Editor (cần `backend/.env` có `ANTHROPIC_*` đúng) → xem
-  có gợi ý summary/operationId tiếng Việt không, hay trả 502.
-- Deactivate 1 module đang active → thử import lại → phải bị chặn với lỗi
-  `MODULE_NOT_ACTIVE`.
+Test bằng **ImportCard** (UI) và **curl trực tiếp** (đảm bảo không phải frontend tự chặn
+trước khi tới backend).
 
-## 4. Cách ghi kết quả
+| ID        | Mô tả                                | Các bước                                                                                                | Kết quả mong đợi                                                                                                                                                  |
+| --------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TC-SEC-01 | Path traversal filename tương đối    | `curl -X POST .../source/upload -F 'files=@sample.docx;filename=../../backend/main.py'`                 | 400 `INVALID_FILENAME` (extension không hợp lệ) hoặc bị flatten về basename trong `SOURCE_DIR` nếu extension hợp lệ — **không bao giờ** ghi ra ngoài `SOURCE_DIR` |
+| TC-SEC-02 | Path traversal absolute filename     | `curl -X POST .../source/upload -F 'files=@sample.docx;filename=/tmp/evil.docx'` hoặc `/etc/evil.pdf`   | Flatten về basename, lưu an toàn trong `SOURCE_DIR`, không ghi được ra `/tmp`, `/etc`                                                                             |
+| TC-SEC-03 | Filename literally `.` hoặc `..`     | Upload với filename là đúng `.` hoặc `..`                                                               | 400 `INVALID_FILENAME`                                                                                                                                            |
+| TC-SEC-04 | Sai extension                        | Upload file `.zip`/`.exe` qua UI                                                                        | 400 `UNSUPPORTED_FILE_TYPE`                                                                                                                                       |
+| TC-SEC-05 | File vượt size cap                   | `dd if=/dev/zero of=/tmp/big.pdf bs=1M count=25`, upload                                                | 400 `FILE_TOO_LARGE`, không lọt vào disk                                                                                                                          |
+| TC-SEC-06 | File hợp lệ trong cap (control case) | Upload file PDF/DOCX hợp lệ < 20MB                                                                      | Upload thành công bình thường, không bị block oan                                                                                                                 |
+| TC-SEC-07 | Import job lỗi giữa đường            | Sửa tạm 1 file config (`4.config/*.yaml`) thành sai cú pháp YAML, trigger import, restore file sau test | Job kết thúc đúng `status: done`, SSE đóng kết nối sạch, không treo vô hạn; traceback được log ở backend, không nuốt im lặng                                      |
+| TC-SEC-08 | Spam import liên tục                 | Gọi `POST /modules/import` ~60 lần liên tiếp (script loop)                                              | Server không OOM/crash, job cũ tự dọn sau khi `status=done`, vẫn phản hồi `/health`                                                                               |
 
-Với mỗi mục: ✅ pass / ❌ fail + mô tả ngắn (response thật nhận được, screenshot console
-error nếu có).
+## A3. Form Editor (`PATCH /docs/operations`)
 
-## 5. Kết quả test đã chạy (2026-06-25)
+| ID       | Mô tả                                                | Các bước                                                                                                | Kết quả mong đợi                                                                                                                                         |
+| -------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TC-FE-01 | Sửa `summary`/`description` cơ bản                   | Sửa qua UI hoặc `curl -X PATCH .../docs/operations -d '[{"operationId":"<id>","summary":"..."}]'`       | Cả tầng 2 (`5.openapi/paths/...`) và tầng 3 (`dist/openapi-bundled.yaml`) đều cập nhật; marker `x-manual-edit-fields` ghi đúng field vừa sửa ở cả 2 tầng |
+| TC-FE-02 | PATCH nhiều operation cùng 1 request                 | Payload là mảng nhiều object, mỗi object 1 `operationId` khác nhau                                      | Tất cả operation trong payload đều được cập nhật đúng, `updated` = đúng số lượng                                                                         |
+| TC-FE-03 | PATCH `operationId` không tồn tại trong bundle       | Payload với `operationId` ngẫu nhiên không có thật                                                      | Bỏ qua êm, `updated: 0`, không lỗi                                                                                                                       |
+| TC-FE-04 | PATCH tham số có `name` không khớp operation thật    | Payload `parameters[].name` không tồn tại trong operation đó                                            | No-op — marker không bị thêm field rác                                                                                                                   |
+| TC-FE-05 | Giá trị có ký tự đặc biệt                            | PATCH `description` chứa `\n`, dấu `"`, emoji, dấu `:`; đọc lại tầng 2 bằng `yaml.safe_load` để so khớp | ruamel.yaml escape đúng, đọc lại ra y nguyên giá trị gốc                                                                                                 |
+| TC-FE-06 | File tầng 2 bị hỏng cú pháp YAML trước khi PATCH tới | Ghi tay YAML sai cú pháp vào file tầng 2, rồi PATCH đúng operation đó                                   | Tầng 3 vẫn ghi thành công (200 OK), tầng 2 hỏng bị bỏ qua an toàn (không crash, không ghi đè thêm)                                                       |
+| TC-FE-07 | Marker cộng dồn qua nhiều lần sửa                    | PATCH field A, sau đó PATCH field B (cùng operation)                                                    | Marker tầng 2 cộng dồn đúng (`[A]` → `[A, B]`), không mất field cũ                                                                                       |
+| TC-FE-08 | AI Suggest điền mô tả tiếng Việt cho field trống     | Bấm "✨ Gợi ý AI" trong Form Editor (cần `backend/.env` có `ANTHROPIC_*`)                                | `POST /docs/operations/ai-suggest` trả 200, điền tiếng Việt vào field đang trống; **không** ghi đè field đã có nội dung                                  |
+
+## A4. Backup + Capture/Compare khi reimport (`backend/services/import_jobs.py`, `manual_edit_conflicts.py`)
+
+| ID         | Mô tả                                                                          | Các bước                                                                                                                                                              | Kết quả mong đợi                                                                                                                |
+| ---------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| TC-SYNC-01 | Marker tồn tại trước import, version doc không đổi (case phổ biến nhất)        | PATCH đánh dấu 1 field, sau đó import lại đúng module đó                                                                                                              | Pipeline skip do `version_unchanged` → marker giữ nguyên 100%, không tạo entry conflict                                         |
+| TC-SYNC-02 | Backup chạy trước mỗi lần import                                               | Quan sát `3.build/backups/` ngay sau khi import                                                                                                                       | Folder `openapi_<module>_<timestamp>/{paths,schemas}` chứa đúng snapshot **trước** khi `run_batch()` chạy                       |
+| TC-SYNC-03 | Conflict thật (version đổi + giá trị mới khác giá trị sửa tay)                 | Gọi trực tiếp `_resolve_manual_edits_after_import()` qua script Python cách ly với `captured` chứa giá trị cũ, file giả lập có giá trị mới khác                       | Field conflict không bị tự ghi đè (giữ giá trị mới), marker của field đó bị bỏ, entry ghi đúng vào `manual_edit_conflicts.json` |
+| TC-SYNC-04 | Module import lần đầu (`paths_dir` chưa tồn tại)                               | Gọi `_scan_manual_edits()` với thư mục tạm chưa từng tồn tại                                                                                                          | Trả `{}` rỗng, không exception, backup tự skip                                                                                  |
+| TC-SYNC-05 | 1 operation có 2 field marker, sau import 1 field conflict + 1 field không đổi | Script Python: `captured` chứa 2 field, 1 giá trị khớp, 1 giá trị khác                                                                                                | Marker chỉ giữ field không-conflict, field conflict bị rớt khỏi marker + đúng 1 entry conflict                                  |
+| TC-SYNC-06 | Tham số bị xoá khỏi doc mới                                                    | `captured["fields"]` có 1 key mà file tầng 2 giả không còn tham số đó                                                                                                 | Field bị xoá tự rớt khỏi marker, **không** tạo conflict giả                                                                     |
+| TC-SYNC-07 | 2 lần backup trùng giây                                                        | Gọi `shutil.copytree()` 2 lần liên tiếp với cùng `backup_dir`                                                                                                         | (xem DEF-01 ở Phần C)                                                                                                           |
+| TC-SYNC-08 | Import nhiều module cùng lúc (`module=None`)                                   | `POST /modules/import` không truyền `module`, theo dõi SSE tới `done`                                                                                                 | Tất cả module import đồng thời trong 1 job, mỗi module có backup folder riêng biệt không đụng nhau                              |
+| TC-SYNC-09 | `run_batch()` throw exception giữa lúc chạy                                    | Đọc code xác nhận vị trí gọi `_resolve_manual_edits_after_import()` nằm trong nhánh chỉ chạy khi không có exception (verify tĩnh, không trigger lỗi thật qua runtime) | Import lỗi không trigger so sánh/làm mất marker sai                                                                             |
+
+## A5. Manual Edit Conflicts — API + UI (`GET/POST /modules/manual-edit-conflicts`)
+
+| ID             | Mô tả                                                                               | Các bước                                                                                     | Kết quả mong đợi                                                                             |
+| -------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| TC-CONFLICT-01 | Card ẩn khi không có conflict                                                       | Mở trang chủ, `manual_edit_conflicts.json` rỗng                                              | Card "Xung đột sửa tay khi import lại" không render                                          |
+| TC-CONFLICT-02 | Card hiện đúng dữ liệu                                                              | Bơm 1+ conflict giả vào JSON, reload trang                                                   | Hiện đúng `operationId`/`field`/giá trị cũ/mới cho từng entry                                |
+| TC-CONFLICT-03 | Bấm "Giữ bản cũ"                                                                    | Click nút trên UI cho 1 field                                                                | Tầng 2 + tầng 3 đổi về đúng `old_value`, marker được set lại, entry biến mất khỏi queue      |
+| TC-CONFLICT-04 | Bấm "Lấy bản mới"                                                                   | Click nút trên UI cho 1 field                                                                | Tầng 2 + tầng 3 **không đổi gì**, entry biến mất khỏi queue                                  |
+| TC-CONFLICT-05 | Double-resolve cùng 1 entry                                                         | Gọi `POST .../resolve` 2 lần liên tiếp cùng `operationId`+`field`                            | Lần 1 `200`, lần 2 `404 CONFLICT_NOT_FOUND`                                                  |
+| TC-CONFLICT-06 | Payload thiếu field / `choice` sai giá trị                                          | `POST .../resolve` thiếu `field`, hoặc `choice: "yolo"`                                      | `400 INVALID_CONFLICT_RESOLVE` cho cả 2 case                                                 |
+| TC-CONFLICT-07 | `operationId` không còn tồn tại ở đâu cả lúc resolve                                | Bơm conflict với `operationId` giả không tồn tại trong bundle lẫn tầng 2, resolve `keep_old` | (xem DEF-02 ở Phần C)                                                                        |
+| TC-CONFLICT-08 | File tầng 2 bị xoá nhưng entry vẫn còn trong queue (operation vẫn còn trong bundle) | Xoá file tầng 2 của 1 operation, bơm conflict cho operation đó, resolve `keep_old`           | Tầng 3 sửa đúng giá trị cũ, tầng 2 thiếu file thì bỏ qua an toàn                             |
+| TC-CONFLICT-09 | Mất kết nối backend giữa lúc resolve                                                | Bơm conflict, tắt backend, click "Giữ bản cũ" trên UI thật                                   | Hiện lỗi kết nối rõ ràng, nút bấm lại được ngay (không stuck), entry không bị xoá khỏi queue |
+| TC-CONFLICT-10 | `old_value`/`new_value` là chuỗi rỗng                                               | Bơm conflict với `old_value: ""`                                                             | UI hiện `(rỗng)` thay vì khoảng trắng vô nghĩa                                               |
+| TC-CONFLICT-11 | Nhiều conflict hiện cùng lúc, resolve 1 cái                                         | Bơm 2 conflict khác operation, resolve 1 entry trên UI                                       | Entry còn lại không bị ảnh hưởng                                                             |
+
+## A6. YAML thô (`PUT /docs/bundle-content`)
+
+| ID         | Mô tả                                                                               | Các bước                                                                                                                                                              | Kết quả mong đợi                                                                          |
+| ---------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| TC-YAML-01 | Sửa field bất kỳ qua field-path generic (không giới hạn 4 field cũ của Form Editor) | Tab "YAML thô", sửa 1 field qua Monaco, bấm Lưu                                                                                                                       | Tầng 2 nhận đúng giá trị mới + marker field-path đúng; tầng 3 ghi verbatim giữ format gốc |
+| TC-YAML-02 | Build lại tài liệu sau khi sửa field tầng 2 mới                                     | Sau TC-YAML-01, bấm "Tạo lại tài liệu" (`POST /docs/build`)                                                                                                           | Giá trị vừa sửa **không bị mất** sau build lại                                            |
+| TC-YAML-03 | Paste YAML lỗi cú pháp, bấm Lưu                                                     | Thêm đoạn YAML không hợp lệ vào nội dung Monaco, bấm Lưu                                                                                                              | `400 BUNDLE_INVALID_YAML`, checksum cả 2 tầng không đổi                                   |
+| TC-YAML-04 | Marker không tự tham chiếu chính nó khi diff stale                                  | Sửa ở tab Form Editor (marker ghi vào tầng 2+3), chuyển sang tab YAML thô **không** đóng/mở lại modal (giữ bundle content cũ trong state), sửa tiếp 1 field khác, Lưu | Marker cộng dồn đúng field thật, **không** tự liệt kê `x-manual-edit-fields` vào chính nó |
+
+## A7. AI-fix (`POST /docs/bundle/ai-fix`)
+
+| ID          | Mô tả                                                             | Các bước                                                                                                      | Kết quả mong đợi                                                                               |
+| ----------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| TC-AIFIX-01 | Bấm "Áp dụng" patch lưu ngay                                      | Tạo lỗi lint thật, bấm "AI tự fix lỗi", bấm "Áp dụng"                                                         | `PUT /docs/bundle-content` bắn ngay sau khi Áp dụng, không cần thêm hành động nào khác         |
+| TC-AIFIX-02 | Marker + đồng bộ tầng 2 cho field schema (không phải operation)   | AI-fix thêm `description` cho field trong `components/schemas/`                                               | `sync_schema_fields` ghi đúng field + marker dạng dot-path                                     |
+| TC-AIFIX-03 | Chất lượng description khi fix batch nhiều operation cùng lúc     | 1 lượt AI-fix sửa nhiều lỗi "thiếu description" cho nhiều operation khác nhau trong 1 batch                   | Description sinh ra đúng nghiệp vụ của từng operation, không generic/sai (xem DEF-03 nếu fail) |
+| TC-AIFIX-04 | `_get_breadcrumb` build đúng đường dẫn khóa từ root tới field lỗi | Unit test với YAML mẫu nhiều cấp lồng nhau, field lỗi nằm sâu trong `paths.../properties/<field>/description` | Breadcrumb trả về đúng chuỗi path từ `paths` tới field, nối bằng dấu `.`                       |
+| TC-AIFIX-05 | `_get_parent_block` lấy đúng entity cha chứa sibling field        | Cùng YAML mẫu, field lỗi có sibling cùng cấp (vd `priority` cạnh `status`)                                    | `parent_text` trả về block chứa cả field lỗi lẫn sibling, không chỉ riêng field đang sửa       |
+
+## A8. Regression
+
+| ID        | Mô tả                                                          | Các bước                                                     | Kết quả mong đợi                                                                       |
+| --------- | -------------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| TC-REG-01 | Deactivate module đang active                                  | Deactivate 1 module, thử import lại                          | Bị chặn `400 MODULE_NOT_ACTIVE`                                                        |
+| TC-REG-02 | Reactivate module                                              | Activate lại module vừa deactivate                           | Status trở về `active`, import lại bình thường                                         |
+| TC-REG-03 | Module đã import trước đó không bị ảnh hưởng bởi thay đổi khác | Mở lại BundleEditorModal của module cũ, sửa Form Editor, lưu | File YAML cập nhật đúng như TC-FE-01, không có hành vi lạ do thay đổi ở tính năng khác |
+
+---
+
+# Phần B — Execution Log
+
+## 2026-06-25 — Module Workflow + Upload Security (TC-WF-01..07, TC-SEC-01..08, TC-REG-01..02, TC-FE-08)
 
 Chạy qua API/curl trực tiếp (không qua click UI browser) — backend `make dev` (port
-8000) + frontend `npm run dev` (port 3000) khởi động thành công, không lỗi
-`load_dotenv`.
+8000) + frontend `npm run dev` (port 3000), không lỗi `load_dotenv`.
 
-### Happy path
+| TC ID     | Kết quả thực tế                                                                                                                                                                                                                      |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| TC-WF-01  | ✅ Đúng 4 module có sẵn (`ticket`, `service`, `statistic`, `department`) + 21 file unassigned                                                                                                                                         |
+| TC-WF-02  | ✅ Mỗi file unassigned có `suggested_module` + `confidence_score` + `conflict` detection đúng                                                                                                                                         |
+| TC-WF-03  | ✅ `approval_status: pending → approved` (test với 1 file, `mode=file`), không skip sai                                                                                                                                               |
+| TC-WF-04  | ✅ Phát hiện đúng `skip_reason: target_file_exists`, không ghi đè file đã tồn tại                                                                                                                                                     |
+| TC-WF-06  | ✅ Re-run module `department`: SSE emit đúng event module + `done`; hash-based skip hoạt động (`skipped: 1`)                                                                                                                          |
+| TC-WF-07  | ✅ `bundle_ready: true`, `html_ready: true`, Spectral lint chạy bình thường (chỉ warning license-url/contact có từ trước)                                                                                                             |
+| TC-SEC-01 | ✅ `../../backend/main.py` bị chặn (extension `.py` không cho phép), `main.py` không đổi (hash giống trước/sau). `../../evil.pdf` (extension hợp lệ) bị flatten về basename `evil_traversal_test.pdf`, lưu an toàn trong `SOURCE_DIR` |
+| TC-SEC-02 | ✅ `/etc/evil.pdf` flatten về basename, không ghi được vào `/etc/`                                                                                                                                                                    |
+| TC-SEC-03 | ✅ Filename `.` và `..` đều 400 `INVALID_FILENAME`                                                                                                                                                                                    |
+| TC-SEC-04 | ✅ `.exe`/`.zip` đều 400 `UNSUPPORTED_FILE_TYPE`                                                                                                                                                                                      |
+| TC-SEC-05 | ✅ File 25MB (vượt cap 20MB) → 400 `FILE_TOO_LARGE`, không lọt disk                                                                                                                                                                   |
+| TC-SEC-06 | ✅ File 5MB hợp lệ upload thành công bình thường                                                                                                                                                                                      |
+| TC-SEC-07 | ✅ Làm hỏng tạm `4.config/import_flow.yaml`: job kết thúc đúng `status: done` ngay, SSE đóng sạch, không treo; traceback `yaml.scanner.ScannerError` log đầy đủ. File restore 100% (verify `diff`)                                    |
+| TC-SEC-08 | ✅ Spam 60 request liên tiếp: server không crash/OOM, RAM ổn định (48MB trước/sau), vẫn phản hồi `/health`                                                                                                                            |
+| TC-REG-01 | ✅ Deactivate `department` → import bị chặn đúng `400 MODULE_NOT_ACTIVE`                                                                                                                                                              |
+| TC-REG-02 | ✅ Reactivate `department` → status về `active`                                                                                                                                                                                       |
+| TC-REG-03 | ✅ Sửa "Mô tả chi tiết" qua UI thật (Playwright) → `PATCH /docs/operations` ghi đúng vào bundle, không đụng file gốc tầng 2 (đúng thiết kế tại thời điểm này — trước khi có TC-FE-01 ghi cả 2 tầng ở đợt 2026-06-26)                  |
+| TC-FE-08  | ✅ Bấm "✨ Gợi ý AI" qua UI thật: trả 200, điền tiếng Việt vào 2 field `parameters[].description` đang trống, độ hoàn chỉnh 67% → 100%; không ghi đè field đã có nội dung                                                              |
 
-| Bước | Kết quả |
-|---|---|
-| Scan | ✅ Đúng 4 module có sẵn (`ticket`, `service`, `statistic`, `department`) + 21 file unassigned |
-| Suggest | ✅ Mỗi file unassigned có `suggested_module` + `confidence_score` + `conflict` detection đúng |
-| Approve (1 file, `mode=file`) | ✅ `approval_status: pending → approved`, không skip sai |
-| Apply | ✅ Phát hiện đúng `skip_reason: target_file_exists`, không ghi đè file đã tồn tại (idempotent) |
-| Import (re-run module `department`) | ✅ SSE emit đúng event module + event `done`; hash-based skip hoạt động (`skipped: 1`, file không đổi) |
-| Docs build | ✅ `bundle_ready: true`, `html_ready: true`, Spectral lint chạy bình thường (chỉ có warning license-url/contact có từ trước, không liên quan) |
+**Dọn dẹp:** file test tạm đã xoá hết; `4.config/import_flow.yaml` restore 100%
+(diff sạch); `4.config/module_registry.yaml` chỉ đổi `last_import_at` (dấu vết hợp lệ).
 
-### Edge case — bảo mật
+**Kết luận:** 19/19 case pass, không phát hiện regression hay bug mới.
 
-| Test | Kết quả |
-|---|---|
-| Path traversal `../../backend/main.py` | ✅ Bị chặn (extension `.py` không cho phép), `main.py` không đổi (hash giống trước/sau) |
-| Path traversal `../../evil.pdf` (extension hợp lệ) | ✅ Bị flatten về basename `evil_traversal_test.pdf`, lưu an toàn **trong** `SOURCE_DIR`, không thoát ra ngoài — đã dọn file test sau khi xác nhận |
-| Absolute path `/etc/evil.pdf` | ✅ Flatten về basename, không ghi được vào `/etc/` — đã dọn file test |
-| Filename literally `.` hoặc `..` | ✅ 400 `INVALID_FILENAME` cho cả 2 |
-| Sai extension `.exe` / `.zip` | ✅ 400 `UNSUPPORTED_FILE_TYPE` cho cả 2 |
-| File 25MB (vượt cap 20MB) | ✅ 400 `FILE_TOO_LARGE`, không lọt vào disk |
-| File 5MB (hợp lệ, để xác nhận không bị block oan) | ✅ Upload thành công bình thường |
-| **Import job lỗi giữa đường** — làm hỏng tạm `4.config/import_flow.yaml` (sai cú pháp YAML), trigger import | ✅ **Job kết thúc đúng `status: done` ngay, SSE đóng kết nối sạch, không treo vô hạn**; traceback `yaml.scanner.ScannerError` được log đầy đủ ở backend (`traceback.print_exc()`), không bị nuốt im lặng. File đã restore lại 100% bản gốc (verify bằng `diff`) |
-| Spam 60 request `POST /modules/import` liên tiếp | ✅ Server không crash/OOM, RAM ổn định (48MB trước/sau), vẫn phản hồi `/health` sau khi spam |
+## 2026-06-26 (đợt 1) — Persist Form Editor edits qua tầng 2 (TC-FE-01, TC-SYNC-01..03, TC-CONFLICT-01..06)
 
-### Regression
+Theo plan "Persist Form Editor edits qua tầng 2 + backup + review xung đột khi
+reimport". Test qua curl trực tiếp + 1 script cách ly (Python) cho case cần giả lập,
+backend `make dev` (port 8000), UI qua Playwright cho Phần Conflict.
 
-| Test | Kết quả |
-|---|---|
-| Deactivate module `department` → thử import | ✅ Bị chặn đúng `400 MODULE_NOT_ACTIVE` |
-| Reactivate lại `department` | ✅ Status trở về `active`, khôi phục trạng thái ban đầu |
-| Form Editor — sửa "Mô tả chi tiết" qua UI thật (Playwright), bấm Lưu | ✅ `PATCH /docs/operations` ghi đúng vào `dist/openapi-bundled.yaml` (operation `getTicket`), không đụng tới file gốc `5.openapi/paths/` — đúng thiết kế (Form Editor chỉ sửa bundle). Đã revert lại `description: ''` sau test |
-| AI Suggest trong Form Editor — bấm "✨ Gợi ý AI" qua UI thật | ✅ `POST /docs/operations/ai-suggest` trả 200, Claude điền tiếng Việt vào 2 field `parameters[].description` đang trống (`user_id`, `id`), độ hoàn chỉnh 67% → 100%. Đúng thiết kế: **không** ghi đè field "Mô tả chi tiết" đã có nội dung — đóng modal không lưu để không re-introduce test data |
+| TC ID          | Kết quả thực tế                                                                                                                                                                                                                                                        |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TC-FE-01       | ✅ PATCH `summary` + mô tả tham số `user_id` của `getTicket`: cả tầng 2 (`get_ticket.yaml`) và tầng 3 (bundle) có giá trị mới; marker `x-manual-edit-fields: {summary: true, parameters: [user_id]}` đúng ở cả 2 file; style ruamel.yaml (comment, indent) không bị phá |
+| TC-SYNC-01     | ✅ Marker `summary` của `getTicket` tồn tại trước import module `ticket`: toàn bộ 8 file bị skip (`version_unchanged`) → marker giữ nguyên 100%, không tạo `manual_edit_conflicts.json`                                                                                 |
+| TC-SYNC-02     | ✅ Folder `openapi_ticket_<timestamp>/{paths,schemas}` tạo đúng, đối chiếu `get_ticket.yaml` trong backup khớp bản trước import                                                                                                                                         |
+| TC-SYNC-03     | ✅ Gọi `_resolve_manual_edits_after_import()` qua script cách ly: field conflict không bị tự ghi đè, marker field đó bị bỏ, entry ghi đúng format (`operationId`, `module`, `field`, `old_value`, `new_value`, `detected_at`)                                           |
+| TC-CONFLICT-01 | ✅ Card ẩn khi JSON rỗng. ⚠️ Flash brief "Đang tải..." lúc trang vừa load — UX rough edge nhỏ, chưa fix                                                                                                                                                                  |
+| TC-CONFLICT-02 | ✅ Bơm 2 conflict giả (`summary`, `description` của `getTicket`) → hiện đúng cả 2                                                                                                                                                                                       |
+| TC-CONFLICT-03 | ✅ Click "Giữ bản cũ" cho `summary`: tầng 2+3 đổi về `old_value`, marker set lại, entry biến mất, UI tự cập nhật không cần reload                                                                                                                                       |
+| TC-CONFLICT-04 | ✅ Click "Lấy bản mới" cho `description`: tầng 2+3 không đổi, entry biến mất, card tự ẩn khi queue rỗng                                                                                                                                                                 |
+| TC-CONFLICT-05 | ✅ Resolve conflict đã resolve trước đó → `404 CONFLICT_NOT_FOUND`                                                                                                                                                                                                      |
+| TC-CONFLICT-06 | ✅ Thiếu `field` / `choice: "yolo"` → cả 2 đều `400 INVALID_CONFLICT_RESOLVE`                                                                                                                                                                                           |
 
-### Dọn dẹp sau test
+**Dọn dẹp:** `dist/openapi-bundled.yaml` revert `git checkout`; `get_ticket.yaml` khôi
+phục tay; backup folder + `manual_edit_conflicts.json` tạo trong test đã xoá;
+`module_registry.yaml` revert `git checkout`.
 
-- File test tạm (`evil_traversal_test.pdf`, `evil_test_absolute.pdf`, `small_test.txt`, file giả 25MB) — đã xoá hết.
-- `4.config/import_flow.yaml` — đã restore đúng 100% bản gốc (diff sạch).
-- `4.config/module_registry.yaml` — chỉ đổi 1 dòng `last_import_at` của `department` (dấu vết hợp lệ từ chính các lần import/deactivate/reactivate test ở trên), không có gì cần revert.
+**⚠️ Gap chưa đóng — chưa test qua pipeline thật với version đổi thật:** TC-SYNC-03 chỉ
+test qua script cách ly (dữ liệu giả lập), chưa chạy qua `run_batch()` thật với tài
+liệu nguồn (tầng 1) thật sự đổi version. Cần 1 trong 2 điều kiện: (1) sửa nội dung tài
+liệu nguồn thật, hoặc (2) sửa `3.build/reports/file_versions.json` để giả lập version
+khác. User đã quyết định để lại làm known gap, test sau khi có tài liệu nguồn thật đổi
+version qua quy trình bình thường. **Gap này vẫn còn mở tính đến lần test gần nhất
+(2026-06-29).**
 
-**Kết luận:** không phát hiện regression hay bug mới. Cả 2 bản fix bảo mật (path
-traversal/extension/size khi upload, và job-stuck-running trong `_run_import_job`) hoạt
-động đúng trên môi trường thật, không chỉ đúng trên review code. Form Editor và AI
-Suggest đã test trực tiếp qua UI browser thật (Playwright) — toàn bộ 19 test case trong
-checklist đều ✅ pass, không có mục nào còn để trống.
+**Kết luận:** Pass trên các nhánh test được (skip case phổ biến nhất; conflict logic
+qua script cách ly + UI thật). Gap version-đổi-thật vẫn mở.
 
-## 6. Kết quả test — Persist Form Editor edits qua tầng 2 (2026-06-26)
+## 2026-06-26 (đợt 2) — Edge case bổ sung (TC-FE-02..07, TC-SYNC-04..09, TC-CONFLICT-07..11)
 
-Theo plan `Persist Form Editor edits qua tầng 2 + backup + review xung đột khi reimport`
-(Phần 1 — `backend/routers/docs.py`, Phần 2 — `backend/routers/modules.py`). Test qua
-curl trực tiếp + 1 script cách ly (Python) cho case cần giả lập, backend `make dev`
-(port 8000).
+Brainstorm sau khi đợt 1 pass, nhằm soi edge case checklist hình thức dễ bỏ qua. Case
+API/logic qua curl + script Python gọi đúng hàm thật (không mock); case UI qua
+Playwright (click nút thật). Backend `uvicorn` port 8000, frontend `npm run dev` port
+3000.
 
-### Phần 1 — Form Editor ghi đồng thời tầng 2 + tầng 3
+| TC ID          | Kết quả thực tế                                                                                                                                                                                                                                              |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| TC-FE-02       | ✅ PATCH `getTicket` + `createTickets` trong 1 request: cả 2 cập nhật đúng, `updated: 2`                                                                                                                                                                      |
+| TC-FE-03       | ✅ `operationId: "khongTonTai123"` → bỏ qua êm, `updated: 0`                                                                                                                                                                                                  |
+| TC-FE-04       | ✅ `parameters[].name: "khong_ton_tai"` → no-op, marker không thêm field rác                                                                                                                                                                                  |
+| TC-FE-05       | ✅ `description` chứa `\n`, `"`, emoji 🎉, `:` → ruamel.yaml escape đúng, đọc lại y nguyên                                                                                                                                                                     |
+| TC-FE-06       | ✅ Ghi tay YAML sai cú pháp (`summary: [unclosed bracket {`) vào tầng 2, PATCH vẫn `200 OK` ở tầng 3, tầng 2 hỏng bị bỏ qua an toàn                                                                                                                           |
+| TC-FE-07       | ✅ PATCH `summary` rồi `description` (cùng operation): marker cộng dồn `{summary: true}` → `{summary: true, description: true}`                                                                                                                               |
+| TC-SYNC-04     | ✅ `_scan_manual_edits(never_imported_dir)` với thư mục tạm chưa tồn tại: trả `{}` rỗng, không exception                                                                                                                                                      |
+| TC-SYNC-05     | ✅ `captured` 2 field (1 khớp, 1 khác): marker chỉ giữ field không-conflict, đúng 1 entry conflict cho field kia                                                                                                                                              |
+| TC-SYNC-06     | ✅ `captured["fields"]` có key tham số đã bị xoá khỏi file tầng 2 giả: field tự rớt khỏi marker, không tạo conflict giả                                                                                                                                       |
+| TC-SYNC-07     | ⚠️ Xác nhận DEF-01 (xem Phần C) — 2 lần `shutil.copytree()` liên tiếp cùng `backup_dir`: lần 2 ném `FileExistsError`                                                                                                                                          |
+| TC-SYNC-08     | ✅ Import 4 module đồng thời (`module=None`) qua SSE: tất cả skip đúng (version không đổi), marker `getTicket` không bị ảnh hưởng, 4 backup folder riêng biệt không đụng nhau                                                                                 |
+| TC-SYNC-09     | ✅ Đọc `backend/routers/modules.py` xác nhận `_resolve_manual_edits_after_import()` nằm trong nhánh chỉ chạy khi `run_batch()` không raise — verify tĩnh, chưa trigger lỗi thật qua runtime (rủi ro thấp, khó dựng input lỗi an toàn không đụng `2.pipeline`) |
+| TC-CONFLICT-07 | 🐛 Xác nhận DEF-02 (xem Phần C) — `operationId: "totallyFakeOpId999"` (không tồn tại đâu cả), resolve `keep_old` trả `200 {"ok": true}` nhưng không ghi gì                                                                                                    |
+| TC-CONFLICT-08 | ✅ Xoá tạm `get_ticket.yaml`, conflict `getTicket` resolve `keep_old`: tầng 3 sửa đúng giá trị cũ, tầng 2 thiếu file bỏ qua an toàn                                                                                                                           |
+| TC-CONFLICT-09 | ✅ `pkill` backend giữa lúc bấm "Giữ bản cũ" trên UI thật: hiện đúng lỗi kết nối, nút bấm lại được ngay (không stuck), entry không bị xoá khỏi queue                                                                                                          |
+| TC-CONFLICT-10 | ✅ `old_value: ""` → UI hiện `<em>(rỗng)</em>`                                                                                                                                                                                                                |
+| TC-CONFLICT-11 | ✅ 2 conflict khác operation, resolve 1 cái: entry còn lại không bị ảnh hưởng                                                                                                                                                                                 |
 
-| Test | Cách làm | Kết quả |
-|---|---|---|
-| Sửa `summary` + mô tả tham số `user_id` qua `PATCH /docs/operations` (operation `getTicket`) | `curl -X PATCH .../docs/operations -d '[{"operationId":"getTicket","summary":"...","parameters":[{"name":"user_id","description":"..."}]}]'` | ✅ Cả `5.openapi/paths/ticket/get_ticket.yaml` (tầng 2) và `dist/openapi-bundled.yaml` (tầng 3) đều có giá trị mới; marker `x-manual-edit-fields: {summary: true, parameters: [user_id]}` xuất hiện đúng ở cả 2 file; style/format ruamel.yaml của file tầng 2 (comment, indent) không bị phá |
+**Dọn dẹp:** `get_ticket.yaml`, `create_tickets.yaml` khôi phục tay (giá trị gốc
+`createTickets.summary` lấy lại từ bundle revert qua `git checkout` vì không còn
+backup); bundle revert nhiều lần trong suốt vòng test; `manual_edit_conflicts.json`
+xoá sau mỗi case; 4 backup folder từ TC-SYNC-08 đã xoá; `module_registry.yaml` revert
+`git checkout`.
 
-### Phần 2 — Backup + capture/restore + phát hiện xung đột khi import
+**Kết luận:** 16/18 case pass đúng thiết kế. 2 case lộ bug thật — xem DEF-01, DEF-02 ở
+Phần C.
 
-| Test | Cách làm | Kết quả |
-|---|---|---|
-| Marker tồn tại trước import, version doc **không đổi** (case phổ biến nhất) | PATCH đánh dấu `summary` của `getTicket`, sau đó `POST /modules/import?module=ticket` | ✅ Toàn bộ 8 file của module `ticket` bị pipeline skip (`reason: version_unchanged`) → marker giữ nguyên 100% sau import → `3.build/reports/manual_edit_conflicts.json` **không** được tạo (đúng — không có gì để báo conflict) |
-| Backup chạy trước mỗi lần import | Quan sát `3.build/backups/` ngay sau lần import trên | ✅ Folder `openapi_ticket_<timestamp>/{paths,schemas}` được tạo, chứa đúng bản snapshot **trước** khi `run_batch()` chạy (đã đối chiếu nội dung file `get_ticket.yaml` trong backup khớp với bản trước import) |
-| Conflict thật (version đổi + giá trị mới khác giá trị sửa tay) | **Không** tái tạo qua pipeline thật — xem mục "Gap quan trọng nhất" ở cuối section. Thay vào đó gọi trực tiếp `_resolve_manual_edits_after_import()` trong 1 script Python với dữ liệu giả lập (`captured` chứa giá trị cũ, file giả lập đã có giá trị mới khác) | ✅ Field conflict **không** bị tự ghi đè (giữ giá trị mới như hiện trạng), marker của riêng field đó bị bỏ, entry ghi đúng format vào `manual_edit_conflicts.json` (`operationId`, `module`, `field`, `old_value`, `new_value`, `detected_at`) |
+## 2026-06-29 — Đồng bộ tầng 2+3 cho AI-fix/YAML thô + generic-hoá marker (TC-FE-01, TC-YAML-01..04, TC-AIFIX-01..03, TC-CONFLICT-03 lặp lại)
 
-### Phần 3 — API review xung đột (`GET/POST /modules/manual-edit-conflicts`)
+Theo plan "Đồng bộ tầng 2 + tầng 3 cho AI-fix / sửa tay YAML thô" — fix bug chính:
+`PUT /docs/bundle-content` (YAML thô + AI-fix) trước đây chỉ ghi tầng 3, mất khi "Build
+tài liệu" chạy lại. Marker `x-manual-edit-fields` đổi từ dict cố định 4 field sang list
+field-path tổng quát. Test qua UI thật (Playwright) + Python script cách ly, backend
+`uvicorn` port 8000 + frontend `npm run dev` port 3000.
 
-Test qua UI thật (Playwright, click nút thật) + curl cho các case lỗi, backend `uvicorn` (port 8000) + frontend `npm run dev` (port 3000).
+| TC ID                                       | Kết quả thực tế                                                                                                                                                                                                                                 |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TC-FE-01 (marker format mới)                | ✅ Sửa `description` của `getTicket` qua UI: `PATCH /docs/operations` ghi đúng cả 2 tầng; marker đổi đúng format mới `x-manual-edit-fields: [description]` (list field-path, không còn dict cố định)                                             |
+| TC-YAML-01                                  | ✅ Đổi `required: true → false` của parameter `user_id` trong `updateClose` qua tab YAML thô (field ngoài 4 field cũ của Form Editor): tầng 2 nhận đúng giá trị + marker `parameters[name=user_id].required`; tầng 3 ghi verbatim giữ format gốc |
+| TC-YAML-02                                  | ✅ Bấm "Tạo lại tài liệu" sau khi sửa ở TC-YAML-01: `required: false` **không bị mất** — đây là bug chính đã fix (trước fix sẽ bị đè mất)                                                                                                        |
+| TC-YAML-03                                  | ✅ Paste `[invalid, yaml,, ,, {{{ ]]]`, bấm Lưu: alert lỗi `400 BUNDLE_INVALID_YAML`, checksum cả 2 tầng không đổi                                                                                                                               |
+| TC-YAML-04                                  | 🐛→✅ Xác nhận DEF-03 (xem Phần C) lúc test, **đã fix ngay trong vòng test này** — verify lại: tab YAML thô với fetch mới, marker cộng dồn đúng `[description, responses[422].description]`, không tự tham chiếu nữa                              |
+| TC-AIFIX-01                                 | ✅ Tạo lỗi lint thật, bấm "AI tự fix lỗi" (26 patch), bấm "Áp dụng": `PUT /docs/bundle-content` bắn ngay (thấy trong Network tab), checksum đổi ngay                                                                                             |
+| TC-AIFIX-02                                 | ✅ AI-fix thêm `description` cho `properties.id`/`properties.name` trong `UserInfo.yaml`: `sync_schema_fields` ghi đúng cả 2 field + marker dạng dot-path `[properties.id.description, properties.name.description]`                             |
+| TC-AIFIX-03                                 | ⚠️ Xác nhận DEF-04 (xem Phần C) — batch fix nhiều operation cùng lúc, AI sinh description chung chung/sai nghiệp vụ cho 5 operation                                                                                                              |
+| TC-CONFLICT-03 (lặp lại với marker generic) | ✅ Bơm conflict field `description` (format mới), click "Giữ bản cũ" trên UI: ghi đúng `old_value` vào cả 2 tầng, entry biến mất khỏi queue                                                                                                      |
 
-| Test | Cách làm | Kết quả |
-|---|---|---|
-| Card ẩn khi không có conflict | Mở trang chủ, không có entry nào trong `manual_edit_conflicts.json` | ✅ Card "Xung đột sửa tay khi import lại" không render. ⚠️ Có flash brief "Đang tải..." ngay lúc trang vừa load (trước khi fetch xong) — không phải bug nhưng là UX rough edge nhỏ, chưa fix |
-| Card hiện đúng dữ liệu | Bơm tay 2 conflict giả lập (`summary`, `description` của `getTicket`) vào JSON, reload trang | ✅ Cả 2 hiện đúng `operationId`/`field`/giá trị cũ/mới |
-| Bấm "Giữ bản cũ" | Click nút thật trên UI cho field `summary` | ✅ Tầng 2 (`get_ticket.yaml`) + tầng 3 (bundle) đều đổi về đúng `old_value`, marker `x-manual-edit-fields.summary: true` được set lại, entry biến mất khỏi queue, UI tự cập nhật không cần reload |
-| Bấm "Lấy bản mới" | Tạo lại 1 conflict mới (field `description`), click nút này | ✅ File tầng 2 + tầng 3 **không đổi gì** (giữ giá trị như trước khi resolve), entry biến mất khỏi queue, card tự ẩn lại khi queue rỗng |
-| Resolve 1 conflict không còn tồn tại | `curl POST .../resolve` với operationId/field đã được resolve trước đó | ✅ `404 CONFLICT_NOT_FOUND` |
-| Payload thiếu field / `choice` sai giá trị | `curl POST .../resolve` thiếu `field`, hoặc `choice: "yolo"` | ✅ Cả 2 đều `400 INVALID_CONFLICT_RESOLVE`, message rõ |
+**Dọn dẹp:** `get_ticket.yaml`, `update_close.yaml` khôi phục tay, xoá marker test;
+5 file operation liên quan DEF-04 revert `description`/`parameters[].description` về
+rỗng như gốc; 3 schema file (`StandardSuccess`, `StandardError`, `UserInfo`) **giữ lại**
+theo quyết định user (nội dung AI sinh đúng, fix đúng lint warning thật); bundle build
+lại lần cuối phản ánh trạng thái sạch; `manual_edit_conflicts.json` về `[]`; backend/
+frontend tắt hẳn, xác nhận bằng `ss -ltnp`.
 
-### Phần 4 — `ManualEditConflictsCard` (frontend)
+**⚠️ Gap kế thừa từ 2026-06-26:** vẫn chưa test qua pipeline thật với version đổi thật
+(xem gap ở đợt 2026-06-26 đợt 1) — lần này user chủ động chọn cách test rẻ hơn (bơm
+conflict giả) để tránh tốn token AI + tránh đụng dữ liệu ticket thật qua pipeline thật.
+Quyết định có chủ ý, không phải do quên.
 
-Đã verify cùng lúc với Phần 3 ở trên (card là phần UI hiển thị/tương tác trực tiếp với 2 API đó) — không có test riêng thêm.
+**Kết luận:** Cơ chế đồng bộ tầng 2+3 (Form Editor, YAML thô, AI-fix, duyệt conflict)
+PASS qua UI thật với marker format mới. DEF-03 phát hiện và fix ngay trong test. DEF-04
+ghi nhận làm input cải thiện prompt AI-fix.
 
-### Dọn dẹp sau test
+## 2026-06-30 — Breadcrumb + parent context cho prompt AI-fix (TC-AIFIX-04, TC-AIFIX-05)
 
-- `dist/openapi-bundled.yaml` — revert bằng `git checkout` (file tracked).
-- `5.openapi/paths/ticket/get_ticket.yaml` — file gitignore (không tracked), khôi phục tay về đúng nội dung gốc đã đọc trước khi test.
-- `3.build/backups/openapi_ticket_<timestamp>/` và `3.build/reports/manual_edit_conflicts.json` (tạo trong lúc test) — đã xoá.
-- `4.config/module_registry.yaml` — chỉ đổi `last_import_at` của `ticket` (dấu vết hợp lệ từ lần import test) — đã revert bằng `git checkout` vì nằm ngoài phạm vi `frontend/`+`backend/`.
-- Script test cách ly dùng `tempfile.mkdtemp()` — không đụng file thật của project, không cần dọn.
+Liên quan DEF-04 (AI sinh description sai nghiệp vụ khi thiếu context riêng từng
+field). Unit test 2 hàm `_get_breadcrumb`/`_get_parent_block`
+(`backend/services/ai_fix.py`) qua standalone script Python (không qua pytest vì
+backend chưa có infra test) — import `indent_of`/`extract_key`/`find_block_end` từ
+`backend/utils/yaml_line.py`, copy logic 2 hàm để chạy cách ly (không import được
+`ai_fix.py` trực tiếp vì cần `anthropic`/`core.errors` full backend env).
 
-### ⚠️ Gap quan trọng nhất — chưa test qua pipeline thật với version đổi thật (2026-06-26)
+| TC ID       | Kết quả thực tế                                                                                                                                                                                                               |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TC-AIFIX-04 | ✅ YAML mẫu 9 cấp lồng nhau (path → operation → response → content → schema → properties → field): breadcrumb trả đúng `paths./tickets/{id}.get.responses.'200'.content.application/json.schema.properties.status.description` |
+| TC-AIFIX-05 | ✅ Cùng YAML mẫu, field `status.description` có sibling `priority` cùng cấp: `parent_text` trả đúng block `properties` chứa cả `status` lẫn `priority` (lấy 2 cấp cha, đủ thấy sibling)                                        |
 
-Toàn bộ tính năng này được sinh ra để xử lý đúng 1 case: **sửa tay tầng 2+3, sau đó tài liệu nguồn (tầng 1) đổi version, import lại, kiểm tra sửa tay có được bảo vệ đúng không.** Case này **chưa được chạy qua pipeline thật một lần nào** — mọi test "conflict" ở Phần 2/3/4 phía trên đều dùng dữ liệu giả lập (bơm tay vào JSON, hoặc gọi hàm cách ly), không phải do `run_batch()` thật tự phát hiện ra khi version tài liệu nguồn thật sự đổi.
+**Dọn dẹp:** script test standalone đã xoá, không phải file của project.
 
-**Vì sao chưa làm:** để tạo version đổi thật cần 1 trong 2 cách, cả 2 đều ngoài phạm vi `frontend/`+`backend/` đã chốt:
-1. Sửa nội dung tài liệu nguồn thật (`1.docs/source/api_contract/ticket/*.pdf`).
-2. Sửa `3.build/reports/file_versions.json` (file trạng thái do `2.pipeline/pipeline_API.py` tự sinh) để giả lập "lần trước ghi nhận version khác".
+**⚠️ Gap — chưa test end-to-end qua API thật để xác nhận DEF-04 đã được khắc phục:** 2
+hàm helper đã verify đúng ở mức unit (pure function, dữ liệu giả lập nhỏ). Chưa chạy
+lại đúng kịch bản TC-AIFIX-03 (AI-fix 1 batch nhiều operation cùng lúc, lỗi "thiếu
+description") qua API thật để so sánh: có breadcrumb/parent_text thì AI có còn sinh
+description sai nghiệp vụ như DEF-04 không. Vì đây là lỗi chất lượng đầu ra của AI
+(không tất định 100%), cần chạy lại với cùng bộ lỗi lint thật và tốn 1 lần gọi AI thật
+mới kết luận được.
 
-User đã được hỏi và chọn: **để lại làm known gap**, không test ngay lúc này — sẽ test sau khi có tài liệu nguồn thật thay đổi version qua quy trình bình thường (teammate phụ trách `2.pipeline`/`1.docs` cập nhật doc → version tự đổi → lúc đó import thật và quan sát kết quả).
+---
 
-**Kết luận:** Phần 1, 2, 3, 4 đều hoạt động đúng thiết kế trên các nhánh đã test được (skip case — phổ biến nhất; conflict logic — test cách ly + UI thật với dữ liệu giả lập). Chưa có gì để báo cáo là bug. Gap còn lại duy nhất là case version-đổi-thật nêu trên, cần dữ liệu nguồn thật thay đổi mới test được.
+# Phần C — Defect Log
 
-## 7. Test case bổ sung — kết quả chạy thật (2026-06-26)
-
-Brainstorm sau khi Phần 1-4 đã pass vòng đầu, nhằm soi edge case checklist hình thức dễ bỏ qua. Toàn bộ 18 case đã chạy thật: case về API/logic qua curl + script Python gọi đúng hàm thật (không mock), case UI qua Playwright (click nút thật trên browser). Backend `uvicorn` port 8000, frontend `npm run dev` port 3000.
-
-### Phần 1 — Form Editor
-
-| # | Case | Cách làm | Kết quả |
-|---|---|---|---|
-| 1 | PATCH nhiều operation cùng lúc trong 1 request | `curl -X PATCH .../docs/operations -d '[{"operationId":"getTicket","summary":"..."},{"operationId":"createTickets","summary":"..."}]'` | ✅ Cả 2 operation đều được cập nhật đúng trong 1 request, `updated: 2` |
-| 2 | PATCH với `operationId` không tồn tại trong bundle | `curl -X PATCH .../docs/operations -d '[{"operationId":"khongTonTai123","summary":"..."}]'` | ✅ Bỏ qua êm, `updated: 0`, không lỗi |
-| 3 | Sửa tham số có `name` không khớp cái nào trong operation thật | `curl -X PATCH .../docs/operations -d '[{"operationId":"getTicket","parameters":[{"name":"khong_ton_tai","description":"..."}]}]'`, soi lại marker trong file tầng 2 | ✅ No-op đúng — marker không bị thêm field rác (`x-manual-edit-fields` không có key `parameters`) |
-| 4 | Giá trị có ký tự đặc biệt (`:`, `"`, `\n`, emoji) | PATCH `description` chứa `\n`, dấu `"`, emoji 🎉, dấu `:` qua payload JSON; đọc lại file tầng 2 bằng `yaml.safe_load` để so khớp giá trị gốc | ✅ ruamel.yaml escape đúng thành double-quoted scalar, đọc lại ra đúng y nguyên giá trị gốc |
-| 5 | File tầng 2 bị hỏng cú pháp YAML trước khi PATCH tới | Ghi tay nội dung YAML sai cú pháp (`summary: [unclosed bracket {`) vào file tầng 2, rồi `curl -X PATCH` vào đúng operation đó, soi response + nội dung file sau đó | ✅ Tầng 3 vẫn ghi thành công (`200 OK`), tầng 2 hỏng bị bỏ qua an toàn (không crash, không bị ghi đè thêm) — xem finding bên dưới |
-| 6 | Sửa lại field đã có marker, lần 2 sửa field khác | PATCH `summary` lần 1, PATCH `description` lần 2 (operation giống nhau), soi marker trong file tầng 2 sau mỗi lần | ✅ Marker cộng dồn đúng: `{summary: true}` → `{summary: true, description: true}`, không mất field cũ |
-
-### Phần 2 — Backup/Capture/Compare
-
-| # | Case | Cách làm | Kết quả |
-|---|---|---|---|
-| 7 | Module import lần đầu (`paths_dir` chưa từng tồn tại) | Script Python gọi trực tiếp `modules._scan_manual_edits(never_imported_dir)` với 1 thư mục tạm chưa từng tồn tại (`tempfile`), không qua API | ✅ Trả `{}` rỗng, không exception; backup tự skip đúng theo guard `paths_dir.exists()` |
-| 8 | 1 operation có 2 field marker, sau import 1 field conflict + 1 field không đổi | Script Python: tạo file tầng 2 giả trong thư mục tạm, gọi trực tiếp `modules._resolve_manual_edits_after_import(paths_dir, captured, ...)` với `captured` chứa 2 field (1 giá trị khớp, 1 giá trị khác giá trị mới trong file) | ✅ Marker chỉ giữ lại đúng field không-conflict (`description`), field conflict (`summary`) bị rớt khỏi marker + đúng 1 entry vào `manual_edit_conflicts.json` |
-| 9 | Tham số bị xoá khỏi doc mới | Script Python tương tự case 8, nhưng `captured["fields"]` có 1 key `parameters.removed_param` mà file tầng 2 giả không còn tham số đó nữa | ✅ Field bị xoá tự rớt khỏi marker, **không** tạo conflict giả; field còn tồn tại không đổi vẫn giữ marker đúng |
-| 10 | 2 lần backup trùng giây (`ts` trùng) | Script Python gọi `shutil.copytree(src, backup_dir / "paths")` 2 lần liên tiếp với cùng `backup_dir` (mô phỏng đúng dòng code thật trong `_run_import_job`) | ⚠️ **Bug nhẹ xác nhận thật**: lần 2 ném `FileExistsError`. Code thật có `try/except` bọc quanh nên không crash cả job, nhưng **backup của lần import thứ 2 sẽ âm thầm không được tạo**, chỉ log `traceback.print_exc()` ở backend, không cảnh báo cho user |
-| 11 | Import nhiều module cùng lúc (`module=None`) | `curl -X POST .../modules/import` (không truyền `module`), theo dõi qua SSE `.../modules/import/{job_id}/stream` tới khi nhận event `done`, soi marker + backup folder sau đó | ✅ Cả 4 module (`department`, `service`, `statistic`, `ticket`) import đồng thời trong 1 job, đều skip đúng (version không đổi), marker `getTicket` không bị ảnh hưởng, 4 backup folder riêng biệt được tạo đúng (không đụng nhau vì tên folder có module name) |
-| 12 | `run_batch()` throw exception giữa lúc chạy | Đọc trực tiếp `backend/routers/modules.py` để xác nhận vị trí đặt lời gọi `_resolve_manual_edits_after_import()` — không trigger lỗi thật qua runtime (cần input_dir hỏng thật, khó dựng an toàn không đụng `2.pipeline`) | ✅ Xác nhận hàm so sánh nằm trong nhánh `else:` chỉ chạy khi `run_batch()` không raise, nên import lỗi sẽ không so sánh/làm mất marker sai |
-
-### Phần 3 — Resolve API
-
-| # | Case | Cách làm | Kết quả |
-|---|---|---|---|
-| 13 | Double-resolve cùng 1 entry (gọi 2 lần liên tiếp) | Bơm 1 conflict vào `manual_edit_conflicts.json`, gọi `curl -X POST .../resolve` 2 lần liên tiếp với cùng `operationId`+`field` | ✅ Lần 1 `200`, lần 2 `404 CONFLICT_NOT_FOUND` — không double-write, không crash |
-| 14 | `operationId` trong conflict không còn tồn tại trong bundle **và** tầng 2 lúc resolve | Bơm 1 conflict với `operationId: "totallyFakeOpId999"` (không tồn tại ở đâu cả), gọi `curl -X POST .../resolve` với `choice: "keep_old"` | 🐛 **Bug thật xác nhận**: API trả `200 {"ok": true}` như thành công nhưng **không ghi gì vào đâu cả**. User sẽ tưởng đã xử lý xong nhưng thực chất mất luôn dữ liệu cũ, không còn cách nào lấy lại từ UI |
-| 15 | File tầng 2 bị xoá nhưng entry vẫn còn trong queue (operation vẫn còn trong bundle) | Xoá tạm `get_ticket.yaml` khỏi `5.openapi/paths/ticket/`, bơm 1 conflict cho `getTicket`, gọi `curl -X POST .../resolve` với `choice: "keep_old"`, soi bundle + xác nhận file tầng 2 không bị tạo lại | ✅ Tầng 3 được sửa đúng giá trị cũ, tầng 2 bị thiếu file thì bỏ qua an toàn — khác case 14 vì bundle vẫn còn operation để sửa |
-
-### Phần 4 — UI
-
-| # | Case | Cách làm | Kết quả |
-|---|---|---|---|
-| 16 | Mất kết nối backend giữa lúc bấm "Giữ bản cũ" | Bơm 1 conflict, mở trang trên Playwright cho load xong, `pkill` tắt backend, rồi click nút "Giữ bản cũ" thật trên UI | ✅ Hiện đúng "Không thể kết nối tới backend, kiểm tra server có đang chạy không", nút trở lại bấm được ngay (không stuck ở "Đang lưu..."), entry **không** bị xoá khỏi queue |
-| 17 | `old_value`/`new_value` là chuỗi rỗng | Bơm 1 conflict với `old_value: ""`, mở trang, chụp snapshot Playwright soi nội dung render | ✅ Hiện đúng `<em>(rỗng)</em>` thay vì khoảng trắng vô nghĩa |
-| 18 | Nhiều conflict hiện cùng lúc, resolve 1 cái | Bơm 2 conflict (operation khác nhau), click "Giữ bản cũ" cho 1 entry trên UI thật, soi snapshot entry còn lại | ✅ Entry khác hoàn toàn không bị ảnh hưởng (không bị disable nhầm, giá trị giữ nguyên) |
-
-### 🐛 Bug thật phát hiện qua vòng test này
-
-1. **Case 14 — Resolve "thành công giả"**: khi `operationId` trong 1 conflict entry không còn tồn tại ở bất kỳ đâu (bundle và tầng 2 đều không có) — ví dụ do LLM sinh lại `operationId` khác sau lần import sau đó — bấm "Giữ bản cũ" trả về `200 OK` y như bình thường, nhưng không có gì được ghi/khôi phục, và entry biến mất khỏi queue vĩnh viễn. **Đề xuất fix**: trước khi xoá entry khỏi queue ở nhánh `keep_old`, kiểm tra có thực sự tìm thấy operation trong bundle hoặc tầng 2 không — nếu cả 2 đều không tìm thấy, trả lỗi (404/410) thay vì `200` giả, để user biết cần xử lý tay.
-2. **Case 10 — Backup mất âm thầm khi trùng giây**: import 2 lần rất nhanh (trong vòng 1 giây) cho cùng 1 module sẽ làm lần backup thứ 2 thất bại lặng lẽ. **Đề xuất fix**: thêm số thứ tự/microsecond vào tên folder backup (`strftime("%Y%m%d_%H%M%S_%f")`), hoặc dùng UUID ngắn, để tránh trùng tên dù gọi liên tiếp.
-
-Cả 2 đều **chưa fix** — ghi nhận lại đây, để quyết định fix ngay hay backlog.
-
-### Dọn dẹp sau vòng test này
-
-- `5.openapi/paths/ticket/get_ticket.yaml`, `create_tickets.yaml` (gitignore, không tracked) — khôi phục tay về đúng nội dung gốc (giá trị gốc của `createTickets.summary` lấy lại từ bundle đã revert qua `git checkout`, vì không có backup nào còn giữ).
-- `dist/openapi-bundled.yaml` — revert bằng `git checkout` nhiều lần trong suốt vòng test.
-- `3.build/reports/manual_edit_conflicts.json` — xoá sau mỗi case cần dữ liệu giả lập.
-- `3.build/backups/openapi_<module>_<timestamp>/` (4 folder tạo từ case 11) — đã xoá; folder `config_before_profile_20260612_133921` có từ trước (không phải của vòng test này) — giữ nguyên, không đụng.
-- `4.config/module_registry.yaml` — revert bằng `git checkout` (chỉ đổi `last_import_at`).
-
-**Kết luận:** 16/18 case pass đúng thiết kế. 2 case lộ bug thật (case 10, case 14) — cả 2 đều là edge case hiếm gặp trong thực tế (double backup cùng giây, operationId biến mất hoàn toàn), không chặn việc dùng tính năng ở luồng chính, nhưng nên fix trước khi coi tính năng là "production-ready" hoàn toàn.
-
-## 8. Đồng bộ tầng 2 + tầng 3 cho AI-fix / YAML thô + generic-hoá marker (2026-06-29)
-
-Theo plan "Đồng bộ tầng 2 + tầng 3 cho AI-fix / sửa tay YAML thô" — fix bug chính: `PUT
-/docs/bundle-content` (YAML thô + AI-fix) trước đây chỉ ghi tầng 3, mất khi "Build tài
-liệu" chạy lại. Viết field-path mini-language dùng chung (`backend/field_paths.py`),
-tách `backend/bundle_sync.py` (diff/sync engine) và `backend/manual_edit_conflicts.py`
-(hệ thống phát hiện conflict khi reimport) ra khỏi `docs.py`/`modules.py`. Marker
-`x-manual-edit-fields` đổi từ dict cố định 4 field sang list field-path tổng quát (bất kỳ
-field nào). Test qua UI thật (Playwright, click nút thật) + Python script cách ly,
-backend `uvicorn` port 8000 + frontend `npm run dev` port 3000.
-
-### Phần 1 — Form Editor với marker format mới
-
-| Test | Cách làm | Kết quả |
-|---|---|---|
-| Sửa `description` của `getTicket` qua Form Editor (UI thật) | Click vào textbox "Mô tả chi tiết", sửa nội dung, bấm "Lưu" | ✅ `PATCH /docs/operations` ghi đúng cả tầng 2 + tầng 3; marker đổi đúng format mới `x-manual-edit-fields: [description]` (list field-path, không còn dict `{summary: true,...}` cũ) |
-
-### Phần 2 — YAML thô / `PUT /docs/bundle-content` (test bug chính)
-
-| Test | Cách làm | Kết quả |
-|---|---|---|
-| Sửa field **ngoài** 4 field cũ của Form Editor | Tab "YAML thô", đổi `required: true → false` của parameter `user_id` trong `updateClose` (qua Monaco model API), bấm "Lưu" | ✅ Tầng 2 (`update_close.yaml`) nhận đúng giá trị mới + marker `parameters[name=user_id].required`; tầng 3 ghi verbatim text (giữ format gốc), marker tầng 3 phản ánh ở lần build kế tiếp đúng như thiết kế |
-| **Test bug chính**: bấm "Tạo lại tài liệu" (`POST /docs/build`) sau khi sửa field trên | Click nút "Tạo lại tài liệu" trên dashboard | ✅ **`required: false` không bị mất** — đây là bug đang fix (trước fix, build lại sẽ đè mất vì tầng 2 không có sửa đó). Marker cũng lên tầng 3 đúng vì giờ build lại từ tầng 2 mới |
-| Paste YAML lỗi cú pháp, bấm Lưu | Thêm dòng `[invalid, yaml,, ,, {{{ ]]]` vào cuối nội dung Monaco, bấm "Lưu" | ✅ Alert "Lỗi lưu bundle: YAML không hợp lệ: ..." (`400 BUNDLE_INVALID_YAML`), checksum cả 2 tầng **không đổi** — không ghi gì khi YAML sai |
-
-### 🐛 Bug thật phát hiện và đã fix ngay trong vòng test này
-
-**`x-manual-edit-fields` tự tham chiếu chính nó khi diff.** Tái hiện: mở modal ở tab Form
-Editor, sửa lưu (marker ghi vào tầng 2+3), chuyển sang tab YAML thô **mà không
-đóng/mở lại modal** — tab này vẫn dùng `bundleContent` đã fetch từ lúc mở modal (trước
-khi marker mới tồn tại). Khi sửa tiếp 1 field khác ở tab này rồi Lưu, `diff_bundle` so
-`old_bundle` (trên đĩa, đã có marker) với `new_bundle` (bản stale, chưa có marker) →
-thấy 2 giá trị marker khác nhau → tự coi `x-manual-edit-fields` là "field user sửa" →
-ghi đè `None` rồi merge lại → marker tự liệt kê chính nó
-(`[description, x-manual-edit-fields]`). **Fix:** thêm `if key ==
-"x-manual-edit-fields": continue` vào đầu loop của `_diff_recursive`
-(`backend/bundle_sync.py`) — loại trừ marker khỏi diff vì nó là bookkeeping nội bộ,
-không phải field thật. Đã unit-test lại 2 case (marker lệch giữa old/new → 0 change;
-field thường vẫn diff đúng) + test lại qua UI thật (tab YAML thô với fetch mới, marker
-cộng dồn đúng `[description, responses[422].description]`, không tự tham chiếu nữa).
-
-### Phần 3 — AI-fix lưu ngay khi bấm "Áp dụng"
-
-| Test | Cách làm | Kết quả |
-|---|---|---|
-| Bấm "Áp dụng" patch AI-fix có lưu ngay không (không cần bấm "Lưu" riêng) | Tạo 1 lượt lỗi lint thật (license/contact/description thiếu...), bấm "AI tự fix lỗi" (26 patch), bấm "Áp dụng" | ✅ `PUT /docs/bundle-content` bắn ngay sau khi bấm Áp dụng (thấy trong Network tab), checksum bundle đổi ngay, không cần thêm hành động nào |
-| Marker + đồng bộ tầng 2 cho field schema (không phải operation) | Soi `5.openapi/components/schemas/common/UserInfo.yaml` sau khi AI-fix thêm `description` cho `properties.id`/`properties.name` | ✅ `sync_schema_fields` ghi đúng cả 2 field + marker `[properties.id.description, properties.name.description]` (dạng dot, không cần bracket vì `properties` không cần match đặc biệt như `parameters`/`responses` — đúng thiết kế generic, không phải thiếu sót) |
-
-### ⚠️ Finding chất lượng AI-fix (không phải bug cơ chế đồng bộ)
-
-Khi 1 lượt AI-fix sửa nhiều lỗi "thiếu description" cùng lúc cho **nhiều operation
-khác nhau** trong 1 batch, AI sinh description **chung chung/sai nghiệp vụ** cho 5
-operation (`createReopen` → "Lấy danh sách tài nguyên." dù đây là API mở lại ticket;
-tương tự sai cho `createChangeAssignee`, `createConversations`, `createFeedback`,
-`createRatings`). Khác với field schema ở Phần 3 (nội dung AI sinh đúng) — có vẻ do
-thiếu context riêng từng operation khi fix dồn nhiều lỗi 1 lượt. Đã revert cả 5 file về
-rỗng như gốc theo quyết định của user (nội dung sai còn tệ hơn để trống). **Chưa fix**
-— ghi nhận lại đây làm input cho việc cải thiện prompt của `backend/ai_fix.py` sau này,
-không thuộc phạm vi bug đồng bộ tầng 2/3 đang test.
-
-### Phần 4 — Duyệt conflict qua UI với marker generic
-
-| Test | Cách làm | Kết quả |
-|---|---|---|
-| Bấm "Giữ bản cũ" cho 1 conflict field tổng quát (`description`) | Bơm tay 1 entry vào `manual_edit_conflicts.json` (field `"description"` — format mới, không phải `"summary"`/`"description"` cố định như trước), reload trang, click "Giữ bản cũ" thật trên UI | ✅ `resolve_manual_edit_conflict` (đã refactor dùng `sync_operation_fields` thay vì loop tay) ghi đúng `old_value` vào cả tầng 2 + tầng 3, entry biến mất khỏi queue |
-
-### Dọn dẹp sau test
-
-- `5.openapi/paths/ticket/get_ticket.yaml`, `update_close.yaml` (gitignore) — khôi phục
-  tay về đúng nội dung gốc (description, `responses['422'].description`,
-  `parameters[].required`), xoá hết marker test.
-- `5.openapi/paths/ticket/create_reopen.yaml`, `create_change_assignee.yaml`,
-  `create_conversations.yaml`, `create_feedback.yaml`, `create_ratings.yaml`
-  (gitignore) — revert `description`/`parameters[].description` về rỗng như gốc (xem
-  finding chất lượng AI-fix ở trên), xoá marker.
-- `5.openapi/components/schemas/common/StandardSuccess.yaml`, `StandardError.yaml`,
-  `UserInfo.yaml` (tracked git) — **giữ lại** theo quyết định của user (nội dung AI sinh
-  đúng, fix đúng lint warning thật).
-- `dist/openapi-bundled.yaml` — build lại lần cuối (`npm run bundle:api`) sau khi dọn
-  xong layer 2, phản ánh đúng trạng thái sạch.
-- `3.build/reports/manual_edit_conflicts.json` — về `[]` sau khi resolve entry test.
-- Backend (`uvicorn`)/frontend (`next dev`) — tắt hẳn sau khi test xong (xác nhận lại
-  bằng `ss -ltnp` không còn process ở port 8000/3000).
-
-### ⚠️ Gap chưa đóng (kế thừa từ mục 6) — chưa test qua pipeline thật với version đổi thật
-
-Giống gap đã ghi nhận ở mục 6 (2026-06-26): nhánh "phát hiện conflict" (`_scan_manual_edits`/`_resolve_manual_edits_after_import`, nay ở `backend/manual_edit_conflicts.py`) vẫn chỉ được test bằng dữ liệu giả lập (Python script cách ly + bơm tay JSON), **chưa** chạy qua `run_batch()` thật với tài liệu nguồn (1.docs/) thật sự đổi version. Lần này user chủ động chọn cách test rẻ hơn (bơm conflict giả, test riêng nhánh duyệt qua UI) để tránh tốn token AI + tránh đụng dữ liệu ticket thật qua pipeline thật — không phải do quên, mà là quyết định đánh đổi có chủ ý. Gap này vẫn cần 1 trong 2 điều kiện nêu ở mục 6 mới test được (đổi nội dung doc nguồn thật, hoặc sửa `file_versions.json` để giả lập).
-
-**Kết luận:** Toàn bộ cơ chế đồng bộ tầng 2+3 (Form Editor, YAML thô, AI-fix, duyệt
-conflict) đã PASS qua UI thật với marker format mới (generic field-path). 1 bug thật
-phát hiện và fix ngay trong lúc test (`x-manual-edit-fields` tự tham chiếu). 1 finding
-về chất lượng AI-fix khi batch nhiều operation (không phải bug đồng bộ, đã xử lý bằng
-cách revert nội dung sai) — đáng cân nhắc cải thiện prompt AI-fix sau này. Gap về test
-version-đổi-thật vẫn còn mở, giống mục 6.
+| ID     | Mô tả                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Phát hiện qua                     | Mức độ                                                       | Trạng thái                                                                                                                                                                                       |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| DEF-01 | 2 lần backup trùng giây (`shutil.copytree()` gọi liên tiếp với cùng tên `backup_dir` dựa trên `strftime` giây) → lần 2 ném `FileExistsError`; code có `try/except` bọc quanh nên không crash job, nhưng **backup của lần import thứ 2 bị mất âm thầm**, chỉ log traceback ở backend, không cảnh báo user. Đề xuất fix: thêm microsecond/UUID vào tên folder backup                                                                                                                                                                                  | TC-SYNC-07 (2026-06-26 đợt 2)     | Nhẹ — edge case hiếm (2 import rất sát giây cho cùng module) | ❌ Chưa fix                                                                                                                                                                                       |
+| DEF-02 | Resolve "thành công giả": khi `operationId` trong 1 conflict entry không còn tồn tại ở bất kỳ đâu (bundle và tầng 2 đều không có, vd do AI sinh lại `operationId` khác sau lần import sau) — resolve `keep_old` trả `200 {"ok": true}` như thành công nhưng **không ghi gì vào đâu cả**, entry biến mất khỏi queue vĩnh viễn, mất luôn dữ liệu cũ không cách nào lấy lại từ UI. Đề xuất fix: trước khi xoá entry khỏi queue, kiểm tra có thực sự tìm thấy operation trong bundle hoặc tầng 2 không — nếu không, trả lỗi (404/410) thay vì `200` giả | TC-CONFLICT-07 (2026-06-26 đợt 2) | Trung bình — mất dữ liệu im lặng                             | ❌ Chưa fix                                                                                                                                                                                       |
+| DEF-03 | `x-manual-edit-fields` tự tham chiếu chính nó khi diff: sửa ở tab Form Editor (marker ghi tầng 2+3) → chuyển tab YAML thô **không** đóng/mở lại modal (bundle content cũ còn trong state) → sửa tiếp 1 field khác, Lưu → `diff_bundle` so `old_bundle` (đã có marker mới) với `new_bundle` (bản stale, chưa có marker) → coi marker là field user sửa → marker tự liệt kê chính nó                                                                                                                                                                  | TC-YAML-04 (2026-06-29)           | Trung bình — phá marker tracking                             | ✅ Đã fix (2026-06-29) — thêm `if key == "x-manual-edit-fields": continue` vào đầu loop `_diff_recursive` (`backend/services/bundle_sync.py`), loại trừ marker khỏi diff vì là bookkeeping nội bộ |
+| DEF-04 | Chất lượng AI-fix: khi 1 lượt fix nhiều lỗi "thiếu description" cùng lúc cho nhiều operation khác nhau trong 1 batch, AI sinh description chung chung/sai nghiệp vụ (vd `createReopen` → "Lấy danh sách tài nguyên." dù là API mở lại ticket; sai tương tự cho 4 operation khác). Khác với field schema (Phần A7/TC-AIFIX-02, nội dung AI sinh đúng) — do thiếu context riêng từng operation khi fix dồn 1 lượt                                                                                                                                     | TC-AIFIX-03 (2026-06-29)          | Chất lượng output AI, không phải bug logic                   | ⚠️ Đang xử lý — TC-AIFIX-04/05 (breadcrumb + parent context, 2026-06-30) là hướng fix, nhưng **chưa verify end-to-end** có thực sự giải quyết DEF-04 hay không (xem gap ở đợt 2026-06-30)         |

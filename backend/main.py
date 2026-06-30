@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv(Path(__file__).parent / ".env")
 
-import config  # noqa: F401 — side effect: inject 2.pipeline vào sys.path + init_emitter, phải chạy trước khi routers import từ pipeline
+from core import config  # noqa: F401 — side effect: inject 2.pipeline vào sys.path + init_emitter, phải chạy trước khi routers import từ pipeline
 
 from routers import health, modules, docs
 
