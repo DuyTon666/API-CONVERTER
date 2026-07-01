@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Literal
 
 from core.config import OUTPUT_DIR
-from utils.field_paths import PathSegment, format_path, set_value_at_path
+from api_utils.field_paths import PathSegment, format_path, set_value_at_path
 
 
 # Set các key hợp lệ trong 1 path item của OpenAPI — dùng để lọc bỏ key khác

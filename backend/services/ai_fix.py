@@ -1,5 +1,5 @@
 from core.errors import ErrorCode, http_error
-from utils.yaml_line import indent_of, extract_key, find_block_end
+from api_utils.yaml_line import indent_of, extract_key, find_block_end
 
 
 # Parse XML từ `redocly lint --format checkstyle` thành list dict {ruleId, message, line, column}

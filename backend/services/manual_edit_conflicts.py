@@ -4,7 +4,7 @@ from pathlib import Path
 
 from core.config import DIST_DIR
 from core.errors import ErrorCode, http_error
-from utils.field_paths import get_value_at_path
+from api_utils.field_paths import get_value_at_path
 
 
 # Set các key hợp lệ trong 1 path item của OpenAPI — bản riêng cho
