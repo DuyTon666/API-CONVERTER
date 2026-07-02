@@ -4,11 +4,11 @@ properties:
     type: integer
     example: 123
     readOnly: true
-    description: ID định danh duy nhất của người dùng.
+    description: ID của người dùng
   name:
     type: string
     example: Nguyen Van A
-    description: Tên hiển thị của người dùng.
+    description: Tên đầy đủ của người dùng
   mgroup:
     type: string
     description: >
@@ -20,5 +20,8 @@ properties:
     enum: ['1', '2', '3', '4']
     example: '1'
 x-manual-edit-fields:
+  - description
   - properties.id.description
   - properties.name.description
+description: Thông tin người dùng — có thể là null nếu không xác định được người
+  dùng

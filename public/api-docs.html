@@ -86,9 +86,11 @@ info:
   version: 1.0.0
   license:
     name: API
+    url: https://pavietnam.vn
   description: API cho hệ thống ticket hỗ trợ khách hàng
   contact:
     name: PA Vietnam
+    url: https://pavietnam.vn
     email: dev@pavietnam.vn
 servers:
   - url: https://apigateway.pavietnam.vn
@@ -96,117 +98,626 @@ servers:
 security:
   - bearerAuth: []
 tags:
-  - name: Ticket
-    description: Các API liên quan đến ticket hỗ trợ khách hàng
   - name: Account
     description: Các API liên quan đến tài khoản
+  - name: Department
+    description: Các API liên quan đến phòng ban
+  - name: Order
+    description: Các API liên quan đến đơn hàng
+  - name: Service
+    description: Các API liên quan đến dịch vụ
+  - name: Statistic
+    description: Các API liên quan đến thống kê
+  - name: Ticket
+    description: Các API liên quan đến ticket hỗ trợ khách hàng
 paths:
-  /v1/users/{user_id}/tickets:
-    summary: Tạo ticket mới cho người dùng
-    operationId: createTickets
-    description: ''
-    tags:
-      - Ticket
-    security:
-      - bearerAuth: []
-    x-permission: CHECK_NEWUPDATE
-    parameters:
-      - name: user_id
-        in: path
-        required: true
-        schema:
-          type: string
-    responses:
-      '200':
-        description: Thành công
-        content:
-          application/json:
-            schema:
-              \$ref: ../../components/schemas/common/StandardSuccess.yaml
-            example:
-              success: true
-              data: null
-              error: null
-      '400':
-        \$ref: ../../components/responses/BadRequest.yaml
-      '401':
-        \$ref: ../../components/responses/Unauthorized.yaml
-      '403':
-        \$ref: ../../components/responses/Forbidden.yaml
-      '404':
-        \$ref: ../../components/responses/NotFound.yaml
-      '422':
-        description: |-
-          4200 — Dữ liệu request không hợp lệ
-          4462 — Tạo yêu cầu thất bại
-        content:
-          application/json:
-            schema:
-              \$ref: ../../components/schemas/common/StandardError.yaml
-      '500':
-        \$ref: ../../components/responses/InternalError.yaml
-    requestBody:
-      required: true
-      content:
-        multipart/form-data:
-          schema:
-            \$ref: ../../components/schemas/ticket/CreateTicketsRequest.yaml
-  /v1/users/{user_id}/tickets/{id}:
+  /v1/departments:
     get:
-      summary: API Contract - API hiển thị chi tiết ticket cho khách hàng.docx
-      operationId: getTicket
-      description: API này cho phép lấy thông tin chi tiết của một ticket cụ thể thuộc về người dùng. Kết quả trả về bao gồm toàn bộ thông tin liên quan đến ticket được yêu cầu.
+      summary: Lấy danh sách phòng ban gửi ticket
+      operationId: getDepartmentList
+      description: API trả về danh sách các phòng ban có quyền gửi ticket trong hệ thống. Dữ liệu được sử dụng để hiển thị lựa chọn phòng ban khi người dùng tạo hoặc lọc ticket.
       tags:
-        - Ticket
+        - Department
       security:
         - bearerAuth: []
-      x-permission: CHECK_NEWUPDATE
+      x-permission: ""
       parameters:
-        - name: user_id
-          in: path
-          required: true
+        - name: support_company
+          in: query
+          required: false
           schema:
             type: string
-          description: Mã định danh duy nhất của người dùng sở hữu ticket.
+          description: "Các giá trị hợp lệ:"
         - name: id
-          in: path
-          required: true
+          in: query
+          required: false
+          description: Id phòng ban
+          schema:
+            type: integer
+        - name: title
+          in: query
+          required: false
+          description: Tiêu đề phòng ban
           schema:
             type: string
-          description: Mã định danh duy nhất của ticket cần lấy thông tin chi tiết.
+            default: Tiêu đề
+        - name: name
+          in: query
+          required: false
+          description: Tên phòng ban
+          schema:
+            type: string
+            default: Tên phòng ban
+        - name: comment
+          in: query
+          required: false
+          description: Mô tả/ ghi chú của phòng ban
+          schema:
+            type: string
+            default: Mô tả/ ghi chú của phòng ban
       responses:
-        '200':
+        "200":
           description: Thành công
           content:
             application/json:
               schema:
                 allOf:
-                  - \$ref: '#/components/schemas/StandardSuccess'
+                  - \$ref: "#/components/schemas/StandardSuccess"
                   - type: object
                     properties:
                       data:
-                        \$ref: '#/components/schemas/GetTicketData'
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
-          description: '422'
+                        \$ref: "#/components/schemas/GetDepartmentListData"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+  /v1/orders/{id}/certificates/{certId}/download:
+    get:
+      summary: Tải xuống chứng chỉ của đơn hàng
+      operationId: downloadOrderCertificate
+      description: Tải xuống tệp chứng chỉ theo ID đơn hàng và ID chứng chỉ tương ứng. Yêu cầu đơn hàng phải tồn tại và chứng chỉ phải được cấp phát hợp lệ trước khi thực hiện tải xuống.
+      tags:
+        - Order
+      security:
+        - bearerAuth: []
+      x-permission: ""
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID của đơn hàng
+          schema:
+            type: integer
+        - name: certId
+          in: path
+          required: true
+          description: ID của chứng chỉ thuộc đơn hàng
+          schema:
+            type: integer
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            default: zip
+            description: "Định dạng file tải xuống: zip (default) — trả file ZIP; json — trả JSON với PEM strings."
+            enum:
+              - zip
+              - json
+          description: zip (default) — trả file ZIP. json — trả JSON với PEM strings.
+        - \$ref: "#/components/parameters/IdempotencyKey"
+        - \$ref: "#/components/parameters/XRequestId"
+        - \$ref: "#/components/parameters/XClientId"
+      responses:
+        "200":
+          description: Thành công
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
-  /v1/users/{user_id}/tickets/{id}/close:
-    put:
-      summary: API Contract - API đóng ticket của khách hàng.docx
-      operationId: updateClose
-      description: API này cho phép đóng một ticket cụ thể của khách hàng. Thao tác sẽ cập nhật trạng thái ticket sang trạng thái đã đóng.
+                allOf:
+                  - \$ref: "#/components/schemas/StandardSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        \$ref: "#/components/schemas/DownloadOrderCertificateData"
+            application/zip:
+              schema:
+                \$ref: "#/components/schemas/BinaryFile"
+          headers:
+            Cache-Control:
+              \$ref: "#/components/headers/CacheControl"
+            Content-Disposition:
+              \$ref: "#/components/headers/ContentDisposition"
+            X-Content-Type-Options:
+              \$ref: "#/components/headers/XContentTypeOptions"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "409":
+          \$ref: "#/components/responses/Conflict"
+        "422":
+          \$ref: "#/components/responses/StandardError422"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+      x-error-responses:
+        "401":
+          - code: 4101
+            category: Auth
+            message: Thiếu Authorization header
+          - code: 4102
+            category: Auth
+            message: Bearer Token không hợp lệ / hết hạn
+        "403":
+          - code: 4103
+            category: Auth
+            message: Client không có scope=admin
+          - code: 4108
+            category: Auth
+            message: IP không được phép
+        "404":
+          - code: 4001
+            category: Not Found
+            message: Order không tồn tại, hoặc certificate không thuộc order này
+        "409":
+          - code: 4090
+            category: Idempotency
+            message: Idempotency-Key đang xử lý (concurrent)
+          - code: 4091
+            category: Idempotency
+            message: Double submit — payload trùng trong dedup window
+        "422":
+          - code: 4200
+            category: Input
+            message: Dữ liệu request không hợp lệ (validate chung)
+          - code: 4301
+            category: State
+            message: Certificate không ở trạng thái ISSUED — không thể download (SUPERSEDED, REVOKED, EXPIRED, REISSUE_QUEUED...)
+          - code: 4302
+            category: State
+            message: certificate_pem rỗng — cert chưa được cấp hoàn chỉnh (provider chưa trả về PEM)
+  /v1/services/types:
+    get:
+      summary: Lấy danh sách các loại dịch vụ hỗ trợ
+      operationId: getServiceTypes
+      description: API trả về danh sách tất cả các loại dịch vụ hiện có trong hệ thống support, phục vụ cho việc phân loại và định tuyến yêu cầu hỗ trợ của khách hàng. Chỉ các loại dịch vụ đang hoạt động và được kích hoạt mới được trả về trong kết quả.
+      tags:
+        - Service
+      security:
+        - bearerAuth: []
+      x-permission: ""
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+          description: Không truyền sẽ trả về tất cả loại dịch vụ
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardSuccess"
+              example:
+                success: true
+                data: null
+                error: null
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+  /v1/users/{user_id}/services:
+    get:
+      summary: Lấy danh sách dịch vụ của khách hàng
+      operationId: getUserServices
+      description: API trả về danh sách tất cả các dịch vụ đang được đăng ký bởi một khách hàng cụ thể dựa trên user_id. Chỉ các dịch vụ thuộc về khách hàng hợp lệ và đang hoạt động trong hệ thống mới được trả về.
+      tags:
+        - Service
+      security:
+        - bearerAuth: []
+      x-permission: "null"
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của khách hàng
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Số thứ tự trang muốn hiển thị
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Tổng số dịch vụ muốn hiển thị trên một trang
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Nội dung cần tìm kiếm
+        - name: type_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Id loại dịch vụ
+        - name: expired_before
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Số ngày sắp hết hạn
+        - name: auto_renew
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: "Trạng thái tự động gia hạn (0: không, 1: có)"
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Trạng thái của dịch vụ
+        - name: domain_protected
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: "Trạng thái bảo vệ tên miền (0: không, 1: có)"
+        - name: owner_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Tìm kiếm theo tên chủ thể (tìm kiếm chính xác)
+        - name: owner_email
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Tìm kiếm theo email chủ thể (tìm kiếm chính xác)
+        - name: owner_phone
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Tìm kiếm theo số điện thoại chủ thể (tìm kiếm chính
+        - name: service_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Tìm kiếm theo tên dịch gói vụ (tìm kiếm chính xác)
+        - name: expired_date_from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Tìm kiếm theo bắt đầu ngày hết hạn (Y-m-d)
+        - name: expired_date_to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Tìm kiếm theo kết thúc ngày hết hạn (Y-m-d)
+        - name: register_date_from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Tìm kiếm theo bắt đầu ngày đăng ký (Y-m-d)
+        - name: register_date_to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Tìm kiếm theo kết thúc ngày đăng ký (Y-m-d)
+        - name: extended_fields
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Các field mở rộng để trả data các cột tương ứng,
+        - name: temporary_service
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: "1: Lấy danh sách mở tạm dịch vụ"
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - \$ref: "#/components/schemas/StandardSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        \$ref: "#/components/schemas/GetUserServicesData"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          \$ref: "#/components/responses/StandardError422"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+  /v1/services/{service_id}/temporary-open:
+    post:
+      summary: Mở tạm thời dịch vụ theo ID
+      operationId: temporaryOpenService
+      description: API cho phép mở tạm thời một dịch vụ đang bị tạm ngừng hoặc đóng, dựa trên service_id được cung cấp. Chỉ áp dụng cho các dịch vụ hợp lệ và đang ở trạng thái cho phép mở tạm thời theo quy định nghiệp vụ.
+      tags:
+        - Service
+      security:
+        - bearerAuth: []
+      x-permission: "null"
+      parameters:
+        - name: service_id
+          in: path
+          required: true
+          description: ID của dịch vụ cần mở tạm thời
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - \$ref: "#/components/schemas/StandardSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        \$ref: "#/components/schemas/TemporaryOpenServiceData"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          \$ref: "#/components/responses/StandardError422"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              \$ref: "#/components/schemas/TemporaryOpenServiceRequest"
+  /v1/users/{user_id}/services/{id}/upgrade-plans:
+    get:
+      summary: Lấy danh sách gói nâng cấp của dịch vụ
+      operationId: getServiceUpgradePlans
+      description: API trả về danh sách các gói nâng cấp khả dụng cho một dịch vụ cụ thể của người dùng. Chỉ các dịch vụ đang hoạt động và thuộc sở hữu của user_id hợp lệ mới được phép truy vấn danh sách gói nâng cấp.
+      tags:
+        - Service
+      security:
+        - bearerAuth: []
+      x-permission: CHECK_UPDATE
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của khách hàng
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: ID của dịch vụ cần truy vấn gói nâng cấp
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardSuccess"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          \$ref: "#/components/responses/StandardError422"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+  /v1/users/{user_id}/services/{id}/request-upgrade-plans:
+    get:
+      summary: Tạo yêu cầu nâng cấp dịch vụ người dùng
+      operationId: requestUpgradeServicePlan
+      description: API cho phép người dùng tạo yêu cầu nâng cấp gói dịch vụ hiện tại lên gói cao hơn. Yêu cầu nâng cấp chỉ được thực hiện khi dịch vụ đang hoạt động và người dùng có quyền truy cập hợp lệ.
+      tags:
+        - Service
+      security:
+        - bearerAuth: []
+      x-permission: CHECK_UPDATE
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của khách hàng
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: ID của dịch vụ cần tạo yêu cầu nâng cấp
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - \$ref: "#/components/schemas/StandardSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        \$ref: "#/components/schemas/RequestUpgradeServicePlanData"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          \$ref: "#/components/responses/StandardError422"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+  /v1/users/{user_id}/services/{id}/change-password:
+    post:
+      summary: Đổi mật khẩu dịch vụ của người dùng
+      operationId: changeServicePassword
+      description: API cho phép thay đổi mật khẩu của một dịch vụ cụ thể thuộc về người dùng. Người dùng cần cung cấp đúng thông tin xác thực và mật khẩu mới phải tuân theo các quy tắc bảo mật được quy định.
+      tags:
+        - Service
+      security:
+        - bearerAuth: []
+      x-permission: CHECK_UPDATE
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của khách hàng
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: ID của dịch vụ cần đổi mật khẩu
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardSuccess"
+              example:
+                success: true
+                data: null
+                error: null
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          \$ref: "#/components/responses/StandardError422"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              \$ref: "#/components/schemas/ChangeServicePasswordRequest"
+  /v1/users/{user_id}/statistics:
+    get:
+      summary: Lấy thống kê tổng quan cho khách hàng
+      operationId: getUserStatistics
+      description: API trả về dữ liệu thống kê tổng quan dành cho trang dashboard của khách hàng, bao gồm các chỉ số kinh doanh quan trọng. Chỉ người dùng có quyền hợp lệ mới được phép truy cập thông tin thống kê theo từng user_id cụ thể.
+      tags:
+        - Statistic
+      security:
+        - bearerAuth: []
+      x-permission: CHECK_UPDATE
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của khách hàng cần lấy thống kê
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - \$ref: "#/components/schemas/StandardSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        \$ref: "#/components/schemas/GetUserStatisticsData"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+  /v1/users/{user_id}/tickets/{id}/change-assignee:
+    post:
+      summary: Yêu cầu đổi nhân viên hỗ trợ ticket
+      operationId: changeTicketAssignee
+      description: API cho phép người dùng gửi yêu cầu thay đổi nhân viên hỗ trợ (assignee) cho một ticket cụ thể. Yêu cầu chỉ được thực hiện khi ticket đang ở trạng thái mở và người dùng có quyền thực hiện thay đổi trên ticket đó.
       tags:
         - Ticket
       security:
@@ -216,50 +727,55 @@ paths:
         - name: user_id
           in: path
           required: true
+          description: ID của khách hàng
           schema:
             type: string
-          description: ID định danh duy nhất của người dùng (khách hàng) sở hữu ticket.
         - name: id
           in: path
           required: true
+          description: ID của ticket cần đổi nhân viên hỗ trợ
           schema:
             type: string
-          description: ID định danh duy nhất của ticket cần được đóng.
       responses:
-        '200':
+        "200":
           description: Thành công
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardSuccess'
+                \$ref: "#/components/schemas/StandardSuccess"
               example:
                 success: true
                 data: null
                 error: null
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
           description: |-
             4200 — Dữ liệu request không hợp lệ
-            4463 — Tạo phản hồi thất bại
-            4464 — Câu hỏi đã đóng
+            4468 — Đang chờ nhân viên tiếp nhận
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
-  /v1/users/{user_id}/tickets/{id}/reopen:
-    post:
-      summary: API Contract - API mở lại ticket của khách hàng.docx
-      operationId: createReopen
-      description: ''
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              \$ref: "#/components/schemas/ChangeTicketAssigneeRequest"
+  /v1/users/{user_id}/tickets/{id}:
+    get:
+      summary: Hiển thị chi tiết ticket của khách hàng
+      operationId: getUserTicketDetail
+      description: API cho phép khách hàng xem thông tin chi tiết của một ticket cụ thể dựa trên ID người dùng và ID ticket. Khách hàng chỉ có thể truy cập ticket thuộc về tài khoản của mình, không thể xem ticket của người dùng khác.
       tags:
         - Ticket
       security:
@@ -269,33 +785,86 @@ paths:
         - name: user_id
           in: path
           required: true
+          description: ID của khách hàng
           schema:
             type: string
         - name: id
           in: path
           required: true
+          description: ID của ticket cần xem chi tiết
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Thành công
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardSuccess'
+                allOf:
+                  - \$ref: "#/components/schemas/StandardSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        \$ref: "#/components/schemas/GetUserTicketDetailData"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+  /v1/users/{user_id}/tickets/{id}/reopen:
+    post:
+      summary: Mở lại ticket đã đóng của khách hàng
+      operationId: reopenUserTicket
+      description: API cho phép mở lại ticket đã đóng hoặc đã giải quyết của khách hàng. Ticket phải ở trạng thái đóng trước khi thực hiện thao tác mở lại, và người dùng phải có quyền truy cập vào ticket tương ứng.
+      tags:
+        - Ticket
+      security:
+        - bearerAuth: []
+      x-permission: CHECK_NEWUPDATE
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của khách hàng
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: ID của ticket cần mở lại
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardSuccess"
               example:
                 success: true
                 data: null
                 error: null
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
           description: |-
             4200 — Dữ liệu request không hợp lệ
             4466 — Quá thời hạn cho phép mở lại
@@ -303,20 +872,20 @@ paths:
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
       requestBody:
         required: false
         content:
           multipart/form-data:
             schema:
-              \$ref: '#/components/schemas/CreateReopenRequest'
+              \$ref: "#/components/schemas/ReopenUserTicketRequest"
   /v1/users/{user_id}/tickets/{id}/conversations:
     post:
-      summary: API Contract - API phản hồi ticket
-      operationId: createConversations
-      description: ''
+      summary: Tạo phản hồi ticket cho khách hàng
+      operationId: createTicketConversation
+      description: API cho phép tạo phản hồi mới trong ticket hỗ trợ của khách hàng. Chỉ người dùng có quyền truy cập ticket mới có thể thêm phản hồi vào cuộc hội thoại.
       tags:
         - Ticket
       security:
@@ -326,34 +895,36 @@ paths:
         - name: user_id
           in: path
           required: true
+          description: ID của khách hàng
           schema:
             type: string
         - name: id
           in: path
           required: true
+          description: ID của ticket cần tạo phản hồi
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Thành công
           content:
             application/json:
               schema:
                 allOf:
-                  - \$ref: '#/components/schemas/StandardSuccess'
+                  - \$ref: "#/components/schemas/StandardSuccess"
                   - type: object
                     properties:
                       data:
-                        \$ref: '#/components/schemas/CreateConversationsData'
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
+                        \$ref: "#/components/schemas/CreateTicketConversationData"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
           description: |-
             4200 — Dữ liệu request không hợp lệ
             4463 — Tạo phản hồi thất bại
@@ -361,20 +932,14 @@ paths:
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              \$ref: '#/components/schemas/CreateConversationsRequest'
-  /v1/users/{user_id}/tickets/{ticket_id}/ratings:
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+  /v1/users/{user_id}/tickets/{id}/feedback:
     post:
-      summary: API Contract - Tạo rating ticket cho khách hàng.docx
-      operationId: createRatings
-      description: ''
+      summary: Tiếp nhận phản ánh góp ý của khách hàng
+      operationId: submitTicketFeedback
+      description: API cho phép khách hàng gửi phản ánh hoặc góp ý liên quan đến một ticket cụ thể sau khi được xử lý. Chỉ áp dụng cho ticket thuộc về đúng người dùng tương ứng với user_id được cung cấp.
       tags:
         - Ticket
       security:
@@ -384,33 +949,306 @@ paths:
         - name: user_id
           in: path
           required: true
+          description: ID của khách hàng
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: ID của ticket cần gửi phản ánh góp ý
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardSuccess"
+              example:
+                success: true
+                data: null
+                error: null
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              \$ref: "#/components/schemas/SubmitTicketFeedbackRequest"
+  /v1/users/{user_id}/tickets:
+    post:
+      summary: Tạo ticket hỗ trợ cho khách hàng
+      operationId: createUserTicket
+      description: Tạo một ticket hỗ trợ mới cho khách hàng dựa trên user_id được cung cấp. Yêu cầu thông tin hợp lệ và khách hàng phải tồn tại trong hệ thống trước khi tạo ticket.
+      tags:
+        - Ticket
+      security:
+        - bearerAuth: []
+      x-permission: CHECK_NEWUPDATE
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của khách hàng cần tạo ticket
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardSuccess"
+              example:
+                success: true
+                data: null
+                error: null
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          description: |-
+            4200 — Dữ liệu request không hợp lệ
+            4462 — Tạo yêu cầu thất bại
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              \$ref: "#/components/schemas/CreateUserTicketRequest"
+    get:
+      summary: Lấy danh sách ticket của khách hàng
+      operationId: listUserTickets
+      description: API cho phép lấy danh sách tất cả ticket thuộc về một khách hàng cụ thể dựa trên user_id. Chỉ khách hàng sở hữu hoặc nhân viên có quyền mới được phép xem danh sách ticket này.
+      tags:
+        - Ticket
+      security:
+        - bearerAuth: []
+      x-permission: CHECK_UPDATE
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của khách hàng cần lấy danh sách ticket
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Số thứ tự trang muốn hiển thị
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Tổng số ticket muốn hiển thị trên một trang
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            description: "Tìm kiếm theo trạng thái: CREATED — Mới tạo; IN_PROGRESS — Đang xử lý; PENDING — Chờ phản hồi; CLOSED — Đóng"
+            enum:
+              - CREATED
+              - IN_PROGRESS
+              - PENDING
+              - CLOSED
+          description: "Tìm kiếm theo trạng thái:CREATED: Mới tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng"
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          description: "Nội dung cần tìm kiếm- Tìm kiếm theo: Mã ticket, tiêu đề.- Tối thiểu 4 ký tự"
+        - name: date_from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Tìm kiếm từ ngày (Y-m-d H:i:s)- date_to>=data_from
+        - name: date_to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Tìm kiếm đến ngày (Y-m-d H:i:s)- date_to>=data_from
+        - name: sort_type
+          in: query
+          required: false
+          schema:
+            type: string
+            description: "Kiểu sắp xếp: LAST_UPDATED_DESC — Ngày cập nhật giảm dần; CREATED_DATE_DESC — Ngày tạo giảm dần"
+            enum:
+              - LAST_UPDATED_DESC
+              - CREATED_DATE_DESC
+          description: "Kiểu sắp xếp:LAST_UPDATED_DESC:Ngày cập nhật giảm dầnCREATED_DATE_DESC: Ngày tạo giảm dần"
+        - name: post_by
+          in: query
+          required: false
+          schema:
+            type: string
+            description: "Người tạo ticket: USER — user hiện tại (khách hàng); SYSTEM — hệ thống"
+            enum:
+              - USER
+              - SYSTEM
+          description: "Người tạo ticketUSER: user hiện tại (khách hàng)SYSTEM: hệ thống"
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - \$ref: "#/components/schemas/StandardSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        \$ref: "#/components/schemas/ListUserTicketsData"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          description: 4200 — Dữ liệu request không hợp lệ
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+  /v1/users/{user_id}/tickets/{id}/close:
+    put:
+      summary: Đóng ticket hỗ trợ của khách hàng
+      operationId: closeUserTicket
+      description: API cho phép đóng ticket hỗ trợ của khách hàng dựa trên user_id và ticket id tương ứng. Chỉ ticket đang hoạt động mới có thể được đóng, ticket đã đóng hoặc không tồn tại sẽ trả về lỗi.
+      tags:
+        - Ticket
+      security:
+        - bearerAuth: []
+      x-permission: CHECK_NEWUPDATE
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của khách hàng
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: ID của ticket cần đóng
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardSuccess"
+              example:
+                success: true
+                data: null
+                error: null
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
+          description: |-
+            4200 — Dữ liệu request không hợp lệ
+            4463 — Tạo phản hồi thất bại
+            4464 — Câu hỏi đã đóng
+          content:
+            application/json:
+              schema:
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
+  /v1/users/{user_id}/tickets/{ticket_id}/ratings:
+    post:
+      summary: Tạo đánh giá cho ticket của khách hàng
+      operationId: createTicketRating
+      description: API cho phép khách hàng tạo đánh giá (rating) cho một ticket hỗ trợ cụ thể sau khi ticket đã được xử lý. Mỗi ticket chỉ được phép đánh giá một lần và phải thuộc về đúng người dùng tương ứng với user_id được cung cấp.
+      tags:
+        - Ticket
+      security:
+        - bearerAuth: []
+      x-permission: CHECK_NEWUPDATE
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của khách hàng
           schema:
             type: string
         - name: ticket_id
           in: path
           required: true
+          description: ID của ticket cần tạo đánh giá
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Thành công
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardSuccess'
+                \$ref: "#/components/schemas/StandardSuccess"
               example:
                 success: true
                 data: null
                 error: null
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
           description: |-
             4200 — Dữ liệu request không hợp lệ
             4462 — Tạo yêu cầu thất bại
@@ -418,20 +1256,20 @@ paths:
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              \$ref: '#/components/schemas/CreateRatingsRequest'
-  /v1/users/{user_id}/tickets/{id}/feedback:
+              \$ref: "#/components/schemas/CreateTicketRatingRequest"
+  /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
     post:
-      summary: API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx
-      operationId: createFeedback
-      description: ''
+      summary: Chỉnh sửa feedback ticket của khách hàng
+      operationId: updateTicketFeedback
+      description: API cho phép chỉnh sửa thông tin feedback của một ticket cụ thể thuộc về người dùng. Chỉ người dùng sở hữu ticket mới có quyền cập nhật feedback tương ứng theo ID được chỉ định.
       tags:
         - Ticket
       security:
@@ -441,51 +1279,59 @@ paths:
         - name: user_id
           in: path
           required: true
+          description: ID của khách hàng
+          schema:
+            type: string
+        - name: ticket_id
+          in: path
+          required: true
+          description: ID của ticket chứa feedback cần chỉnh sửa
           schema:
             type: string
         - name: id
           in: path
           required: true
+          description: ID của feedback cần chỉnh sửa
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Thành công
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardSuccess'
+                \$ref: "#/components/schemas/StandardSuccess"
               example:
                 success: true
                 data: null
                 error: null
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
           description: 4200 — Dữ liệu request không hợp lệ
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              \$ref: '#/components/schemas/CreateFeedbackRequest'
-  /v1/users/{user_id}/tickets/{id}/change-assignee:
-    post:
-      summary: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx
-      operationId: createChangeAssignee
-      description: ''
+              \$ref: "#/components/schemas/UpdateTicketFeedbackRequest"
+  /v1/users/{user_id}/tickets/{id}/support-staffs:
+    get:
+      summary: Lấy danh sách nhân viên hỗ trợ ticket
+      operationId: getSupportStaffsByTicket
+      description: API trả về danh sách nhân viên hỗ trợ cho một ticket cụ thể của người dùng. Chỉ người dùng sở hữu ticket mới có quyền xem danh sách nhân viên hỗ trợ tương ứng.
       tags:
         - Ticket
       security:
@@ -495,46 +1341,45 @@ paths:
         - name: user_id
           in: path
           required: true
+          description: ID của khách hàng
           schema:
             type: string
         - name: id
           in: path
           required: true
+          description: ID của ticket cần lấy danh sách nhân viên hỗ trợ
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Thành công
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardSuccess'
-              example:
-                success: true
-                data: null
-                error: null
-        '400':
-          \$ref: '#/components/responses/BadRequest'
-        '401':
-          \$ref: '#/components/responses/Unauthorized'
-        '403':
-          \$ref: '#/components/responses/Forbidden'
-        '404':
-          \$ref: '#/components/responses/NotFound'
-        '422':
+                allOf:
+                  - \$ref: "#/components/schemas/StandardSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          \$ref: "#/components/schemas/GetSupportStaffsByTicketDataList"
+        "400":
+          \$ref: "#/components/responses/BadRequest"
+        "401":
+          \$ref: "#/components/responses/Unauthorized"
+        "403":
+          \$ref: "#/components/responses/Forbidden"
+        "404":
+          \$ref: "#/components/responses/NotFound"
+        "422":
           description: 4200 — Dữ liệu request không hợp lệ
           content:
             application/json:
               schema:
-                \$ref: '#/components/schemas/StandardError'
-        '500':
-          \$ref: '#/components/responses/InternalError'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              \$ref: '#/components/schemas/CreateChangeAssigneeRequest'
+                \$ref: "#/components/schemas/StandardError"
+        "500":
+          \$ref: "#/components/responses/InternalError"
 components:
   securitySchemes:
     bearerAuth:
@@ -551,46 +1396,206 @@ components:
       properties:
         success:
           type: boolean
+          description: Trạng thái xử lý của request — true nếu thành công
           example: true
-          description: Trạng thái thành công của request.
         error:
           type:
-            - 'null'
+            - "null"
+          description: Thông tin lỗi — null khi request thành công
           example: null
-          description: Thông tin lỗi, null khi thành công.
         data:
           description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
-      x-manual-edit-fields:
-        - properties.error.description
-        - properties.success.description
-    UserInfo:
-      type:
-        - object
-        - 'null'
+    GetDepartmentListData:
+      type: object
       properties:
         id:
           type: integer
-          example: 123
+          description: Id phòng ban
           readOnly: true
-          description: ID định danh duy nhất của người dùng.
+        title:
+          type: string
+          description: Tiêu đề
         name:
           type: string
+          description: Tên phòng ban
+        comment:
+          type: string
+          description: Mô tả/ ghi chú của phòng ban
+    StandardError:
+      type: object
+      description: Standard error response wrapper.
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          description: Trạng thái xử lý của request — luôn là false khi có lỗi
+          const: false
+          example: false
+        error:
+          type: object
+          description: Thông tin chi tiết về lỗi xảy ra
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: integer
+              description: Internal application error code.
+              example: 4200
+            message:
+              type: string
+              description: Human-readable error message.
+              example: Dữ liệu không hợp lệ
+            data:
+              type:
+                - object
+                - "null"
+              description: Optional error detail payload.
+    DownloadOrderCertificateData:
+      type: object
+      description: Dữ liệu chứng chỉ SSL dưới dạng chuỗi PEM (chỉ trả về khi format=json)
+      properties:
+        certificate_pem:
+          type: string
+          description: Chứng chỉ SSL cuối (end-entity certificate) dưới dạng PEM (nội dung của certificates.certificate_pem)
+        intermediate_pem:
+          type: string
+          description: Chứng chỉ Intermediate CA dưới dạng PEM (có thể rỗng nếu không có)
+        root_pem:
+          type: string
+          description: Chứng chỉ Root CA dưới dạng PEM (có thể rỗng nếu không có)
+        has_private_key:
+          type: boolean
+          description: Cho biết hệ thống có lưu private key (private_key_enc) của chứng chỉ này hay không. Private key không được trả về trực tiếp trong JSON — dùng format=zip để tải về file private.key đã giải mã
+      required:
+        - certificate_pem
+        - intermediate_pem
+        - root_pem
+        - has_private_key
+    BinaryFile:
+      type: string
+      format: binary
+      description: Binary file response.
+    GetUserServicesData:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          description: Số thứ tự trang hiện tại
+        next_page_url:
+          type: string
+          description: Link đến trang tiếp theo
+        prev_page_url:
+          type: string
+          description: Link đến trang trước
+        first_page_url:
+          type: string
+          description: Link đến trang đầu tiên
+        per_page:
+          type: integer
+          description: Số record mỗi trang
+        from:
+          type: integer
+          description: Số thứ tự bắt đầu
+        to:
+          type: integer
+          description: Số thứ tự kết thúc
+        data:
+          type: array
+          items:
+            type: object
+          description: Danh sách các dịch vụ
+    TemporaryOpenServiceRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          description: Lý do cần mở tạm
+    TemporaryOpenServiceData:
+      type: object
+      properties:
+        temp_open_day:
+          type: integer
+          description: Số ngày được mở tạm
+        temp_expired_date:
+          type: string
+          description: Ngày hết hạn tạm
+    RequestUpgradeServicePlanData:
+      type: object
+      properties:
+        pin:
+          type: string
+          description: Mã đơn hàng.
+        send_email_list:
+          type: string
+          description: Danh sách email đã gửi thông tin đơn hàng (mỗi email
+        upgrade_link:
+          type: string
+          description: Đường dẫn đến trang nâng cấp.
+    ChangeServicePasswordRequest:
+      type: object
+      properties:
+        new_password:
+          type: string
+          description: Mật khẩu mới
+        new_password_confirmation:
+          type: string
+          description: Nhập lại mật khẩu mới
+      required:
+        - new_password
+        - new_password_confirmation
+    GetUserStatisticsData:
+      type: object
+      properties:
+        incomplete_profiles:
+          type: integer
+          description: Số hồ sơ chưa hoàn thành.
+        unpaid_orders:
+          type: integer
+          description: Số đơn hàng chờ thanh toán
+        expiring_soon_services:
+          type: integer
+          description: Số dịch vụ sắp hết hạn (30 ngày trước khi hết hạn)
+        expiried_services:
+          type: integer
+          description: Số dịch vụ đã hết hạn
+    ChangeTicketAssigneeRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          maxLength: 4000
+          description: Lý do từ chối.Tối đa 4000 ký tự.
+      required:
+        - reason
+    UserInfo:
+      type:
+        - object
+        - "null"
+      description: Thông tin người dùng — có thể là null nếu không xác định được người dùng
+      properties:
+        id:
+          type: integer
+          description: ID của người dùng
+          example: 123
+          readOnly: true
+        name:
+          type: string
+          description: Tên đầy đủ của người dùng
           example: Nguyen Van A
-          description: Tên hiển thị của người dùng.
         mgroup:
           type: string
           description: |
             Phân loại người dùng: 1 = Khách hàng PA, 2 = Đại lý / tài khoản trả trước, 3 = Nhân viên, 4 = Khách hàng đại lý
           enum:
-            - '1'
-            - '2'
-            - '3'
-            - '4'
-          example: '1'
-      x-manual-edit-fields:
-        - properties.id.description
-        - properties.name.description
-    GetTicketDataConversations:
+            - "1"
+            - "2"
+            - "3"
+            - "4"
+          example: "1"
+    GetUserTicketDetailDataConversations:
       type: object
       properties:
         id:
@@ -610,14 +1615,14 @@ components:
                 description: Đường dẫn đến file
               category:
                 type: string
-                description: 'Phân loại:'
+                description: "Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác"
           description: Thông tin các tệp tin (xem thêm bên dưới)
         created_date:
           type: string
           description: Ngày tạo (Y-m-d H:i:s)
         owner:
-          \$ref: '#/components/schemas/UserInfo'
-    GetTicketData:
+          \$ref: "#/components/schemas/UserInfo"
+    GetUserTicketDetailData:
       type: object
       properties:
         id:
@@ -636,12 +1641,15 @@ components:
         created_date:
           type: string
           description: Ngày ticket được tạo (Y-m-d H:i:s)
+        last_updated:
+          type: string
+          description: Ngày cập nhật gần nhất (Y-m-d H:i:s)
         trangthai:
           type: integer
           description: Trạng thái thực của ticket
         status:
           type: string
-          description: Trạng thái dành cho FE
+          description: "Trạng thái dành cho FEGồm 4 trạng thái: CREATED: Vừa tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng"
         files:
           type: array
           items:
@@ -652,7 +1660,7 @@ components:
                 description: Đường dẫn đến file
               category:
                 type: string
-                description: 'Phân loại:'
+                description: "Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác"
           description: Thông tin các tệp tin (xem thêm bên dưới)
         department:
           type: object
@@ -680,74 +1688,27 @@ components:
               description: Loại dịch vụ
           description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
         assignee:
-          \$ref: '#/components/schemas/UserInfo'
+          \$ref: "#/components/schemas/UserInfo"
         conversations:
           type: array
           items:
-            \$ref: '#/components/schemas/GetTicketDataConversations'
+            \$ref: "#/components/schemas/GetUserTicketDetailDataConversations"
           description: Danh sách các phản hồi (xem thêm bên dưới)
-    StandardError:
-      type: object
-      description: Standard error response wrapper.
-      required:
-        - success
-        - error
-      properties:
-        success:
-          type: boolean
-          const: false
-          example: false
-          description: Trạng thái thành công của request, luôn là false khi có lỗi.
-        error:
-          type: object
-          required:
-            - code
-            - message
-          properties:
-            code:
-              type: integer
-              description: Internal application error code.
-              example: 4200
-            message:
-              type: string
-              description: Human-readable error message.
-              example: Dữ liệu không hợp lệ
-            data:
-              type:
-                - object
-                - 'null'
-              description: Optional error detail payload.
-          description: Thông tin chi tiết về lỗi xảy ra.
-      x-manual-edit-fields:
-        - properties.error.description
-        - properties.success.description
-    CreateReopenRequest:
+    ReopenUserTicketRequest:
       type: object
       properties:
         descriptions:
           type: string
-          description: Nội dung
+          maxLength: 4000
+          description: Nội dung -  Tối đa 4000 ký tự
         files:
           type: array
           items:
             type: string
             format: binary
-          description: Tệp đính kèm
-    CreateConversationsRequest:
-      type: object
-      properties:
-        descriptions:
-          type: string
-          description: Nội dung yêu cầu
-        files:
-          type: array
-          items:
-            type: string
-            format: binary
-          description: Tệp đính kèm
-      required:
-        - descriptions
-    CreateConversationsData:
+          maxItems: 3
+          description: "Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar"
+    CreateTicketConversationData:
       type: object
       properties:
         id:
@@ -767,14 +1728,141 @@ components:
                 description: Đường dẫn đến file
               category:
                 type: string
-                description: 'Phân loại:'
+                description: "Phân loại:image:Các file ảnhvideo: Các file videodocument: Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác"
           description: Thông tin các tệp tin (xem thêm bên dưới)
         created_date:
           type: string
           description: Ngày tạo (Y-m-d H:i:s)
         owner:
-          \$ref: '#/components/schemas/UserInfo'
-    CreateRatingsRequest:
+          \$ref: "#/components/schemas/UserInfo"
+    SubmitTicketFeedbackRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Vấn đề bạn gặp phải
+        descriptions:
+          type: string
+          maxLength: 4000
+          description: Chi tiết sự việc -  Tối thiểu 20 ký tự -  Tối đa 4000 ký tự
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+          maxItems: 3
+          description: "Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar"
+      required:
+        - title
+        - descriptions
+    ListUserTicketsDataData:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id của ticket
+          readOnly: true
+        title:
+          type: string
+          description: Tiêu đề
+        code:
+          type: string
+          description: Mã ticket
+        created_date:
+          type: string
+          description: Ngày ticket được tạo (Y-m-d H:i:s)
+        last_updated:
+          type: string
+          description: Ngày cập nhật gần nhất (Y-m-d H:i:s)
+        trangthai:
+          type: integer
+          description: Trạng thái thực của ticket
+        status:
+          type: string
+          description: "Trạng thái dành cho FEGồm 4 trạng thái: CREATED: Vừa tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng"
+        department:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: Id của phòng ban
+              readOnly: true
+            name:
+              type: string
+              description: Tên phòng ban
+          description: Thông tin phòng ban xử lý yêu cầu (xem thêm bên dưới)
+        service:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: Id của dịch vụ
+              readOnly: true
+            domain:
+              type: string
+              description: Tên domain
+            type:
+              type: string
+              description: Loại dịch vụ
+          description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
+    ListUserTicketsData:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          description: Số thứ tự trang hiện tại
+        next_page_url:
+          type: string
+          description: Link đến trang tiếp theo
+        prev_page_url:
+          type: string
+          description: Link đến trang trước
+        first_page_url:
+          type: string
+          description: Link đến trang đầu tiên
+        per_page:
+          type: integer
+          description: Số record mỗi trang
+        from:
+          type: integer
+          description: Số thứ tự bắt đầu
+        to:
+          type: integer
+          description: Số thứ tự kết thúc
+        data:
+          type: array
+          items:
+            \$ref: "#/components/schemas/ListUserTicketsDataData"
+          description: Danh sách các ticket
+    CreateUserTicketRequest:
+      type: object
+      properties:
+        department_id:
+          type: integer
+          description: Phòng ban muốn được hỗ trợ
+        service_id:
+          type: integer
+          description: Dịch vụ cần hỗ trợ
+        title:
+          type: string
+          description: Tiêu đề
+        descriptions:
+          type: string
+          maxLength: 4000
+          description: Nội dung yêu cầu -  Tối đa 4000 ký tự
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+          maxItems: 3
+          description: "Tệp đính kèm -  Tối đa 3 files -  Tối đa 10MB mỗi file -  Chỉ chấp nhận định dạng: .gif, .jpg, .jpeg, .png, .svg, .bmp, .pdf, .zip, .rar"
+      required:
+        - department_id
+        - service_id
+        - title
+        - descriptions
+    CreateTicketRatingRequest:
       type: object
       properties:
         ratings:
@@ -787,63 +1875,90 @@ components:
                 description: ID nhân viên hỗ trợ
               stars:
                 type: integer
-                description: Số sao
+                description: "Số sao -  Tối thiểu: 1 -  Tối đa: 5"
               descriptions:
                 type: string
-                description: Nội dung đánh giá
+                maxLength: 4000
+                description: Nội dung đánh giá -  Tối đa 4000 ký tự -  Bắt buộc nếu stars < 3
             required:
               - supporter_id
               - stars
-          description: Danh sách các đánh giá
+          description: Danh sách các đánh giáTham khảo bên dưới
         supporter_id:
           type: integer
           description: ID nhân viên hỗ trợ
         stars:
           type: integer
-          description: Số sao
+          description: "Số sao -  Tối thiểu: 1 -  Tối đa: 5"
         descriptions:
           type: string
-          description: Nội dung đánh giá
+          maxLength: 4000
+          description: Nội dung đánh giá -  Tối đa 4000 ký tự -  Bắt buộc nếu stars < 3
       required:
         - ratings
         - supporter_id
         - stars
-    CreateFeedbackRequest:
+    UpdateTicketFeedbackRequest:
       type: object
       properties:
-        title:
-          type: string
-          description: Vấn đề bạn gặp phải
-        descriptions:
-          type: string
-          description: Chi tiết sự việc
-        files:
-          type: array
-          items:
-            type: string
-            format: binary
-          description: Tệp đính kèm
+        id:
+          type: integer
+          description: Id của đánh giá
+        review_service:
+          type: integer
+          description: Số sao cho chất lượng dịch vụNhỏ nhất 1Lớn nhất 5
+        review_employee:
+          type: integer
+          description: Số sao cho chất lượng phục vụNhỏ nhất 1Lớn nhất 5
       required:
-        - title
-        - descriptions
-    CreateChangeAssigneeRequest:
+        - id
+        - review_service
+        - review_employee
+    GetSupportStaffsByTicketDataList:
       type: object
       properties:
-        reason:
+        id:
+          type: integer
+          description: id của nhân viên
+          readOnly: true
+        name:
           type: string
-          description: Lý do từ chối.
-      required:
-        - reason
+          description: Tên đầy đủ của nhân viên
+        department:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: id phòng ban
+              readOnly: true
+            name:
+              type: string
+              description: Tên phòng ban
+          description: Thông tin phòng ban của nhân viên
+        rating:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: id đánh giá
+              readOnly: true
+            stars:
+              type: integer
+              description: Số sao
+            descriptions:
+              type: string
+              description: Nội dung đánh giá
+          description: Thông tin đánh giá của nhân viên
   responses:
     BadRequest:
       description: Bad Request
       content:
         application/json:
           schema:
-            \$ref: '#/components/schemas/StandardError'
+            \$ref: "#/components/schemas/StandardError"
           example:
             success: false
-            data: null
+
             error:
               code: 400
               message: Bad Request
@@ -852,7 +1967,7 @@ components:
       content:
         application/json:
           schema:
-            \$ref: '#/components/schemas/StandardError'
+            \$ref: "#/components/schemas/StandardError"
           example:
             success: false
             error:
@@ -864,7 +1979,7 @@ components:
       content:
         application/json:
           schema:
-            \$ref: '#/components/schemas/StandardError'
+            \$ref: "#/components/schemas/StandardError"
           example:
             success: false
             error:
@@ -876,7 +1991,7 @@ components:
       content:
         application/json:
           schema:
-            \$ref: '#/components/schemas/StandardError'
+            \$ref: "#/components/schemas/StandardError"
           example:
             success: false
             error:
@@ -888,7 +2003,7 @@ components:
       content:
         application/json:
           schema:
-            \$ref: '#/components/schemas/StandardError'
+            \$ref: "#/components/schemas/StandardError"
           example:
             success: false
             error:
@@ -897,6 +2012,61 @@ components:
               data:
                 type:
                   - null
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            \$ref: "#/components/schemas/StandardError"
+    StandardError422:
+      description: Lỗi nghiệp vụ
+      content:
+        application/json:
+          schema:
+            \$ref: "#/components/schemas/StandardError"
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: Chống double submit. Strongly recommended cho POST/PATCH/DELETE.
+      schema:
+        type: string
+        format: uuid
+    XRequestId:
+      name: X-Request-Id
+      in: header
+      required: false
+      description: |
+        Trace ID để debug request — optional, xuất hiện ở toàn bộ APIs trong hệ thống.
+      schema:
+        type: string
+      example: req-abc123
+    XClientId:
+      name: X-Client-Id
+      in: header
+      required: false
+      description: Client identifier dùng cho audit/logging.
+      schema:
+        type: string
+  headers:
+    CacheControl:
+      description: Cache policy của response.
+      schema:
+        type: string
+      example: no-store, no-cache, must-revalidate
+    ContentDisposition:
+      description: Tên file trả về khi response là attachment/download.
+      schema:
+        type: string
+      example: attachment; filename="example.zip"
+    XContentTypeOptions:
+      description: Security header chống MIME sniffing.
+      schema:
+        type: string
+        enum:
+          - nosniff
+        example: nosniff
 `);
 
       window.ui = SwaggerUIBundle({

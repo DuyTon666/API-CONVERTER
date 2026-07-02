@@ -1,22 +1,24 @@
 "use client";
 
 import { useEffect } from "react";
-import ImportCard from "./_dashboard/ImportCard";
-import ScanCard from "./_dashboard/ScanCard";
-import SuggestCard from "./_dashboard/SuggestCard";
-import ManualEditConflictsCard from "./_dashboard/ManualEditConflictsCard";
-import ModuleRegistryCard from "./_dashboard/ModuleRegistryCard";
-import SwaggerDocsCard from "./_dashboard/SwaggerDocsCard";
-import BundleEditorModal from "./_dashboard/BundleEditorModal";
-import AiFixPanel from "./_dashboard/AiFixPanel";
-import StatTiles from "./_dashboard/StatTiles";
-import WorkflowStepper, { toSteps } from "./_dashboard/WorkflowStepper";
-import { useScan } from "./_dashboard/hooks/useScan";
-import { useModuleRegistry } from "./_dashboard/hooks/useModuleRegistry";
-import { useUpload } from "./_dashboard/hooks/useUpload";
-import { useDocsBuilder } from "./_dashboard/hooks/useDocsBuilder";
-import { useSuggestions } from "./_dashboard/hooks/useSuggestions";
-import { useManualEditConflicts } from "./_dashboard/hooks/useManualEditConflicts";
+import ImportCard from "@/components/dashboard/ImportCard";
+import ScanCard from "@/components/dashboard/ScanCard";
+import SuggestCard from "@/components/dashboard/SuggestCard";
+import ManualEditConflictsCard from "@/components/dashboard/ManualEditConflictsCard";
+import ModuleRegistryCard from "@/components/dashboard/ModuleRegistryCard";
+import SwaggerDocsCard from "@/components/dashboard/SwaggerDocsCard";
+import BundleEditorModal from "@/components/dashboard/BundleEditorModal";
+import AiFixPanel from "@/components/dashboard/AiFixPanel";
+import StatTiles from "@/components/dashboard/StatTiles";
+import WorkflowStepper, {
+  toSteps,
+} from "@/components/dashboard/WorkflowStepper";
+import { useScan } from "@/hooks/dashboard/useScan";
+import { useModuleRegistry } from "@/hooks/dashboard/useModuleRegistry";
+import { useUpload } from "@/hooks/dashboard/useUpload";
+import { useDocsBuilder } from "@/hooks/dashboard/useDocsBuilder";
+import { useSuggestions } from "@/hooks/dashboard/useSuggestions";
+import { useManualEditConflicts } from "@/hooks/dashboard/useManualEditConflicts";
 
 export default function Home() {
   const backend = process.env.NEXT_PUBLIC_API_URL!;
@@ -88,6 +90,10 @@ export default function Home() {
     saveBundle,
     saveAndRelint,
     handleAiFixBundle,
+    deploying,
+    deployMessage,
+    deployError,
+    handleDeploy,
   } = useDocsBuilder(backend);
 
   const {
@@ -253,6 +259,10 @@ export default function Home() {
                   bundleReady={bundleReady}
                   htmlReady={htmlReady}
                   relinting={relinting}
+                  deploying={deploying}
+                  deployMessage={deployMessage}
+                  deployError={deployError}
+                  onDeploy={handleDeploy}
                   onBuildDocs={handleBuildDocs}
                   onRelint={handleRelint}
                   onOpenBundleEditor={openBundleEditor}
@@ -263,17 +273,15 @@ export default function Home() {
 
             {/* Cột thao tác chính — bên trái trên desktop */}
             <div className="contents lg:block lg:order-1 lg:col-span-7 lg:space-y-6">
-              <div className="order-3 scroll-mt-32">
-                <ManualEditConflictsCard
-                  conflicts={conflicts}
-                  loading={conflictsLoading}
-                  error={conflictsError}
-                  resolving={conflictResolving}
-                  resolveError={conflictResolveError}
-                  conflictKey={conflictKey}
-                  onResolve={handleResolveConflict}
-                />
-              </div>
+              <ManualEditConflictsCard
+                conflicts={conflicts}
+                loading={conflictsLoading}
+                error={conflictsError}
+                resolving={conflictResolving}
+                resolveError={conflictResolveError}
+                conflictKey={conflictKey}
+                onResolve={handleResolveConflict}
+              />
 
               <div id="card-suggest" className="order-3 scroll-mt-32">
                 <SuggestCard

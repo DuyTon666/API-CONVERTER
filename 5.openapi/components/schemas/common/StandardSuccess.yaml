@@ -9,11 +9,11 @@ properties:
   success:
     type: boolean
     example: true
-    description: Trạng thái thành công của request.
+    description: Trạng thái xử lý của request — true nếu thành công
   error:
     type: ['null']
     example:
-    description: Thông tin lỗi, null khi thành công.
+    description: Thông tin lỗi — null khi request thành công
   data:
     description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
 x-manual-edit-fields:

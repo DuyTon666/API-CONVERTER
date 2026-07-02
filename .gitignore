@@ -7,10 +7,6 @@ backend/.env
 
 3.build/reports/
 
-5.openapi/paths/
-
-5.openapi/components/schemas/
-
 __pycache__/
 
 .venv/

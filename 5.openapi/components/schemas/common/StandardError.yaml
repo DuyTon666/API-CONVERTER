@@ -8,7 +8,7 @@ properties:
     type: boolean
     const: false
     example: false
-    description: Trạng thái thành công của request, luôn là false khi có lỗi.
+    description: Trạng thái xử lý của request — luôn là false khi có lỗi
   error:
     type: object
     required:
@@ -28,7 +28,7 @@ properties:
           - object
           - 'null'
         description: Optional error detail payload.
-    description: Thông tin chi tiết về lỗi xảy ra.
+    description: Thông tin chi tiết về lỗi xảy ra
 x-manual-edit-fields:
   - properties.error.description
   - properties.success.description
