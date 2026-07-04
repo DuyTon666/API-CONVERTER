@@ -91,8 +91,6 @@ export default function Home() {
     saveAndRelint,
     handleAiFixBundle,
     deploying,
-    deployMessage,
-    deployError,
     handleDeploy,
   } = useDocsBuilder(backend);
 
@@ -133,35 +131,23 @@ export default function Home() {
   const draftModules = moduleList?.summary.by_status["draft"] ?? 0;
   const unassignedFiles = scan?.unassigned.length ?? 0;
 
-  const hasSourceFiles =
-    scan !== null && (scan.modules.length > 0 || scan.unassigned.length > 0);
-
   const bundleReady =
     docsResult?.bundle_ready ?? docsStatus?.bundle_ready ?? false;
   const htmlReady = docsResult?.html_ready ?? docsStatus?.html_ready ?? false;
 
   const steps = toSteps([
-    { id: "card-import", label: "Nguồn", done: hasSourceFiles },
+    { id: "card-import", label: "Nguồn" },
     {
       id: "card-suggest",
       label: "Phân loại",
-      done: hasSourceFiles && unassignedFiles === 0 && pendingSuggestions === 0,
     },
     {
       id: "card-modules",
       label: "Module",
-      done:
-        activeModules > 0 &&
-        draftModules === 0 &&
-        (moduleList?.modules.every(
-          (m) => m.status !== "active" || m.last_import_at !== null,
-        ) ??
-          false),
     },
     {
       id: "card-docs",
       label: "Tài liệu",
-      done: bundleReady && htmlReady,
     },
   ]);
 
@@ -235,7 +221,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Cột phụ trợ — bên phải trên desktop; mobile xen kẽ theo order */}
             <div className="contents lg:block lg:order-2 lg:col-span-5 lg:space-y-6">
-              <div className="order-1 scroll-mt-32">
+              <div id="card-import" className="order-1 scroll-mt-32">
                 <ImportCard
                   files={uploadFiles}
                   uploading={uploading}
@@ -260,8 +246,6 @@ export default function Home() {
                   htmlReady={htmlReady}
                   relinting={relinting}
                   deploying={deploying}
-                  deployMessage={deployMessage}
-                  deployError={deployError}
                   onDeploy={handleDeploy}
                   onBuildDocs={handleBuildDocs}
                   onRelint={handleRelint}

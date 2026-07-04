@@ -46,6 +46,20 @@ export async function POST(req: NextRequest) {
     // dùng mặc định "develop"
   }
 
+  try {
+    run(
+      `git rev-parse --verify --quiet refs/remotes/origin/${baseBranch}`,
+      repoDir,
+    );
+  } catch {
+    return NextResponse.json(
+      {
+        error: `Branch "${baseBranch}" chưa tồn tại trên remote. Hãy tạo branch này trước khi deploy.`,
+      },
+      { status: 400 },
+    );
+  }
+
   // 1. Kiểm tra có thay đổi thật trong 5.openapi/ chưa
   let status = "";
   try {
