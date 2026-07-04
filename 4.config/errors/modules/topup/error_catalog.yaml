@@ -1,0 +1,60 @@
+error_codes:
+  '4090':
+    http_status: ''
+    message: Idempotency-Key đang xử lý (concurrent)
+  '4091':
+    http_status: ''
+    message: Double submit — payload trùng trong dedup window
+  '4101':
+    http_status: ''
+    message: Thiếu Authorization header
+  '4103':
+    http_status: ''
+    message: Client không có scope=admin
+  '4221':
+    http_status: ''
+    message: external_account_id là bắt buộc.
+  '4222':
+    http_status: ''
+    message: external_account_id phải là số nguyên ≥ 1.
+  '4223':
+    http_status: ''
+    message: customer_id là bắt buộc.
+  '4224':
+    http_status: ''
+    message: customer_id không được vượt quá 255 ký tự.
+  '6001':
+    http_status: ''
+    message: Không tìm thấy đơn hàng MULTI_DOMAIN/FLEX đang active cho account này.
+  '6002':
+    http_status: ''
+    message: Đơn hàng tìm được không phải loại Multi-Domain/FLEX.
+  '6003':
+    http_status: ''
+    message: Đơn hàng ở trạng thái không cho phép top-up (EXPIRED, FAILED, CANCELED...).
+  '6004':
+    http_status: ''
+    message: Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn
+      hàng.
+  '6005':
+    http_status: ''
+    message: Tổng SAN sau top-up vượt quá giới hạn tối đa (max_san).
+  '6006':
+    http_status: ''
+    message: Đơn hàng chưa được gán provider (chưa qua routing).
+  '6010':
+    http_status: ''
+    message: core_plan_id là bắt buộc.
+  '6011':
+    http_status: ''
+    message: core_plan_id không được vượt quá 100 ký tự.
+  '6012':
+    http_status: ''
+    message: plan_quantity là bắt buộc.
+  '6013':
+    http_status: ''
+    message: plan_quantity phải là số nguyên ≥ 1.
+  '6014':
+    http_status: ''
+    message: plan_quantity không được vượt quá 100.
+namespace: topup

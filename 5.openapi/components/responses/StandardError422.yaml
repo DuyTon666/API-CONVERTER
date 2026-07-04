@@ -1,0 +1,5 @@
+description: Lỗi nghiệp vụ
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/common/StandardError.yaml

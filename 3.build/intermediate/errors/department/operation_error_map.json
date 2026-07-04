@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-06-24T11:26:20.174078",
+  "module": "department",
+  "batch_timestamp": "2026-06-22 13:04:35",
+  "operations": {
+    "getDepartmentList": {
+      "method": "get",
+      "path": "",
+      "source_file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/department/get_department_list.yaml",
+      "errors": {}
+    }
+  }
+}

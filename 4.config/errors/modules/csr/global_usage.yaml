@@ -1,0 +1,46 @@
+namespace: csr
+runs:
+- timestamp: '2026-06-22T13:12:21.319011'
+  used_by:
+  - code: '4102'
+    source_file: API_csr_generate.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_csr_generate.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_csr_generate.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-06-22T13:26:02.338289'
+  used_by:
+  - code: '4102'
+    source_file: API_csr_generate.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_csr_generate.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_csr_generate.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-06-24T10:18:23.793964'
+  used_by:
+  - code: '4102'
+    source_file: API_csr_generate.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_csr_generate.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_csr_generate.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-06-24T14:44:55.093478'
+  used_by:
+  - code: '4102'
+    source_file: API_csr_generate.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_csr_generate.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_csr_generate.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)

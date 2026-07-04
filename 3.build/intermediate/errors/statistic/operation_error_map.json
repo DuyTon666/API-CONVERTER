@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-06-24T11:27:58.658590",
+  "module": "statistic",
+  "batch_timestamp": "2026-06-22 13:05:28",
+  "operations": {
+    "getUserStatistics": {
+      "method": "get",
+      "path": "",
+      "source_file": "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/statistic/get_user_statistics.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ]
+      }
+    }
+  }
+}

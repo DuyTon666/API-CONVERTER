@@ -1,0 +1,20 @@
+'# http_status_overrides.yaml': null
+overrides:
+  '4761':
+    http_status: 422
+    reason: validation required field
+  '4762':
+    http_status: 422
+    reason: validation required field
+  '4763':
+    http_status: 422
+    reason: validation invalid enum
+  '4764':
+    http_status: 422
+    reason: validation invalid email
+  '4765':
+    http_status: 422
+    reason: conditional required field
+  '4758':
+    http_status: 422
+    reason: validation required field

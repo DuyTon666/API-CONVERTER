@@ -1,0 +1,151 @@
+namespace: order
+runs:
+- timestamp: '2026-06-19T15:58:29.514995'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-06-20T09:34:51.837086'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-06-22T13:16:06.168947'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-06-22T13:25:42.790512'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-06-22T15:06:17.977076'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-06-22T15:16:22.735133'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-06-24T10:12:50.967734'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-06-30T11:42:14.958771'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+  - code: '4200'
+    source_file: API_order_dcv_records.docx
+    message_in_document: Giá trị query param status không hợp lệ
+  - code: '4108'
+    source_file: API_order_renew.docx
+    message_in_document: 'Chứng chỉ chưa đến thời điểm gia hạn. data: {days_left,
+      renewal_early_days}'
+- timestamp: '2026-07-02T10:56:50.507247'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+  - code: '4200'
+    source_file: API_order_dcv_records.docx
+    message_in_document: Giá trị query param status không hợp lệ
+  - code: '4108'
+    source_file: API_order_renew.docx
+    message_in_document: 'Chứng chỉ chưa đến thời điểm gia hạn. data: {days_left,
+      renewal_early_days}'
+- timestamp: '2026-07-02T11:05:41.719869'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+  - code: '4200'
+    source_file: API_order_dcv_records.docx
+    message_in_document: Giá trị query param status không hợp lệ
+  - code: '4108'
+    source_file: API_order_renew.docx
+    message_in_document: 'Chứng chỉ chưa đến thời điểm gia hạn. data: {days_left,
+      renewal_early_days}'
+- timestamp: '2026-07-02T16:18:25.370286'
+  used_by:
+  - code: '4102'
+    source_file: API_cert_download.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_cert_download.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_cert_download.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+  - code: '4200'
+    source_file: API_order_dcv_records.docx
+    message_in_document: Giá trị query param status không hợp lệ
+  - code: '4108'
+    source_file: API_order_renew.docx
+    message_in_document: 'Chứng chỉ chưa đến thời điểm gia hạn. data: {days_left,
+      renewal_early_days}'

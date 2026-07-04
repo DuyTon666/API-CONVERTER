@@ -1,0 +1,72 @@
+namespace: service
+runs:
+- timestamp: '2026-06-22T10:48:15.244032'
+  used_by:
+  - code: '4102'
+    source_file: API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf
+    message_in_document: Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf
+    message_in_document: IP không được phép truy cập
+  - code: '4200'
+    source_file: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf
+    message_in_document: Dữ liệu request không hợp lệ
+  - code: '4004'
+    source_file: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf
+    message_in_document: Không tìm thấy dữ liệu
+- timestamp: '2026-06-23T11:06:34.792298'
+  used_by:
+  - code: '4102'
+    source_file: API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf
+    message_in_document: Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf
+    message_in_document: IP không được phép truy cập
+  - code: '4200'
+    source_file: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf
+    message_in_document: Dữ liệu request không hợp lệ
+  - code: '4004'
+    source_file: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf
+    message_in_document: Không tìm thấy dữ liệu
+- timestamp: '2026-06-23T11:19:00.737437'
+  used_by:
+  - code: '4102'
+    source_file: API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf
+    message_in_document: Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf
+    message_in_document: IP không được phép truy cập
+  - code: '4200'
+    source_file: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf
+    message_in_document: Dữ liệu request không hợp lệ
+  - code: '4004'
+    source_file: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf
+    message_in_document: Không tìm thấy dữ liệu
+- timestamp: '2026-06-23T11:23:09.292712'
+  used_by:
+  - code: '4102'
+    source_file: API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf
+    message_in_document: Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf
+    message_in_document: IP không được phép truy cập
+  - code: '4200'
+    source_file: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf
+    message_in_document: Dữ liệu request không hợp lệ
+  - code: '4004'
+    source_file: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf
+    message_in_document: Không tìm thấy dữ liệu
+- timestamp: '2026-06-24T10:15:00.798584'
+  used_by:
+  - code: '4102'
+    source_file: API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf
+    message_in_document: Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf
+    message_in_document: IP không được phép truy cập
+  - code: '4200'
+    source_file: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf
+    message_in_document: Dữ liệu request không hợp lệ
+  - code: '4004'
+    source_file: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf
+    message_in_document: Không tìm thấy dữ liệu

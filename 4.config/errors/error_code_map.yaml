@@ -1,0 +1,14 @@
+error_codes:
+  '4004':
+    http_status: '404'
+    message: Không tìm thấy dữ liệu
+  '4102':
+    http_status: '401'
+    message: Token không hợp lệ hoặc đã hết hạn
+  '4108':
+    http_status: '401'
+    message: Không có quyền truy cập
+  '4200':
+    http_status: '422'
+    message: Dữ liệu request không hợp lệ
+namespace: _global

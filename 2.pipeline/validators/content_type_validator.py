@@ -16,6 +16,10 @@ from validators.validation_model import (
     FIX_MANUAL,
 )
 
+CHECK_OK = "ok"
+CHECK_NO_BODY = "no_body"
+CHECK_NO_SCHEMA = "no_schema"
+
 #Helpers nội bộ 
 
 def _collect_field_info(schema: dict) -> list[dict]:
@@ -62,12 +66,12 @@ def _check_file(
     yaml_path: Path,
     module: str,
     rules: RuleEngine,
-) -> ValidationResult | None:
+) -> ValidationResult | str:
     """Kiểm tra 1 file YAML, trả về ValidationResult nếu phát hiện mismatch."""
     try:
         data = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
     except Exception:
-        return None
+        return CHECK_NO_SCHEMA
 
     # Tìm operation có requestBody
     operation = None
@@ -77,11 +81,11 @@ def _check_file(
             break
 
     if operation is None:
-        return None
+        return CHECK_NO_BODY
 
     content = operation["requestBody"].get("content", {})
     if not content:
-        return None
+        return CHECK_NO_BODY
 
     declared   = list(content.keys())[0]
     schema_obj = content[declared].get("schema", {})
@@ -92,13 +96,13 @@ def _check_file(
         schema = schema_obj
 
     if not schema:
-        return None
+        return CHECK_NO_SCHEMA
 
     fields             = _collect_field_info(schema)
     inferred, evidence = _infer_content_type(fields, rules)
 
     if declared == inferred:
-        return None
+        return CHECK_OK
 
     return ValidationResult(
         type            = "content_type_mismatch",
@@ -142,14 +146,20 @@ def validate_content_types(module: str | None = None) -> None:
 
         mod_name     = module_dir.name
         yaml_files   = sorted(module_dir.glob("*.yaml"))
+        mod_checked  = 0
         mod_mismatch = 0
         mod_skipped  = 0
 
         for yf in yaml_files:
             result = _check_file(yf, mod_name, rules)
 
-            if result is None:
+            if result == CHECK_NO_BODY:
                 mod_skipped += 1
+                continue
+
+            mod_checked += 1
+
+            if result in {CHECK_OK, CHECK_NO_SCHEMA}:
                 continue
 
             if engine.is_duplicate(result):
@@ -167,7 +177,7 @@ def validate_content_types(module: str | None = None) -> None:
                 f"       evidence: {', '.join(result.detail['evidence'])}"
             )
 
-        checked = mod_mismatch + mod_skipped
+        checked = mod_checked
         print(
             f"[content_type] module={mod_name} "
             f"checked={checked} "

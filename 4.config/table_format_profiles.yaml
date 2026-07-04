@@ -1,0 +1,29 @@
+# Mỗi profile mô tả 1 kiểu bảng mã lỗi đã từng gặp trong các file nguồn.
+# header_match_keywords: TẤT CẢ keyword phải có trong header row thì mới match.
+# column_aliases: map từng field chuẩn sang các tên cột có thể gặp trong thực tế.
+# Thứ tự profile quan trọng: profile cụ thể hơn (nhiều keyword hơn) phải đứng trước.
+
+profiles:
+  - name: "4_have_http"
+    description: "Bảng 4 cột: Error Code | HTTP | Ngữ cảnh | Mô tả"
+    header_match_keywords: ["error code", "http", "ngữ cảnh", "mô tả"]
+    column_aliases:
+      code:        ["error code", "mã lỗi", "code", "error"]
+      http_status: ["http", "http status", "status", "http_status"]
+      category:    ["ngữ cảnh", "context", "category", "loại", "nhóm"]
+      message:     ["mô tả", "description", "message", "nội dung"]
+
+  - name: "3_no_http"
+    description: "Bảng 3 cột: Error Code | Ngữ cảnh | Mô tả, không có cột HTTP"
+    header_match_keywords: ["error code", "ngữ cảnh", "mô tả"]
+    column_aliases:
+      code:     ["error code", "mã lỗi", "code", "error"]
+      category: ["ngữ cảnh", "context", "category", "loại", "nhóm"]
+      message:  ["mô tả", "description", "message", "nội dung"]
+
+  - name: "2_code_desc_only"
+    description: "Bảng 2 cột: Error Code | Mô tả, không có HTTP, không có Ngữ cảnh"
+    header_match_keywords: ["error code", "mô tả"]
+    column_aliases:
+      code:    ["error code", "mã lỗi", "code", "error"]
+      message: ["mô tả", "description", "message", "nội dung"]

@@ -1,0 +1,122 @@
+namespace: admin
+runs:
+- timestamp: '2026-06-30T11:41:30.088289'
+  used_by:
+  - code: '4102'
+    source_file: API_internal_product_create.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_internal_product_create.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_internal_product_create.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+  - code: '4004'
+    source_file: API_provider_product_delete.docx
+    message_in_document: Không tìm thấy sản phẩm (hoặc đã soft-deleted trước đó)
+  - code: '4004'
+    source_file: API_provider_product_detail.docx
+    message_in_document: Không tìm thấy sản phẩm với id được cho (hoặc đã soft-deleted)
+  - code: '4004'
+    source_file: API_provider_product_toggle.docx
+    message_in_document: Không tìm thấy sản phẩm
+- timestamp: '2026-07-02T10:54:00.809149'
+  used_by:
+  - code: '4102'
+    source_file: API_internal_product_create.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_internal_product_create.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_internal_product_create.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+  - code: '4004'
+    source_file: API_provider_product_delete.docx
+    message_in_document: Không tìm thấy sản phẩm (hoặc đã soft-deleted trước đó)
+  - code: '4004'
+    source_file: API_provider_product_detail.docx
+    message_in_document: Không tìm thấy sản phẩm với id được cho (hoặc đã soft-deleted)
+  - code: '4004'
+    source_file: API_provider_product_toggle.docx
+    message_in_document: Không tìm thấy sản phẩm
+- timestamp: '2026-07-02T11:06:52.373304'
+  used_by:
+  - code: '4102'
+    source_file: API_internal_product_create.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_internal_product_create.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_internal_product_create.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+  - code: '4004'
+    source_file: API_provider_product_delete.docx
+    message_in_document: Không tìm thấy sản phẩm (hoặc đã soft-deleted trước đó)
+  - code: '4004'
+    source_file: API_provider_product_detail.docx
+    message_in_document: Không tìm thấy sản phẩm với id được cho (hoặc đã soft-deleted)
+  - code: '4004'
+    source_file: API_provider_product_toggle.docx
+    message_in_document: Không tìm thấy sản phẩm
+- timestamp: '2026-07-02T13:46:26.501717'
+  used_by:
+  - code: '4102'
+    source_file: API_internal_product_create.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_internal_product_create.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_internal_product_create.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+  - code: '4004'
+    source_file: API_provider_product_delete.docx
+    message_in_document: Không tìm thấy sản phẩm (hoặc đã soft-deleted trước đó)
+  - code: '4004'
+    source_file: API_provider_product_detail.docx
+    message_in_document: Không tìm thấy sản phẩm với id được cho (hoặc đã soft-deleted)
+  - code: '4004'
+    source_file: API_provider_product_toggle.docx
+    message_in_document: Không tìm thấy sản phẩm
+- timestamp: '2026-07-02T14:42:52.959833'
+  used_by:
+  - code: '4102'
+    source_file: API_internal_product_create.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_internal_product_create.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_internal_product_create.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+  - code: '4004'
+    source_file: API_provider_product_delete.docx
+    message_in_document: Không tìm thấy sản phẩm (hoặc đã soft-deleted trước đó)
+  - code: '4004'
+    source_file: API_provider_product_detail.docx
+    message_in_document: Không tìm thấy sản phẩm với id được cho (hoặc đã soft-deleted)
+  - code: '4004'
+    source_file: API_provider_product_toggle.docx
+    message_in_document: Không tìm thấy sản phẩm
+- timestamp: '2026-07-02T14:47:32.377471'
+  used_by:
+  - code: '4102'
+    source_file: API_internal_product_create.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_internal_product_create.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_internal_product_create.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+  - code: '4004'
+    source_file: API_provider_product_delete.docx
+    message_in_document: Không tìm thấy sản phẩm (hoặc đã soft-deleted trước đó)
+  - code: '4004'
+    source_file: API_provider_product_detail.docx
+    message_in_document: Không tìm thấy sản phẩm với id được cho (hoặc đã soft-deleted)
+  - code: '4004'
+    source_file: API_provider_product_toggle.docx
+    message_in_document: Không tìm thấy sản phẩm

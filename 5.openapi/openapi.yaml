@@ -1,27 +1,23 @@
-openapi: "3.1.0"
+openapi: 3.1.0
 info:
   title: PA Vietnam Support API
-  version: "1.0.0"
+  version: 1.0.0
   license:
     name: API
   description: API cho hệ thống ticket hỗ trợ khách hàng
   contact:
     name: PA Vietnam
     email: dev@pavietnam.vn
-
 servers:
-  - url: https://apigateway.pavietnam.vn
-    description: Production
-
+- url: https://apigateway.pavietnam.vn
+  description: Production
 tags:
-  - name: Ticket
-    description: Các API liên quan đến ticket hỗ trợ khách hàng
-  - name: Account
-    description: Các API liên quan đến tài khoản
-    
+- name: Ticket
+  description: Các API liên quan đến ticket hỗ trợ khách hàng
+- name: Account
+  description: Các API liên quan đến tài khoản
 security:
-  - bearerAuth: []
-
+- bearerAuth: []
 components:
   securitySchemes:
     bearerAuth:
@@ -29,19 +25,131 @@ components:
       scheme: bearer
       bearerFormat: JWT
 paths:
-  /v1/users/{user_id}/tickets:
-    $ref: "./paths/ticket/create_tickets.yaml#/post"
-  /v1/users/{user_id}/tickets/{id}:
-    $ref: "./paths/ticket/get_ticket.yaml"
-  /v1/users/{user_id}/tickets/{id}/close:
-    $ref: "./paths/ticket/update_close.yaml"
-  /v1/users/{user_id}/tickets/{id}/reopen:
-    $ref: "./paths/ticket/create_reopen.yaml"
-  /v1/users/{user_id}/tickets/{id}/conversations:
-    $ref: "./paths/ticket/create_conversations.yaml"
-  /v1/users/{user_id}/tickets/{ticket_id}/ratings:
-    $ref: "./paths/ticket/create_ratings.yaml"
-  /v1/users/{user_id}/tickets/{id}/feedback:
-    $ref: "./paths/ticket/create_feedback.yaml"
+  /v1/departments:
+    $ref: ./paths/department/get_department_list.yaml
+  /v1/orders/{id}/certificates/{certId}/download:
+    $ref: ./paths/order/download_order_certificate.yaml
+  /v1/services/types:
+    $ref: ./paths/service/get_service_types.yaml
+  /v1/users/{user_id}/services:
+    $ref: ./paths/service/get_user_services.yaml
+  /v1/services/{service_id}/temporary-open:
+    $ref: ./paths/service/temporary_open_service.yaml
+  /v1/users/{user_id}/services/{id}/upgrade-plans:
+    $ref: ./paths/service/get_service_upgrade_plans.yaml
+  /v1/users/{user_id}/services/{id}/request-upgrade-plans:
+    $ref: ./paths/service/create_service_upgrade_plan_request.yaml
+  /v1/users/{user_id}/services/{id}/change-password:
+    $ref: ./paths/service/change_service_password.yaml
+  /v1/users/{user_id}/statistics:
+    $ref: ./paths/statistic/get_user_statistics.yaml
   /v1/users/{user_id}/tickets/{id}/change-assignee:
-    $ref: "./paths/ticket/create_change_assignee.yaml"
+    $ref: ./paths/ticket/change_ticket_assignee.yaml
+  /v1/users/{user_id}/tickets/{id}:
+    $ref: ./paths/ticket/get_user_ticket_detail.yaml
+  /v1/users/{user_id}/tickets/{id}/reopen:
+    $ref: ./paths/ticket/reopen_user_ticket.yaml
+  /v1/users/{user_id}/tickets/{id}/conversations:
+    $ref: ./paths/ticket/create_ticket_conversation.yaml
+  /v1/users/{user_id}/tickets/{id}/feedback:
+    $ref: ./paths/ticket/submit_ticket_feedback.yaml
+  /v1/users/{user_id}/tickets:
+    post:
+      $ref: ./paths/ticket/create_user_ticket.yaml#/post
+    get:
+      $ref: ./paths/ticket/list_user_tickets.yaml#/get
+  /v1/users/{user_id}/tickets/{id}/close:
+    $ref: ./paths/ticket/close_user_ticket.yaml
+  /v1/users/{user_id}/tickets/{ticket_id}/ratings:
+    $ref: ./paths/ticket/create_ticket_rating.yaml
+  /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
+    $ref: ./paths/ticket/update_ticket_feedback.yaml
+  /v1/users/{user_id}/tickets/{id}/support-staffs:
+    $ref: ./paths/ticket/get_support_staffs_by_ticket.yaml
+  /v1/csr/generate:
+    $ref: ./paths/csr/generate_csr_request.yaml
+  /v1/orders:
+    post:
+      $ref: ./paths/order/create_order.yaml#/post
+    get:
+      $ref: ./paths/order/list_orders.yaml#/get
+  /v1/admin/internal-products:
+    post:
+      $ref: ./paths/admin/create_internal_product.yaml#/post
+    get:
+      $ref: ./paths/admin/list_internal_products.yaml#/get
+  /v1/admin/internal-products/{id}:
+    delete:
+      $ref: ./paths/admin/delete_internal_product.yaml#/delete
+    get:
+      $ref: ./paths/admin/get_internal_product_detail.yaml#/get
+    patch:
+      $ref: ./paths/admin/update_internal_product.yaml#/patch
+  /v1/admin/internal-products/{id}/mappings:
+    post:
+      $ref: ./paths/admin/create_internal_product_mapping.yaml#/post
+    get:
+      $ref: ./paths/admin/list_internal_product_mappings.yaml#/get
+  /v1/admin/internal-products/{id}/mappings/{mapping_id}:
+    delete:
+      $ref: ./paths/admin/delete_internal_product_mapping.yaml#/delete
+    patch:
+      $ref: ./paths/admin/update_internal_product_mapping.yaml#/patch
+  /v1/admin/internal-products/{id}/status:
+    $ref: ./paths/admin/toggle_internal_product_status.yaml
+  /v1/admin/providers:
+    post:
+      $ref: ./paths/admin/create_provider.yaml#/post
+    get:
+      $ref: ./paths/admin/list_providers.yaml#/get
+  /v1/admin/providers/{id}:
+    delete:
+      $ref: ./paths/admin/delete_provider_by_id.yaml#/delete
+    get:
+      $ref: ./paths/admin/get_provider_detail.yaml#/get
+    patch:
+      $ref: ./paths/admin/update_provider_by_id.yaml#/patch
+  /v1/admin/providers/{provider_code}/products:
+    post:
+      $ref: ./paths/admin/create_provider_product.yaml#/post
+    get:
+      $ref: ./paths/admin/get_provider_product_list.yaml#/get
+  /v1/admin/providers/{provider_code}/products/{id}:
+    delete:
+      $ref: ./paths/admin/delete_provider_product.yaml#/delete
+    get:
+      $ref: ./paths/admin/get_provider_product_detail.yaml#/get
+    patch:
+      $ref: ./paths/admin/update_provider_product.yaml#/patch
+  /v1/admin/providers/{provider_code}/products/sync:
+    $ref: ./paths/admin/sync_provider_products.yaml
+  /v1/admin/providers/{provider_code}/products/{id}/status:
+    $ref: ./paths/admin/toggle_provider_product_status.yaml
+  /v1/admin/providers/{id}/reveal-token:
+    $ref: ./paths/admin/reveal_provider_token.yaml
+  /v1/admin/providers/{id}/status:
+    $ref: ./paths/admin/toggle_provider_status.yaml
+  /v1/orders/{id}/dcv/change:
+    $ref: ./paths/order/change_order_dcv_method.yaml
+  /v1/orders/{id}/dcv/records:
+    $ref: ./paths/order/get_order_dcv_records.yaml
+  /v1/orders/{id}/dcv/resend-email:
+    $ref: ./paths/order/resend_dcv_email_for_order.yaml
+  /v1/orders/{id}/dcv/validate:
+    $ref: ./paths/order/validate_order_dcv.yaml
+  /v1/orders/{id}:
+    $ref: ./paths/order/get_order_detail.yaml
+  /v1/orders/{id}/generate-csr:
+    $ref: ./paths/order/generate_csr_for_order.yaml
+  /v1/orders/{id}/reissue:
+    $ref: ./paths/order/reissue_order_by_id.yaml
+  /v1/orders/{id}/renew:
+    $ref: ./paths/order/renew_order.yaml
+  /v1/orders/{id}/revoke:
+    $ref: ./paths/order/revoke_order_by_id.yaml
+  /v1/orders/{id}/submit-csr:
+    $ref: ./paths/order/submit_csr_for_order.yaml
+  /v1/orders/{id}/sync-status:
+    $ref: ./paths/order/sync_order_status.yaml
+  /v1/topup:
+    $ref: ./paths/topup/order_plan_topup.yaml

@@ -1,0 +1,44 @@
+namespace: ticket
+runs:
+- timestamp: '2026-06-22T15:06:36.503347'
+  used_by:
+  - code: '4102'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: IP không được phép truy cập
+  - code: '4200'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: Dữ liệu request không hợp lệ
+  - code: '4004'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: Không tìm thấy dữ liệu
+- timestamp: '2026-06-22T15:16:40.937232'
+  used_by:
+  - code: '4102'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: IP không được phép truy cập
+  - code: '4200'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: Dữ liệu request không hợp lệ
+  - code: '4004'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: Không tìm thấy dữ liệu
+- timestamp: '2026-06-24T09:47:12.415604'
+  used_by:
+  - code: '4102'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: IP không được phép truy cập
+  - code: '4200'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: Dữ liệu request không hợp lệ
+  - code: '4004'
+    source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+    message_in_document: Không tìm thấy dữ liệu

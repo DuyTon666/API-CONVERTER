@@ -14,11 +14,28 @@
     "review:suggest": "python3 2.pipeline/run_api_import.py review-suggestions",
     "approve": "python3 2.pipeline/run_api_import.py approve-suggestions --all",
     "update:registry": "python3 2.pipeline/run_api_import.py apply-suggestions",
+    "approve:module:rule": "python3 2.pipeline/run_api_import.py approve-module-rule",
     "list:module": "python3 2.pipeline/run_api_import.py list-modules",
-    "activate:module": "python3 2.pipeline/run_api_import.py activate-module --module <tên>",
-    "enrich:openapi": "python3 2.pipeline/run_api_import.py enrich-openapi",
+    "endpoints:duplicates": "python3 2.pipeline/import_flow/endpoint_duplicates.py",
+    "activate:module": "python3 2.pipeline/run_api_import.py activate-module",
+
     "convert:api": "python3 2.pipeline/run_api_import.py import",
-    "verify:stats": "python3 2.pipeline/run_api_import.py list-modules"
+
+    "errors:parse": "python3 2.pipeline/run_api_import.py parse-errors",
+    "errors:conflicts": "python3 2.pipeline/contract_profile/error_conflicts.py",
+    "errors:review": "python3 2.pipeline/contract_profile/error_review_assistant.py",
+    "errors:resolve": "python3 2.pipeline/run_api_import.py resolve",
+    "errors:apply": "python3 2.pipeline/run_api_import.py apply-errors",
+    "errors:audit:global": "python3 2.pipeline/run_api_import.py audit-global-usage",
+    "errors:build-map": "python3 2.pipeline/run_api_import.py build-operation-map",
+    "errors:enrich": "python3 2.pipeline/run_api_import.py enrich-openapi",
+    "enrich:openapi": "python3 2.pipeline/run_api_import.py enrich-openapi --module order",
+
+    "gen:path-stubs": "python3 6.path_stub/generate_path_stubs.py",
+    "merge:openapi": "python3 6.path_stub/generate_path_stubs.py --merge",
+
+    "verify:stats": "python3 2.pipeline/run_api_import.py list-modules",
+    "verify:py:errors": "python3 -m py_compile 2.pipeline/contract_profile/run_error_parser.py 2.pipeline/contract_profile/operation_map_builder.py 2.pipeline/enrichers/enrich_errors.py"
   },
   "repository": {
     "type": "git",

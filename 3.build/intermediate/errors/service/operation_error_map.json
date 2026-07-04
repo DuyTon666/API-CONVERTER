@@ -1,0 +1,327 @@
+{
+  "generated_at": "2026-07-04T11:33:50.632106",
+  "module": "service",
+  "batch_timestamp": "2026-07-04 11:11:31",
+  "operations": {
+    "getServiceTypes": {
+      "method": "get",
+      "path": "/v1/services/types",
+      "source_file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/service/get_service_types.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ]
+      }
+    },
+    "getUserServices": {
+      "method": "get",
+      "path": "/v1/users/{user_id}/services",
+      "source_file": "API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/service/get_user_services.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ]
+      }
+    },
+    "temporaryOpenService": {
+      "method": "post",
+      "path": "/v1/services/{service_id}/temporary-open",
+      "source_file": "API Contract - API mở tạm dịch vụ.docx.pdf",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/service/temporary_open_service.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4481",
+            "category": "",
+            "message": "Dịch vụ không hỗ trợ mở tạm",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4482",
+            "category": "",
+            "message": "Dịch vụ không đủ điều kiện mở tạm",
+            "http_status_source": "override"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ],
+        "409": [
+          {
+            "code": "4483",
+            "category": "",
+            "message": "Thời gian xin gia hạn lần trước vẫn còn. Không thể thực hiện tiếp",
+            "http_status_source": "override"
+          }
+        ]
+      }
+    },
+    "getServiceUpgradePlans": {
+      "method": "get",
+      "path": "/v1/users/{user_id}/services/{id}/upgrade-plans",
+      "source_file": "API Service - API lấy danh sách các gói nâng cấp của một dịch vụ.docx.pdf",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/service/get_service_upgrade_plans.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ]
+      }
+    },
+    "createServiceUpgradePlanRequest": {
+      "method": "post",
+      "path": "/v1/users/{user_id}/services/{id}/request-upgrade-plans",
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/service/create_service_upgrade_plan_request.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "5012",
+            "category": "",
+            "message": "Dịch vụ đã hết hạn",
+            "http_status_source": "override"
+          },
+          {
+            "code": "5015",
+            "category": "",
+            "message": "Dịch vụ không hỗ trợ nâng cấp",
+            "http_status_source": "override"
+          },
+          {
+            "code": "5017",
+            "category": "",
+            "message": "Dịch vụ mới đã bị tạm khóa",
+            "http_status_source": "override"
+          },
+          {
+            "code": "5018",
+            "category": "",
+            "message": "Dịch vụ mới không cùng plan",
+            "http_status_source": "override"
+          },
+          {
+            "code": "5019",
+            "category": "",
+            "message": "Dịch vụ mới không hỗ trợ nâng cấp",
+            "http_status_source": "override"
+          },
+          {
+            "code": "5020",
+            "category": "",
+            "message": "Chưa cho phép nâng cấp giữa 2 dịch vụ",
+            "http_status_source": "override"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "5000",
+            "category": "Not Found",
+            "message": "Dịch vụ không tìm thấy",
+            "http_status_source": "override"
+          },
+          {
+            "code": "5008",
+            "category": "Not Found",
+            "message": "Không tìm thấy thông tin gói nâng cấp",
+            "http_status_source": "override"
+          }
+        ],
+        "500": [
+          {
+            "code": "5013",
+            "category": "",
+            "message": "Không xác định được thời hạn còn lại",
+            "http_status_source": "override"
+          },
+          {
+            "code": "5014",
+            "category": "Not Found",
+            "message": "Không lấy được giá của dịch vụ hiện tại",
+            "http_status_source": "override"
+          },
+          {
+            "code": "5016",
+            "category": "",
+            "message": "Không lấy được giá của dịch vụ mới",
+            "http_status_source": "override"
+          }
+        ]
+      }
+    },
+    "changeServicePassword": {
+      "method": "post",
+      "path": "/v1/users/{user_id}/services/{id}/change-password",
+      "source_file": "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/service/change_service_password.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4118",
+            "category": "",
+            "message": "Chưa bật 2FA",
+            "http_status_source": "override"
+          },
+          {
+            "code": "5012",
+            "category": "",
+            "message": "Dịch vụ không hỗ trợ chức năng này",
+            "http_status_source": "override"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ],
+        "500": [
+          {
+            "code": "5013",
+            "category": "",
+            "message": "Xảy ra lỗi trong quá trình đổi mật khẩu",
+            "http_status_source": "override"
+          }
+        ]
+      }
+    }
+  }
+}

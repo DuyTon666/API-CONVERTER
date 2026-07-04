@@ -1,0 +1,59 @@
+'# http_status_overrides.yaml': null
+overrides:
+  '4221':
+    http_status: 422
+    reason: validation required field
+  '4222':
+    http_status: 422
+    reason: validation invalid value
+  '4223':
+    http_status: 422
+    reason: validation required field
+  '4224':
+    http_status: 422
+    reason: validation max length
+  '6010':
+    http_status: 422
+    reason: validation required field
+  '6011':
+    http_status: 422
+    reason: validation max length
+  '6012':
+    http_status: 422
+    reason: validation required field
+  '6013':
+    http_status: 422
+    reason: validation invalid value
+  '6014':
+    http_status: 422
+    reason: validation max value
+  '6001':
+    http_status: 404
+    reason: resource not found
+  '6002':
+    http_status: 422
+    reason: business rule violation
+  '6003':
+    http_status: 422
+    reason: business state invalid
+  '6004':
+    http_status: 404
+    reason: mapping config not found
+  '6005':
+    http_status: 422
+    reason: business limit exceeded
+  '6006':
+    http_status: 422
+    reason: business state invalid
+  '4090':
+    http_status: 409
+    reason: idempotency concurrent conflict
+  '4091':
+    http_status: 409
+    reason: duplicate submit conflict
+  '4101':
+    http_status: 401
+    reason: missing authorization
+  '4103':
+    http_status: 403
+    reason: missing required scope

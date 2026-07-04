@@ -37,16 +37,106 @@ def emit_yaml(op: ParsedOperation, output_path: str):
         yaml.dump(data, f)  # dump = chuyển dict Python → text YAML và ghi vào file
     validate_yaml_file(output_path)
 
+
 def _ref(path: str) -> dict:
     """
     Helper tạo $ref đúng chuẩn OpenAPI 3.1.
     OpenAPI yêu cầu $ref phải là chuỗi có dấu ngoặc kép.
-    Q() (DoubleQuotedScalarString) báo cho ruamel.yaml biết phải in quotes.
-
-    Ví dụ: _ref("../../components/responses/Unauthorized.yaml")
-    Output YAML: $ref: "../../components/responses/Unauthorized.yaml"
     """
     return {"$ref": Q(path)}
+
+
+def _has_canonical_request_schema(op: ParsedOperation) -> bool:
+    result = getattr(op, "request_schema_result", None)
+    return bool(result and getattr(result, "root", None))
+
+
+def _can_emit_request_schema(op: ParsedOperation) -> bool:
+    return bool(
+        op.operation_id
+        and (
+            _has_canonical_request_schema(op)
+            or op.request_body_fields
+        )
+    )
+
+
+def _request_schema_name(operation_id: str) -> str:
+    if not operation_id:
+        return ""
+
+    base = operation_id[0].upper() + operation_id[1:]
+
+    if base.lower().endswith("request"):
+        return base
+    
+    return base + "Request"
+
+def _schema_node_to_openapi(node, schema_kind: str = "request") -> dict:
+    node_type = getattr(node, "type", "string") or "string"
+
+    if getattr(node, "nullable", False):
+        schema = {"type": [node_type, "null"]}
+    else:
+        schema = {"type": node_type}
+
+    if getattr(node, "description", None):
+        schema["description"] = node.description
+
+    if getattr(node, "format", None):
+        schema["format"] = node.format
+
+    if getattr(node, "enum", None):
+        schema["enum"] = node.enum
+
+    if getattr(node, "has_default", False):
+        schema["default"] = node.default
+
+    if getattr(node, "has_example", False):
+        schema["example"] = node.example
+
+    constraints = getattr(node, "constraints", {}) or {}
+    for key, value in constraints.items():
+        if value is not None:
+            schema[key] = value
+
+    if node.type == "object":
+        properties = {}
+
+        for field_name, child in node.properties.items():
+            prop = _schema_node_to_openapi(child, schema_kind=schema_kind)
+            prop = _apply_server_managed_rules(
+                field_name,
+                prop,
+                schema_kind=schema_kind,
+            )
+
+            if prop is None:
+                continue
+
+            properties[field_name] = prop
+
+        schema["properties"] = properties
+
+        required = [
+            field_name
+            for field_name in getattr(node, "required", [])
+            if field_name in properties
+        ]
+
+        if required:
+            schema["required"] = required
+
+    if node.type == "array":
+        if getattr(node, "items", None) is not None:
+            schema["items"] = _schema_node_to_openapi(
+                node.items,
+                schema_kind=schema_kind,
+            )
+        else:
+            schema["items"] = {}
+
+    return schema
 
 def _apply_server_managed_rules(field_name: str, prop: dict, schema_kind: str) -> dict | None:
     """
@@ -168,52 +258,6 @@ def init_config(config_dir: str) -> None:
     REQUEST_AUTO_REMOVE_FIELDS = set(_CONFIG.get("request_auto_remove_fields", []))
     RESPONSE_READONLY_FIELDS   = set(_CONFIG.get("response_readonly_fields", []))
 
-def _group_error_codes_by_status(error_codes):
-    """
-    Input: op.error_codes từ parser.
-    Output: {"422": ["4200", "4468"], "404": ["4004"], ...}
-    """
-    grouped = {}
-    registry = _CONFIG.get("error_codes", {})
-
-    for code in error_codes or []:
-        code = str(code).strip()
-        meta = registry.get(code)
-
-        # Không biết code này thì bỏ qua để không làm fail toàn pipeline.
-        # Nếu muốn strict hơn thì đổi thành raise ValueError.
-        if not meta:
-            continue
-
-        status = str(meta.get("http_status", "")).strip()
-        if not status:
-            continue
-
-        grouped.setdefault(status, []).append(code)
-
-    return grouped
-
-
-def _make_422_response(codes):
-    registry = _CONFIG.get("error_codes", {})
-    lines = []
-
-    for code in codes:
-        meta = registry.get(str(code), {})
-        message = meta.get("message", "Lỗi nghiệp vụ")
-        lines.append(f"{code} — {message}")
-
-    return {
-        "description": "\n".join(lines),
-        "content": {
-            "application/json": {
-                "schema": _ref(_CONFIG.get(
-                    "standard_error_ref",
-                    "../../components/schemas/common/StandardError.yaml"
-                ))
-            }
-        }
-    }
 
 def _build_structure(op: ParsedOperation) -> dict:
     """
@@ -250,29 +294,31 @@ def _build_structure(op: ParsedOperation) -> dict:
         parameters.append(param)
 
     # --- PHẦN 2: GROUP ERROR CODES THEO HTTP STATUS ---
-    grouped_errors = _group_error_codes_by_status(op.error_codes)
-    business_codes = grouped_errors.get("422", [])
 
     # --- PHẦN 3: XÂY RESPONSES ---
     response_schema = _resolve_response_schema(op)   # gọi hàm bên ngoài
     has_real_data = bool(op.response_schemas and op.operation_id)
-    response_200_content = {"schema": response_schema}
+    success_response_content = {"schema": response_schema}
     if not has_real_data:
-        response_200_content["example"] = {"success": True, "data": None, "error": None}
+        success_response_content["example"] = {"success": True, "data": None, "error": None}
 
-    responses = {   # responses luôn được tạo, không nằm trong if
-        "200": {
+    success_status = str(getattr(op, "success_status", "") or "200").strip()
+    if not (success_status.isdigit() and success_status.startswith("2")):
+        success_status = "200"
+
+    responses = {
+        success_status: {
             "description": "Thành công",
-            "content": {"application/json": response_200_content}
+            "content": {"application/json": success_response_content}
         },
     }
 
     response_refs = _CONFIG.get("response_refs", {})
     for status, ref_path in response_refs.items():
+        if str(status) == success_status:
+            continue
         responses[status] = _ref(ref_path)
 
-    if business_codes:
-        responses["422"] = _make_422_response(business_codes)
 
     # --- PHẦN 4: GHÉP LẠI THÀNH CẤU TRÚC OPENAPI ---
     method_key = op.method.lower()  # "PUT" → "put" vì OpenAPI dùng chữ thường
@@ -292,11 +338,18 @@ def _build_structure(op: ParsedOperation) -> dict:
     # --- PHẦN 5: THÊM REQUEST BODY NẾU CÓ ---
     # Không phải endpoint nào cũng có request body
     # Ví dụ: close ticket không có, nhưng create ticket có
-    has_body = op.has_request_body or bool(op.request_body_fields)
+    can_emit_request_schema = _can_emit_request_schema(op)
+    method_upper = op.method.upper()
 
-    if has_body and op.method.upper() not in ("GET", "DELETE"):
-        schema_name = op.operation_id[0].upper() + op.operation_id[1:] + "Request" if op.operation_id else ""
-        schema_ref  = f"../../components/schemas/{op.service}/{schema_name}.yaml" if schema_name else ""
+    # GET/HEAD không emit requestBody.
+    # Các method khác, kể cả DELETE, vẫn emit nếu parser tìm thấy body/schema thật.
+    if can_emit_request_schema and method_upper not in {"GET", "HEAD"}:
+        schema_name = _request_schema_name(op.operation_id)
+
+        schema_ref = (
+            f"../../components/schemas/"
+            f"{op.service}/{schema_name}.yaml"
+        )
         structure[method_key]["requestBody"] = {
             "required": op.request_body_required,
             "content": {
@@ -308,16 +361,40 @@ def _build_structure(op: ParsedOperation) -> dict:
     return structure
 
 def emit_request_schema(op: ParsedOperation, schemas_dir: str):
-    """Tạo file RequestSchema.yaml từ request body fields"""
-    if not op.request_body_fields or not op.operation_id:
-        return
+    """Tạo file RequestSchema.yaml từ request body schema"""
+    if not op.operation_id:
+        return None
+
+    has_canonical_schema = _has_canonical_request_schema(op)
+
+    if not has_canonical_schema and not op.request_body_fields:
+        return None
 
     # reopenUserTicket → ReopenUserTicketRequest.yaml
-    schema_name = op.operation_id[0].upper() + op.operation_id[1:] + "Request"
+    schema_name = _request_schema_name(op.operation_id)
     output_path = Path(schemas_dir) / f"{schema_name}.yaml"
 
     if output_path.exists():
         print(f"    Schema đã tồn tại, bỏ qua: {output_path}")
+        return schema_name
+
+    if has_canonical_schema:
+        data = _schema_node_to_openapi(
+            op.request_schema_result.root,
+            schema_kind="request",
+        )
+
+        yaml = YAML()
+        yaml.default_flow_style = False
+        yaml.indent(mapping=2, sequence=4, offset=2)
+
+        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as f:
+            yaml.dump(data, f)
+
+        validate_yaml_file(output_path)
+
+        print(f"      Schema: {output_path}")
         return schema_name
 
     properties = {}
@@ -394,10 +471,35 @@ def emit_request_schema(op: ParsedOperation, schemas_dir: str):
     print(f"      Schema: {output_path}")
     return schema_name
 
+
+def _scalar_schema(dtype: str) -> dict:
+    dtype = (dtype or "string").lower()
+
+    if dtype in {"string", "integer", "number", "boolean"}:
+        return {"type": dtype}
+
+    if dtype == "null":
+        return {"type": ["string", "null"]}
+
+    return {"type": "string"}
+
+
+def _array_items_schema(field: dict) -> dict:
+    item_type = (field.get("item_type") or "").lower()
+
+    if item_type in {"string", "integer", "number", "boolean"}:
+        return {"type": item_type}
+
+    if item_type == "null":
+        return {"type": ["string", "null"]}
+
+    return {"type": "object"}
+
+
 def _build_properties(fields: list, parent_path: str = "", all_schemas: dict = None, prefix: str = "") -> dict:
     properties = {}
     for f in fields:
-        dtype = f["type"]
+        dtype = (f.get("type") or "string").lower()
         child_path = f"{parent_path}.{f['name']}" if parent_path else f['name']
         has_child = all_schemas and child_path in all_schemas
 
@@ -423,7 +525,7 @@ def _build_properties(fields: list, parent_path: str = "", all_schemas: dict = N
                         "properties": _build_properties(child_fields, child_path, all_schemas, prefix)
                     }}
             else:
-                prop = {"type": "array", "items": {"type": "object"}}
+                prop = {"type": "array", "items": _array_items_schema(f)}
         elif dtype == "object":
             if has_child:
                 if _child_has_nested(child_path):
@@ -435,10 +537,8 @@ def _build_properties(fields: list, parent_path: str = "", all_schemas: dict = N
                     prop = {"type": "object", "properties": _build_properties(child_fields, child_path, all_schemas, prefix)}
             else:
                 prop = {"type": "object"}
-        elif dtype == "integer":
-            prop = {"type": "integer"}
         else:
-            prop = {"type": "string"}
+            prop = _scalar_schema(dtype)
 
         if f.get("description"):
             prop["description"] = f["description"]

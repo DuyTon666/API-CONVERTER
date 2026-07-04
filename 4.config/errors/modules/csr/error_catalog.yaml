@@ -1,0 +1,17 @@
+error_codes:
+  '4090':
+    http_status: '409'
+    message: Idempotency-Key đang xử lý (concurrent)
+  '4091':
+    http_status: '409'
+    message: Double submit — payload trùng trong dedup window
+  '4101':
+    http_status: '401'
+    message: Thiếu Authorization header
+  '4103':
+    http_status: '403'
+    message: Client không có scope=admin
+  '4701':
+    http_status: '500'
+    message: Không sinh được CSR — cả TheSSLStore API và openssl nội bộ đều thất bại
+namespace: csr

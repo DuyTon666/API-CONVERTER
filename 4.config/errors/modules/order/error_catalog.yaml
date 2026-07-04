@@ -1,0 +1,383 @@
+error_codes:
+  '4001':
+    http_status: '404'
+    message: Order không tồn tại, hoặc certificate không thuộc order này
+  '4002':
+    http_status: '422'
+    message: Internal product is_enabled=false — không cho phép tạo order mới
+  '4003':
+    http_status: '404'
+    message: internal_product_code không tồn tại hoặc đã soft-delete
+  '4090':
+    http_status: '409'
+    message: Idempotency-Key đang xử lý (concurrent)
+  '4091':
+    http_status: '409'
+    message: Double submit — payload trùng trong dedup window
+  '4100':
+    http_status: '422'
+    message: 'Chứng chỉ chưa đến thời điểm gia hạn. data: {days_left, renewal_early_days}'
+  '4101':
+    http_status: '401'
+    message: Thiếu Authorization header
+  '4103':
+    http_status: '403'
+    message: Client không có scope=admin
+  '4107':
+    http_status: '422'
+    message: 'Trạng thái đơn hàng không cho phép gia hạn. data: {current_status}'
+  '4109':
+    http_status: '422'
+    message: 'Đã có đơn gia hạn đang xử lý. data: {renewal_order_id, renewal_order_number}'
+  '4110':
+    http_status: '422'
+    message: 'Thiếu provider mapping cho gia hạn (order còn hạn). data: null'
+  '4111':
+    http_status: '422'
+    message: 'Đơn hàng thiếu subscription_end_date. data: null'
+  '4112':
+    http_status: '422'
+    message: 'Không có provider khả dụng (order EXPIRED). data: {internal_product_id,
+      years}'
+  '4113':
+    http_status: '422'
+    message: 'years không hợp lệ (phải là integer 1–3). data: errors'
+  '4114':
+    http_status: '422'
+    message: 'dcv_method không hợp lệ (EMAIL | HTTP | HTTPS | CNAME). data: errors'
+  '4201':
+    http_status: '422'
+    message: Order không ở trạng thái ISSUED/INSTALLED/ACTIVE — không thể reissue
+      (R1)
+  '4202':
+    http_status: '422'
+    message: order.provider_order_id rỗng — order chưa được submit lên provider (R2)
+  '4203':
+    http_status: '422'
+    message: Đang có cert REISSUE_QUEUED hoặc REISSUE_PENDING — không thể reissue
+      đồng thời (R3)
+  '4204':
+    http_status: '422'
+    message: Không tìm thấy CSR — cert hiện tại không có csr_pem và request không
+      cung cấp csr mới (R5)
+  '4205':
+    http_status: '422'
+    message: Order không có provider được chọn (selectedMapping.provider = null) (R6)
+  '4206':
+    http_status: '422'
+    message: Provider chưa hỗ trợ reissue (is_reissue_supported = false) — reserved,
+      hiện chưa dùng
+  '4207':
+    http_status: '400'
+    message: 'CSR PEM mới không hợp lệ: sai format PEM, không parse được, hoặc CN
+      không khớp primary_domain (R5)'
+  '4210':
+    http_status: '400'
+    message: id không phải số nguyên dương hợp lệ (BIGINT, không phải UUID)
+  '4211':
+    http_status: '400'
+    message: status không thuộc tập giá trị hợp lệ
+  '4212':
+    http_status: '400'
+    message: product_type không thuộc tập giá trị hợp lệ (DV/OV/EV)
+  '4213':
+    http_status: '400'
+    message: cert_type không thuộc tập giá trị hợp lệ
+  '4214':
+    http_status: '400'
+    message: date_from hoặc date_to không đúng định dạng YYYY-MM-DD
+  '4215':
+    http_status: '400'
+    message: date_to nhỏ hơn date_from
+  '4216':
+    http_status: '400'
+    message: page < 1 hoặc per_page ngoài [1, 100]
+  '4217':
+    http_status: '400'
+    message: sort_by hoặc sort_dir không hợp lệ
+  '422':
+    http_status: '4622'
+    message: ''
+  '4221':
+    http_status: '422'
+    message: external_account_id là bắt buộc
+  '4222':
+    http_status: '422'
+    message: external_account_id phải là số nguyên ≥ 1
+  '4223':
+    http_status: '422'
+    message: customer_id là bắt buộc
+  '4224':
+    http_status: '422'
+    message: customer_id không được vượt quá 255 ký tự
+  '4225':
+    http_status: '422'
+    message: internal_product_code là bắt buộc
+  '4226':
+    http_status: '422'
+    message: internal_product_code không đúng định dạng (^[A-Za-z0-9_-]{2,64}$)
+  '4227':
+    http_status: '422'
+    message: years là bắt buộc
+  '4228':
+    http_status: '422'
+    message: years phải là số nguyên ≥ 1
+  '4229':
+    http_status: '422'
+    message: primary_domain là bắt buộc
+  '4230':
+    http_status: '422'
+    message: primary_domain không phải FQDN hợp lệ
+  '4231':
+    http_status: '422'
+    message: note không được vượt quá 500 ký tự
+  '4241':
+    http_status: '422'
+    message: contact.contact_admin.email không hợp lệ (RFC 5322)
+  '4242':
+    http_status: '422'
+    message: contact.contact_admin.phone phải theo định dạng E.164
+  '4251':
+    http_status: '422'
+    message: contact_org.name là bắt buộc khi cung cấp contact_org
+  '4252':
+    http_status: '422'
+    message: contact_org.address là bắt buộc khi cung cấp contact_org
+  '4253':
+    http_status: '422'
+    message: contact_org.country là bắt buộc khi cung cấp contact_org
+  '4254':
+    http_status: '422'
+    message: 'contact_org.country phải là mã ISO 3166-1 alpha-2 (VD: VN, US)'
+  '4255':
+    http_status: '422'
+    message: contact_org.phone phải theo định dạng E.164
+  '4261':
+    http_status: '422'
+    message: contact.contact_tech.email không hợp lệ (RFC 5322)
+  '4262':
+    http_status: '422'
+    message: contact.contact_tech.phone phải theo định dạng E.164
+  '4300':
+    http_status: '422'
+    message: customer_id không tồn tại ở Internal Core
+  '4301':
+    http_status: '422'
+    message: Certificate không ở trạng thái ISSUED — không thể download (SUPERSEDED,
+      REVOKED, EXPIRED, REISSUE_QUEUED...)
+  '4302':
+    http_status: '422'
+    message: certificate_pem rỗng — cert chưa được cấp hoàn chỉnh (provider chưa trả
+      về PEM)
+  '4310':
+    http_status: '422'
+    message: Certificate không ở trạng thái ISSUED — không thể download
+  '4501':
+    http_status: '422'
+    message: Không có provider nào khả dụng — NO_PROVIDER_AVAILABLE
+  '4502':
+    http_status: '409'
+    message: Không acquire được routing lock (concurrent WRR) — client retry sau 1s
+  '4601':
+    http_status: '422'
+    message: Order không ở trạng thái INIT hoặc FAILED — không thể lưu CSR
+  '4602':
+    http_status: '422'
+    message: Order đang ở trạng thái CSR_READY (đang chờ worker submit lên provider)
+      — không thể ghi đè
+  '4605':
+    http_status: '422'
+    message: Order đã được submit thành công lên provider (provider_order_id đã có
+      giá trị) — không thể ghi đè
+  '4606':
+    http_status: '422'
+    message: Đơn gia hạn (RENEWAL) yêu cầu đơn gốc đã được submit lên provider (provider_order_id
+      IS NULL)
+  '4610':
+    http_status: '422'
+    message: csr là bắt buộc — không được null hoặc bỏ trống
+  '4611':
+    http_status: '422'
+    message: key_type không thuộc tập hợp lệ (RSA_2048 / RSA_4096 / ECDSA_P256 / ECDSA_P384)
+  '4612':
+    http_status: '422'
+    message: web_server_type không thuộc tập hợp lệ
+  '4613':
+    http_status: '422'
+    message: signature_hash_algorithm không thuộc tập hợp lệ (SHA2-256 / SHA2-384
+      / SHA2-512)
+  '4614':
+    http_status: '422'
+    message: approver_email không đúng định dạng RFC 5322
+  '4615':
+    http_status: '422'
+    message: Order không ở trạng thái PENDING hoặc DCV_PENDING — không thể trigger
+      DCV validate
+  '4621':
+    http_status: '422'
+    message: dcv_method không thuộc tập hợp lệ (EMAIL / HTTP / HTTPS / CNAME)
+  '4622':
+    http_status: '422'
+    message: dcv_config[domain].method không thuộc tập hợp lệ
+  '4623':
+    http_status: '422'
+    message: dcv_config[domain].approver_email không đúng định dạng RFC 5322
+  '4631':
+    http_status: '422'
+    message: contact_admin.email không hợp lệ (RFC 5322)
+  '4632':
+    http_status: '422'
+    message: contact_admin.first_name bắt buộc
+  '4633':
+    http_status: '422'
+    message: contact_admin.last_name bắt buộc
+  '4634':
+    http_status: '422'
+    message: contact_admin.phone bắt buộc / không đúng định dạng E.164
+  '4635':
+    http_status: '422'
+    message: contact_admin bắt buộc — không được null hoặc bỏ trống
+  '4643':
+    http_status: '422'
+    message: contact_org bắt buộc — không được null hoặc bỏ trống
+  '4644':
+    http_status: '422'
+    message: contact_org.name bắt buộc
+  '4645':
+    http_status: '422'
+    message: contact_org.address bắt buộc
+  '4646':
+    http_status: '422'
+    message: contact_org.province bắt buộc
+  '4647':
+    http_status: '422'
+    message: contact_org.country bắt buộc / không đúng định dạng ISO 3166-1 alpha-2
+  '4648':
+    http_status: '422'
+    message: contact_org.postal_code bắt buộc
+  '4649':
+    http_status: '422'
+    message: contact_org.phone bắt buộc / không đúng định dạng E.164
+  '4651':
+    http_status: '422'
+    message: contact_tech.email không hợp lệ (RFC 5322)
+  '4652':
+    http_status: '422'
+    message: contact_tech.first_name bắt buộc
+  '4653':
+    http_status: '422'
+    message: contact_tech.last_name bắt buộc
+  '4654':
+    http_status: '422'
+    message: contact_tech.phone bắt buộc / không đúng định dạng E.164
+  '4655':
+    http_status: '422'
+    message: contact_tech bắt buộc — không được null hoặc bỏ trống
+  '4661':
+    http_status: '422'
+    message: contact_org.business_number bắt buộc với OV/EV
+  '4662':
+    http_status: '422'
+    message: contact_org.representative_name bắt buộc với OV/EV
+  '4700':
+    http_status: '500'
+    message: Không sinh được CSR — cả TheSSLStore API và openssl nội bộ đều thất bại
+  '4701':
+    http_status: '400'
+    message: CSR PEM không hợp lệ (sai format, không parse được)
+  '4702':
+    http_status: '400'
+    message: CN/SAN trong CSR không chứa primary_domain của order
+  '4706':
+    http_status: '400'
+    message: approver_email bắt buộc khi dcv_method=EMAIL nhưng không được cung cấp
+  '4707':
+    http_status: '400'
+    message: san_list chứa wildcard entry (*.domain) — không được phép; wildcard coverage
+      áp dụng tự động theo sản phẩm
+  '4708':
+    http_status: '422'
+    message: cert_type MULTI_DOMAIN/FLEX không hỗ trợ dcv_method=EMAIL — chỉ cho phép
+      HTTP/HTTPS/CNAME
+  '4709':
+    http_status: '422'
+    message: dcv_method là bắt buộc
+  '4751':
+    http_status: '422'
+    message: Cert không ở trạng thái PENDING hoặc REISSUE_PENDING
+  '4752':
+    http_status: '422'
+    message: Domain không tồn tại trong dcv_records của cert
+  '4753':
+    http_status: '422'
+    message: Domain đang dùng phương thức DCV khác (không phải EMAIL)
+  '4754':
+    http_status: '422'
+    message: Domain đã được xác minh (VALIDATED), không thể gửi lại email
+  '4755':
+    http_status: '422'
+    message: Domain đã được xác minh (VALIDATED), không thể đổi phương thức DCV
+  '4757':
+    http_status: '422'
+    message: Không tìm thấy provider cho đơn hàng
+  '4758':
+    http_status: ''
+    message: domain là bắt buộc
+  '4761':
+    http_status: ''
+    message: domain là bắt buộc
+  '4762':
+    http_status: ''
+    message: method là bắt buộc
+  '4763':
+    http_status: ''
+    message: 'method không hợp lệ — chỉ cho: EMAIL, HTTP, CNAME'
+  '4764':
+    http_status: ''
+    message: approver_email không đúng định dạng email
+  '4765':
+    http_status: ''
+    message: approver_email bắt buộc khi method=EMAIL
+  '4766':
+    http_status: '422'
+    message: Phương thức DCV không hợp lệ cho cert_type này — WILDCARD/FLEX chỉ cho
+      CNAME hoặc EMAIL
+  '4767':
+    http_status: '422'
+    message: Primary domain là địa chỉ IP, chỉ hỗ trợ phương thức HTTP
+  '4768':
+    http_status: '422'
+    message: WILDCARD/FLEX không hỗ trợ primary domain là địa chỉ IP — cấu hình sản
+      phẩm không hợp lệ
+  '4801':
+    http_status: '502'
+    message: Provider API trả về lỗi khi submit reissue. Chi tiết trong error.data.provider_message
+  '4820':
+    http_status: '502'
+    message: Provider API trả về lỗi khi kiểm tra DCV status. Chi tiết trong error.data.provider_message
+  '4851':
+    http_status: '502'
+    message: Provider API lỗi khi cập nhật phương thức DCV
+  '4852':
+    http_status: '502'
+    message: Provider API lỗi khi gửi lại email DCV
+  '4900':
+    http_status: '429'
+    message: Đã đạt giới hạn revoke_daily_limit lần/ngày — thử lại vào ngày mai
+  '4901':
+    http_status: '422'
+    message: Order status không cho phép thu hồi (REVOKED, FAILED, CANCELED, v.v.)
+  '4902':
+    http_status: '422'
+    message: Đang có revoke in-progress (REVOKE_QUEUED hoặc REVOKE_PENDING)
+  '4903':
+    http_status: '422'
+    message: Không tìm thấy cert ISSUED/PENDING/CSR_READY để thu hồi
+  '4904':
+    http_status: '422'
+    message: provider_order_id rỗng — cert chưa được submit lên provider, không thể
+      thu hồi
+  '4905':
+    http_status: '422'
+    message: Cert ISSUED đã quá revoke_max_days_after_issue ngày kể từ issued_at
+namespace: order

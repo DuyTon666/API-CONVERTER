@@ -1,0 +1,44 @@
+namespace: topup
+decisions:
+- code: '4102'
+  source_file: API_order_plan_topup.docx
+  incoming_message_key: bearer token khong hop le het han
+  matched_namespace: _global
+  status: conflict
+  incoming_message: Bearer Token không hợp lệ / hết hạn
+  existing_message: Token không hợp lệ hoặc đã hết hạn
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T12:01:52.276504'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:48.464014'
+- code: '4108'
+  source_file: API_order_plan_topup.docx
+  incoming_message_key: ip khong duoc phep
+  matched_namespace: _global
+  status: conflict
+  incoming_message: IP không được phép
+  existing_message: Không có quyền truy cập
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:47:42.671539'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:48.464046'
+- code: '4200'
+  source_file: API_order_plan_topup.docx
+  incoming_message_key: du lieu request khong hop le validate chung
+  matched_namespace: _global
+  status: duplicate_ok
+  incoming_message: Dữ liệu request không hợp lệ (validate chung)
+  existing_message: Dữ liệu request không hợp lệ
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T12:02:26.722235'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:48.464077'

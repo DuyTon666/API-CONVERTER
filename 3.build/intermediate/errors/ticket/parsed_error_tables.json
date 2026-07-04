@@ -1,0 +1,382 @@
+{
+  "generated_at": "2026-06-24T09:47:12.405026",
+  "source_files": [
+    "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+    "API Contract - API hiển thị chi tiết ticket cho khách hàng.docx.pdf",
+    "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+    "API Contract - API phản hồi ticket.pdf",
+    "API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx.pdf",
+    "API Contract - API tạo ticket cho khách hàng.docx.pdf",
+    "API Contract - API đóng ticket của khách hàng.docx.pdf",
+    "API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+    "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+    "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
+    "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
+    "API Ticket - API mở lại ticket của khách hàng.docx",
+    "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
+    "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+    "API Ticket - API tạo ratting ticket cho khách hàng.docx",
+    "API Ticket - API đóng ticket của khách hàng.docx",
+    "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
+    "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
+    "API Ticket - Tạo ticket cho khách hàng.docx"
+  ],
+  "summary": {
+    "total": 12,
+    "new": 0,
+    "duplicate_ok": 9,
+    "conflict": 3,
+    "needs_review": 0,
+    "intra_batch_conflict": 2,
+    "missing_http_status": 12
+  },
+  "entries": [
+    {
+      "code": "4102",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+      "seen_in_files": [
+        "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+        "API Contract - API hiển thị chi tiết ticket cho khách hàng.docx.pdf",
+        "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+        "API Contract - API phản hồi ticket.pdf",
+        "API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx.pdf",
+        "API Contract - API tạo ticket cho khách hàng.docx.pdf",
+        "API Contract - API đóng ticket của khách hàng.docx.pdf",
+        "API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+        "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+        "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
+        "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
+        "API Ticket - API mở lại ticket của khách hàng.docx",
+        "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
+        "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+        "API Ticket - API tạo ratting ticket cho khách hàng.docx",
+        "API Ticket - API đóng ticket của khách hàng.docx",
+        "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
+        "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
+        "API Ticket - Tạo ticket cho khách hàng.docx"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Auth",
+        "message": "Token không hợp lệ / hết hạn"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Token không hợp lệ hoặc đã hết hạn"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4108",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+      "seen_in_files": [
+        "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+        "API Contract - API hiển thị chi tiết ticket cho khách hàng.docx.pdf",
+        "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+        "API Contract - API phản hồi ticket.pdf",
+        "API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx.pdf",
+        "API Contract - API tạo ticket cho khách hàng.docx.pdf",
+        "API Contract - API đóng ticket của khách hàng.docx.pdf",
+        "API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+        "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+        "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
+        "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
+        "API Ticket - API mở lại ticket của khách hàng.docx",
+        "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
+        "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+        "API Ticket - API tạo ratting ticket cho khách hàng.docx",
+        "API Ticket - API đóng ticket của khách hàng.docx",
+        "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
+        "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
+        "API Ticket - Tạo ticket cho khách hàng.docx"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Auth",
+        "message": "IP không được phép truy cập"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Không có quyền truy cập"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4200",
+      "status": "duplicate_ok",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+      "seen_in_files": [
+        "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+        "API Contract - API hiển thị chi tiết ticket cho khách hàng.docx.pdf",
+        "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+        "API Contract - API phản hồi ticket.pdf",
+        "API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx.pdf",
+        "API Contract - API tạo ticket cho khách hàng.docx.pdf",
+        "API Contract - API đóng ticket của khách hàng.docx.pdf",
+        "API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+        "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+        "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
+        "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
+        "API Ticket - API mở lại ticket của khách hàng.docx",
+        "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
+        "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+        "API Ticket - API tạo ratting ticket cho khách hàng.docx",
+        "API Ticket - API đóng ticket của khách hàng.docx",
+        "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
+        "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
+        "API Ticket - Tạo ticket cho khách hàng.docx"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Input validation",
+        "message": "Dữ liệu request không hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Dữ liệu request không hợp lệ"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4004",
+      "status": "duplicate_ok",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+      "seen_in_files": [
+        "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+        "API Contract - API hiển thị chi tiết ticket cho khách hàng.docx.pdf",
+        "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+        "API Contract - API phản hồi ticket.pdf",
+        "API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx.pdf",
+        "API Contract - API tạo ticket cho khách hàng.docx.pdf",
+        "API Contract - API đóng ticket của khách hàng.docx.pdf",
+        "API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+        "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+        "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
+        "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
+        "API Ticket - API mở lại ticket của khách hàng.docx",
+        "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
+        "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+        "API Ticket - API tạo ratting ticket cho khách hàng.docx",
+        "API Ticket - API đóng ticket của khách hàng.docx",
+        "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
+        "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
+        "API Ticket - Tạo ticket cho khách hàng.docx"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Not Found",
+        "message": "Không tìm thấy dữ liệu"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Không tìm thấy dữ liệu"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4466",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+        "API Ticket - API mở lại ticket của khách hàng.docx"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Quá thời hạn cho phép mở lại"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Quá thời hạn cho phép mở lại"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4467",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+        "API Ticket - API mở lại ticket của khách hàng.docx"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Câu hỏi đang được mở"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Câu hỏi đang được mở"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4463",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": true,
+      "source_file": "API Contract - API phản hồi ticket.pdf",
+      "seen_in_files": [
+        "API Contract - API phản hồi ticket.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Tạo phản hồi thất bai"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Tạo phản hồi thất bại"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4464",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API phản hồi ticket.pdf",
+      "seen_in_files": [
+        "API Contract - API phản hồi ticket.pdf",
+        "API Contract - API đóng ticket của khách hàng.docx.pdf",
+        "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+        "API Ticket - API đóng ticket của khách hàng.docx"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Câu hỏi đã đóng, không được thực hiện phản hồi"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Câu hỏi đã đóng, không được thực hiện phản hồi"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4462",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API tạo ticket cho khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API Contract - API tạo ticket cho khách hàng.docx.pdf",
+        "API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+        "API Ticket - API tạo ratting ticket cho khách hàng.docx",
+        "API Ticket - Tạo ticket cho khách hàng.docx"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Insert data",
+        "message": "Tạo yêu cầu thất bại"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Tạo yêu cầu thất bại"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4463",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": true,
+      "source_file": "API Contract - API đóng ticket của khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API Contract - API đóng ticket của khách hàng.docx.pdf",
+        "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+        "API Ticket - API đóng ticket của khách hàng.docx"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Tạo phản hồi thất bại"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Tạo phản hồi thất bại"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4469",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+        "API Ticket - API tạo ratting ticket cho khách hàng.docx"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Input validation",
+        "message": "Ticket chưa được hoàn tất"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Ticket chưa được hoàn tất"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4468",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+      "seen_in_files": [
+        "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Đang chờ nhân viên tiếp nhận, không thể yêu cầu liên tục."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Đang chờ nhân viên tiếp nhận, không thể yêu cầu liên tục."
+      },
+      "resolution": null
+    }
+  ]
+}

@@ -114,7 +114,7 @@ def cmd_convert_root(module: str) -> None:
     )
 
 
-def cmd_import(active_only: bool = True, module_filter: str | None = None) -> None:
+def cmd_import(active_only: bool = True, module_filter: str | None = None, force: bool = False) -> None:
     cfg          = load_import_config()
     source_root  = get_source_root(cfg)
     output_root  = get_output_root(cfg)
@@ -243,6 +243,7 @@ def cmd_import(active_only: bool = True, module_filter: str | None = None) -> No
                 output_dir=str(output_root / m["name"]),
                 schemas_dir=str(schemas_root / m["name"]),
                 files_override=selection["selected_files"],
+                force=force,
             )
 
             n_success += 1

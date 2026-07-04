@@ -205,9 +205,10 @@ def _convert_one_file(
 
     schemas_dir.mkdir(parents=True, exist_ok=True)
 
-    if op.has_request_body and op.request_body_fields:
+    if op.has_request_body:
         schema_name = emit_request_schema(op, str(schemas_dir))
-        print(f"    Request schema: {schema_name}.yaml")
+        if schema_name:
+            print(f"    Request schema: {schema_name}.yaml")
 
     if op.response_schemas:
         emit_response_schemas(op, str(schemas_dir))
@@ -237,6 +238,7 @@ def run_batch(
     output_dir: str | None = None,
     schemas_dir: str | None = None,
     files_override: list[Path] | None = None,
+    force: bool = False,
 ) -> int:
 
     input_path = Path(input_dir)
@@ -291,7 +293,13 @@ def run_batch(
             old_version = old_entry.get("version", "") if isinstance(old_entry, dict) else old_entry
             old_output = old_entry.get("output", "") if isinstance(old_entry, dict) else ""
 
-            if new_version and new_version == old_version and old_output and Path(old_output).exists():
+            if (
+                not force
+                and new_version
+                and new_version == old_version
+                and old_output
+                and Path(old_output).exists()
+            ):
                 print(f"    [SKIP] version {new_version} không đổi")
 
                 skipped.append({

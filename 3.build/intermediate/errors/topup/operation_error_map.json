@@ -1,0 +1,157 @@
+{
+  "generated_at": "2026-07-03T14:10:31.586590",
+  "module": "topup",
+  "batch_timestamp": "2026-07-03 14:08:06",
+  "operations": {
+    "orderPlanTopup": {
+      "method": "post",
+      "path": "/v1/topup",
+      "source_file": "API_order_plan_topup.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/topup/order_plan_topup.yaml",
+      "errors": {
+        "422": [
+          {
+            "code": "4221",
+            "category": "",
+            "message": "external_account_id là bắt buộc.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4222",
+            "category": "",
+            "message": "external_account_id phải là số nguyên ≥ 1.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4223",
+            "category": "",
+            "message": "customer_id là bắt buộc.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4224",
+            "category": "",
+            "message": "customer_id không được vượt quá 255 ký tự.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "6010",
+            "category": "",
+            "message": "core_plan_id là bắt buộc.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "6011",
+            "category": "",
+            "message": "core_plan_id không được vượt quá 100 ký tự.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "6012",
+            "category": "",
+            "message": "plan_quantity là bắt buộc.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "6013",
+            "category": "",
+            "message": "plan_quantity phải là số nguyên ≥ 1.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "6014",
+            "category": "",
+            "message": "plan_quantity không được vượt quá 100.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "6002",
+            "category": "",
+            "message": "Đơn hàng tìm được không phải loại Multi-Domain/FLEX.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "6003",
+            "category": "",
+            "message": "Đơn hàng ở trạng thái không cho phép top-up (EXPIRED, FAILED, CANCELED...).",
+            "http_status_source": "override"
+          },
+          {
+            "code": "6005",
+            "category": "",
+            "message": "Tổng SAN sau top-up vượt quá giới hạn tối đa (max_san).",
+            "http_status_source": "override"
+          },
+          {
+            "code": "6006",
+            "category": "",
+            "message": "Đơn hàng chưa được gán provider (chưa qua routing).",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4200",
+            "category": "",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "6001",
+            "category": "",
+            "message": "Không tìm thấy đơn hàng MULTI_DOMAIN/FLEX đang active cho account này.",
+            "http_status_source": "override"
+          },
+          {
+            "code": "6004",
+            "category": "",
+            "message": "Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn hàng.",
+            "http_status_source": "override"
+          }
+        ],
+        "409": [
+          {
+            "code": "4090",
+            "category": "",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4091",
+            "category": "",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "override"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4102",
+            "category": "",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "",
+            "message": "IP không được phép",
+            "http_status_source": "global_map"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "",
+            "message": "Client không có scope=admin",
+            "http_status_source": "override"
+          }
+        ]
+      }
+    }
+  }
+}

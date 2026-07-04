@@ -1,0 +1,16 @@
+namespace: statistic
+runs:
+- timestamp: '2026-06-24T11:27:34.860081'
+  used_by:
+  - code: '4102'
+    source_file: API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf
+    message_in_document: Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf
+    message_in_document: IP không được phép truy cập
+  - code: '4200'
+    source_file: API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf
+    message_in_document: Dữ liệu request không hợp lệ
+  - code: '4004'
+    source_file: API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf
+    message_in_document: Không tìm thấy dữ liệu

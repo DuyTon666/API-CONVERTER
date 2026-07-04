@@ -1,0 +1,3931 @@
+{
+  "generated_at": "2026-07-02T16:18:25.238994",
+  "source_files": [
+    "API_cert_download.docx",
+    "API_order_certificate.docx",
+    "API_order_create.docx",
+    "API_order_dcv_change.docx",
+    "API_order_dcv_records.docx",
+    "API_order_dcv_resend_email.docx",
+    "API_order_dcv_validate.docx",
+    "API_order_detail.docx",
+    "API_order_generate_csr.docx",
+    "API_order_list.docx",
+    "API_order_reissue.docx",
+    "API_order_renew.docx",
+    "API_order_revoke.docx",
+    "API_order_submit_csr.docx",
+    "API_order_sync_status.docx"
+  ],
+  "summary": {
+    "total": 163,
+    "new": 0,
+    "duplicate_ok": 109,
+    "conflict": 54,
+    "needs_review": 0,
+    "intra_batch_conflict": 98,
+    "missing_http_status": 0
+  },
+  "entries": [
+    {
+      "code": "4090",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_cert_download.docx",
+      "seen_in_files": [
+        "API_cert_download.docx",
+        "API_order_create.docx",
+        "API_order_dcv_records.docx",
+        "API_order_dcv_validate.docx",
+        "API_order_detail.docx",
+        "API_order_generate_csr.docx",
+        "API_order_list.docx",
+        "API_order_reissue.docx",
+        "API_order_renew.docx",
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "409",
+        "category": "Idempotency",
+        "message": "Idempotency-Key đang xử lý (concurrent)"
+      },
+      "existing_in_map": {
+        "http_status": "409",
+        "message": "Idempotency-Key đang xử lý (concurrent)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4091",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_cert_download.docx",
+      "seen_in_files": [
+        "API_cert_download.docx",
+        "API_order_create.docx",
+        "API_order_dcv_records.docx",
+        "API_order_dcv_validate.docx",
+        "API_order_detail.docx",
+        "API_order_generate_csr.docx",
+        "API_order_list.docx",
+        "API_order_reissue.docx",
+        "API_order_renew.docx",
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "409",
+        "category": "Idempotency",
+        "message": "Double submit — payload trùng trong dedup window"
+      },
+      "existing_in_map": {
+        "http_status": "409",
+        "message": "Double submit — payload trùng trong dedup window"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4101",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_cert_download.docx",
+      "seen_in_files": [
+        "API_cert_download.docx",
+        "API_order_certificate.docx",
+        "API_order_create.docx",
+        "API_order_dcv_change.docx",
+        "API_order_dcv_records.docx",
+        "API_order_dcv_resend_email.docx",
+        "API_order_dcv_validate.docx",
+        "API_order_detail.docx",
+        "API_order_generate_csr.docx",
+        "API_order_list.docx",
+        "API_order_reissue.docx",
+        "API_order_renew.docx",
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "401",
+        "category": "Auth",
+        "message": "Thiếu Authorization header"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Thiếu Authorization header"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4102",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_cert_download.docx",
+      "seen_in_files": [
+        "API_cert_download.docx",
+        "API_order_certificate.docx",
+        "API_order_create.docx",
+        "API_order_dcv_change.docx",
+        "API_order_dcv_records.docx",
+        "API_order_dcv_resend_email.docx",
+        "API_order_dcv_validate.docx",
+        "API_order_detail.docx",
+        "API_order_generate_csr.docx",
+        "API_order_list.docx",
+        "API_order_renew.docx",
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "401",
+        "category": "Auth",
+        "message": "Bearer Token không hợp lệ / hết hạn"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Token không hợp lệ hoặc đã hết hạn"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:18:15.352038"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4103",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_cert_download.docx",
+      "seen_in_files": [
+        "API_cert_download.docx",
+        "API_order_create.docx",
+        "API_order_dcv_records.docx",
+        "API_order_dcv_validate.docx",
+        "API_order_detail.docx",
+        "API_order_generate_csr.docx",
+        "API_order_list.docx",
+        "API_order_reissue.docx",
+        "API_order_renew.docx",
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "403",
+        "category": "Auth",
+        "message": "Client không có scope=admin"
+      },
+      "existing_in_map": {
+        "http_status": "403",
+        "message": "Client không có scope=admin"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:28:47.212618"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4108",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_cert_download.docx",
+      "seen_in_files": [
+        "API_cert_download.docx",
+        "API_order_certificate.docx",
+        "API_order_create.docx",
+        "API_order_dcv_change.docx",
+        "API_order_dcv_records.docx",
+        "API_order_dcv_resend_email.docx",
+        "API_order_dcv_validate.docx",
+        "API_order_detail.docx",
+        "API_order_generate_csr.docx",
+        "API_order_list.docx",
+        "API_order_reissue.docx",
+        "API_order_renew.docx",
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "403",
+        "category": "Auth",
+        "message": "IP không được phép"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Không có quyền truy cập"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:18:33.653017"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4200",
+      "status": "duplicate_ok",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_cert_download.docx",
+      "seen_in_files": [
+        "API_cert_download.docx",
+        "API_order_create.docx",
+        "API_order_dcv_records.docx",
+        "API_order_dcv_validate.docx",
+        "API_order_detail.docx",
+        "API_order_generate_csr.docx",
+        "API_order_list.docx",
+        "API_order_reissue.docx",
+        "API_order_renew.docx",
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Input",
+        "message": "Dữ liệu request không hợp lệ (validate chung)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Dữ liệu request không hợp lệ"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:18:21.413041"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4001",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_cert_download.docx",
+      "seen_in_files": [
+        "API_cert_download.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "404",
+        "category": "Not Found",
+        "message": "Order không tồn tại, hoặc certificate không thuộc order này"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Order không tồn tại, hoặc certificate không thuộc order này"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:06:35.153298"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4301",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_cert_download.docx",
+      "seen_in_files": [
+        "API_cert_download.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Certificate không ở trạng thái ISSUED — không thể download (SUPERSEDED, REVOKED, EXPIRED, REISSUE_QUEUED...)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Certificate không ở trạng thái ISSUED — không thể download (SUPERSEDED, REVOKED, EXPIRED, REISSUE_QUEUED...)"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:02:29.784593"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4302",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_cert_download.docx",
+      "seen_in_files": [
+        "API_cert_download.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "certificate_pem rỗng — cert chưa được cấp hoàn chỉnh (provider chưa trả về PEM)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "certificate_pem rỗng — cert chưa được cấp hoàn chỉnh (provider chưa trả về PEM)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4103",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_certificate.docx",
+      "seen_in_files": [
+        "API_order_certificate.docx",
+        "API_order_dcv_change.docx",
+        "API_order_dcv_resend_email.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "403",
+        "category": "Auth",
+        "message": "Không có quyền"
+      },
+      "existing_in_map": {
+        "http_status": "403",
+        "message": "Client không có scope=admin"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:28:52.568352"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4001",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_certificate.docx",
+      "seen_in_files": [
+        "API_order_certificate.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "404",
+        "category": "Not Found",
+        "message": "Order hoặc Certificate không tồn tại"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Order không tồn tại, hoặc certificate không thuộc order này"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:06:45.036668"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4310",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_certificate.docx",
+      "seen_in_files": [
+        "API_order_certificate.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Certificate không ở trạng thái ISSUED — không thể download"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Certificate không ở trạng thái ISSUED — không thể download"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4302",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_certificate.docx",
+      "seen_in_files": [
+        "API_order_certificate.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Certificate PEM chưa có — cert được cấp chưa hoàn chỉnh"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "certificate_pem rỗng — cert chưa được cấp hoàn chỉnh (provider chưa trả về PEM)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4221",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "external_account_id là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "external_account_id là bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4222",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "external_account_id phải là số nguyên ≥ 1"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "external_account_id phải là số nguyên ≥ 1"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4223",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "customer_id là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "customer_id là bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4224",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "customer_id không được vượt quá 255 ký tự"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "customer_id không được vượt quá 255 ký tự"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4225",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "internal_product_code là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "internal_product_code là bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4226",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "internal_product_code không đúng định dạng (^[A-Za-z0-9_-]{2,64}$)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "internal_product_code không đúng định dạng (^[A-Za-z0-9_-]{2,64}$)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4227",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "years là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "years là bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4228",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "years phải là số nguyên ≥ 1"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "years phải là số nguyên ≥ 1"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4229",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "primary_domain là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "primary_domain là bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4230",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "primary_domain không phải FQDN hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "primary_domain không phải FQDN hợp lệ"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4231",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "note không được vượt quá 500 ký tự"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "note không được vượt quá 500 ký tự"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4241",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact.contact_admin.email không hợp lệ (RFC 5322)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact.contact_admin.email không hợp lệ (RFC 5322)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4242",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact.contact_admin.phone phải theo định dạng E.164"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact.contact_admin.phone phải theo định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4251",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.name là bắt buộc khi cung cấp contact_org"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.name là bắt buộc khi cung cấp contact_org"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4252",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.address là bắt buộc khi cung cấp contact_org"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.address là bắt buộc khi cung cấp contact_org"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4253",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.country là bắt buộc khi cung cấp contact_org"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.country là bắt buộc khi cung cấp contact_org"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4254",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.country phải là mã ISO 3166-1 alpha-2 (VD: VN, US)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.country phải là mã ISO 3166-1 alpha-2 (VD: VN, US)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4255",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.phone phải theo định dạng E.164"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.phone phải theo định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4261",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact.contact_tech.email không hợp lệ (RFC 5322)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact.contact_tech.email không hợp lệ (RFC 5322)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4262",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact.contact_tech.phone phải theo định dạng E.164"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact.contact_tech.phone phải theo định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4001",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "404",
+        "category": "Not Found",
+        "message": "internal_product_code không tồn tại hoặc đã soft-delete"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Order không tồn tại, hoặc certificate không thuộc order này"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:06:51.379538",
+        "new_code": "4003"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4002",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Internal product is_enabled=false — không cho phép tạo order mới"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Internal product is_enabled=false — không cho phép tạo order mới"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4301",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "customer_id không tồn tại ở Internal Core"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Certificate không ở trạng thái ISSUED — không thể download (SUPERSEDED, REVOKED, EXPIRED, REISSUE_QUEUED...)"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:02:37.235654",
+        "new_code": "4300"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4501",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Routing",
+        "message": "Không có provider nào khả dụng — NO_PROVIDER_AVAILABLE"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Không có provider nào khả dụng — NO_PROVIDER_AVAILABLE"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4502",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_create.docx",
+      "seen_in_files": [
+        "API_order_create.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "409",
+        "category": "Routing",
+        "message": "Không acquire được routing lock (concurrent WRR) — client retry sau 1s"
+      },
+      "existing_in_map": {
+        "http_status": "409",
+        "message": "Không acquire được routing lock (concurrent WRR) — client retry sau 1s"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4761",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "domain là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "domain là bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4762",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "method là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "method là bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4763",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "method không hợp lệ — chỉ cho: EMAIL, HTTP, CNAME"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "method không hợp lệ — chỉ cho: EMAIL, HTTP, CNAME"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4764",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "approver_email không đúng định dạng email"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "approver_email không đúng định dạng email"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4765",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "approver_email bắt buộc khi method=EMAIL"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "approver_email bắt buộc khi method=EMAIL"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4001",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx",
+        "API_order_dcv_records.docx",
+        "API_order_dcv_resend_email.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "404",
+        "category": "Not Found",
+        "message": "Order không tồn tại (hoặc đã bị xóa)"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Order không tồn tại, hoặc certificate không thuộc order này"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:06:56.960057"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4751",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx",
+        "API_order_dcv_resend_email.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Cert không ở trạng thái PENDING hoặc REISSUE_PENDING"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Cert không ở trạng thái PENDING hoặc REISSUE_PENDING"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4766",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Phương thức DCV không hợp lệ cho cert_type này — WILDCARD/FLEX chỉ cho CNAME hoặc EMAIL"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Phương thức DCV không hợp lệ cho cert_type này — WILDCARD/FLEX chỉ cho CNAME hoặc EMAIL"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4767",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Primary domain là địa chỉ IP, chỉ hỗ trợ phương thức HTTP"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Primary domain là địa chỉ IP, chỉ hỗ trợ phương thức HTTP"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4768",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "WILDCARD/FLEX không hỗ trợ primary domain là địa chỉ IP — cấu hình sản phẩm không hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "WILDCARD/FLEX không hỗ trợ primary domain là địa chỉ IP — cấu hình sản phẩm không hợp lệ"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4752",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx",
+        "API_order_dcv_resend_email.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Domain không tồn tại trong dcv_records của cert"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Domain không tồn tại trong dcv_records của cert"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4755",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Domain đã được xác minh (VALIDATED), không thể đổi phương thức DCV"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Domain đã được xác minh (VALIDATED), không thể đổi phương thức DCV"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4757",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx",
+        "API_order_dcv_resend_email.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Không tìm thấy provider cho đơn hàng"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Không tìm thấy provider cho đơn hàng"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4851",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_change.docx",
+      "seen_in_files": [
+        "API_order_dcv_change.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "502",
+        "category": "Provider",
+        "message": "Provider API lỗi khi cập nhật phương thức DCV"
+      },
+      "existing_in_map": {
+        "http_status": "502",
+        "message": "Provider API lỗi khi cập nhật phương thức DCV"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4201",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_records.docx",
+      "seen_in_files": [
+        "API_order_dcv_records.docx",
+        "API_order_dcv_validate.docx",
+        "API_order_detail.docx"
+      ],
+      "table_index": 7,
+      "incoming": {
+        "http_status": "400",
+        "category": "Format",
+        "message": "id không phải số nguyên dương hợp lệ (BIGINT, không phải UUID)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order không ở trạng thái ISSUED/INSTALLED/ACTIVE — không thể reissue (R1)"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:59:18.266403",
+        "new_code": "4210"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4200",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_records.docx",
+      "seen_in_files": [
+        "API_order_dcv_records.docx"
+      ],
+      "table_index": 7,
+      "incoming": {
+        "http_status": "400",
+        "category": "Input",
+        "message": "Giá trị query param status không hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Dữ liệu request không hợp lệ"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:18:28.698653"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4758",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_resend_email.docx",
+      "seen_in_files": [
+        "API_order_dcv_resend_email.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "domain là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "domain là bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4753",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_resend_email.docx",
+      "seen_in_files": [
+        "API_order_dcv_resend_email.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Domain đang dùng phương thức DCV khác (không phải EMAIL)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Domain đang dùng phương thức DCV khác (không phải EMAIL)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4754",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_resend_email.docx",
+      "seen_in_files": [
+        "API_order_dcv_resend_email.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Domain đã được xác minh (VALIDATED), không thể gửi lại email"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Domain đã được xác minh (VALIDATED), không thể gửi lại email"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4852",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_resend_email.docx",
+      "seen_in_files": [
+        "API_order_dcv_resend_email.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "502",
+        "category": "Provider",
+        "message": "Provider API lỗi khi gửi lại email DCV"
+      },
+      "existing_in_map": {
+        "http_status": "502",
+        "message": "Provider API lỗi khi gửi lại email DCV"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4001",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_validate.docx",
+      "seen_in_files": [
+        "API_order_dcv_validate.docx",
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "404",
+        "category": "Not Found",
+        "message": "Order không tồn tại"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Order không tồn tại, hoặc certificate không thuộc order này"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:07:11.554161"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4610",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_validate.docx",
+      "seen_in_files": [
+        "API_order_dcv_validate.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Order không ở trạng thái PENDING hoặc DCV_PENDING — không thể trigger DCV validate"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "csr là bắt buộc — không được null hoặc bỏ trống"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:02:50.256847",
+        "new_code": "4615"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4820",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_dcv_validate.docx",
+      "seen_in_files": [
+        "API_order_dcv_validate.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "502",
+        "category": "Provider",
+        "message": "Provider API trả về lỗi khi kiểm tra DCV status. Chi tiết trong error.data.provider_message"
+      },
+      "existing_in_map": {
+        "http_status": "502",
+        "message": "Provider API trả về lỗi khi kiểm tra DCV status. Chi tiết trong error.data.provider_message"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4001",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_detail.docx",
+      "seen_in_files": [
+        "API_order_detail.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "404",
+        "category": "Not Found",
+        "message": "Order không tồn tại (id không khớp hoặc deleted_at IS NOT NULL)"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Order không tồn tại, hoặc certificate không thuộc order này"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4001",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_generate_csr.docx",
+      "seen_in_files": [
+        "API_order_generate_csr.docx"
+      ],
+      "table_index": 7,
+      "incoming": {
+        "http_status": "404",
+        "category": "Not Found",
+        "message": "Order không tồn tại hoặc đã bị xóa mềm"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Order không tồn tại, hoặc certificate không thuộc order này"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:07:18.274847"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4601",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_generate_csr.docx",
+      "seen_in_files": [
+        "API_order_generate_csr.docx"
+      ],
+      "table_index": 7,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Order không ở trạng thái INIT, FAILED hoặc CSR_READY"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order không ở trạng thái INIT hoặc FAILED — không thể lưu CSR"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4605",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_generate_csr.docx",
+      "seen_in_files": [
+        "API_order_generate_csr.docx"
+      ],
+      "table_index": 7,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Order đã được submit thành công lên provider (provider_order_id IS NOT NULL)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order đã được submit thành công lên provider (provider_order_id đã có giá trị) — không thể ghi đè"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4701",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_generate_csr.docx",
+      "seen_in_files": [
+        "API_order_generate_csr.docx"
+      ],
+      "table_index": 7,
+      "incoming": {
+        "http_status": "500",
+        "category": "Internal",
+        "message": "Không sinh được CSR — cả TheSSLStore API và openssl nội bộ đều thất bại"
+      },
+      "existing_in_map": {
+        "http_status": "400",
+        "message": "CSR PEM không hợp lệ (sai format, không parse được)"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:03:01.987635",
+        "new_code": "4700"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4201",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_list.docx",
+      "seen_in_files": [
+        "API_order_list.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "400",
+        "category": "Format",
+        "message": "status không thuộc tập giá trị hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order không ở trạng thái ISSUED/INSTALLED/ACTIVE — không thể reissue (R1)"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:59:25.917046",
+        "new_code": "4211"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4202",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_list.docx",
+      "seen_in_files": [
+        "API_order_list.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "400",
+        "category": "Format",
+        "message": "product_type không thuộc tập giá trị hợp lệ (DV/OV/EV)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "order.provider_order_id rỗng — order chưa được submit lên provider (R2)"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:59:47.497938",
+        "new_code": "4212"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4203",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_list.docx",
+      "seen_in_files": [
+        "API_order_list.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "400",
+        "category": "Format",
+        "message": "cert_type không thuộc tập giá trị hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Đang có cert REISSUE_QUEUED hoặc REISSUE_PENDING — không thể reissue đồng thời (R3)"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:59:59.112608",
+        "new_code": "4213"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4204",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_list.docx",
+      "seen_in_files": [
+        "API_order_list.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "400",
+        "category": "Format",
+        "message": "date_from hoặc date_to không đúng định dạng YYYY-MM-DD"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Không tìm thấy CSR — cert hiện tại không có csr_pem và request không cung cấp csr mới (R5)"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:00:04.821059",
+        "new_code": "4214"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4205",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_list.docx",
+      "seen_in_files": [
+        "API_order_list.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "400",
+        "category": "Business",
+        "message": "date_to nhỏ hơn date_from"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order không có provider được chọn (selectedMapping.provider = null) (R6)"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:00:10.570642",
+        "new_code": "4215"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4206",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_list.docx",
+      "seen_in_files": [
+        "API_order_list.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "400",
+        "category": "Format",
+        "message": "page < 1 hoặc per_page ngoài [1, 100]"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Provider chưa hỗ trợ reissue (is_reissue_supported = false) — reserved, hiện chưa dùng"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:00:16.216180",
+        "new_code": "4216"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4207",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_list.docx",
+      "seen_in_files": [
+        "API_order_list.docx"
+      ],
+      "table_index": 6,
+      "incoming": {
+        "http_status": "400",
+        "category": "Format",
+        "message": "sort_by hoặc sort_dir không hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "400",
+        "message": "CSR PEM mới không hợp lệ: sai format PEM, không parse được, hoặc CN không khớp primary_domain (R5)"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:00:22.145619",
+        "new_code": "4217"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4001",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "404",
+        "category": "Not Found",
+        "message": "Order không tồn tại hoặc đã xoá"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Order không tồn tại, hoặc certificate không thuộc order này"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:07:23.853448"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4201",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Order không ở trạng thái ISSUED/INSTALLED/ACTIVE — không thể reissue (R1)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order không ở trạng thái ISSUED/INSTALLED/ACTIVE — không thể reissue (R1)"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:57:58.315378"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4202",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "order.provider_order_id rỗng — order chưa được submit lên provider (R2)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "order.provider_order_id rỗng — order chưa được submit lên provider (R2)"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:58:02.857572"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4203",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Đang có cert REISSUE_QUEUED hoặc REISSUE_PENDING — không thể reissue đồng thời (R3)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Đang có cert REISSUE_QUEUED hoặc REISSUE_PENDING — không thể reissue đồng thời (R3)"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:58:08.923312"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4204",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Không tìm thấy CSR — cert hiện tại không có csr_pem và request không cung cấp csr mới (R5)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Không tìm thấy CSR — cert hiện tại không có csr_pem và request không cung cấp csr mới (R5)"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:58:14.959112"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4205",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Order không có provider được chọn (selectedMapping.provider = null) (R6)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order không có provider được chọn (selectedMapping.provider = null) (R6)"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:58:20.518503"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4206",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Provider chưa hỗ trợ reissue (is_reissue_supported = false) — reserved, hiện chưa dùng"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Provider chưa hỗ trợ reissue (is_reissue_supported = false) — reserved, hiện chưa dùng"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:58:27.586338"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4207",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "400",
+        "category": "Format",
+        "message": "CSR PEM mới không hợp lệ: sai format PEM, không parse được, hoặc CN không khớp primary_domain (R5)"
+      },
+      "existing_in_map": {
+        "http_status": "400",
+        "message": "CSR PEM mới không hợp lệ: sai format PEM, không parse được, hoặc CN không khớp primary_domain (R5)"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:58:33.696406"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4801",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "502",
+        "category": "Provider",
+        "message": "Provider API trả về lỗi khi submit reissue. Chi tiết trong error.data.provider_message"
+      },
+      "existing_in_map": {
+        "http_status": "502",
+        "message": "Provider API trả về lỗi khi submit reissue. Chi tiết trong error.data.provider_message"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4622",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "dcv_config là bắt buộc; hoặc dcv_config thiếu domain (primary_domain hoặc SAN); hoặc dcv_config.*.method không hợp lệ (EMAIL|HTTP|HTTPS|CNAME). data.missing_domains chứa danh sách domain bị thiếu."
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "dcv_config[domain].method không thuộc tập hợp lệ"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:28:57.891877"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4623",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "dcv_config.*.approver_email không đúng định dạng RFC 5322"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "dcv_config[domain].approver_email không đúng định dạng RFC 5322"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4631",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_admin.email không hợp lệ hoặc thiếu (RFC 5322)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_admin.email không hợp lệ (RFC 5322)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4632",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_admin.first_name là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_admin.first_name bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4633",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_admin.last_name là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_admin.last_name bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4634",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_admin.phone không hợp lệ (E.164)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_admin.phone bắt buộc / không đúng định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4635",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_admin là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_admin bắt buộc — không được null hoặc bỏ trống"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:29:08.648523"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4643",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_org là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org bắt buộc — không được null hoặc bỏ trống"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:29:19.433804"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4644",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_org.name là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.name bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4645",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_org.address là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.address bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4646",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_org.province là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.province bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4647",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_org.country là bắt buộc hoặc không đúng định dạng ISO 3166-1 alpha-2"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.country bắt buộc / không đúng định dạng ISO 3166-1 alpha-2"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4648",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_org.postal_code là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.postal_code bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4649",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_org.phone là bắt buộc hoặc không đúng định dạng E.164"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.phone bắt buộc / không đúng định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4651",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_tech.email không hợp lệ hoặc thiếu (RFC 5322)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_tech.email không hợp lệ (RFC 5322)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4652",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_tech.first_name là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_tech.first_name bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4653",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_tech.last_name là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_tech.last_name bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4654",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_tech.phone không hợp lệ (E.164)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_tech.phone bắt buộc / không đúng định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4655",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_reissue.docx",
+      "seen_in_files": [
+        "API_order_reissue.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "422",
+        "category": "",
+        "message": "contact_tech là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_tech bắt buộc — không được null hoặc bỏ trống"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:29:29.837053"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4001",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "404",
+        "category": "Not Found",
+        "message": "Order gốc không tồn tại"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Order không tồn tại, hoặc certificate không thuộc order này"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:07:29.372904"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4107",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Trạng thái đơn hàng không cho phép gia hạn. data: {current_status}"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Trạng thái đơn hàng không cho phép gia hạn. data: {current_status}"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4108",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Chứng chỉ chưa đến thời điểm gia hạn. data: {days_left, renewal_early_days}"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Không có quyền truy cập"
+      },
+      "resolution": {
+        "decision": "reassign",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:18:39.933327",
+        "new_code": "4100"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4109",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Đã có đơn gia hạn đang xử lý. data: {renewal_order_id, renewal_order_number}"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Đã có đơn gia hạn đang xử lý. data: {renewal_order_id, renewal_order_number}"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4110",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Routing",
+        "message": "Thiếu provider mapping cho gia hạn (order còn hạn). data: null"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Thiếu provider mapping cho gia hạn (order còn hạn). data: null"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4111",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Data",
+        "message": "Đơn hàng thiếu subscription_end_date. data: null"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Đơn hàng thiếu subscription_end_date. data: null"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4112",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Routing",
+        "message": "Không có provider khả dụng (order EXPIRED). data: {internal_product_id, years}"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Không có provider khả dụng (order EXPIRED). data: {internal_product_id, years}"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4113",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Format",
+        "message": "years không hợp lệ (phải là integer 1–3). data: errors"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "years không hợp lệ (phải là integer 1–3). data: errors"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4114",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Format",
+        "message": "dcv_method không hợp lệ (EMAIL | HTTP | HTTPS | CNAME). data: errors"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "dcv_method không hợp lệ (EMAIL | HTTP | HTTPS | CNAME). data: errors"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4241",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Contact",
+        "message": "contact_admin.email không đúng định dạng RFC 5322"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact.contact_admin.email không hợp lệ (RFC 5322)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4242",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Contact",
+        "message": "contact_admin.phone không đúng định dạng E.164"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact.contact_admin.phone phải theo định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4251",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Contact",
+        "message": "contact_org.name bắt buộc khi cung cấp contact_org"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.name là bắt buộc khi cung cấp contact_org"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4252",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Contact",
+        "message": "contact_org.address bắt buộc khi cung cấp contact_org"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.address là bắt buộc khi cung cấp contact_org"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4253",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Contact",
+        "message": "contact_org.country bắt buộc khi cung cấp contact_org"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.country là bắt buộc khi cung cấp contact_org"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4254",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Contact",
+        "message": "contact_org.country không đúng định dạng ISO 3166-1 alpha-2"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.country phải là mã ISO 3166-1 alpha-2 (VD: VN, US)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4255",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Contact",
+        "message": "contact_org.phone không đúng định dạng E.164"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.phone phải theo định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4261",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Contact",
+        "message": "contact_tech.email không đúng định dạng RFC 5322"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact.contact_tech.email không hợp lệ (RFC 5322)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4262",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_renew.docx",
+      "seen_in_files": [
+        "API_order_renew.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "422",
+        "category": "Contact",
+        "message": "contact_tech.phone không đúng định dạng E.164"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact.contact_tech.phone phải theo định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4900",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_revoke.docx",
+      "seen_in_files": [
+        "API_order_revoke.docx"
+      ],
+      "table_index": 5,
+      "incoming": {
+        "http_status": "429",
+        "category": "Rate Limit",
+        "message": "Đã đạt giới hạn revoke_daily_limit lần/ngày — thử lại vào ngày mai"
+      },
+      "existing_in_map": {
+        "http_status": "429",
+        "message": "Đã đạt giới hạn revoke_daily_limit lần/ngày — thử lại vào ngày mai"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4901",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_revoke.docx",
+      "seen_in_files": [
+        "API_order_revoke.docx"
+      ],
+      "table_index": 5,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Order status không cho phép thu hồi (REVOKED, FAILED, CANCELED, v.v.)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order status không cho phép thu hồi (REVOKED, FAILED, CANCELED, v.v.)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4902",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_revoke.docx",
+      "seen_in_files": [
+        "API_order_revoke.docx"
+      ],
+      "table_index": 5,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Đang có revoke in-progress (REVOKE_QUEUED hoặc REVOKE_PENDING)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Đang có revoke in-progress (REVOKE_QUEUED hoặc REVOKE_PENDING)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4903",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_revoke.docx",
+      "seen_in_files": [
+        "API_order_revoke.docx"
+      ],
+      "table_index": 5,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Không tìm thấy cert ISSUED/PENDING/CSR_READY để thu hồi"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Không tìm thấy cert ISSUED/PENDING/CSR_READY để thu hồi"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4904",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_revoke.docx",
+      "seen_in_files": [
+        "API_order_revoke.docx"
+      ],
+      "table_index": 5,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "provider_order_id rỗng — cert chưa được submit lên provider, không thể thu hồi"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "provider_order_id rỗng — cert chưa được submit lên provider, không thể thu hồi"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4905",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_revoke.docx",
+      "seen_in_files": [
+        "API_order_revoke.docx"
+      ],
+      "table_index": 5,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Cert ISSUED đã quá revoke_max_days_after_issue ngày kể từ issued_at"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Cert ISSUED đã quá revoke_max_days_after_issue ngày kể từ issued_at"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4601",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Order không ở trạng thái INIT hoặc FAILED — không thể lưu CSR"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order không ở trạng thái INIT hoặc FAILED — không thể lưu CSR"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4602",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "State",
+        "message": "Order đang ở trạng thái CSR_READY (đang chờ worker submit lên provider) — không thể ghi đè"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order đang ở trạng thái CSR_READY (đang chờ worker submit lên provider) — không thể ghi đè"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4605",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Order đã được submit thành công lên provider (provider_order_id đã có giá trị) — không thể ghi đè"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Order đã được submit thành công lên provider (provider_order_id đã có giá trị) — không thể ghi đè"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4606",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "Đơn gia hạn (RENEWAL) yêu cầu đơn gốc đã được submit lên provider (provider_order_id IS NULL)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Đơn gia hạn (RENEWAL) yêu cầu đơn gốc đã được submit lên provider (provider_order_id IS NULL)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4610",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "csr là bắt buộc — không được null hoặc bỏ trống"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "csr là bắt buộc — không được null hoặc bỏ trống"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:02:44.030980"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4611",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "key_type không thuộc tập hợp lệ (RSA_2048 / RSA_4096 / ECDSA_P256 / ECDSA_P384)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "key_type không thuộc tập hợp lệ (RSA_2048 / RSA_4096 / ECDSA_P256 / ECDSA_P384)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4612",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "web_server_type không thuộc tập hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "web_server_type không thuộc tập hợp lệ"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4613",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "signature_hash_algorithm không thuộc tập hợp lệ (SHA2-256 / SHA2-384 / SHA2-512)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "signature_hash_algorithm không thuộc tập hợp lệ (SHA2-256 / SHA2-384 / SHA2-512)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4614",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "approver_email không đúng định dạng RFC 5322"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "approver_email không đúng định dạng RFC 5322"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4621",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "dcv_method không thuộc tập hợp lệ (EMAIL / HTTP / HTTPS / CNAME)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "dcv_method không thuộc tập hợp lệ (EMAIL / HTTP / HTTPS / CNAME)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4622",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "dcv_config[domain].method không thuộc tập hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "dcv_config[domain].method không thuộc tập hợp lệ"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:29:02.303212"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4623",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "dcv_config[domain].approver_email không đúng định dạng RFC 5322"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "dcv_config[domain].approver_email không đúng định dạng RFC 5322"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4631",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_admin.email không hợp lệ (RFC 5322)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_admin.email không hợp lệ (RFC 5322)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4632",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_admin.first_name bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_admin.first_name bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4633",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_admin.last_name bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_admin.last_name bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4634",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_admin.phone bắt buộc / không đúng định dạng E.164"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_admin.phone bắt buộc / không đúng định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4635",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_admin bắt buộc — không được null hoặc bỏ trống"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_admin bắt buộc — không được null hoặc bỏ trống"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:29:14.348892"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4643",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org bắt buộc — không được null hoặc bỏ trống"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org bắt buộc — không được null hoặc bỏ trống"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:29:23.911228"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4644",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.name bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.name bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4645",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.address bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.address bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4646",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.province bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.province bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4647",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.country bắt buộc / không đúng định dạng ISO 3166-1 alpha-2"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.country bắt buộc / không đúng định dạng ISO 3166-1 alpha-2"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4648",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.postal_code bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.postal_code bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4649",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.phone bắt buộc / không đúng định dạng E.164"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.phone bắt buộc / không đúng định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4651",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_tech.email không hợp lệ (RFC 5322)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_tech.email không hợp lệ (RFC 5322)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4652",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_tech.first_name bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_tech.first_name bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4653",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_tech.last_name bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_tech.last_name bắt buộc"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4654",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_tech.phone bắt buộc / không đúng định dạng E.164"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_tech.phone bắt buộc / không đúng định dạng E.164"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4655",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_tech bắt buộc — không được null hoặc bỏ trống"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_tech bắt buộc — không được null hoặc bỏ trống"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T15:29:36.869994"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4661",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.business_number bắt buộc với OV/EV"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.business_number bắt buộc với OV/EV"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4662",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "contact_org.representative_name bắt buộc với OV/EV"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "contact_org.representative_name bắt buộc với OV/EV"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4701",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "400",
+        "category": "Format",
+        "message": "CSR PEM không hợp lệ (sai format, không parse được)"
+      },
+      "existing_in_map": {
+        "http_status": "400",
+        "message": "CSR PEM không hợp lệ (sai format, không parse được)"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T16:02:55.696224"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4702",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "400",
+        "category": "Business",
+        "message": "CN/SAN trong CSR không chứa primary_domain của order"
+      },
+      "existing_in_map": {
+        "http_status": "400",
+        "message": "CN/SAN trong CSR không chứa primary_domain của order"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4706",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "400",
+        "category": "Business",
+        "message": "approver_email bắt buộc khi dcv_method=EMAIL nhưng không được cung cấp"
+      },
+      "existing_in_map": {
+        "http_status": "400",
+        "message": "approver_email bắt buộc khi dcv_method=EMAIL nhưng không được cung cấp"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4707",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "400",
+        "category": "Business",
+        "message": "san_list chứa wildcard entry (*.domain) — không được phép; wildcard coverage áp dụng tự động theo sản phẩm"
+      },
+      "existing_in_map": {
+        "http_status": "400",
+        "message": "san_list chứa wildcard entry (*.domain) — không được phép; wildcard coverage áp dụng tự động theo sản phẩm"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4708",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Business",
+        "message": "cert_type MULTI_DOMAIN/FLEX không hỗ trợ dcv_method=EMAIL — chỉ cho phép HTTP/HTTPS/CNAME"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "cert_type MULTI_DOMAIN/FLEX không hỗ trợ dcv_method=EMAIL — chỉ cho phép HTTP/HTTPS/CNAME"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4709",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_submit_csr.docx",
+      "seen_in_files": [
+        "API_order_submit_csr.docx"
+      ],
+      "table_index": 9,
+      "incoming": {
+        "http_status": "422",
+        "category": "Validation",
+        "message": "dcv_method là bắt buộc"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "dcv_method là bắt buộc"
+      },
+      "resolution": null
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+error_codes:
+  '4118':
+    http_status: ''
+    message: Chưa bật 2FA
+  '4481':
+    http_status: ''
+    message: Dịch vụ không hỗ trợ mở tạm
+  '4482':
+    http_status: ''
+    message: Dịch vụ không đủ điều kiện mở tạm
+  '4483':
+    http_status: ''
+    message: Thời gian xin gia hạn lần trước vẫn còn. Không thể thực hiện tiếp
+  '5000':
+    http_status: ''
+    message: Dịch vụ không tìm thấy
+  '5008':
+    http_status: ''
+    message: Không tìm thấy thông tin gói nâng cấp
+  '5012':
+    http_status: ''
+    message: Dịch vụ không hỗ trợ chức năng này
+  '5013':
+    http_status: ''
+    message: Xảy ra lỗi trong quá trình đổi mật khẩu
+  '5014':
+    http_status: ''
+    message: Không lấy được giá của dịch vụ hiện tại
+  '5015':
+    http_status: ''
+    message: Dịch vụ không hỗ trợ nâng cấp
+  '5016':
+    http_status: ''
+    message: Không lấy được giá của dịch vụ mới
+  '5017':
+    http_status: ''
+    message: Dịch vụ mới đã bị tạm khóa
+  '5018':
+    http_status: ''
+    message: Dịch vụ mới không cùng plan
+  '5019':
+    http_status: ''
+    message: Dịch vụ mới không hỗ trợ nâng cấp
+  '5020':
+    http_status: ''
+    message: Chưa cho phép nâng cấp giữa 2 dịch vụ
+  '5021':
+    http_status: ''
+    message: Dịch vụ đã hết hạn
+  '5022':
+    http_status: ''
+    message: Không xác định được thời hạn còn lại
+namespace: service

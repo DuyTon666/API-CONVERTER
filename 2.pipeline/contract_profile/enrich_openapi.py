@@ -64,26 +64,20 @@ def cmd_enrich_openapi(
 
             response_modes = hints.get("response_contract", {}).get("response_modes", [])
             has_json_wrapper = any(m.get("mode") == "json_wrapper" for m in response_modes)
-            if has_json_wrapper:
-                doc_text   = read_document(source_file)
-                schema_name = Path(source_file).stem + "Data"
-                generate_response_schema(
-                    doc_text     = doc_text,
-                    operation_id = Path(source_file).stem,
-                    module       = module,
-                    schema_name  = schema_name,
-                )
-
+            
             if has_json_wrapper:
                 doc_text    = read_document(source_file)
                 
-                _target = _find_target_yaml(str(source_file), module)
                 _op_id = ""
+                _target = _find_target_yaml(str(source_file), module)
                 if _target and _target.exists():
                     _yaml_data = _yaml.safe_load(_target.read_text(encoding="utf-8")) or {}
-                    for m in ["get", "post", "put", "patch", "deleta"]:
+                    for m in ["get", "post", "put", "patch", "delete"]:
+                        _op = _yaml_data.get(m)
                         if isinstance(_op, dict) and _op.get("operationId"):
                             _op_id = _op["operationId"]
+                            break
+
                 schema_name = (_op_id[0].upper() + _op_id[1:] + "Data") if _op_id else (Path(source_file).stem + "Data")
 
                 result = generate_response_schema(

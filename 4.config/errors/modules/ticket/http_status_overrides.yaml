@@ -1,0 +1,23 @@
+'# http_status_overrides.yaml': null
+overrides:
+  '4466':
+    http_status: 409
+    reason: Quá thời hạn cho phép, deadline constraint
+  '4467':
+    http_status: 409
+    reason: Ticket đang ở trạng thái mở, conflict với hành động hiện tại
+  '4463':
+    http_status: 422
+    reason: Business rule violation khi tạo phản hồi
+  '4464':
+    http_status: 409
+    reason: Resource đã đóng, không cho phép thực hiện hành động
+  '4462':
+    http_status: 422
+    reason: Business rule violation khi tạo yêu cầu
+  '4469':
+    http_status: 409
+    reason: Ticket chưa hoàn tất, precondition chưa đủ để thực hiện
+  '4468':
+    http_status: 429
+    reason: Rate-limit theo trạng thái, không thể gửi yêu cầu liên tục

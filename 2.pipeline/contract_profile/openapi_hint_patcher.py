@@ -143,7 +143,10 @@ def _patch_status_responses(responses: dict, status_codes: list[dict], status_re
     changed = False
 
     for item in status_codes:
-        status = str(item.get("status"))
+        if item.get("error_code"):
+            continue
+
+        status = str(item.get("status", ""))
         ref = item.get("ref") or status_refs.get(status)
 
         if not status or not ref:
@@ -347,13 +350,20 @@ def _patch_json_data_schema(
     content = resp_200.setdefault("content", {})
     json_content = content.setdefault("application/json", {})
     current_schema = json_content.get("schema", {})
+    data_ref = f"../../components/schemas/{module}/{schema_name}.yaml"
 
     # Đã có allOf rồi thì skip
     if "allOf" in current_schema:
+        for item in current_schema["allOf"]:
+            if isinstance(item, dict ) and "properties" in item:
+                current_ref = item.get("properties", {}).get("data", {}).get("$ref", "")
+                if current_ref == data_ref:
+                    return False
+                item["properties"]["data"]["$ref"] = data_ref
+                return True
         return False
 
     ref_standard = current_schema.get("$ref", "../../components/schemas/common/StandardSuccess.yaml")
-    data_ref = f"../../components/schemas/{module}/{schema_name}.yaml"
 
     json_content["schema"] = {
         "allOf": [

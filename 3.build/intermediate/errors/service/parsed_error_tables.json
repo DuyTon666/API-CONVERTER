@@ -1,0 +1,502 @@
+{
+  "generated_at": "2026-06-24T10:15:00.790231",
+  "source_files": [
+    "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+    "API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+    "API Contract - API mở tạm dịch vụ.docx.pdf",
+    "API Service - API lấy danh sách các gói nâng cấp của một dịch vụ.docx.pdf",
+    "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+    "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf"
+  ],
+  "summary": {
+    "total": 21,
+    "new": 0,
+    "duplicate_ok": 17,
+    "conflict": 4,
+    "needs_review": 0,
+    "intra_batch_conflict": 4,
+    "missing_http_status": 21
+  },
+  "entries": [
+    {
+      "code": "4102",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+      "seen_in_files": [
+        "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+        "API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+        "API Contract - API mở tạm dịch vụ.docx.pdf",
+        "API Service - API lấy danh sách các gói nâng cấp của một dịch vụ.docx.pdf",
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+        "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Auth",
+        "message": "Token không hợp lệ / hết hạn"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Token không hợp lệ hoặc đã hết hạn"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4108",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+      "seen_in_files": [
+        "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+        "API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+        "API Contract - API mở tạm dịch vụ.docx.pdf",
+        "API Service - API lấy danh sách các gói nâng cấp của một dịch vụ.docx.pdf",
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+        "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Auth",
+        "message": "IP không được phép truy cập"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Không có quyền truy cập"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4200",
+      "status": "duplicate_ok",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+        "API Contract - API mở tạm dịch vụ.docx.pdf",
+        "API Service - API lấy danh sách các gói nâng cấp của một dịch vụ.docx.pdf",
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+        "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Input validation",
+        "message": "Dữ liệu request không hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Dữ liệu request không hợp lệ"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4004",
+      "status": "duplicate_ok",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+        "API Contract - API mở tạm dịch vụ.docx.pdf",
+        "API Service - API lấy danh sách các gói nâng cấp của một dịch vụ.docx.pdf",
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+        "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Not Found",
+        "message": "Không tìm thấy dữ liệu"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Không tìm thấy dữ liệu"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4481",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API mở tạm dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Contract - API mở tạm dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Dịch vụ không hỗ trợ mở tạm"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Dịch vụ không hỗ trợ mở tạm"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4482",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API mở tạm dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Contract - API mở tạm dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Dịch vụ không đủ điều kiện mở tạm"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Dịch vụ không đủ điều kiện mở tạm"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4483",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Contract - API mở tạm dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Contract - API mở tạm dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Thời gian xin gia hạn lần trước vẫn còn. Không thể thực hiện tiếp"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Thời gian xin gia hạn lần trước vẫn còn. Không thể thực hiện tiếp"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5000",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Not Found",
+        "message": "Dịch vụ không tìm thấy"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Dịch vụ không tìm thấy"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5008",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Not Found",
+        "message": "Không tìm thấy thông tin gói nâng cấp"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Không tìm thấy thông tin gói nâng cấp"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5012",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Dịch vụ đã hết hạn"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Dịch vụ không hỗ trợ chức năng này"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5013",
+      "status": "conflict",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Không xác định được thời hạn còn lại"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Xảy ra lỗi trong quá trình đổi mật khẩu"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5014",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Not Found",
+        "message": "Không lấy được giá của dịch vụ hiện tại"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Không lấy được giá của dịch vụ hiện tại"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5015",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Dịch vụ không hỗ trợ nâng cấp"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Dịch vụ không hỗ trợ nâng cấp"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5016",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Không lấy được giá của dịch vụ mới"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Không lấy được giá của dịch vụ mới"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5017",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Dịch vụ mới đã bị tạm khóa"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Dịch vụ mới đã bị tạm khóa"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5018",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Dịch vụ mới không cùng plan"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Dịch vụ mới không cùng plan"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5019",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Dịch vụ mới không hỗ trợ nâng cấp"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Dịch vụ mới không hỗ trợ nâng cấp"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5020",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Chưa cho phép nâng cấp giữa 2 dịch vụ"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Chưa cho phép nâng cấp giữa 2 dịch vụ"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4118",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Chưa bật 2FA"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Chưa bật 2FA"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5012",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": true,
+      "source_file": "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Dịch vụ không hỗ trợ chức năng này"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Dịch vụ không hỗ trợ chức năng này"
+      },
+      "resolution": null
+    },
+    {
+      "code": "5013",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": true,
+      "missing_http_status": true,
+      "source_file": "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf",
+      "seen_in_files": [
+        "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "",
+        "message": "Xảy ra lỗi trong quá trình đổi mật khẩu"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Xảy ra lỗi trong quá trình đổi mật khẩu"
+      },
+      "resolution": null
+    }
+  ]
+}

@@ -17,12 +17,35 @@ from import_flow.config import (
     ignore_dirs,
 )
 
+
 def normalize_http_path(path: str) -> str:
     """
-    Normalize param name trong http_path về {} để so sánh nhất quán.
-    /v1/users/{user_id}/tickets/{id} → /v1/users/{}/tickets/{}
+    Normalize http_path để so sánh endpoint:
+    - bỏ domain nếu có
+    - bỏ query string
+    - {id}, {user_id}, {certId} -> {}
+    - sample numeric id như /23/456 -> /{}/{}
     """
-    return re.sub(r"\{[^}]+\}", "{}", path)
+    path = str(path or "").strip()
+    path = re.sub(r"^https?://[^/]+", "", path)
+    path = path.split("?")[0].strip()
+    path = path.rstrip(".,;:)]\"'")
+    path = re.sub(r"/+", "/", path)
+
+    parts = []
+    for part in path.split("/"):
+        if re.fullmatch(r"\{[^/{}]+\}", part or ""):
+            parts.append("{}")
+        elif re.fullmatch(r"\d+", part or ""):
+            parts.append("{}")
+        else:
+            parts.append(part)
+
+    normalized = "/".join(parts)
+    if not normalized.startswith("/"):
+        normalized = "/" + normalized
+    return normalized
+
 
 def read_contract(file_path: Path) -> tuple[str, str]:
     ext = file_path.suffix.lower()
@@ -124,6 +147,43 @@ def light_parse(file_path: Path) -> list[tuple[str,str]]:
 
     return result
 
+
+def primary_endpoint(file_path: Path) -> tuple[str, str] | None:
+    """
+    Lấy endpoint chính của API contract.
+    Chỉ dùng parser chính, không scan toàn bộ nội dung file.
+    """
+    try:
+        text, _ = read_contract(file_path)
+
+        try:
+            parsed = parse_text(text, source_file=file_path.name)
+        except TypeError:
+            parsed = parse_text(text)
+
+        if isinstance(parsed, dict):
+            method = parsed.get("method")
+            path = parsed.get("path")
+        else:
+            method = getattr(parsed, "method", None)
+            path = getattr(parsed, "path", None)
+
+        if not method or not path:
+            return None
+
+        method = str(method).upper().strip()
+        path = str(path).strip()
+
+        if method not in _HTTP_METHODS:
+            return None
+
+        return method, path
+
+    except Exception as e:
+        print(f"    [WARN] primary_endpoint: Không parse được {file_path.name}: {e}")
+        return None
+
+
 def scan_for_collisions(
     module_path: Path, extensions: list[str],
 ) -> list[dict]:
@@ -139,10 +199,13 @@ def scan_for_collisions(
         if file_path.suffix.lower() not in extensions:
             continue
 
-        endpoints = light_parse(file_path)
-        for method, raw_path in endpoints:
-            norm_key = f"{method}:{normalize_http_path(raw_path)}"
-            index.setdefault(norm_key, []).append((file_path, f"{method} {raw_path}"))
+        endpoint = primary_endpoint(file_path)
+        if not endpoint:
+            continue
+
+        method, raw_path = endpoint
+        norm_key = f"{method}:{normalize_http_path(raw_path)}"
+        index.setdefault(norm_key, []).append((file_path, f"{method} {raw_path}"))
 
     collisions = []
     for key, entries in index.items():

@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-06-24T11:21:17.538093",
+  "module": "csr",
+  "batch_timestamp": "2026-06-22 13:04:33",
+  "operations": {
+    "generateCsrRequest": {
+      "method": "post",
+      "path": "/v1/csr/generate",
+      "source_file": "API_csr_generate.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/csr/generate_csr_request.yaml",
+      "errors": {
+        "409": [
+          {
+            "code": "4090",
+            "category": "Idempotency",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4091",
+            "category": "Idempotency",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "document"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Client không có scope=admin",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "document"
+          }
+        ],
+        "500": [
+          {
+            "code": "4701",
+            "category": "Internal",
+            "message": "Không sinh được CSR — cả TheSSLStore API và openssl nội bộ đều thất bại",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    }
+  }
+}

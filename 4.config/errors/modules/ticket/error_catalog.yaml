@@ -1,0 +1,23 @@
+error_codes:
+  '4462':
+    http_status: ''
+    message: Tạo yêu cầu thất bại
+  '4463':
+    http_status: ''
+    message: Tạo phản hồi thất bại
+  '4464':
+    http_status: ''
+    message: Câu hỏi đã đóng, không được thực hiện phản hồi
+  '4466':
+    http_status: ''
+    message: Quá thời hạn cho phép mở lại
+  '4467':
+    http_status: ''
+    message: Câu hỏi đang được mở
+  '4468':
+    http_status: ''
+    message: Đang chờ nhân viên tiếp nhận, không thể yêu cầu liên tục.
+  '4469':
+    http_status: ''
+    message: Ticket chưa được hoàn tất
+namespace: ticket

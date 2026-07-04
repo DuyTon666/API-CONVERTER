@@ -22,6 +22,15 @@ endpoint_rules:
   order:
     patterns:
     - /orders
+  csr:
+    patterns:
+    - /csr
+  admin:
+    patterns:
+    - /admin
+  topup:
+    patterns:
+    - /topup
 ignored_segments:
 - v1
 - v2

@@ -1,48 +1,12 @@
 {
-  "timestamp": "2026-06-16T14:48:48",
+  "timestamp": "2026-07-04T11:11:31",
   "summary": {
-    "total_conflicts": 1,
-    "duplicate_import": 1,
+    "total_conflicts": 0,
+    "duplicate_import": 0,
     "endpoint_collision": 0,
     "output_collision": 0,
-    "auto_resolvable": 1,
+    "auto_resolvable": 0,
     "requires_review": 0
   },
-  "conflicts": [
-    {
-      "conflict_id": "dup_api_cert_download",
-      "conflict_type": "duplicate_import",
-      "severity": "low",
-      "module": "order",
-      "sources": [
-        {
-          "file": "API_cert_download.docx",
-          "path": "1.docs/source/api_contract/order/API_cert_download.docx",
-          "source_format": "docx",
-          "version": "1.0",
-          "output": "5.openapi/paths/order/download_order_certificate.yaml",
-          "module": "order",
-          "method": "get",
-          "http_path": "/v1/orders/{}/certificates/{}/download"
-        },
-        {
-          "file": "API_cert_download.docx",
-          "path": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/1.docs/source/api_contract/order/API_cert_download.docx",
-          "source_format": "docx",
-          "version": "1.0",
-          "output": "5.openapi/paths/order/download_order_certificate.yaml",
-          "module": "order",
-          "method": "get",
-          "http_path": "/v1/orders/{}/certificates/{}/download"
-        }
-      ],
-      "confidence_score": 1.0,
-      "suggested_winner": "API_cert_download.docx",
-      "reason": [
-        "same version"
-      ],
-      "requires_review": false,
-      "recommended_action": "keep_canonical_path"
-    }
-  ]
+  "conflicts": []
 }

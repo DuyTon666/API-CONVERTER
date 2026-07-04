@@ -1,0 +1,174 @@
+namespace: admin
+decisions:
+- code: '4102'
+  source_file: API_internal_product_create.docx
+  incoming_message_key: bearer token khong hop le het han
+  matched_namespace: _global
+  status: conflict
+  incoming_message: Bearer Token không hợp lệ / hết hạn
+  existing_message: Token không hợp lệ hoặc đã hết hạn
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:33:00.356774'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.266932'
+- code: '4200'
+  source_file: API_internal_product_create.docx
+  incoming_message_key: du lieu request khong hop le validate chung
+  matched_namespace: _global
+  status: duplicate_ok
+  incoming_message: Dữ liệu request không hợp lệ (validate chung)
+  existing_message: Dữ liệu request không hợp lệ
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:33:06.491434'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.266997'
+- code: '6004'
+  source_file: API_internal_product_delete.docx
+  incoming_message_key: internal product khong ton tai hoac da soft deleted
+  matched_namespace: module
+  status: duplicate_ok
+  incoming_message: Internal product không tồn tại (hoặc đã soft-deleted)
+  existing_message: Internal product không tồn tại (hoặc đã soft-deleted)
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:33:54.605042'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.267033'
+- code: '6405'
+  source_file: API_internal_product_toggle.docx
+  incoming_message_key: internal product da soft deleted khong the thao tac
+  matched_namespace: module
+  status: duplicate_ok
+  incoming_message: Internal product đã soft-deleted, không thể thao tác
+  existing_message: Internal product đã soft-deleted, không thể thao tác
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:34:06.346210'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.267064'
+- code: '6004'
+  source_file: API_internal_product_update.docx
+  incoming_message_key: id khong ton tai trong db
+  matched_namespace: module
+  status: conflict
+  incoming_message: id không tồn tại trong DB
+  existing_message: Internal product không tồn tại (hoặc đã soft-deleted)
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:33:59.491208'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.267086'
+- code: '6405'
+  source_file: API_internal_product_update.docx
+  incoming_message_key: record ton tai nhung da bi soft delete
+  matched_namespace: module
+  status: conflict
+  incoming_message: Record tồn tại nhưng đã bị soft-delete
+  existing_message: Internal product đã soft-deleted, không thể thao tác
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:34:13.703063'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.267113'
+- code: '4409'
+  source_file: API_provider_product_create.docx
+  incoming_message_key: provider khong ton tai hoac da bi tat
+  matched_namespace: module
+  status: duplicate_ok
+  incoming_message: Provider không tồn tại hoặc đã bị tắt
+  existing_message: Provider không tồn tại hoặc đã bị tắt — không thể tạo/cập nhật
+    sản phẩm cho provider này
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:33:37.533459'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.267140'
+- code: '4004'
+  source_file: API_provider_product_delete.docx
+  incoming_message_key: khong tim thay san pham hoac da soft deleted truoc do
+  matched_namespace: _global
+  status: conflict
+  incoming_message: Không tìm thấy sản phẩm (hoặc đã soft-deleted trước đó)
+  existing_message: Không tìm thấy dữ liệu
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:33:12.246750'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.267173'
+- code: '4004'
+  source_file: API_provider_product_detail.docx
+  incoming_message_key: khong tim thay san pham voi id duoc cho hoac da soft deleted
+  matched_namespace: _global
+  status: conflict
+  incoming_message: Không tìm thấy sản phẩm với id được cho (hoặc đã soft-deleted)
+  existing_message: Không tìm thấy dữ liệu
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:33:20.155340'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.267208'
+- code: '4409'
+  source_file: API_provider_product_sync.docx
+  incoming_message_key: provider khong ton tai hoac da bi tat khong the tao cap nhat
+    san pham cho provider nay
+  matched_namespace: module
+  status: duplicate_ok
+  incoming_message: Provider không tồn tại hoặc đã bị tắt — không thể tạo/cập nhật
+    sản phẩm cho provider này
+  existing_message: Provider không tồn tại hoặc đã bị tắt — không thể tạo/cập nhật
+    sản phẩm cho provider này
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:33:44.578317'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.267257'
+- code: '4004'
+  source_file: API_provider_product_toggle.docx
+  incoming_message_key: khong tim thay san pham
+  matched_namespace: _global
+  status: conflict
+  incoming_message: Không tìm thấy sản phẩm
+  existing_message: Không tìm thấy dữ liệu
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:33:28.604788'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.267283'
+- code: '4108'
+  source_file: API_internal_product_create.docx
+  incoming_message_key: ip khong duoc phep
+  matched_namespace: _global
+  status: conflict
+  incoming_message: IP không được phép
+  existing_message: Không có quyền truy cập
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Duy
+    approved_at: '2026-07-02T14:47:13.553073'
+  action: keep_existing
+  applied_at: '2026-07-02T14:47:23.266966'

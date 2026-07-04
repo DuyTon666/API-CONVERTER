@@ -1,0 +1,35 @@
+namespace: topup
+runs:
+- timestamp: '2026-06-30T11:43:37.488923'
+  used_by:
+  - code: '4102'
+    source_file: API_order_plan_topup.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_order_plan_topup.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_order_plan_topup.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-07-02T11:10:37.630920'
+  used_by:
+  - code: '4102'
+    source_file: API_order_plan_topup.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_order_plan_topup.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_order_plan_topup.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)
+- timestamp: '2026-07-02T14:50:19.213142'
+  used_by:
+  - code: '4102'
+    source_file: API_order_plan_topup.docx
+    message_in_document: Bearer Token không hợp lệ / hết hạn
+  - code: '4108'
+    source_file: API_order_plan_topup.docx
+    message_in_document: IP không được phép
+  - code: '4200'
+    source_file: API_order_plan_topup.docx
+    message_in_document: Dữ liệu request không hợp lệ (validate chung)

@@ -1,0 +1,145 @@
+error_codes:
+  '4090':
+    http_status: '409'
+    message: Idempotency-Key đang xử lý (concurrent)
+  '4091':
+    http_status: '409'
+    message: Double submit — payload trùng trong dedup window
+  '4101':
+    http_status: '401'
+    message: Thiếu Authorization header
+  '4103':
+    http_status: '403'
+    message: Client không có scope=admin
+  '4401':
+    http_status: '422'
+    message: provider_product_code đã tồn tại trong phạm vi provider
+  '4403':
+    http_status: '422'
+    message: Kết hợp product_type + cert_type không hợp lệ
+  '4404':
+    http_status: '422'
+    message: years_supported rỗng hoặc không hợp lệ
+  '4405':
+    http_status: '422'
+    message: MULTI_DOMAIN nhưng thiếu min_san/max_san
+  '4406':
+    http_status: '422'
+    message: Request chứa trường immutable không cho phép cập nhật
+  '4407':
+    http_status: '422'
+    message: Không thể xóa — vẫn còn Order active sử dụng sản phẩm
+  '4408':
+    http_status: '422'
+    message: Sản phẩm đã soft-deleted, không thể toggle
+  '4409':
+    http_status: '422'
+    message: Provider không tồn tại hoặc đã bị tắt — không thể tạo/cập nhật sản phẩm
+      cho provider này
+  '5004':
+    http_status: '404'
+    message: Không tìm thấy provider với id được cho (hoặc đã soft-deleted)
+  '5401':
+    http_status: '422'
+    message: code đã tồn tại trong hệ thống
+  '5402':
+    http_status: '422'
+    message: Không cho phép update field immutable (code, id, created_at, created_by)
+  '5403':
+    http_status: '422'
+    message: registered_ip không phải IPv4/IPv6 hợp lệ
+  '5404':
+    http_status: '422'
+    message: sandbox_base_url / production_base_url không phải URL HTTPS hợp lệ
+  '5405':
+    http_status: '422'
+    message: Provider đã soft-deleted, không thể thao tác
+  '5406':
+    http_status: '422'
+    message: Không thể xóa provider — vẫn còn provider_products active liên kết
+  '5407':
+    http_status: '401'
+    message: Re-authentication thất bại (password sai khi reveal-token)
+  '5408':
+    http_status: '422'
+    message: auth_extra không phải JSON object hợp lệ
+  '5409':
+    http_status: '422'
+    message: code chứa ký tự không hợp lệ — chỉ cho [A-Z0-9_], 2-32 chars
+  '5410':
+    http_status: '422'
+    message: Provider không hỗ trợ đồng bộ sản phẩm (không có API list-products)
+  '5411':
+    http_status: '422'
+    message: Field mapping config rỗng hoặc thiếu cho provider — cần admin cấu hình
+      bảng provider_product_field_mappings trước
+  '5412':
+    http_status: '502'
+    message: Provider API trả lỗi hoặc timeout khi đồng bộ
+  '5413':
+    http_status: '409'
+    message: Đã có một tiến trình sync đang chạy cho provider này — chờ hoàn tất
+  '5414':
+    http_status: '422'
+    message: Cấu hình list-products không đầy đủ — phải set đồng thời endpoint, method,
+      request_template, response_path (all-or-none)
+  '5415':
+    http_status: '422'
+    message: list_products_response_path không phải JSONPath hợp lệ hoặc list_products_timeout_seconds
+      ngoài range [5, 120]
+  '6004':
+    http_status: '404'
+    message: Internal product không tồn tại (hoặc đã soft-deleted)
+  '6401':
+    http_status: '422'
+    message: code đã tồn tại trong hệ thống
+  '6402':
+    http_status: '422'
+    message: Không cho update field immutable (id, code, product_type, cert_type,
+      created_at, created_by)
+  '6403':
+    http_status: '422'
+    message: Không thể xóa — còn provider_product_mappings active liên kết
+  '6404':
+    http_status: '422'
+    message: Không thể xóa — còn order active sử dụng internal product này
+  '6405':
+    http_status: '422'
+    message: Internal product đã soft-deleted, không thể thao tác
+  '6406':
+    http_status: '422'
+    message: Body không chứa field mutable nào
+  '6407':
+    http_status: '422'
+    message: default_san không phải integer hoặc < 0
+  '6408':
+    http_status: '422'
+    message: max_san không phải integer hoặc < 1
+  '6409':
+    http_status: '422'
+    message: code không hợp lệ — chỉ cho [A-Z0-9_-], 2-64 chars
+  '6410':
+    http_status: '422'
+    message: 'Kết hợp product_type + cert_type không hợp lệ (VD: EV + WILDCARD)'
+  '6501':
+    http_status: '404'
+    message: Mapping không tồn tại (hoặc đã soft-deleted)
+  '6502':
+    http_status: '422'
+    message: Compatibility mismatch — product_type hoặc cert_type không khớp giữa
+      internal product và provider product
+  '6503':
+    http_status: '422'
+    message: Internal product này đã có mapping với provider này — không thể map 2
+      sản phẩm của cùng 1 provider cho 1 internal
+  '6504':
+    http_status: '422'
+    message: Provider product không tồn tại / đã xóa / provider đã bị disable hoặc
+      soft-deleted
+  '6505':
+    http_status: '422'
+    message: Cặp (internal, provider_product) đã được mapping trước đó
+  '6506':
+    http_status: '422'
+    message: routing_weight không hợp lệ — phải là integer trong range [1, 100]
+namespace: admin

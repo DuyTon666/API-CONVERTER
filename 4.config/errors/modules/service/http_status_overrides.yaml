@@ -1,0 +1,52 @@
+# http_status_overrides.yaml
+# Module: service
+# Lý do tồn tại: các PDF của module service không có cột HTTP status.
+# HTTP status được xác định dựa trên ngữ nghĩa từng mã lỗi.
+# Xem pending_review.yaml cho các mã chưa được confirm.
+
+overrides:
+  '4118':
+    http_status: 422
+    reason: "Business rule — điều kiện chưa thỏa (chưa bật 2FA)"
+  '4481':
+    http_status: 422
+    reason: "Business rule — feature không khả dụng cho dịch vụ này"
+  '4482':
+    http_status: 422
+    reason: "Business rule — dịch vụ không đủ điều kiện"
+  '4483':
+    http_status: 409
+    reason: "Conflict — thao tác trùng lặp, cooldown chưa hết"
+  '5000':
+    http_status: 404
+    reason: "Not Found — dịch vụ không tồn tại"
+  '5008':
+    http_status: 404
+    reason: "Not Found — gói nâng cấp không tồn tại"
+  '5012':
+    http_status: 422
+    reason: "Business rule — feature không được hỗ trợ"
+  '5013':
+    http_status: 500
+    reason: "Internal error — lỗi hệ thống trong quá trình đổi mật khẩu"
+  '5014':
+    http_status: 500
+    reason: "Internal error — fetch giá dịch vụ hiện tại thất bại"
+  '5015':
+    http_status: 422
+    reason: "Business rule — dịch vụ không hỗ trợ nâng cấp"
+  '5016':
+    http_status: 500
+    reason: "Internal error — fetch giá dịch vụ mới thất bại"
+  '5017':
+    http_status: 422
+    reason: "Business rule — dịch vụ mới đang bị tạm khóa"
+  '5018':
+    http_status: 422
+    reason: "Business rule — dịch vụ mới không cùng plan"
+  '5019':
+    http_status: 422
+    reason: "Business rule — dịch vụ mới không hỗ trợ nâng cấp"
+  '5020':
+    http_status: 422
+    reason: "Business rule — chưa cấu hình cho phép nâng cấp giữa 2 dịch vụ này"

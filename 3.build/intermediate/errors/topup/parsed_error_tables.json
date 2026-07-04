@@ -1,0 +1,516 @@
+{
+  "generated_at": "2026-07-02T14:50:19.203926",
+  "source_files": [
+    "API_order_plan_topup.docx"
+  ],
+  "summary": {
+    "total": 22,
+    "new": 0,
+    "duplicate_ok": 20,
+    "conflict": 2,
+    "needs_review": 0,
+    "intra_batch_conflict": 0,
+    "missing_http_status": 0
+  },
+  "entries": [
+    {
+      "code": "4221",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "external_account_id là bắt buộc."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "external_account_id là bắt buộc."
+      },
+      "resolution": null
+    },
+    {
+      "code": "4222",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "external_account_id phải là số nguyên ≥ 1."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "external_account_id phải là số nguyên ≥ 1."
+      },
+      "resolution": null
+    },
+    {
+      "code": "4223",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "customer_id là bắt buộc."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "customer_id là bắt buộc."
+      },
+      "resolution": null
+    },
+    {
+      "code": "4224",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "customer_id không được vượt quá 255 ký tự."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "customer_id không được vượt quá 255 ký tự."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6010",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "core_plan_id là bắt buộc."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "core_plan_id là bắt buộc."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6011",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "core_plan_id không được vượt quá 100 ký tự."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "core_plan_id không được vượt quá 100 ký tự."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6012",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "plan_quantity là bắt buộc."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "plan_quantity là bắt buộc."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6013",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "plan_quantity phải là số nguyên ≥ 1."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "plan_quantity phải là số nguyên ≥ 1."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6014",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 11,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "plan_quantity không được vượt quá 100."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "plan_quantity không được vượt quá 100."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6001",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Không tìm thấy đơn hàng MULTI_DOMAIN/FLEX đang active cho account này."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Không tìm thấy đơn hàng MULTI_DOMAIN/FLEX đang active cho account này."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6002",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Đơn hàng tìm được không phải loại Multi-Domain/FLEX."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Đơn hàng tìm được không phải loại Multi-Domain/FLEX."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6003",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Đơn hàng ở trạng thái không cho phép top-up (EXPIRED, FAILED, CANCELED...)."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Đơn hàng ở trạng thái không cho phép top-up (EXPIRED, FAILED, CANCELED...)."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6004",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn hàng."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn hàng."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6005",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Tổng SAN sau top-up vượt quá giới hạn tối đa (max_san)."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Tổng SAN sau top-up vượt quá giới hạn tối đa (max_san)."
+      },
+      "resolution": null
+    },
+    {
+      "code": "6006",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 12,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Đơn hàng chưa được gán provider (chưa qua routing)."
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Đơn hàng chưa được gán provider (chưa qua routing)."
+      },
+      "resolution": null
+    },
+    {
+      "code": "4090",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 13,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Idempotency-Key đang xử lý (concurrent)"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Idempotency-Key đang xử lý (concurrent)"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4091",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 13,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Double submit — payload trùng trong dedup window"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Double submit — payload trùng trong dedup window"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4101",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 13,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Thiếu Authorization header"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Thiếu Authorization header"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4102",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 13,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Bearer Token không hợp lệ / hết hạn"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Token không hợp lệ hoặc đã hết hạn"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T12:01:52.276504"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4103",
+      "status": "duplicate_ok",
+      "matched_namespace": "module",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 13,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Client không có scope=admin"
+      },
+      "existing_in_map": {
+        "http_status": "",
+        "message": "Client không có scope=admin"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4108",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 13,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "IP không được phép"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Không có quyền truy cập"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T14:47:42.671539"
+      },
+      "resolution_source": "persistent"
+    },
+    {
+      "code": "4200",
+      "status": "duplicate_ok",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": false,
+      "source_file": "API_order_plan_topup.docx",
+      "seen_in_files": [
+        "API_order_plan_topup.docx"
+      ],
+      "table_index": 13,
+      "incoming": {
+        "http_status": "",
+        "category": "",
+        "message": "Dữ liệu request không hợp lệ (validate chung)"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Dữ liệu request không hợp lệ"
+      },
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Duy",
+        "approved_at": "2026-07-02T12:02:26.722235"
+      },
+      "resolution_source": "persistent"
+    }
+  ]
+}

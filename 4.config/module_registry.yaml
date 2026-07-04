@@ -15,7 +15,7 @@ modules:
     selected_files_count: 11
     skipped_duplicate_count: 8
     endpoint_count: 11
-    last_import_at: '2026-06-16T14:48:31'
+    last_import_at: '2026-06-30T08:45:19'
     last_import_status: success
     notes: null
   service:
@@ -33,8 +33,8 @@ modules:
     source_files_count: 6
     selected_files_count: 6
     skipped_duplicate_count: 0
-    endpoint_count: 6
-    last_import_at: '2026-06-16T14:48:02'
+    endpoint_count: 7
+    last_import_at: '2026-07-04T11:10:28'
     last_import_status: success
     notes: null
   department:
@@ -53,7 +53,7 @@ modules:
     selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
-    last_import_at: '2026-06-16T14:47:53'
+    last_import_at: '2026-06-30T08:44:04'
     last_import_status: success
     notes: null
   statistic:
@@ -72,7 +72,7 @@ modules:
     selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
-    last_import_at: '2026-06-16T14:48:28'
+    last_import_at: '2026-06-30T08:45:16'
     last_import_status: success
     notes: null
   order:
@@ -87,10 +87,67 @@ modules:
     deprecated_at: null
     deprecated_by: null
     file_count: 1
+    source_files_count: 15
+    selected_files_count: 15
+    skipped_duplicate_count: 0
+    endpoint_count: 14
+    last_import_at: '2026-07-03T15:44:27'
+    last_import_status: success
+    notes: null
+  csr:
+    status: active
+    source_dir: 1.docs/source/api_contract/csr
+    output_dir: 5.openapi/paths/csr
+    schemas_dir: 5.openapi/components/schemas/csr
+    created_at: '2026-06-22T11:44:39'
+    created_by: cli
+    activated_at: '2026-06-22T11:46:33'
+    activated_by: cli
+    deprecated_at: null
+    deprecated_by: null
+    file_count: 1
+    source_files_count: 1
+    selected_files_count: 1
+    skipped_duplicate_count: 0
+    endpoint_count: 2
+    last_import_at: '2026-06-30T08:44:01'
+    last_import_status: success
+    notes: null
+  admin:
+    status: active
+    source_dir: 1.docs/source/api_contract/admin
+    output_dir: 5.openapi/paths/admin
+    schemas_dir: 5.openapi/components/schemas/admin
+    created_at: '2026-06-30T08:29:27'
+    created_by: cli
+    activated_at: '2026-06-30T08:36:54'
+    activated_by: cli
+    deprecated_at: null
+    deprecated_by: null
+    file_count: 0
+    source_files_count: 24
+    selected_files_count: 24
+    skipped_duplicate_count: 0
+    endpoint_count: 24
+    last_import_at: '2026-07-04T09:20:58'
+    last_import_status: success
+    notes: Auto-created by approve-module-rule at 2026-06-30T08:29:27
+  topup:
+    status: active
+    source_dir: 1.docs/source/api_contract/topup
+    output_dir: 5.openapi/paths/topup
+    schemas_dir: 5.openapi/components/schemas/topup
+    created_at: '2026-06-30T08:31:33'
+    created_by: cli
+    activated_at: '2026-06-30T08:37:03'
+    activated_by: cli
+    deprecated_at: null
+    deprecated_by: null
+    file_count: 0
     source_files_count: 1
     selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
-    last_import_at: '2026-06-16T14:47:56'
+    last_import_at: '2026-07-03T14:08:02'
     last_import_status: success
-    notes: null
+    notes: Auto-created by approve-module-rule at 2026-06-30T08:31:33

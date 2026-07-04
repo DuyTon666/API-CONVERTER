@@ -25,4 +25,5 @@ def load_contract_profile() -> dict:
         "extraction_policy": load_yaml(GLOBAL_DIR / "extraction_policy.yaml"),
         "header_refs": load_yaml(GLOBAL_DIR / "header_refs.yaml"),
         "status_response_refs": load_yaml(GLOBAL_DIR / "status_response_refs.yaml"),
+        "error_code_map": load_yaml(CONFIG_DIR / "error_code_map.yaml"),
     }

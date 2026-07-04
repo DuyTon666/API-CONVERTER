@@ -1,0 +1,1660 @@
+{
+  "generated_at": "2026-07-03T15:47:18.700786",
+  "module": "order",
+  "batch_timestamp": "2026-07-03 15:45:25",
+  "operations": {
+    "downloadOrderCertificate": {
+      "method": "get",
+      "path": "/v1/orders/{id}/certificates/{certId}/download",
+      "source_file": "API_order_certificate.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/download_order_certificate.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Không có quyền",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4001",
+            "category": "Not Found",
+            "message": "Order hoặc Certificate không tồn tại",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4310",
+            "category": "State",
+            "message": "Certificate không ở trạng thái ISSUED — không thể download",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4302",
+            "category": "State",
+            "message": "Certificate PEM chưa có — cert được cấp chưa hoàn chỉnh",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "createOrder": {
+      "method": "post",
+      "path": "/v1/orders",
+      "source_file": "API_order_create.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/create_order.yaml",
+      "errors": {
+        "409": [
+          {
+            "code": "4090",
+            "category": "Idempotency",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4091",
+            "category": "Idempotency",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4502",
+            "category": "Routing",
+            "message": "Không acquire được routing lock (concurrent WRR) — client retry sau 1s",
+            "http_status_source": "document"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Client không có scope=admin",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4221",
+            "category": "Validation",
+            "message": "external_account_id là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4222",
+            "category": "Validation",
+            "message": "external_account_id phải là số nguyên ≥ 1",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4223",
+            "category": "Validation",
+            "message": "customer_id là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4224",
+            "category": "Validation",
+            "message": "customer_id không được vượt quá 255 ký tự",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4225",
+            "category": "Validation",
+            "message": "internal_product_code là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4226",
+            "category": "Validation",
+            "message": "internal_product_code không đúng định dạng (^[A-Za-z0-9_-]{2,64}$)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4227",
+            "category": "Validation",
+            "message": "years là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4228",
+            "category": "Validation",
+            "message": "years phải là số nguyên ≥ 1",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4229",
+            "category": "Validation",
+            "message": "primary_domain là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4230",
+            "category": "Validation",
+            "message": "primary_domain không phải FQDN hợp lệ",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4231",
+            "category": "Validation",
+            "message": "note không được vượt quá 500 ký tự",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4241",
+            "category": "Validation",
+            "message": "contact.contact_admin.email không hợp lệ (RFC 5322)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4242",
+            "category": "Validation",
+            "message": "contact.contact_admin.phone phải theo định dạng E.164",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4251",
+            "category": "Validation",
+            "message": "contact_org.name là bắt buộc khi cung cấp contact_org",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4252",
+            "category": "Validation",
+            "message": "contact_org.address là bắt buộc khi cung cấp contact_org",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4253",
+            "category": "Validation",
+            "message": "contact_org.country là bắt buộc khi cung cấp contact_org",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4254",
+            "category": "Validation",
+            "message": "contact_org.country phải là mã ISO 3166-1 alpha-2 (VD: VN, US)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4255",
+            "category": "Validation",
+            "message": "contact_org.phone phải theo định dạng E.164",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4261",
+            "category": "Validation",
+            "message": "contact.contact_tech.email không hợp lệ (RFC 5322)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4262",
+            "category": "Validation",
+            "message": "contact.contact_tech.phone phải theo định dạng E.164",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4002",
+            "category": "Business",
+            "message": "Internal product is_enabled=false — không cho phép tạo order mới",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4300",
+            "category": "Business",
+            "message": "customer_id không tồn tại ở Internal Core",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4501",
+            "category": "Routing",
+            "message": "Không có provider nào khả dụng — NO_PROVIDER_AVAILABLE",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4003",
+            "category": "Not Found",
+            "message": "internal_product_code không tồn tại hoặc đã soft-delete",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "changeOrderDcvMethod": {
+      "method": "post",
+      "path": "/v1/orders/{id}/dcv/change",
+      "source_file": "API_order_dcv_change.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/change_order_dcv_method.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Không có quyền",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4761",
+            "category": "",
+            "message": "domain là bắt buộc",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4762",
+            "category": "",
+            "message": "method là bắt buộc",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4763",
+            "category": "",
+            "message": "method không hợp lệ — chỉ cho: EMAIL, HTTP, CNAME",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4764",
+            "category": "",
+            "message": "approver_email không đúng định dạng email",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4765",
+            "category": "",
+            "message": "approver_email bắt buộc khi method=EMAIL",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4751",
+            "category": "State",
+            "message": "Cert không ở trạng thái PENDING hoặc REISSUE_PENDING",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4766",
+            "category": "Business",
+            "message": "Phương thức DCV không hợp lệ cho cert_type này — WILDCARD/FLEX chỉ cho CNAME hoặc EMAIL",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4767",
+            "category": "Business",
+            "message": "Primary domain là địa chỉ IP, chỉ hỗ trợ phương thức HTTP",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4768",
+            "category": "Business",
+            "message": "WILDCARD/FLEX không hỗ trợ primary domain là địa chỉ IP — cấu hình sản phẩm không hợp lệ",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4752",
+            "category": "Business",
+            "message": "Domain không tồn tại trong dcv_records của cert",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4755",
+            "category": "Business",
+            "message": "Domain đã được xác minh (VALIDATED), không thể đổi phương thức DCV",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4757",
+            "category": "Business",
+            "message": "Không tìm thấy provider cho đơn hàng",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4001",
+            "category": "Not Found",
+            "message": "Order không tồn tại (hoặc đã bị xóa)",
+            "http_status_source": "document"
+          }
+        ],
+        "502": [
+          {
+            "code": "4851",
+            "category": "Provider",
+            "message": "Provider API lỗi khi cập nhật phương thức DCV",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "getOrderDcvRecords": {
+      "method": "get",
+      "path": "/v1/orders/{id}/dcv/records",
+      "source_file": "API_order_dcv_records.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/get_order_dcv_records.yaml",
+      "errors": {
+        "409": [
+          {
+            "code": "4090",
+            "category": "Idempotency",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4091",
+            "category": "Idempotency",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "document"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Client không có scope=admin",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4001",
+            "category": "Not Found",
+            "message": "Order không tồn tại (hoặc đã bị xóa)",
+            "http_status_source": "document"
+          }
+        ],
+        "400": [
+          {
+            "code": "4210",
+            "category": "Format",
+            "message": "id không phải số nguyên dương hợp lệ (BIGINT, không phải UUID)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Giá trị query param status không hợp lệ",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "resendDcvEmailForOrder": {
+      "method": "post",
+      "path": "/v1/orders/{id}/dcv/resend-email",
+      "source_file": "API_order_dcv_resend_email.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/resend_dcv_email_for_order.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Không có quyền",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4001",
+            "category": "Not Found",
+            "message": "Order không tồn tại (hoặc đã bị xóa)",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4751",
+            "category": "State",
+            "message": "Cert không ở trạng thái PENDING hoặc REISSUE_PENDING",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4752",
+            "category": "Business",
+            "message": "Domain không tồn tại trong dcv_records của cert",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4757",
+            "category": "Business",
+            "message": "Không tìm thấy provider cho đơn hàng",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4758",
+            "category": "",
+            "message": "domain là bắt buộc",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4753",
+            "category": "Business",
+            "message": "Domain đang dùng phương thức DCV khác (không phải EMAIL)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4754",
+            "category": "Business",
+            "message": "Domain đã được xác minh (VALIDATED), không thể gửi lại email",
+            "http_status_source": "document"
+          }
+        ],
+        "502": [
+          {
+            "code": "4852",
+            "category": "Provider",
+            "message": "Provider API lỗi khi gửi lại email DCV",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "validateOrderDcv": {
+      "method": "post",
+      "path": "/v1/orders/{id}/dcv/validate",
+      "source_file": "API_order_dcv_validate.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/validate_order_dcv.yaml",
+      "errors": {
+        "409": [
+          {
+            "code": "4090",
+            "category": "Idempotency",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4091",
+            "category": "Idempotency",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "document"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Client không có scope=admin",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4615",
+            "category": "State",
+            "message": "Order không ở trạng thái PENDING hoặc DCV_PENDING — không thể trigger DCV validate",
+            "http_status_source": "document"
+          }
+        ],
+        "400": [
+          {
+            "code": "4201",
+            "category": "Format",
+            "message": "id không phải số nguyên dương hợp lệ (BIGINT, không phải UUID)",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4001",
+            "category": "Not Found",
+            "message": "Order không tồn tại",
+            "http_status_source": "document"
+          }
+        ],
+        "502": [
+          {
+            "code": "4820",
+            "category": "Provider",
+            "message": "Provider API trả về lỗi khi kiểm tra DCV status. Chi tiết trong error.data.provider_message",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "getOrderDetail": {
+      "method": "get",
+      "path": "/v1/orders/{id}",
+      "source_file": "API_order_detail.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/get_order_detail.yaml",
+      "errors": {
+        "409": [
+          {
+            "code": "4090",
+            "category": "Idempotency",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4091",
+            "category": "Idempotency",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "document"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Client không có scope=admin",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "document"
+          }
+        ],
+        "400": [
+          {
+            "code": "4201",
+            "category": "Format",
+            "message": "id không phải số nguyên dương hợp lệ (BIGINT, không phải UUID)",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4001",
+            "category": "Not Found",
+            "message": "Order không tồn tại (id không khớp hoặc deleted_at IS NOT NULL)",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "generateCsrForOrder": {
+      "method": "post",
+      "path": "/v1/orders/{id}/generate-csr",
+      "source_file": "API_order_generate_csr.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/generate_csr_for_order.yaml",
+      "errors": {
+        "409": [
+          {
+            "code": "4090",
+            "category": "Idempotency",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4091",
+            "category": "Idempotency",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "document"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Client không có scope=admin",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4601",
+            "category": "State",
+            "message": "Order không ở trạng thái INIT, FAILED hoặc CSR_READY",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4605",
+            "category": "Business",
+            "message": "Order đã được submit thành công lên provider (provider_order_id IS NOT NULL)",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4001",
+            "category": "Not Found",
+            "message": "Order không tồn tại hoặc đã bị xóa mềm",
+            "http_status_source": "document"
+          }
+        ],
+        "500": [
+          {
+            "code": "4700",
+            "category": "Internal",
+            "message": "Không sinh được CSR — cả TheSSLStore API và openssl nội bộ đều thất bại",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "listOrders": {
+      "method": "get",
+      "path": "/v1/orders",
+      "source_file": "API_order_list.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/list_orders.yaml",
+      "errors": {
+        "409": [
+          {
+            "code": "4090",
+            "category": "Idempotency",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4091",
+            "category": "Idempotency",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "document"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Client không có scope=admin",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "document"
+          }
+        ],
+        "400": [
+          {
+            "code": "4211",
+            "category": "Format",
+            "message": "status không thuộc tập giá trị hợp lệ",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4212",
+            "category": "Format",
+            "message": "product_type không thuộc tập giá trị hợp lệ (DV/OV/EV)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4213",
+            "category": "Format",
+            "message": "cert_type không thuộc tập giá trị hợp lệ",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4214",
+            "category": "Format",
+            "message": "date_from hoặc date_to không đúng định dạng YYYY-MM-DD",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4215",
+            "category": "Business",
+            "message": "date_to nhỏ hơn date_from",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4216",
+            "category": "Format",
+            "message": "page < 1 hoặc per_page ngoài [1, 100]",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4217",
+            "category": "Format",
+            "message": "sort_by hoặc sort_dir không hợp lệ",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "reissueOrderById": {
+      "method": "post",
+      "path": "/v1/orders/{id}/reissue",
+      "source_file": "API_order_reissue.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/reissue_order_by_id.yaml",
+      "errors": {
+        "409": [
+          {
+            "code": "4090",
+            "category": "Idempotency",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4091",
+            "category": "Idempotency",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "document"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Client không có scope=admin",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4201",
+            "category": "State",
+            "message": "Order không ở trạng thái ISSUED/INSTALLED/ACTIVE — không thể reissue (R1)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4202",
+            "category": "State",
+            "message": "order.provider_order_id rỗng — order chưa được submit lên provider (R2)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4203",
+            "category": "State",
+            "message": "Đang có cert REISSUE_QUEUED hoặc REISSUE_PENDING — không thể reissue đồng thời (R3)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4204",
+            "category": "Business",
+            "message": "Không tìm thấy CSR — cert hiện tại không có csr_pem và request không cung cấp csr mới (R5)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4205",
+            "category": "Business",
+            "message": "Order không có provider được chọn (selectedMapping.provider = null) (R6)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4206",
+            "category": "Business",
+            "message": "Provider chưa hỗ trợ reissue (is_reissue_supported = false) — reserved, hiện chưa dùng",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4622",
+            "category": "",
+            "message": "dcv_config là bắt buộc; hoặc dcv_config thiếu domain (primary_domain hoặc SAN); hoặc dcv_config.*.method không hợp lệ (EMAIL|HTTP|HTTPS|CNAME). data.missing_domains chứa danh sách domain bị thiếu.",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4623",
+            "category": "",
+            "message": "dcv_config.*.approver_email không đúng định dạng RFC 5322",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4631",
+            "category": "",
+            "message": "contact_admin.email không hợp lệ hoặc thiếu (RFC 5322)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4632",
+            "category": "",
+            "message": "contact_admin.first_name là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4633",
+            "category": "",
+            "message": "contact_admin.last_name là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4634",
+            "category": "",
+            "message": "contact_admin.phone không hợp lệ (E.164)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4635",
+            "category": "",
+            "message": "contact_admin là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4643",
+            "category": "",
+            "message": "contact_org là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4644",
+            "category": "",
+            "message": "contact_org.name là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4645",
+            "category": "",
+            "message": "contact_org.address là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4646",
+            "category": "",
+            "message": "contact_org.province là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4647",
+            "category": "",
+            "message": "contact_org.country là bắt buộc hoặc không đúng định dạng ISO 3166-1 alpha-2",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4648",
+            "category": "",
+            "message": "contact_org.postal_code là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4649",
+            "category": "",
+            "message": "contact_org.phone là bắt buộc hoặc không đúng định dạng E.164",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4651",
+            "category": "",
+            "message": "contact_tech.email không hợp lệ hoặc thiếu (RFC 5322)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4652",
+            "category": "",
+            "message": "contact_tech.first_name là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4653",
+            "category": "",
+            "message": "contact_tech.last_name là bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4654",
+            "category": "",
+            "message": "contact_tech.phone không hợp lệ (E.164)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4655",
+            "category": "",
+            "message": "contact_tech là bắt buộc",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4001",
+            "category": "Not Found",
+            "message": "Order không tồn tại hoặc đã xoá",
+            "http_status_source": "document"
+          }
+        ],
+        "400": [
+          {
+            "code": "4207",
+            "category": "Format",
+            "message": "CSR PEM mới không hợp lệ: sai format PEM, không parse được, hoặc CN không khớp primary_domain (R5)",
+            "http_status_source": "document"
+          }
+        ],
+        "502": [
+          {
+            "code": "4801",
+            "category": "Provider",
+            "message": "Provider API trả về lỗi khi submit reissue. Chi tiết trong error.data.provider_message",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "renewOrder": {
+      "method": "post",
+      "path": "/v1/orders/{id}/renew",
+      "source_file": "API_order_renew.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/renew_order.yaml",
+      "errors": {
+        "409": [
+          {
+            "code": "4090",
+            "category": "Idempotency",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4091",
+            "category": "Idempotency",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "document"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Client không có scope=admin",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4100",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4107",
+            "category": "State",
+            "message": "Trạng thái đơn hàng không cho phép gia hạn. data: {current_status}",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4100",
+            "category": "Business",
+            "message": "Chứng chỉ chưa đến thời điểm gia hạn. data: {days_left, renewal_early_days}",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4109",
+            "category": "Business",
+            "message": "Đã có đơn gia hạn đang xử lý. data: {renewal_order_id, renewal_order_number}",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4110",
+            "category": "Routing",
+            "message": "Thiếu provider mapping cho gia hạn (order còn hạn). data: null",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4111",
+            "category": "Data",
+            "message": "Đơn hàng thiếu subscription_end_date. data: null",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4112",
+            "category": "Routing",
+            "message": "Không có provider khả dụng (order EXPIRED). data: {internal_product_id, years}",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4113",
+            "category": "Format",
+            "message": "years không hợp lệ (phải là integer 1–3). data: errors",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4114",
+            "category": "Format",
+            "message": "dcv_method không hợp lệ (EMAIL | HTTP | HTTPS | CNAME). data: errors",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4241",
+            "category": "Contact",
+            "message": "contact_admin.email không đúng định dạng RFC 5322",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4242",
+            "category": "Contact",
+            "message": "contact_admin.phone không đúng định dạng E.164",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4251",
+            "category": "Contact",
+            "message": "contact_org.name bắt buộc khi cung cấp contact_org",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4252",
+            "category": "Contact",
+            "message": "contact_org.address bắt buộc khi cung cấp contact_org",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4253",
+            "category": "Contact",
+            "message": "contact_org.country bắt buộc khi cung cấp contact_org",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4254",
+            "category": "Contact",
+            "message": "contact_org.country không đúng định dạng ISO 3166-1 alpha-2",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4255",
+            "category": "Contact",
+            "message": "contact_org.phone không đúng định dạng E.164",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4261",
+            "category": "Contact",
+            "message": "contact_tech.email không đúng định dạng RFC 5322",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4262",
+            "category": "Contact",
+            "message": "contact_tech.phone không đúng định dạng E.164",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4001",
+            "category": "Not Found",
+            "message": "Order gốc không tồn tại",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "revokeOrderById": {
+      "method": "post",
+      "path": "/v1/orders/{id}/revoke",
+      "source_file": "API_order_revoke.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/revoke_order_by_id.yaml",
+      "errors": {
+        "429": [
+          {
+            "code": "4900",
+            "category": "Rate Limit",
+            "message": "Đã đạt giới hạn revoke_daily_limit lần/ngày — thử lại vào ngày mai",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4901",
+            "category": "State",
+            "message": "Order status không cho phép thu hồi (REVOKED, FAILED, CANCELED, v.v.)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4902",
+            "category": "State",
+            "message": "Đang có revoke in-progress (REVOKE_QUEUED hoặc REVOKE_PENDING)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4903",
+            "category": "State",
+            "message": "Không tìm thấy cert ISSUED/PENDING/CSR_READY để thu hồi",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4904",
+            "category": "State",
+            "message": "provider_order_id rỗng — cert chưa được submit lên provider, không thể thu hồi",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4905",
+            "category": "Business",
+            "message": "Cert ISSUED đã quá revoke_max_days_after_issue ngày kể từ issued_at",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "submitCsrForOrder": {
+      "method": "post",
+      "path": "/v1/orders/{id}/submit-csr",
+      "source_file": "API_order_submit_csr.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/submit_csr_for_order.yaml",
+      "errors": {
+        "409": [
+          {
+            "code": "4090",
+            "category": "Idempotency",
+            "message": "Idempotency-Key đang xử lý (concurrent)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4091",
+            "category": "Idempotency",
+            "message": "Double submit — payload trùng trong dedup window",
+            "http_status_source": "document"
+          }
+        ],
+        "401": [
+          {
+            "code": "4101",
+            "category": "Auth",
+            "message": "Thiếu Authorization header",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Bearer Token không hợp lệ / hết hạn",
+            "http_status_source": "document"
+          }
+        ],
+        "403": [
+          {
+            "code": "4103",
+            "category": "Auth",
+            "message": "Client không có scope=admin",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input",
+            "message": "Dữ liệu request không hợp lệ (validate chung)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4601",
+            "category": "State",
+            "message": "Order không ở trạng thái INIT hoặc FAILED — không thể lưu CSR",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4602",
+            "category": "State",
+            "message": "Order đang ở trạng thái CSR_READY (đang chờ worker submit lên provider) — không thể ghi đè",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4605",
+            "category": "Business",
+            "message": "Order đã được submit thành công lên provider (provider_order_id đã có giá trị) — không thể ghi đè",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4606",
+            "category": "Business",
+            "message": "Đơn gia hạn (RENEWAL) yêu cầu đơn gốc đã được submit lên provider (provider_order_id IS NULL)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4610",
+            "category": "Validation",
+            "message": "csr là bắt buộc — không được null hoặc bỏ trống",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4611",
+            "category": "Validation",
+            "message": "key_type không thuộc tập hợp lệ (RSA_2048 / RSA_4096 / ECDSA_P256 / ECDSA_P384)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4612",
+            "category": "Validation",
+            "message": "web_server_type không thuộc tập hợp lệ",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4613",
+            "category": "Validation",
+            "message": "signature_hash_algorithm không thuộc tập hợp lệ (SHA2-256 / SHA2-384 / SHA2-512)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4614",
+            "category": "Validation",
+            "message": "approver_email không đúng định dạng RFC 5322",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4621",
+            "category": "Validation",
+            "message": "dcv_method không thuộc tập hợp lệ (EMAIL / HTTP / HTTPS / CNAME)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4622",
+            "category": "Validation",
+            "message": "dcv_config[domain].method không thuộc tập hợp lệ",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4623",
+            "category": "Validation",
+            "message": "dcv_config[domain].approver_email không đúng định dạng RFC 5322",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4631",
+            "category": "Validation",
+            "message": "contact_admin.email không hợp lệ (RFC 5322)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4632",
+            "category": "Validation",
+            "message": "contact_admin.first_name bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4633",
+            "category": "Validation",
+            "message": "contact_admin.last_name bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4634",
+            "category": "Validation",
+            "message": "contact_admin.phone bắt buộc / không đúng định dạng E.164",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4635",
+            "category": "Validation",
+            "message": "contact_admin bắt buộc — không được null hoặc bỏ trống",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4643",
+            "category": "Validation",
+            "message": "contact_org bắt buộc — không được null hoặc bỏ trống",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4644",
+            "category": "Validation",
+            "message": "contact_org.name bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4645",
+            "category": "Validation",
+            "message": "contact_org.address bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4646",
+            "category": "Validation",
+            "message": "contact_org.province bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4647",
+            "category": "Validation",
+            "message": "contact_org.country bắt buộc / không đúng định dạng ISO 3166-1 alpha-2",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4648",
+            "category": "Validation",
+            "message": "contact_org.postal_code bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4649",
+            "category": "Validation",
+            "message": "contact_org.phone bắt buộc / không đúng định dạng E.164",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4651",
+            "category": "Validation",
+            "message": "contact_tech.email không hợp lệ (RFC 5322)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4652",
+            "category": "Validation",
+            "message": "contact_tech.first_name bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4653",
+            "category": "Validation",
+            "message": "contact_tech.last_name bắt buộc",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4654",
+            "category": "Validation",
+            "message": "contact_tech.phone bắt buộc / không đúng định dạng E.164",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4655",
+            "category": "Validation",
+            "message": "contact_tech bắt buộc — không được null hoặc bỏ trống",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4661",
+            "category": "Validation",
+            "message": "contact_org.business_number bắt buộc với OV/EV",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4662",
+            "category": "Validation",
+            "message": "contact_org.representative_name bắt buộc với OV/EV",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4708",
+            "category": "Business",
+            "message": "cert_type MULTI_DOMAIN/FLEX không hỗ trợ dcv_method=EMAIL — chỉ cho phép HTTP/HTTPS/CNAME",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4709",
+            "category": "Validation",
+            "message": "dcv_method là bắt buộc",
+            "http_status_source": "document"
+          }
+        ],
+        "404": [
+          {
+            "code": "4001",
+            "category": "Not Found",
+            "message": "Order không tồn tại",
+            "http_status_source": "document"
+          }
+        ],
+        "400": [
+          {
+            "code": "4701",
+            "category": "Format",
+            "message": "CSR PEM không hợp lệ (sai format, không parse được)",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4702",
+            "category": "Business",
+            "message": "CN/SAN trong CSR không chứa primary_domain của order",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4706",
+            "category": "Business",
+            "message": "approver_email bắt buộc khi dcv_method=EMAIL nhưng không được cung cấp",
+            "http_status_source": "document"
+          },
+          {
+            "code": "4707",
+            "category": "Business",
+            "message": "san_list chứa wildcard entry (*.domain) — không được phép; wildcard coverage áp dụng tự động theo sản phẩm",
+            "http_status_source": "document"
+          }
+        ]
+      }
+    },
+    "syncOrderStatus": {
+      "method": "post",
+      "path": "/v1/orders/{id}/sync-status",
+      "source_file": "API_order_sync_status.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/sync_order_status.yaml",
+      "errors": {}
+    }
+  }
+}

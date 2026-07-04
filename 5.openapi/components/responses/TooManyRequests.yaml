@@ -1,0 +1,5 @@
+description: Yêu cầu quá nhiều lần trong thời gian ngắn
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/common/StandardError.yaml

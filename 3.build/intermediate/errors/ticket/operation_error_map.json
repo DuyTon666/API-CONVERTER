@@ -1,0 +1,495 @@
+{
+  "generated_at": "2026-07-02T11:35:00.588855",
+  "module": "ticket",
+  "batch_timestamp": "2026-06-30 08:45:36",
+  "operations": {
+    "changeTicketAssignee": {
+      "method": "post",
+      "path": "",
+      "source_file": "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/change_ticket_assignee.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ],
+        "429": [
+          {
+            "code": "4468",
+            "category": "",
+            "message": "Đang chờ nhân viên tiếp nhận, không thể yêu cầu liên tục.",
+            "http_status_source": "override"
+          }
+        ]
+      }
+    },
+    "getUserTicketDetail": {
+      "method": "get",
+      "path": "",
+      "source_file": "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/get_user_ticket_detail.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ]
+      }
+    },
+    "reopenUserTicket": {
+      "method": "post",
+      "path": "",
+      "source_file": "API Ticket - API mở lại ticket của khách hàng.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/reopen_user_ticket.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ],
+        "409": [
+          {
+            "code": "4466",
+            "category": "",
+            "message": "Quá thời hạn cho phép mở lại",
+            "http_status_source": "override"
+          },
+          {
+            "code": "4467",
+            "category": "",
+            "message": "Câu hỏi đang được mở",
+            "http_status_source": "override"
+          }
+        ]
+      }
+    },
+    "createTicketConversation": {
+      "method": "post",
+      "path": "",
+      "source_file": "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/create_ticket_conversation.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4463",
+            "category": "",
+            "message": "Tạo phản hồi thất bại",
+            "http_status_source": "override"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ],
+        "409": [
+          {
+            "code": "4464",
+            "category": "",
+            "message": "Câu hỏi đã đóng, không được thực hiện phản hồi",
+            "http_status_source": "override"
+          }
+        ]
+      }
+    },
+    "submitTicketFeedback": {
+      "method": "post",
+      "path": "",
+      "source_file": "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/submit_ticket_feedback.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ]
+      }
+    },
+    "createUserTicket": {
+      "method": "post",
+      "path": "",
+      "source_file": "API Ticket - Tạo ticket cho khách hàng.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/create_user_ticket.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4462",
+            "category": "Insert data",
+            "message": "Tạo yêu cầu thất bại",
+            "http_status_source": "override"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ]
+      }
+    },
+    "closeUserTicket": {
+      "method": "put",
+      "path": "",
+      "source_file": "API Ticket - API đóng ticket của khách hàng.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/close_user_ticket.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4463",
+            "category": "",
+            "message": "Tạo phản hồi thất bại",
+            "http_status_source": "override"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ],
+        "409": [
+          {
+            "code": "4464",
+            "category": "",
+            "message": "Câu hỏi đã đóng, không được thực hiện phản hồi",
+            "http_status_source": "override"
+          }
+        ]
+      }
+    },
+    "createTicketRating": {
+      "method": "post",
+      "path": "",
+      "source_file": "API Ticket - API tạo ratting ticket cho khách hàng.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/create_ticket_rating.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4462",
+            "category": "Insert data",
+            "message": "Tạo yêu cầu thất bại",
+            "http_status_source": "override"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ],
+        "409": [
+          {
+            "code": "4469",
+            "category": "Input validation",
+            "message": "Ticket chưa được hoàn tất",
+            "http_status_source": "override"
+          }
+        ]
+      }
+    },
+    "updateTicketFeedback": {
+      "method": "post",
+      "path": "",
+      "source_file": "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/update_ticket_feedback.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ]
+      }
+    },
+    "getSupportStaffsByTicket": {
+      "method": "get",
+      "path": "",
+      "source_file": "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/get_support_staffs_by_ticket.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ]
+      }
+    },
+    "listUserTickets": {
+      "method": "get",
+      "path": "",
+      "source_file": "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/list_user_tickets.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ]
+      }
+    }
+  }
+}

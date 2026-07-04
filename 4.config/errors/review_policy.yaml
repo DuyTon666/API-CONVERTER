@@ -1,0 +1,93 @@
+global_namespaces:
+  - _global
+  - global
+
+similarity_thresholds:
+  global_pass_candidate: 0.55
+  safe_keep_existing: 0.72
+
+groups:
+  order:
+    - PARSE_SUSPECT_MESSAGE
+    - MODULE_HARD_CONFLICT
+    - INTRA_MODULE_CODE_REVIEW
+    - GLOBAL_HTTP_VARIANT
+    - GLOBAL_SEMANTIC_REVIEW
+    - GLOBAL_PASS_CANDIDATE
+    - SAFE_KEEP_EXISTING
+    - MISSING_HTTP_STATUS
+    - NEW_CODE_REVIEW
+    - RESOLVED
+
+  hidden_by_default:
+    - NEW_CODE_OK_HIDE
+    - RESOLVED
+
+  title:
+    PARSE_SUSPECT_MESSAGE: "PARSE SUSPECT MESSAGE - message có dấu hiệu parser lấy nhầm"
+    MODULE_HARD_CONFLICT: "MODULE HARD CONFLICT - cùng module/code nhưng khác nghĩa"
+    INTRA_MODULE_CODE_REVIEW: "MODULE CODE CONFLICT - cùng module cùng code có nhiều message"
+    GLOBAL_HTTP_VARIANT: "GLOBAL HTTP VARIANT - global code nhưng HTTP trong module khác"
+    GLOBAL_SEMANTIC_REVIEW: "GLOBAL SEMANTIC REVIEW - global code nhưng message lệch nghĩa"
+    GLOBAL_PASS_CANDIDATE: "GLOBAL CODE REVIEW - mã global xuất hiện trong module"
+    SAFE_KEEP_EXISTING: "SAFE KEEP EXISTING - message gần giống, có thể giữ mã cũ"
+    MISSING_HTTP_STATUS: "MISSING HTTP STATUS"
+    NEW_CODE_REVIEW: "NEW CODE REVIEW"
+    RESOLVED: "RESOLVED"
+
+status_suggestion:
+  default: review
+
+  by_category:
+    Auth: "401"
+    Authentication: "401"
+    Permission: "403"
+    Forbidden: "403"
+    Not Found: "404"
+    Validation: "422"
+    Input: "422"
+    Format: "422"
+    Provider: "502"
+    Internal: "500"
+    Rate Limit: "429"
+    Idempotency: "409"
+
+  by_prefix:
+    "409": "409"
+    "42": "422"
+    "47": "422"
+
+  by_message_regex:
+    - pattern: "(thieu authorization|authorization header|bearer token|token.*(het han|khong hop le))"
+      status: "401"
+
+    - pattern: "(client.*scope|scope=admin|khong co quyen|ip.*khong.*duoc.*phep|forbidden)"
+      status: "403"
+
+    - pattern: "(khong tim thay|not found)"
+      status: "404"
+
+    - pattern: "(idempotency|double submit|concurrent)"
+      status: "409"
+
+    - pattern: "(bat buoc|khong hop le|dinh dang|vuot qua|phai la)"
+      status: "422"
+
+module_code_conflict:
+  same_meaning_threshold: 0.65
+  max_messages_preview: 8
+  max_sources_preview: 6
+
+message_quality:
+  suspect_exact:
+    - ""
+    - "null"
+    - "none"
+    - "-"
+
+  suspect_regex:
+    - "^\\s*[\\{\\[].*[\\}\\]]\\s*$"
+
+parse_suspect:
+  max_items_preview: 12
+  max_text_preview_chars: 120

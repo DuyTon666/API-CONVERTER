@@ -1,0 +1,105 @@
+{
+  "generated_at": "2026-06-24T11:27:34.860029",
+  "source_files": [
+    "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf"
+  ],
+  "summary": {
+    "total": 4,
+    "new": 0,
+    "duplicate_ok": 2,
+    "conflict": 2,
+    "needs_review": 0,
+    "intra_batch_conflict": 0,
+    "missing_http_status": 4
+  },
+  "entries": [
+    {
+      "code": "4102",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Auth",
+        "message": "Token không hợp lệ / hết hạn"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Token không hợp lệ hoặc đã hết hạn"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4108",
+      "status": "conflict",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Auth",
+        "message": "IP không được phép truy cập"
+      },
+      "existing_in_map": {
+        "http_status": "401",
+        "message": "Không có quyền truy cập"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4200",
+      "status": "duplicate_ok",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Input validation",
+        "message": "Dữ liệu request không hợp lệ"
+      },
+      "existing_in_map": {
+        "http_status": "422",
+        "message": "Dữ liệu request không hợp lệ"
+      },
+      "resolution": null
+    },
+    {
+      "code": "4004",
+      "status": "duplicate_ok",
+      "matched_namespace": "_global",
+      "intra_batch_conflict": false,
+      "missing_http_status": true,
+      "source_file": "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf",
+      "seen_in_files": [
+        "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf"
+      ],
+      "table_index": 0,
+      "incoming": {
+        "http_status": null,
+        "category": "Not Found",
+        "message": "Không tìm thấy dữ liệu"
+      },
+      "existing_in_map": {
+        "http_status": "404",
+        "message": "Không tìm thấy dữ liệu"
+      },
+      "resolution": null
+    }
+  ]
+}

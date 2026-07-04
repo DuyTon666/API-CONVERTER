@@ -76,6 +76,12 @@ modules:
         upgrade request
       classified_by: claude
       classified_at: '2026-06-11'
+    - segment: request-upgrade-service-plan
+      confidence: 0.88
+      reason: verb phrase 'request-upgrade' indicates an operation/action to create
+        an upgrade request for a service plan
+      classified_by: claude
+      classified_at: '2026-07-04'
     resource_segments:
     - segment: types
       confidence: 0.97
@@ -107,4 +113,207 @@ modules:
         the certificate file'
       classified_by: claude
       classified_at: '2026-06-16'
+    - segment: reissue
+      confidence: 0.98
+      reason: '''reissue'' is a verb indicating the operation of reissuing/regenerating
+        an order, which is a state change action'
+      classified_by: claude
+      classified_at: '2026-06-30'
+    - segment: renew
+      confidence: 0.98
+      reason: '''renew'' is a verb indicating an operation to extend/renew an order,
+        consistent with action patterns like ''close'' or ''approve'''
+      classified_by: claude
+      classified_at: '2026-06-30'
+    - segment: revoke
+      confidence: 0.99
+      reason: '''revoke'' is a verb indicating an operation to cancel/withdraw an
+        order, clearly an action endpoint'
+      classified_by: claude
+      classified_at: '2026-06-30'
+    - segment: validate
+      confidence: 0.97
+      reason: validate is a verb indicating a validation operation performed on DCV
+        for an order
+      classified_by: claude
+      classified_at: '2026-06-30'
+    - segment: get-order-list
+      confidence: 0.85
+      reason: The segment 'get-order-list' starts with the verb 'get', making it a
+        verb phrase indicating a retrieval operation rather than a pure resource noun
+      classified_by: claude
+      classified_at: '2026-07-02'
+    - segment: renew-order-by-id
+      confidence: 0.97
+      reason: verb phrase 'renew' indicates an operation to extend/renew an order,
+        combined with 'by-id' specifying the lookup method
+      classified_by: claude
+      classified_at: '2026-07-02'
+    resource_segments:
+    - segment: orders
+      confidence: 0.99
+      reason: orders is a noun indicating a collection of order entities
+      classified_by: claude
+      classified_at: '2026-06-22'
+    - segment: records
+      confidence: 0.97
+      reason: '''records'' is a noun indicating a collection of DCV records associated
+        with an order'
+      classified_by: claude
+      classified_at: '2026-06-30'
+  topup:
+    action_segments:
+    - segment: topup
+      confidence: 0.72
+      reason: topup is a verb phrase indicating the action of adding funds to an account,
+        though it can also be interpreted as a noun referring to a top-up transaction
+        resource
+      classified_by: claude
+      classified_at: '2026-06-30'
     resource_segments: []
+  admin:
+    action_segments:
+    - segment: reveal-token
+      confidence: 0.97
+      reason: verb phrase 'reveal-token' indicates an operation to expose/display
+        the secret token of a provider
+      classified_by: claude
+      classified_at: '2026-06-30'
+    - segment: status
+      confidence: 0.85
+      reason: In the context of a PATCH method with API summary 'Cập nhật trạng thái
+        sản phẩm nội bộ' (Update internal product status), 'status' acts as an action
+        target indicating a state-change operation rather than a standalone resource
+        collection, similar to patterns like /activate or /change-status
+      classified_by: claude
+      classified_at: '2026-06-30'
+    - segment: create-internal-products
+      confidence: 0.95
+      reason: verb phrase 'create-internal-products' starts with the verb 'create',
+        indicating an operation to create resources rather than naming a resource
+        collection
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: create-mappings
+      confidence: 0.95
+      reason: verb phrase 'create-mappings' starts with the verb 'create', indicating
+        an operation to create mapping resources
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: create-products
+      confidence: 0.95
+      reason: verb phrase 'create-products' indicates an operation/action rather than
+        a resource noun
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: create-providers
+      confidence: 0.85
+      reason: verb phrase 'create-providers' indicates a creation operation, though
+        it could also be interpreted as a resource endpoint for provider creation
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: create-reveal-token
+      confidence: 0.95
+      reason: verb phrase 'create-reveal-token' indicates an operation to create/generate
+        a reveal token
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: delete-mapping
+      confidence: 0.95
+      reason: delete-mapping is a verb phrase indicating a delete operation on a mapping,
+        functioning as an action rather than a resource noun
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: delete-product
+      confidence: 0.95
+      reason: verb phrase 'delete-product' indicates an operation/action to delete
+        a product, rather than a noun resource
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: delete-provider
+      confidence: 0.85
+      reason: The segment 'delete-provider' is a verb phrase indicating a delete operation
+        on a provider, functioning as an action rather than a resource noun. Combined
+        with the HTTP DELETE method, this suggests redundant verb usage typical of
+        action-style endpoints.
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: get-internal-product
+      confidence: 0.82
+      reason: path segment starts with verb 'get', forming a verb phrase 'get-internal-product'
+        indicating a retrieval operation, though it refers to a resource entity
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: get-product
+      confidence: 0.82
+      reason: path segment 'get-product' starts with the verb 'get', making it a verb
+        phrase indicating a retrieval operation, though it refers to a product resource
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: get-provider
+      confidence: 0.82
+      reason: The segment 'get-provider' starts with the verb 'get', making it a verb
+        phrase indicating a retrieval operation rather than a pure resource noun.
+        However, the underlying intent is to retrieve a provider entity, blurring
+        the line slightly.
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: list-mappings
+      confidence: 0.82
+      reason: list-mappings is a verb phrase where 'list' acts as an action verb indicating
+        a listing operation, rather than a pure noun resource like 'mappings' would
+        be
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: list-products
+      confidence: 0.85
+      reason: verb phrase 'list-products' uses 'list' as a verb indicating a listing
+        operation, rather than a noun resource like 'products'
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: update-mapping
+      confidence: 0.95
+      reason: verb phrase 'update-mapping' indicates an operation to update a mapping,
+        which is an action rather than a resource noun
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: update-product
+      confidence: 0.95
+      reason: verb phrase 'update-product' indicates an operation/action rather than
+        a resource entity
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: update-provider
+      confidence: 0.85
+      reason: verb phrase 'update-provider' indicates an operation/action rather than
+        a resource, though combined with PATCH method it is somewhat redundant
+      classified_by: claude
+      classified_at: '2026-07-03'
+    - segment: update-status
+      confidence: 0.95
+      reason: verb phrase 'update-status' indicates an operation to change the status
+        of a resource
+      classified_by: claude
+      classified_at: '2026-07-03'
+    resource_segments:
+    - segment: internal-products
+      confidence: 0.97
+      reason: noun phrase indicating a collection of internal products entities
+      classified_by: claude
+      classified_at: '2026-06-30'
+    - segment: mappings
+      confidence: 0.95
+      reason: mappings is a noun indicating a collection of mapping entities associated
+        with an internal product
+      classified_by: claude
+      classified_at: '2026-06-30'
+    - segment: providers
+      confidence: 0.99
+      reason: providers is a noun indicating a collection of provider entities
+      classified_by: claude
+      classified_at: '2026-06-30'
+    - segment: products
+      confidence: 0.99
+      reason: products is a noun indicating a collection of product entities
+      classified_by: claude
+      classified_at: '2026-06-30'

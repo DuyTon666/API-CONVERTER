@@ -39,3 +39,10 @@ error_codes:
   '4469':
     http_status: '422'
     message: Ticket chưa được hoàn tất
+  # Nghiệp vụ order
+  '4301':
+    http_status: '422'
+    message: Certificate không ở trạng thái ISSUED — không thể download
+  '4302':
+    http_status: '422'
+    message: certificate_pem rỗng — cert chưa được cấp hoàn chỉnh
