@@ -1,0 +1,92 @@
+post:
+  summary: Tạo CSR cho đơn hàng chứng chỉ số
+  operationId: generateCsrForOrder
+  description: Tạo Certificate Signing Request (CSR) cho đơn hàng được chỉ định bằng ID. Yêu cầu đơn hàng phải tồn tại 
+    và ở trạng thái hợp lệ để có thể thực hiện việc tạo CSR.
+  tags:
+  - Order
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/order/GenerateCsrForOrderData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: false
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/order/GenerateCsrForOrderRequest.yaml"
+  x-error-responses:
+    '409':
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    - code: '4601'
+      category: State
+      message: Order không ở trạng thái INIT, FAILED hoặc CSR_READY
+    - code: '4605'
+      category: Business
+      message: Order đã được submit thành công lên provider (provider_order_id IS NOT NULL)
+    '404':
+    - code: '4001'
+      category: Not Found
+      message: Order không tồn tại hoặc đã bị xóa mềm
+    '500':
+    - code: '4700'
+      category: Internal
+      message: Không sinh được CSR — cả TheSSLStore API và openssl nội bộ đều thất bại

@@ -1,0 +1,10 @@
+type: object
+properties:
+  name:
+    type: string
+    description: Tên group
+  upgrade_plans:
+    type: array
+    items:
+      type: object
+    description: Các gói nâng cấp

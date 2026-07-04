@@ -1,0 +1,44 @@
+type: object
+properties:
+  id:
+    type: string
+    readOnly: true
+  internal_product_id:
+    type: string
+  provider_product_id:
+    type: string
+  provider_id:
+    type: string
+  routing_weight:
+    type: integer
+  is_active:
+    type: boolean
+  notes:
+    type: string
+  created_at:
+    type: string
+    readOnly: true
+  created_by:
+    type: string
+  provider:
+    type: object
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+      is_enabled:
+        type: boolean
+  provider_product:
+    type: object
+    properties:
+      provider_product_code:
+        type: string
+      product_name:
+        type: string
+      product_type:
+        type: string
+      cert_type:
+        type: string
+      is_enabled:
+        type: boolean

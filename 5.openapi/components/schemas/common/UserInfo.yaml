@@ -1,12 +1,14 @@
-type: ["object", "null"]
+type: [object, 'null']
 properties:
   id:
     type: integer
     example: 123
     readOnly: true
+    description: ID của người dùng
   name:
     type: string
-    example: "Nguyen Van A"
+    example: Nguyen Van A
+    description: Tên đầy đủ của người dùng
   mgroup:
     type: string
     description: >
@@ -15,5 +17,11 @@ properties:
       2 = Đại lý / tài khoản trả trước,
       3 = Nhân viên,
       4 = Khách hàng đại lý
-    enum: ["1", "2", "3", "4"]
-    example: "1"
+    enum: ['1', '2', '3', '4']
+    example: '1'
+x-manual-edit-fields:
+  - description
+  - properties.id.description
+  - properties.name.description
+description: Thông tin người dùng — có thể là null nếu không xác định được người
+  dùng

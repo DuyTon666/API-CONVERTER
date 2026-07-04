@@ -1,0 +1,17 @@
+type: object
+properties:
+  id:
+    type: string
+    readOnly: true
+  internal_product_id:
+    type: string
+  provider_product_id:
+    type: string
+  provider_id:
+    type: string
+  deleted_at:
+    type: string
+  deleted_by:
+    type: string
+  reason:
+    type: string

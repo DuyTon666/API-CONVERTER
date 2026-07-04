@@ -1,17 +1,14 @@
 node_modules/
 
 backend/venv
+backend/.env
 
 1.docs/source/api_contract/
 
 3.build/reports/
 
-5.openapi/paths/
-
-5.openapi/components/schemas/
-
 __pycache__/
 
-venv/
+.venv/
 
 CLAUDE.md

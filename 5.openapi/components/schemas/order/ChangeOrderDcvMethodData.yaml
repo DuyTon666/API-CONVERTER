@@ -1,0 +1,10 @@
+type: object
+properties:
+  domain:
+    type: string
+  method:
+    type: string
+  approver_email:
+    type: string
+  status:
+    type: string

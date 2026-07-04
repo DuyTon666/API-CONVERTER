@@ -1,0 +1,16 @@
+type: object
+properties:
+  domain:
+    type: string
+    description: Domain cần đổi DCV. Phải tồn tại trong dcv_records của cert 
+      hiện tại. Tối đa 255 ký tự.
+  method:
+    type: string
+    description: 'Phương thức DCV mới: EMAIL | HTTP | CNAME.'
+  approver_email:
+    type: string
+    description: Email approver nhận mã xác thực. Bắt buộc khi method=EMAIL. Bỏ 
+      qua khi HTTP/CNAME. RFC 5322. Tối đa 255 ký tự.
+required:
+  - domain
+  - method

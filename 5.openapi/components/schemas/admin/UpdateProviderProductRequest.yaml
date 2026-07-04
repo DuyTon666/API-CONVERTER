@@ -1,0 +1,29 @@
+type: object
+example:
+  product_name: PositiveSSL DV Single Domain (Updated)
+  wholesale_price_usd: 9.0
+  years_supported: &id001
+    - 1
+    - 2
+    - 3
+  max_san: 150
+  admin_note: Tăng giá theo policy 2026-Q2
+properties:
+  product_name:
+    type: string
+    example: PositiveSSL DV Single Domain (Updated)
+  wholesale_price_usd:
+    type: number
+    example: 9.0
+  years_supported:
+    type: array
+    example: *id001
+    items:
+      type: integer
+      example: 1
+  max_san:
+    type: integer
+    example: 150
+  admin_note:
+    type: string
+    example: Tăng giá theo policy 2026-Q2

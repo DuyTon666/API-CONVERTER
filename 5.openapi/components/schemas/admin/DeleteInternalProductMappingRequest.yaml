@@ -1,0 +1,7 @@
+type: object
+example:
+  reason: Hủy mapping vì provider không còn cung cấp product này
+properties:
+  reason:
+    type: string
+    example: Hủy mapping vì provider không còn cung cấp product này

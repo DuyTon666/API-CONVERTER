@@ -1,0 +1,11 @@
+type: object
+example:
+  admin_password: <mật khẩu admin hiện tại>
+  env: PRODUCTION
+properties:
+  admin_password:
+    type: string
+    example: <mật khẩu admin hiện tại>
+  env:
+    type: string
+    example: PRODUCTION

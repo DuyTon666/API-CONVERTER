@@ -1,0 +1,52 @@
+get:
+  summary: API Contract - API hiển thị chi tiết ticket cho khách hàng.docx
+  operationId: getTicket
+  description: API này cho phép lấy thông tin chi tiết của một ticket cụ thể
+    thuộc về người dùng. Kết quả trả về bao gồm toàn bộ thông tin liên quan đến
+    ticket được yêu cầu.
+  tags:
+    - Ticket
+  security:
+    - bearerAuth: []
+  x-permission: CHECK_NEWUPDATE
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Mã định danh duy nhất của người dùng sở hữu ticket.
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Mã định danh duy nhất của ticket cần lấy thông tin chi tiết.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
+              - type: object
+                properties:
+                  data:
+                    $ref: ../../components/schemas/ticket/GetTicketData.yaml
+    '401':
+      $ref: ../../components/responses/Unauthorized.yaml
+    '403':
+      $ref: ../../components/responses/Forbidden.yaml
+    '404':
+      $ref: ../../components/responses/NotFound.yaml
+    '500':
+      $ref: ../../components/responses/InternalError.yaml
+    '400':
+      $ref: ../../components/responses/BadRequest.yaml
+    '422':
+      description: '422'
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/StandardError.yaml

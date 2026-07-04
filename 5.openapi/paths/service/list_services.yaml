@@ -1,0 +1,157 @@
+get:
+  summary: API Contract - API lấy danh sách dịch vụ của một khách hàng.docx
+  operationId: listServices
+  description: ''
+  tags:
+    - Service
+  security:
+    - bearerAuth: []
+  x-permission: 'null'
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
+      description: Số thứ tự trang muốn hiển thị
+    - name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 10
+      description: Tổng số dịch vụ muốn hiển thị trên một trang
+    - name: keyword
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Nội dung cần tìm kiếm
+    - name: type_id
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: Id loại dịch vụ
+    - name: expired_before
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: Số ngày sắp hết hạn
+    - name: auto_renew
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: 'Trạng thái tự động gia hạn (0: không, 1: có)'
+    - name: status
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Trạng thái của dịch vụ
+    - name: domain_protected
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: 'Trạng thái bảo vệ tên miền (0: không, 1: có)'
+    - name: owner_name
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Tìm kiếm theo tên chủ thể (tìm kiếm chính xác)
+    - name: owner_email
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Tìm kiếm theo email chủ thể (tìm kiếm chính xác)
+    - name: owner_phone
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Tìm kiếm theo số điện thoại chủ thể (tìm kiếm chính
+    - name: service_name
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Tìm kiếm theo tên dịch gói vụ (tìm kiếm chính xác)
+    - name: expired_date_from
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: Tìm kiếm theo bắt đầu ngày hết hạn (Y-m-d)
+    - name: expired_date_to
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: Tìm kiếm theo kết thúc ngày hết hạn (Y-m-d)
+    - name: register_date_from
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: Tìm kiếm theo bắt đầu ngày đăng ký (Y-m-d)
+    - name: register_date_to
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: Tìm kiếm theo kết thúc ngày đăng ký (Y-m-d)
+    - name: extended_fields
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Các field mở rộng để trả data các cột tương ứng,
+    - name: temporary_service
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: '1: Lấy danh sách mở tạm dịch vụ'
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/service/ListServicesData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      description: 4200 — Dữ liệu request không hợp lệ
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/common/StandardError.yaml"

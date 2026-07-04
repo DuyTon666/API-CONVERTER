@@ -1,0 +1,82 @@
+get:
+  summary: Lấy danh sách dịch vụ của khách hàng
+  operationId: getUserServices
+  description: API trả về danh sách các dịch vụ đang được đăng ký bởi một khách hàng cụ thể dựa trên user_id. Chỉ các 
+    dịch vụ thuộc quyền sở hữu của khách hàng đó mới được trả về, đảm bảo tính bảo mật và phân quyền dữ liệu.
+  tags:
+  - Service
+  security:
+  - bearerAuth: []
+  x-permission: 'null'
+  parameters:
+  - name: user_id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: page
+    in: query
+    required: false
+    schema:
+      type: integer
+      default: 1
+    description: Số thứ tự trang muốn hiển thị
+  - name: limit
+    in: query
+    required: false
+    schema:
+      type: integer
+      default: 10
+    description: Tổng số dịch vụ muốn hiển thị trên một trang
+  - name: keyword
+    in: query
+    required: false
+    schema:
+      type: string
+    description: Nội dung cần tìm kiếm
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/service/GetUserServicesData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  x-error-responses:
+    '401':
+    - code: '4102'
+      category: Auth
+      message: Token không hợp lệ / hết hạn
+    - code: '4108'
+      category: Auth
+      message: IP không được phép truy cập
+    '422':
+    - code: '4200'
+      category: Input validation
+      message: Dữ liệu request không hợp lệ
+    '404':
+    - code: '4004'
+      category: Not Found
+      message: Không tìm thấy dữ liệu

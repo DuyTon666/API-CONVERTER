@@ -1,456 +1,128 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import ImportCard from "./_dashboard/ImportCard";
-import ScanCard from "./_dashboard/ScanCard";
-import SuggestCard from "./_dashboard/SuggestCard";
-import ModuleRegistryCard from "./_dashboard/ModuleRegistryCard";
-import SwaggerDocsCard from "./_dashboard/SwaggerDocsCard";
-import BundleEditorModal from "./_dashboard/BundleEditorModal";
-import StatTiles from "./_dashboard/StatTiles";
-import WorkflowStepper, { toSteps } from "./_dashboard/WorkflowStepper";
-import { isSupportedFile } from "./_dashboard/format";
-import {
-  ApplyResult,
-  DocsBuildResult,
-  DocsStatus,
-  ImportModuleProgress,
-  ModuleListResult,
-  ScanResult,
-  SuggestionsResult,
-} from "./_dashboard/types";
+import { useEffect } from "react";
+import ImportCard from "@/components/dashboard/ImportCard";
+import ScanCard from "@/components/dashboard/ScanCard";
+import SuggestCard from "@/components/dashboard/SuggestCard";
+import ManualEditConflictsCard from "@/components/dashboard/ManualEditConflictsCard";
+import ModuleRegistryCard from "@/components/dashboard/ModuleRegistryCard";
+import SwaggerDocsCard from "@/components/dashboard/SwaggerDocsCard";
+import BundleEditorModal from "@/components/dashboard/BundleEditorModal";
+import AiFixPanel from "@/components/dashboard/AiFixPanel";
+import StatTiles from "@/components/dashboard/StatTiles";
+import WorkflowStepper, {
+  toSteps,
+} from "@/components/dashboard/WorkflowStepper";
+import { useScan } from "@/hooks/dashboard/useScan";
+import { useModuleRegistry } from "@/hooks/dashboard/useModuleRegistry";
+import { useUpload } from "@/hooks/dashboard/useUpload";
+import { useDocsBuilder } from "@/hooks/dashboard/useDocsBuilder";
+import { useSuggestions } from "@/hooks/dashboard/useSuggestions";
+import { useManualEditConflicts } from "@/hooks/dashboard/useManualEditConflicts";
 
 export default function Home() {
-  const backend = process.env.NEXT_PUBLIC_API_URL;
+  const backend = process.env.NEXT_PUBLIC_API_URL!;
 
-  const [scan, setScan] = useState<ScanResult | null>(null);
-  const [scanLoading, setScanLoading] = useState(true);
-  const [scanError, setScanError] = useState("");
+  const { scan, scanLoading, scanError, fetchScan } = useScan(backend);
 
-  const [moduleList, setModuleList] = useState<ModuleListResult | null>(null);
-  const [modulesLoading, setModulesLoading] = useState(true);
-  const [modulesError, setModulesError] = useState("");
+  const {
+    conflicts,
+    loading: conflictsLoading,
+    error: conflictsError,
+    resolving: conflictResolving,
+    resolveError: conflictResolveError,
+    conflictKey,
+    fetchConflicts,
+    handleResolve: handleResolveConflict,
+  } = useManualEditConflicts(backend);
 
-  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const [uploadMessage, setUploadMessage] = useState("");
+  const {
+    moduleList,
+    modulesLoading,
+    modulesError,
+    activatingModule,
+    activateError,
+    handleActivate,
+    deactivatingModule,
+    deactivateError,
+    handleDeactivate,
+    importRunning,
+    importTarget,
+    importModules,
+    importDone,
+    importError,
+    handleImport,
+    fetchModules,
+  } = useModuleRegistry(backend, { onImportDone: fetchConflicts });
 
-  const [suggestions, setSuggestions] = useState<SuggestionsResult | null>(
-    null,
-  );
-  const [suggestionsLoading, setSuggestionsLoading] = useState(true);
-  const [suggestionsError, setSuggestionsError] = useState("");
-  const [suggestRunning, setSuggestRunning] = useState(false);
-  const [approving, setApproving] = useState<string | null>(null);
-  const [approvingMulti, setApprovingMulti] = useState(false);
-  const [applying, setApplying] = useState(false);
-  const [applyResult, setApplyResult] = useState<ApplyResult | null>(null);
-  const [suggestActionError, setSuggestActionError] = useState("");
-  const [overrideInputs, setOverrideInputs] = useState<Record<string, string>>(
-    {},
-  );
+  const {
+    uploadFiles,
+    uploading,
+    uploadError,
+    uploadMessage,
+    handleSelectFiles,
+    handleRemoveUploadFile,
+    handleUpload,
+  } = useUpload(backend, { onSuccess: fetchScan });
 
-  const [activatingModule, setActivatingModule] = useState<string | null>(null);
-  const [activateError, setActivateError] = useState("");
-  const [deactivatingModule, setDeactivatingModule] = useState<string | null>(null);
-  const [deactivateError, setDeactivateError] = useState("");
+  const {
+    docsBuilding,
+    docsResult,
+    docsError,
+    docsStatus,
+    bundleContent,
+    setBundleContent,
+    savingBundle,
+    relinting,
+    aiFixingBundle,
+    aiFixPatches,
+    aiFixUnresolved,
+    aiFixResolutions,
+    showAiFixPanel,
+    applyAiFixResolutions,
+    setAiFixResolution,
+    closeAiFixPanel,
+    fetchDocsStatus,
+    handleBuildDocs,
+    handleRelint,
+    handleDownloadDocsHtml,
+    openBundleEditor,
+    saveBundle,
+    saveAndRelint,
+    handleAiFixBundle,
+    deploying,
+    handleDeploy,
+  } = useDocsBuilder(backend);
 
-  const [importRunning, setImportRunning] = useState(false);
-  const [importTarget, setImportTarget] = useState<string | null>(null);
-  const [importModules, setImportModules] = useState<ImportModuleProgress[]>(
-    [],
-  );
-  const [importDone, setImportDone] = useState(false);
-  const [importError, setImportError] = useState("");
-
-  const [docsBuilding, setDocsBuilding] = useState(false);
-  const [docsResult, setDocsResult] = useState<DocsBuildResult | null>(null);
-  const [docsError, setDocsError] = useState("");
-  const [docsStatus, setDocsStatus] = useState<DocsStatus | null>(null);
-
-  const [bundleContent, setBundleContent] = useState<string | null>(null);
-  const [savingBundle, setSavingBundle] = useState(false);
-  const [relinting, setRelinting] = useState(false);
-  
-  const [uploadDomain, setUploadDomain] = useState("");
-
-  const fetchScan = () => {
-    return fetch(`${backend}/modules/scan`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể tải dữ liệu scan");
-        return res.json();
-      })
-      .then((data) => {
-        setScan(data);
-        setScanError("");
-      })
-      .catch((e) =>
-        setScanError(e instanceof Error ? e.message : "Lỗi kết nối backend"),
-      )
-      .finally(() => setScanLoading(false));
-  };
-
-  const fetchModules = () => {
-    return fetch(`${backend}/modules`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể tải danh sách module");
-        return res.json();
-      })
-      .then((data) => {
-        setModuleList(data);
-        setModulesError("");
-      })
-      .catch((e) =>
-        setModulesError(e instanceof Error ? e.message : "Lỗi kết nối backend"),
-      )
-      .finally(() => setModulesLoading(false));
-  };
-
-  const fetchSuggestions = () => {
-    return fetch(`${backend}/modules/suggestions`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể tải suggestions");
-        return res.json();
-      })
-      .then((data) => {
-        setSuggestions(data);
-        setSuggestionsError("");
-      })
-      .catch((e) =>
-        setSuggestionsError(
-          e instanceof Error ? e.message : "Lỗi kết nối backend",
-        ),
-      )
-      .finally(() => setSuggestionsLoading(false));
-  };
-
-  const fetchDocsStatus = () => {
-    return fetch(`${backend}/docs/status`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Không thể tải trạng thái tài liệu");
-        return res.json();
-      })
-      .then((data) => setDocsStatus(data))
-      .catch(() => setDocsStatus(null));
-  };
+  const {
+    suggestions,
+    suggestionsLoading,
+    suggestionsError,
+    suggestRunning,
+    approving,
+    approvingMulti,
+    applying,
+    applyResult,
+    suggestActionError,
+    overrideInputs,
+    setOverrideInputs,
+    approveSkipped,
+    fetchSuggestions,
+    handleRunSuggest,
+    handleApproveSelected,
+    handleApprove,
+    handleApply,
+  } = useSuggestions(backend, {
+    onApplySuccess: () => Promise.all([fetchScan(), fetchModules()]),
+  });
 
   useEffect(() => {
     fetchScan();
     fetchModules();
     fetchSuggestions();
     fetchDocsStatus();
+    fetchConflicts();
   }, []);
-
-  const handleSelectFiles = (selected: FileList | null) => {
-    if (!selected) return;
-    const valid = Array.from(selected).filter((f) => isSupportedFile(f.name));
-    setUploadFiles((prev) => [...prev, ...valid]);
-    setUploadMessage("");
-    setUploadError("");
-  };
-
-  const handleRemoveUploadFile = (index: number) => {
-    setUploadFiles((prev) => prev.filter((_, j) => j !== index));
-  };
-
-  const handleUpload = async () => {
-    if (uploadFiles.length === 0) return;
-    setUploading(true);
-    setUploadError("");
-    setUploadMessage("");
-    const form = new FormData();
-    uploadFiles.forEach((f) => form.append("files", f));
-    try {
-      const url = `${backend}/jobs?domain=${encodeURIComponent(uploadDomain)}`;
-      const res = await fetch(url, { method: "POST", body: form });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi upload");
-      setUploadMessage(
-        `Đã lưu ${data.total} file vào 1.docs/source/api_contract/`,
-      );
-      setUploadFiles([]);
-      setScanLoading(true);
-      fetchScan();
-    } catch (e: unknown) {
-      setUploadError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleRunSuggest = async () => {
-    setSuggestRunning(true);
-    setSuggestActionError("");
-    try {
-      const res = await fetch(`${backend}/modules/suggest`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi chạy suggest-root");
-      setSuggestions(data);
-    } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
-    } finally {
-      setSuggestRunning(false);
-    }
-  };
-
-  const handleApproveSelected = async (
-    items: Array<{ file: string; override_module?: string }>,
-  ) => {
-    setApprovingMulti(true);
-    setSuggestActionError("");
-    try {
-      let latestData = suggestions;
-      for (const item of items) {
-        const res = await fetch(`${backend}/modules/suggestions/approve`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            mode: "file",
-            file: item.file,
-            override_module: item.override_module,
-          }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail ?? "Lỗi duyệt suggestion");
-        latestData = data;
-      }
-      if (latestData) setSuggestions(latestData);
-    } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
-    } finally {
-      setApprovingMulti(false);
-    }
-  };
-
-  const handleApprove = async (
-    body: {
-      mode: string;
-      module?: string;
-      file?: string;
-      override_module?: string;
-    },
-    key: string,
-  ) => {
-    setApproving(key);
-    setSuggestActionError("");
-    try {
-      const res = await fetch(`${backend}/modules/suggestions/approve`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi duyệt suggestion");
-      setSuggestions(data);
-    } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
-    } finally {
-      setApproving(null);
-    }
-  };
-
-  const handleApply = async () => {
-    setApplying(true);
-    setSuggestActionError("");
-    try {
-      const res = await fetch(`${backend}/modules/apply`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi apply suggestions");
-      setApplyResult(data);
-      setScanLoading(true);
-      setModulesLoading(true);
-      await Promise.all([fetchScan(), fetchModules(), fetchSuggestions()]);
-    } catch (e: unknown) {
-      setSuggestActionError(
-        e instanceof Error ? e.message : "Lỗi kết nối backend",
-      );
-    } finally {
-      setApplying(false);
-    }
-  };
-
-  const handleDeactivate = async (name: string) => {
-    setDeactivatingModule(name);
-    setDeactivateError("");
-    try {
-      const res = await fetch(
-        `${backend}/modules/${encodeURIComponent(name)}/deactivate`,
-        { method: "POST" },
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi deactivate module");
-      setModuleList(data);
-    } catch (e: unknown) {
-      setDeactivateError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-    } finally {
-      setDeactivatingModule(null);
-    }
-  };
-
-  const handleActivate = async (name: string) => {
-    setActivatingModule(name);
-    setActivateError("");
-    try {
-      const res = await fetch(
-        `${backend}/modules/${encodeURIComponent(name)}/activate`,
-        {
-          method: "POST",
-        },
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi activate module");
-      setModuleList(data);
-    } catch (e: unknown) {
-      setActivateError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-    } finally {
-      setActivatingModule(null);
-    }
-  };
-
-  const handleImport = async (moduleName: string | null) => {
-    setImportError("");
-    setImportModules([]);
-    setImportDone(false);
-    setImportRunning(true);
-    setImportTarget(moduleName);
-    try {
-      const url = moduleName
-        ? `${backend}/modules/import?module=${encodeURIComponent(moduleName)}`
-        : `${backend}/modules/import`;
-      const res = await fetch(url, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi khởi chạy import");
-
-      const es = new EventSource(
-        `${backend}/modules/import/${data.job_id}/stream`,
-      );
-      es.onmessage = (e) => {
-        const payload = JSON.parse(e.data);
-        if (payload.event === "done") {
-          setImportDone(true);
-          setImportRunning(false);
-          es.close();
-          fetchModules();
-          return;
-        }
-        setImportModules((prev) => {
-          const exists = prev.find((m) => m.name === payload.name);
-          if (exists)
-            return prev.map((m) => (m.name === payload.name ? payload : m));
-          return [...prev, payload];
-        });
-      };
-      es.onerror = () => {
-        es.close();
-        setImportRunning(false);
-        setImportError("Mất kết nối stream import");
-      };
-    } catch (e: unknown) {
-      setImportError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-      setImportRunning(false);
-    }
-  };
-
-  const handleBuildDocs = async () => {
-    setDocsError("");
-    setDocsBuilding(true);
-    try {
-      const res = await fetch(`${backend}/docs/build`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi build tài liệu");
-      setDocsResult(data);
-    } catch (e: unknown) {
-      setDocsError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-    } finally {
-      setDocsBuilding(false);
-    }
-  };
-
-  const handleRelint = async () => {
-    setDocsError("");
-    setRelinting(true);
-    try {
-      const res = await fetch(`${backend}/docs/relint`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Lỗi kiểm tra bundle");
-      setDocsResult(data);
-    } catch (e: unknown) {
-      setDocsError(e instanceof Error ? e.message : "Lỗi kết nối backend");
-    } finally {
-      setRelinting(false);
-    }
-  };
-
-  const handleDownloadDocsHtml = () => {
-    window.open(`${backend}/docs/download-html`, "_blank");
-  };
-
-  const openBundleEditor = async () => {
-    try {
-      const res = await fetch(`${backend}/docs/bundle-content`, {
-        cache: "no-store",
-      });
-      if (res.status === 404) {
-        alert("Chưa có bundle, hãy build tài liệu trước");
-        return;
-      }
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ detail: res.statusText }));
-        alert("Lỗi đọc bundle: " + data.detail);
-        return;
-      }
-      const text = await res.text();
-      setBundleContent(text);
-    } catch (e) {
-      alert("Lỗi kết nối: " + String(e));
-    }
-  };
-
-  const saveBundle = async () => {
-    if (bundleContent === null) return;
-    setSavingBundle(true);
-    try {
-      await fetch(`${backend}/docs/bundle-content`, {
-        method: "PUT",
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
-        body: bundleContent,
-      });
-    } finally {
-      setSavingBundle(false);
-    }
-  };
-
-  const saveAndRelint = async () => {
-    if (bundleContent === null) return;
-    setSavingBundle(true);
-    try {
-      await fetch(`${backend}/docs/bundle-content`, {
-        method: "PUT",
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
-        body: bundleContent,
-      });
-      setRelinting(true);
-      const res = await fetch(`${backend}/docs/relint`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) {
-        alert("Lỗi kiểm tra lại: " + data.detail);
-        return;
-      }
-      setDocsResult(data);
-      setBundleContent(null);
-    } finally {
-      setSavingBundle(false);
-      setRelinting(false);
-    }
-  };
 
   const pendingSuggestions =
     suggestions?.items.filter((i) => i.approval_status === "pending").length ??
@@ -459,35 +131,23 @@ export default function Home() {
   const draftModules = moduleList?.summary.by_status["draft"] ?? 0;
   const unassignedFiles = scan?.unassigned.length ?? 0;
 
-  const hasSourceFiles =
-    scan !== null && (scan.modules.length > 0 || scan.unassigned.length > 0);
-
   const bundleReady =
     docsResult?.bundle_ready ?? docsStatus?.bundle_ready ?? false;
   const htmlReady = docsResult?.html_ready ?? docsStatus?.html_ready ?? false;
 
   const steps = toSteps([
-    { id: "card-import", label: "Nguồn", done: hasSourceFiles },
+    { id: "card-import", label: "Nguồn" },
     {
       id: "card-suggest",
       label: "Phân loại",
-      done: hasSourceFiles && unassignedFiles === 0 && pendingSuggestions === 0,
     },
     {
       id: "card-modules",
       label: "Module",
-      done:
-        activeModules > 0 &&
-        draftModules === 0 &&
-        (moduleList?.modules.every(
-          (m) => m.status !== "active" || m.last_import_at !== null,
-        ) ??
-          false),
     },
     {
       id: "card-docs",
       label: "Tài liệu",
-      done: bundleReady && htmlReady,
     },
   ]);
 
@@ -497,9 +157,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 lg:px-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-            <span className="font-semibold text-gray-900">
-              API Converter
-            </span>
+            <span className="font-semibold text-gray-900">API Converter</span>
           </div>
           <a
             href="/swagger"
@@ -531,7 +189,6 @@ export default function Home() {
       </div>
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
-
           <StatTiles
             stats={[
               {
@@ -539,7 +196,7 @@ export default function Home() {
                 value: activeModules,
                 tone: "success",
                 loading: modulesLoading,
-                },
+              },
               {
                 label: "Module draft",
                 value: draftModules,
@@ -570,9 +227,6 @@ export default function Home() {
                   uploading={uploading}
                   error={uploadError}
                   message={uploadMessage}
-                  domain={uploadDomain}
-                  moduleOptions={moduleList?.modules.map((m) => m.name) ?? []}
-                  onDomainChange={setUploadDomain}
                   onSelectFiles={handleSelectFiles}
                   onRemoveFile={handleRemoveUploadFile}
                   onUpload={handleUpload}
@@ -591,6 +245,8 @@ export default function Home() {
                   bundleReady={bundleReady}
                   htmlReady={htmlReady}
                   relinting={relinting}
+                  deploying={deploying}
+                  onDeploy={handleDeploy}
                   onBuildDocs={handleBuildDocs}
                   onRelint={handleRelint}
                   onOpenBundleEditor={openBundleEditor}
@@ -601,26 +257,37 @@ export default function Home() {
 
             {/* Cột thao tác chính — bên trái trên desktop */}
             <div className="contents lg:block lg:order-1 lg:col-span-7 lg:space-y-6">
+              <ManualEditConflictsCard
+                conflicts={conflicts}
+                loading={conflictsLoading}
+                error={conflictsError}
+                resolving={conflictResolving}
+                resolveError={conflictResolveError}
+                conflictKey={conflictKey}
+                onResolve={handleResolveConflict}
+              />
+
               <div id="card-suggest" className="order-3 scroll-mt-32">
-            <SuggestCard
-              suggestions={suggestions}
-              loading={suggestionsLoading}
-              error={suggestionsError}
-              actionError={suggestActionError}
-              suggestRunning={suggestRunning}
-              approving={approving}
-              approvingMulti={approvingMulti}
-              applying={applying}
-              applyResult={applyResult}
-              overrideInputs={overrideInputs}
-              onOverrideChange={(file, value) =>
-                setOverrideInputs((prev) => ({ ...prev, [file]: value }))
-              }
-              onRunSuggest={handleRunSuggest}
-              onApprove={handleApprove}
-              onApproveSelected={handleApproveSelected}
-              onApply={handleApply}
-            />
+                <SuggestCard
+                  suggestions={suggestions}
+                  loading={suggestionsLoading}
+                  error={suggestionsError}
+                  actionError={suggestActionError}
+                  suggestRunning={suggestRunning}
+                  approving={approving}
+                  approvingMulti={approvingMulti}
+                  applying={applying}
+                  applyResult={applyResult}
+                  approveSkipped={approveSkipped}
+                  overrideInputs={overrideInputs}
+                  onOverrideChange={(file, value) =>
+                    setOverrideInputs((prev) => ({ ...prev, [file]: value }))
+                  }
+                  onRunSuggest={handleRunSuggest}
+                  onApprove={handleApprove}
+                  onApproveSelected={handleApproveSelected}
+                  onApply={handleApply}
+                />
               </div>
 
               <div id="card-modules" className="order-4 scroll-mt-32">
@@ -654,9 +321,22 @@ export default function Home() {
             redoclyIssues={docsResult?.redocly ?? []}
             saving={savingBundle}
             relinting={relinting}
+            aiFixing={aiFixingBundle}
             onClose={() => setBundleContent(null)}
             onSave={saveBundle}
             onSaveAndRelint={saveAndRelint}
+            onAiFix={handleAiFixBundle}
+          />
+        )}
+
+        {showAiFixPanel && (
+          <AiFixPanel
+            patches={aiFixPatches}
+            unresolved={aiFixUnresolved}
+            resolutions={aiFixResolutions}
+            onResolutionChange={setAiFixResolution}
+            onApply={applyAiFixResolutions}
+            onCancel={closeAiFixPanel}
           />
         )}
       </main>

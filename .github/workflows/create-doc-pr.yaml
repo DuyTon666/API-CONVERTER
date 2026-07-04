@@ -1,0 +1,111 @@
+name: Create API Update PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_branch:
+        description: "Branch nền để mở PR vào"
+        required: false
+        default: "develop"
+        type: choice
+        options:
+          - develop
+          - main
+      branch_name:
+        description: "Branch đã được push sẵn (chứa thay đổi 5.openapi/). Để trống để tự sinh branch mới."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-pr:
+    name: Bundle & Open PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Resolve source ref
+        id: ref
+        run: |
+          if [ -n "${{ inputs.branch_name }}" ]; then
+            echo "ref=${{ inputs.branch_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=${{ inputs.base_branch }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ steps.ref.outputs.ref }}
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # =========================
+      # Regenerate OpenAPI bundle
+      # =========================
+      - name: Bundle OpenAPI
+        run: npm run bundle:api
+
+      # =========================
+      # Mở PR nếu có thay đổi
+      # (action tự kiểm tra diff; không có thay đổi thì bỏ qua, không tạo PR rác)
+      # =========================
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: ${{ inputs.base_branch }}
+          branch: ${{ inputs.branch_name != '' && inputs.branch_name || format('auto/update-openapi-{0}', github.run_number) }}
+          delete-branch: true
+          # CHỈ commit thay đổi trong 2 path này — không đụng gì khác trong repo,
+          # dù npm ci / bundle:api có lỡ sinh ra file rác ở nơi khác.
+          add-paths: |
+            5.openapi/**
+            dist/openapi-bundled.yaml
+          commit-message: "chore(openapi): cập nhật bundle tự động từ Dashboard"
+          title: "🤖 Cập nhật OpenAPI spec tự động"
+          body: |
+            PR này được tạo tự động khi bấm nút "Tạo PR" trên Dashboard.
+
+            - Nguồn: `npm run bundle:api`
+            - Trigger bởi: @${{ github.actor }}
+            - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Workflow validate (Spectral lint + oasdiff diff) sẽ tự chạy trên PR này.
+          labels: |
+            automated
+            openapi
+
+      - name: Log kết quả
+        run: |
+          if [ "${{ steps.cpr.outputs.pull-request-number }}" = "" ]; then
+            echo "Không có thay đổi nào — không tạo PR mới."
+          else
+            echo "Đã mở PR #${{ steps.cpr.outputs.pull-request-number }}: ${{ steps.cpr.outputs.pull-request-url }}"
+          fi
+
+      # =========================
+      # Bật auto-merge — GitHub sẽ tự merge PR ngay khi mọi required
+      # status check (Spectral/oasdiff) pass, không cần bấm tay.
+      # Yêu cầu: Settings > General > "Allow auto-merge" đã bật, và
+      # branch base có rule "Require status checks to pass".
+      # =========================
+      - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge "${{ steps.cpr.outputs.pull-request-number }}" \
+            --auto --squash --delete-branch

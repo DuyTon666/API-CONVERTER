@@ -1,0 +1,163 @@
+post:
+  summary: Tái cấp phát đơn hàng theo ID
+  operationId: reissueOrderById
+  description: Tái cấp phát đơn hàng đã tồn tại dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng đủ điều kiện tái
+    cấp phát và không ở trạng thái đã hủy hoặc đang xử lý.
+  tags:
+  - Order
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+  responses:
+    '202':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/order/ReissueOrderByIdData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/order/ReissueOrderByIdRequest.yaml"
+  x-error-responses:
+    '409':
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    - code: '4201'
+      category: State
+      message: Order không ở trạng thái ISSUED/INSTALLED/ACTIVE — không thể reissue (R1)
+    - code: '4202'
+      category: State
+      message: order.provider_order_id rỗng — order chưa được submit lên provider (R2)
+    - code: '4203'
+      category: State
+      message: Đang có cert REISSUE_QUEUED hoặc REISSUE_PENDING — không thể reissue đồng thời (R3)
+    - code: '4204'
+      category: Business
+      message: Không tìm thấy CSR — cert hiện tại không có csr_pem và request không cung cấp csr mới (R5)
+    - code: '4205'
+      category: Business
+      message: Order không có provider được chọn (selectedMapping.provider = null) (R6)
+    - code: '4206'
+      category: Business
+      message: Provider chưa hỗ trợ reissue (is_reissue_supported = false) — reserved, hiện chưa dùng
+    - code: '4622'
+      category: ''
+      message: dcv_config là bắt buộc; hoặc dcv_config thiếu domain (primary_domain hoặc SAN); hoặc dcv_config.*.method 
+        không hợp lệ (EMAIL|HTTP|HTTPS|CNAME). data.missing_domains chứa danh sách domain bị thiếu.
+    - code: '4623'
+      category: ''
+      message: dcv_config.*.approver_email không đúng định dạng RFC 5322
+    - code: '4631'
+      category: ''
+      message: contact_admin.email không hợp lệ hoặc thiếu (RFC 5322)
+    - code: '4632'
+      category: ''
+      message: contact_admin.first_name là bắt buộc
+    - code: '4633'
+      category: ''
+      message: contact_admin.last_name là bắt buộc
+    - code: '4634'
+      category: ''
+      message: contact_admin.phone không hợp lệ (E.164)
+    - code: '4635'
+      category: ''
+      message: contact_admin là bắt buộc
+    - code: '4643'
+      category: ''
+      message: contact_org là bắt buộc
+    - code: '4644'
+      category: ''
+      message: contact_org.name là bắt buộc
+    - code: '4645'
+      category: ''
+      message: contact_org.address là bắt buộc
+    - code: '4646'
+      category: ''
+      message: contact_org.province là bắt buộc
+    - code: '4647'
+      category: ''
+      message: contact_org.country là bắt buộc hoặc không đúng định dạng ISO 3166-1 alpha-2
+    - code: '4648'
+      category: ''
+      message: contact_org.postal_code là bắt buộc
+    - code: '4649'
+      category: ''
+      message: contact_org.phone là bắt buộc hoặc không đúng định dạng E.164
+    - code: '4651'
+      category: ''
+      message: contact_tech.email không hợp lệ hoặc thiếu (RFC 5322)
+    - code: '4652'
+      category: ''
+      message: contact_tech.first_name là bắt buộc
+    - code: '4653'
+      category: ''
+      message: contact_tech.last_name là bắt buộc
+    - code: '4654'
+      category: ''
+      message: contact_tech.phone không hợp lệ (E.164)
+    - code: '4655'
+      category: ''
+      message: contact_tech là bắt buộc
+    '404':
+    - code: '4001'
+      category: Not Found
+      message: Order không tồn tại hoặc đã xoá
+    '400':
+    - code: '4207'
+      category: Format
+      message: 'CSR PEM mới không hợp lệ: sai format PEM, không parse được, hoặc CN không khớp primary_domain (R5)'
+    '502':
+    - code: '4801'
+      category: Provider
+      message: Provider API trả về lỗi khi submit reissue. Chi tiết trong error.data.provider_message

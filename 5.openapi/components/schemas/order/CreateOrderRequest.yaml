@@ -1,0 +1,115 @@
+type: object
+properties:
+  external_account_id:
+    type: integer
+    description: ID dịch vụ / đơn hàng bên hệ thống bán (BIGINT, ≥ 1) — dùng cho
+      đối soát. Không unique constraint (1 account có thể có nhiều order SSL).
+  customer_id:
+    type: integer
+    description: ID khách hàng trong Internal Core System. Được verify qua 
+      Internal Core API.
+  internal_product_code:
+    type: string
+    description: Mã sản phẩm nội bộ (bảng internal_products). Hệ thống tự 
+      resolve sang internal_product_id.
+  years:
+    type: integer
+    description: Số năm đăng ký (≥ 1). Phải có ít nhất 1 mapping với 
+      provider_product.max_years ≥ years.
+  primary_domain:
+    type: string
+    description: FQDN chính. Dạng *.example.com nếu cert_type=WILDCARD.
+  contact:
+    type: object
+    description: Thông tin liên hệ. Tùy chọn tại bước tạo đơn — có thể bổ sung 
+      sau. Xem mục b, c, d bên dưới.
+    properties:
+      contact_admin:
+        type: object
+        properties:
+          email:
+            type: string
+            description: Email người quản lý. RFC 5322.
+          first_name:
+            type: string
+            description: Tên.
+          last_name:
+            type: string
+            description: Họ.
+          phone:
+            type: string
+            description: Số điện thoại. E.164.
+          title:
+            type: string
+            description: 'Chức danh: Mr | Mrs | Ms | Dr | ...'
+      contact_org:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Tên tổ chức / công ty. Bắt buộc nếu contact_org được 
+              cung cấp.
+          address:
+            type: string
+            description: Địa chỉ đường phố. Bắt buộc nếu contact_org được cung 
+              cấp.
+          province:
+            type: string
+            description: Tỉnh / Thành phố.
+          country:
+            type: string
+            description: 'Mã quốc gia ISO 3166-1 alpha-2. VD: VN, US. Bắt buộc nếu
+              contact_org được cung cấp.'
+          postal_code:
+            type: string
+            description: Mã bưu chính.
+          phone:
+            type: string
+            description: Số điện thoại tổ chức. E.164.
+          business_number:
+            type: string
+            description: Số giấy phép kinh doanh / mã số thuế. Tùy chọn với mọi 
+              loại chứng chỉ.
+          representative_name:
+            type: string
+            description: Tên người đại diện pháp lý. Tùy chọn với mọi loại chứng
+              chỉ.
+          duns:
+            type: string
+            description: D-U-N-S Number.
+        required:
+          - name
+          - address
+          - country
+      contact_tech:
+        type: object
+        properties:
+          email:
+            type: string
+            description: Email kỹ thuật viên. Bắt buộc nếu contact_tech != null.
+          first_name:
+            type: string
+            description: Tên.
+          last_name:
+            type: string
+            description: Họ.
+          phone:
+            type: string
+            description: Số điện thoại. E.164.
+          title:
+            type: string
+            description: 'Chức danh: Mr | Mrs | Ms | Dr | ...'
+        required:
+          - email
+          - first_name
+          - last_name
+          - phone
+  note:
+    type: string
+    description: Ghi chú nội bộ (≤ 500 ký tự).
+required:
+  - external_account_id
+  - customer_id
+  - internal_product_code
+  - years
+  - primary_domain

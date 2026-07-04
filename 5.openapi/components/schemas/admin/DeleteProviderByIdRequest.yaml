@@ -1,0 +1,7 @@
+type: object
+example:
+  reason: Provider ngừng hợp tác — chuyển sang đối tác khác
+properties:
+  reason:
+    type: string
+    example: Provider ngừng hợp tác — chuyển sang đối tác khác

@@ -1,0 +1,40 @@
+type: object
+properties:
+  Thuộc tính:
+    type: string
+  id:
+    type: string
+  code:
+    type: string
+  sandbox_base_url:
+    type: string
+  production_base_url:
+    type: string
+  sandbox_token:
+    type: string
+  production_token:
+    type: string
+  registered_ip:
+    type: string
+  auth_extra:
+    type: string
+  list_products_endpoint:
+    type: string
+  list_products_method:
+    type: string
+  list_products_request_template:
+    type: string
+  list_products_response_path:
+    type: string
+  list_products_timeout_seconds:
+    type: string
+  is_enabled:
+    type: string
+  display_order:
+    type: string
+  created_by:
+    type: string
+  updated_by:
+    type: string
+  deleted_at:
+    type: string
