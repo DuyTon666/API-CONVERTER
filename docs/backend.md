@@ -57,7 +57,7 @@ backend/
 ├── models/, repositories/, schemas/  # Tồn tại nhưng CỐ Ý không dùng (xem mục Quy ước layer)
 ├── requirements.txt          # fastapi, uvicorn, python-dotenv, anthropic, ruamel.yaml, + deps parsing mà pipeline_API.py import trực tiếp
 ├── .env                       # Gitignored — biến cho gateway Claude nội bộ (xem dưới)
-└── venv/                      # Python virtual environment riêng (khác .venv root)
+└── .venv/                     # Python virtual environment riêng của backend (tách khỏi .venv root)
 ```
 
 ### Quy ước layer
@@ -73,7 +73,7 @@ backend/
 
 ```bash
 cd backend && make dev
-# hoặc: source backend/venv/bin/activate && uvicorn main:app --reload --port 8000
+# hoặc: source backend/.venv/bin/activate && uvicorn main:app --reload --port 8000
 ```
 
 `load_dotenv(Path(__file__).parent / ".env")` chạy ngay khi import `main.py`. `backend/.env` cần:
