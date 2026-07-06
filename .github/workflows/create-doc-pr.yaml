@@ -27,19 +27,25 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      # branch: tên branch PR sẽ trỏ tới. Nếu branch_name được truyền vào
+      # (route deploy-docs luôn truyền), dùng đúng branch đó — branch này
+      # ĐÃ có sẵn commit thật từ route, không được đụng vào lịch sử của nó.
       - name: Resolve source ref
         id: ref
         run: |
           if [ -n "${{ inputs.branch_name }}" ]; then
             echo "ref=${{ inputs.branch_name }}" >> "$GITHUB_OUTPUT"
+            echo "branch=${{ inputs.branch_name }}" >> "$GITHUB_OUTPUT"
           else
             echo "ref=${{ inputs.base_branch }}" >> "$GITHUB_OUTPUT"
+            echo "branch=auto/update-openapi-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
           ref: ${{ steps.ref.outputs.ref }}
+          fetch-depth: 0
 
       - name: Setup NodeJS
         uses: actions/setup-node@v5
@@ -58,42 +64,88 @@ jobs:
         run: npm run bundle:api
 
       # =========================
-      # Mở PR nếu có thay đổi
-      # (action tự kiểm tra diff; không có thay đổi thì bỏ qua, không tạo PR rác)
+      # Commit thêm dist/openapi-bundled.yaml lên ĐÚNG branch đang có
+      # (không tạo branch mới, không reset lịch sử cũ) — nếu bundle không
+      # đổi gì thì bỏ qua, không tạo commit rỗng.
+      #
+      # LƯU Ý: không dùng action peter-evans/create-pull-request nữa —
+      # action đó tự dựng lại branch từ base + chỉ những file "dirty" tại
+      # thời điểm nó chạy, nên sẽ xoá mất commit thật mà route deploy-docs
+      # đã tạo sẵn qua Git Data API trước khi dispatch workflow này.
       # =========================
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: ${{ inputs.base_branch }}
-          branch: ${{ inputs.branch_name != '' && inputs.branch_name || format('auto/update-openapi-{0}', github.run_number) }}
-          delete-branch: true
-          # CHỈ commit thay đổi trong 2 path này — không đụng gì khác trong repo,
-          # dù npm ci / bundle:api có lỡ sinh ra file rác ở nơi khác.
-          add-paths: |
-            5.openapi/**
-            dist/openapi-bundled.yaml
-          commit-message: "chore(openapi): cập nhật bundle tự động từ Dashboard"
-          title: "🤖 Cập nhật OpenAPI spec tự động"
-          body: |
-            PR này được tạo tự động khi bấm nút "Tạo PR" trên Dashboard.
-
-            - Nguồn: `npm run bundle:api`
-            - Trigger bởi: @${{ github.actor }}
-            - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-            Workflow validate (Spectral lint + oasdiff diff) sẽ tự chạy trên PR này.
-          labels: |
-            automated
-            openapi
-
-      - name: Log kết quả
+      - name: Commit bundle nếu có thay đổi
+        id: commit
         run: |
-          if [ "${{ steps.cpr.outputs.pull-request-number }}" = "" ]; then
-            echo "Không có thay đổi nào — không tạo PR mới."
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- dist/openapi-bundled.yaml; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            echo "Đã mở PR #${{ steps.cpr.outputs.pull-request-number }}: ${{ steps.cpr.outputs.pull-request-url }}"
+            git add dist/openapi-bundled.yaml
+            git commit -m "chore(openapi): cap nhat bundle tu dong tu Dashboard"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # =========================
+      # Chỉ mở PR nếu branch thực sự khác base_branch (có commit thật từ
+      # route, hoặc vừa thêm commit bundle ở bước trên) — tránh tạo PR rỗng.
+      # =========================
+      - name: Kiem tra co gi de mo PR khong
+        id: check
+        run: |
+          git fetch origin "${{ inputs.base_branch }}"
+          AHEAD=$(git rev-list --count "origin/${{ inputs.base_branch }}..HEAD")
+          echo "ahead=$AHEAD" >> "$GITHUB_OUTPUT"
+
+      - name: Push branch
+        if: steps.check.outputs.ahead != '0'
+        run: git push origin HEAD:refs/heads/${{ steps.ref.outputs.branch }}
+
+      # =========================
+      # Mở PR trực tiếp bằng gh CLI — chỉ mở PR từ branch đã có sẵn,
+      # không tự sinh lại nội dung branch như action cũ.
+      # =========================
+      - name: Tao PR body
+        id: body
+        if: steps.check.outputs.ahead != '0'
+        run: |
+          {
+            echo "text<<PRBODY_EOF"
+            echo 'PR nay duoc tao tu dong khi bam nut "Tao PR" tren Dashboard.'
+            echo ""
+            echo "- Nguon: \`npm run bundle:api\`"
+            echo "- Trigger boi: @${{ github.actor }}"
+            echo "- Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo ""
+            echo "Workflow validate (Spectral lint + oasdiff diff) se tu chay tren PR nay."
+            echo "PRBODY_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Tao hoac lay PR da co
+        id: pr
+        if: steps.check.outputs.ahead != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh pr list --head "${{ steps.ref.outputs.branch }}" --base "${{ inputs.base_branch }}" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            echo "number=$EXISTING" >> "$GITHUB_OUTPUT"
+          else
+            NUM=$(gh pr create \
+              --base "${{ inputs.base_branch }}" \
+              --head "${{ steps.ref.outputs.branch }}" \
+              --title "Cap nhat OpenAPI spec tu dong" \
+              --label automated --label openapi \
+              --body "${{ steps.body.outputs.text }}" | grep -oE '[0-9]+$')
+            echo "number=$NUM" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Log ket qua
+        run: |
+          if [ "${{ steps.check.outputs.ahead }}" = "0" ]; then
+            echo "Khong co thay doi nao - khong tao PR moi."
+          else
+            echo "Da mo/cap nhat PR #${{ steps.pr.outputs.number }}"
           fi
 
       # =========================
@@ -103,9 +155,9 @@ jobs:
       # branch base có rule "Require status checks to pass".
       # =========================
       - name: Enable auto-merge
-        if: steps.cpr.outputs.pull-request-number != ''
+        if: steps.check.outputs.ahead != '0' && steps.pr.outputs.number != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr merge "${{ steps.cpr.outputs.pull-request-number }}" \
+          gh pr merge "${{ steps.pr.outputs.number }}" \
             --auto --squash --delete-branch
