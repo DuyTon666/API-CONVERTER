@@ -105,21 +105,28 @@ jobs:
       # Mở PR trực tiếp bằng gh CLI — chỉ mở PR từ branch đã có sẵn,
       # không tự sinh lại nội dung branch như action cũ.
       # =========================
+      # Ghi body ra FILE thay vì nhét qua ${{ }} vào lệnh shell ở bước sau —
+      # nhét text nhiều dòng qua ${{ }} là dán thẳng vào script bash của
+      # bước đó, nếu text chứa ký tự đặc biệt (backtick, $, ...) sẽ bị bash
+      # hiểu nhầm thành lệnh cần chạy, gây lỗi khó lường.
       - name: Tao PR body
         id: body
         if: steps.check.outputs.ahead != '0'
+        env:
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          BODY_FILE="$RUNNER_TEMP/pr_body.md"
           {
-            echo "text<<PRBODY_EOF"
-            echo 'PR nay duoc tao tu dong khi bam nut "Tao PR" tren Dashboard.'
-            echo ""
-            echo "- Nguon: \`npm run bundle:api\`"
-            echo "- Trigger boi: @${{ github.actor }}"
-            echo "- Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            echo ""
-            echo "Workflow validate (Spectral lint + oasdiff diff) se tu chay tren PR nay."
-            echo "PRBODY_EOF"
-          } >> "$GITHUB_OUTPUT"
+            printf '%s\n' 'PR nay duoc tao tu dong khi bam nut "Tao PR" tren Dashboard.'
+            printf '\n'
+            printf '%s\n' '- Nguon: npm run bundle:api'
+            printf -- '- Trigger boi: @%s\n' "$ACTOR"
+            printf -- '- Workflow run: %s\n' "$RUN_URL"
+            printf '\n'
+            printf '%s\n' 'Workflow validate (Spectral lint + oasdiff diff) se tu chay tren PR nay.'
+          } > "$BODY_FILE"
+          echo "file=$BODY_FILE" >> "$GITHUB_OUTPUT"
 
       - name: Tao hoac lay PR da co
         id: pr
@@ -136,7 +143,7 @@ jobs:
               --head "${{ steps.ref.outputs.branch }}" \
               --title "Cap nhat OpenAPI spec tu dong" \
               --label automated --label openapi \
-              --body "${{ steps.body.outputs.text }}" | grep -oE '[0-9]+$')
+              --body-file "${{ steps.body.outputs.file }}" | grep -oE '[0-9]+$')
             echo "number=$NUM" >> "$GITHUB_OUTPUT"
           fi
 
