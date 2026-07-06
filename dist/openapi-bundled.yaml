@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: PA Vietnam Support API
-  version: 1.0.1
+  version: 1.0.2
   license:
     name: API
   description: API cho hệ thống ticket hỗ trợ khách hàng
