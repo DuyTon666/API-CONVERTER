@@ -132,7 +132,14 @@ jobs:
         id: pr
         if: steps.check.outputs.ahead != '0'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Dùng PAT (secret KEY_DEPLOY) thay vì secrets.GITHUB_TOKEN mặc định.
+          # GitHub chặn cứng: sự kiện phát sinh (pull_request opened, push từ
+          # merge) do chính GITHUB_TOKEN của 1 workflow tạo ra sẽ KHÔNG kích
+          # hoạt được workflow khác (chống vòng lặp vô hạn) — trừ
+          # workflow_dispatch/repository_dispatch. Vì vậy PR mở/merge bằng
+          # GITHUB_TOKEN không bao giờ tự trigger được ci.yaml lẫn
+          # deploy.yaml. Dùng PAT thật để các sự kiện này trigger bình thường.
+          GH_TOKEN: ${{ secrets.KEY_DEPLOY }}
         run: |
           EXISTING=$(gh pr list --head "${{ steps.ref.outputs.branch }}" --base "${{ inputs.base_branch }}" --state open --json number --jq '.[0].number // empty')
           if [ -n "$EXISTING" ]; then
@@ -164,7 +171,14 @@ jobs:
       - name: Enable auto-merge
         if: steps.check.outputs.ahead != '0' && steps.pr.outputs.number != ''
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Dùng PAT (secret KEY_DEPLOY) thay vì secrets.GITHUB_TOKEN mặc định.
+          # GitHub chặn cứng: sự kiện phát sinh (pull_request opened, push từ
+          # merge) do chính GITHUB_TOKEN của 1 workflow tạo ra sẽ KHÔNG kích
+          # hoạt được workflow khác (chống vòng lặp vô hạn) — trừ
+          # workflow_dispatch/repository_dispatch. Vì vậy PR mở/merge bằng
+          # GITHUB_TOKEN không bao giờ tự trigger được ci.yaml lẫn
+          # deploy.yaml. Dùng PAT thật để các sự kiện này trigger bình thường.
+          GH_TOKEN: ${{ secrets.KEY_DEPLOY }}
         run: |
           gh pr merge "${{ steps.pr.outputs.number }}" \
             --auto --squash --delete-branch
