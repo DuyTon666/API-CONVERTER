@@ -5288,12 +5288,17 @@ components:
         success:
           type: boolean
           example: true
+          description: Trạng thái xử lý của request — true nếu thành công
         error:
           type:
             - 'null'
           example: null
+          description: Thông tin lỗi — null khi request thành công
         data:
           description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
+      x-manual-edit-fields:
+        - properties.error.description
+        - properties.success.description
     GetDepartmentListData:
       type: object
       properties:
@@ -5321,6 +5326,7 @@ components:
           type: boolean
           const: false
           example: false
+          description: Trạng thái xử lý của request — luôn là false khi có lỗi
         error:
           type: object
           required:
@@ -5340,6 +5346,10 @@ components:
                 - object
                 - 'null'
               description: Optional error detail payload.
+          description: Thông tin chi tiết về lỗi xảy ra
+      x-manual-edit-fields:
+        - properties.error.description
+        - properties.success.description
     GetUserServicesData:
       type: object
       properties:
@@ -5449,9 +5459,11 @@ components:
           type: integer
           example: 123
           readOnly: true
+          description: ID của người dùng
         name:
           type: string
           example: Nguyen Van A
+          description: Tên đầy đủ của người dùng
         mgroup:
           type: string
           description: |
@@ -5462,6 +5474,11 @@ components:
             - '3'
             - '4'
           example: '1'
+      x-manual-edit-fields:
+        - description
+        - properties.id.description
+        - properties.name.description
+      description: Thông tin người dùng — có thể là null nếu không xác định được người dùng
     GetUserTicketDetailDataConversations:
       type: object
       properties:
