@@ -1,0 +1,58 @@
+type: object
+properties:
+  reissue_reason:
+    type: string
+    description: 'Lý do cấp lại (tùy chọn). Xem bảng reissue_reason bên dưới. Có thể
+      bỏ trống khi reissue kỹ thuật (ví dụ: AUTO_RENEWAL do hệ thống tạo).'
+  csr:
+    type:
+      - string
+      - 'null'
+    description: CSR PEM mới. null/bỏ trống → reuse CSR của cert hiện tại. CSR 
+      giống cert hiện tại → cũng tự động reuse.
+  private_key:
+    type:
+      - string
+      - 'null'
+    description: Private key PEM (browser-generated). Chỉ dùng kèm csr mới. 
+      Server mã hoá và lưu. Không cung cấp → server không lưu key.
+  contact_admin:
+    type:
+      - object
+      - 'null'
+    description: 'Bắt buộc. Thông tin admin contact. Các trường con: email (required,
+      RFC 5322), first_name (required), last_name (required), phone (required, E.164),
+      title (optional). Replace hoàn toàn contact_admin của order.'
+    properties: {}
+  contact_org:
+    type: object
+    description: 'Bắt buộc. Thông tin tổ chức: name, address, province, country (ISO
+      3166-1 alpha-2), postal_code, phone (tất cả required). business_number, representative_name,
+      duns (optional). Replace hoàn toàn contact_org của order.'
+    properties: {}
+  contact_tech:
+    type:
+      - object
+      - 'null'
+    description: 'Bắt buộc. Thông tin tech contact. Các trường con: email (required,
+      RFC 5322), first_name (required), last_name (required), phone (required, E.164),
+      title (optional). Replace hoàn toàn contact_tech của order.'
+    properties: {}
+  san_list:
+    type: string
+    description: Bắt buộc truyền. Danh sách SAN mới — replace hoàn toàn san_list
+      của order. Truyền [] để xóa hết SAN. Mỗi item là string tối đa 255 ký tự.
+  dcv_config:
+    type:
+      - object
+      - 'null'
+    description: 'Bắt buộc. Key = domain, value = {method: EMAIL|HTTP|HTTPS|CNAME,
+      approver_email}. Phải cover đầy đủ primary_domain + tất cả domain trong san_list.
+      Thiếu domain → lỗi 4622 với data.missing_domains.'
+    properties: {}
+required:
+  - contact_admin
+  - contact_org
+  - contact_tech
+  - san_list
+  - dcv_config

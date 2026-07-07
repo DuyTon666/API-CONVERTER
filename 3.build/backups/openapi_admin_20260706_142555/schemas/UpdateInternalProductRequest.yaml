@@ -1,0 +1,35 @@
+type: object
+example:
+  name: SSL DV Single Domain (cập nhật)
+  name_en: '...'
+  description: '...'
+  retail_price_vnd: 280000
+  is_enabled: true
+  display_order: 15
+  default_san: 0
+  max_san: 10
+properties:
+  name:
+    type: string
+    example: SSL DV Single Domain (cập nhật)
+  name_en:
+    type: string
+    example: '...'
+  description:
+    type: string
+    example: '...'
+  retail_price_vnd:
+    type: integer
+    example: 280000
+  is_enabled:
+    type: boolean
+    example: true
+  display_order:
+    type: integer
+    example: 15
+  default_san:
+    type: integer
+    example: 0
+  max_san:
+    type: integer
+    example: 10

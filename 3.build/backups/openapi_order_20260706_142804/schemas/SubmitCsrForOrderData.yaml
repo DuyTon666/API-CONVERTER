@@ -1,0 +1,23 @@
+type: object
+properties:
+  status:
+    type: string
+    description: Luôn là CSR_READY sau khi API thành công.
+  csr_saved_at:
+    type: string
+    description: Thời điểm lưu CSR. Null nếu chưa có.
+  server_generated_key:
+    type: string
+    description: True nếu hệ thống tự generate CSR + private key.
+  has_private_key:
+    type: string
+    description: True nếu có private key lưu (encrypted). Chỉ khi 
+      server_generated_key=true.
+  certificate_id:
+    type: integer
+    description: ID (BIGINT) của certificate record vừa tạo/cập nhật trong bảng 
+      certificates.
+  next_step:
+    type: string
+    description: Hướng dẫn bước tiếp theo — Worker sẽ submit lên Provider tự 
+      động.

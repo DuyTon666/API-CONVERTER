@@ -6,6 +6,7 @@ from fastapi import HTTPException
 # (giống static class chứa const string của C#, hoặc enum chuỗi).
 class ErrorCode:
     PIPELINE_FAILED = "PIPELINE_FAILED"
+    PATH_STUB_FAILED = "PATH_STUB_FAILED"
     SUGGEST_FAILED = "SUGGEST_FAILED"
     SUGGEST_REPORT_MISSING = "SUGGEST_REPORT_MISSING"
     SUGGESTIONS_NOT_FOUND = "SUGGESTIONS_NOT_FOUND"
@@ -34,6 +35,7 @@ class ErrorCode:
     FILE_TOO_LARGE = "FILE_TOO_LARGE"
     INVALID_CONFLICT_RESOLVE = "INVALID_CONFLICT_RESOLVE"
     CONFLICT_NOT_FOUND = "CONFLICT_NOT_FOUND"
+
 
 
 # Tạo và TRẢ VỀ (không tự raise) 1 HTTPException theo format {code, message} —

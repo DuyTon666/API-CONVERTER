@@ -57,10 +57,11 @@ export default function ManualEditConflictsCard({
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="font-mono text-sm font-semibold text-gray-900">
-                  {c.operationId}
+                  {c.entityId}
                 </span>
                 <span className="text-xs text-gray-500">
-                  {c.module} · {c.field}
+                  {c.module} · {c.kind === "schema" ? "schema" : "operation"} ·{" "}
+                  {c.field}
                 </span>
               </div>
 

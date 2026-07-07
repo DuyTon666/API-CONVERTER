@@ -1,0 +1,27 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Id của phản hồi
+    readOnly: true
+  descriptions:
+    type: string
+    description: Nội dung yêu cầu hỗ trợ
+  files:
+    type: array
+    items:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Đường dẫn đến file
+        category:
+          type: string
+          description: 'Phân loại:image:Các file ảnhvideo: Các file videodocument:
+            Tài liệu (PDF, Word, Excel, …)archive: File nénother: Loại khác'
+    description: Thông tin các tệp tin (xem thêm bên dưới)
+  created_date:
+    type: string
+    description: Ngày tạo (Y-m-d H:i:s)
+  owner:
+    $ref: "../common/UserInfo.yaml"

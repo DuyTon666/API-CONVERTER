@@ -1,0 +1,61 @@
+get:
+  summary: Hiển thị chi tiết ticket của khách hàng
+  operationId: getUserTicketDetail
+  description: API cho phép khách hàng xem thông tin chi tiết của một ticket cụ thể dựa trên ID người dùng và ID ticket.
+    Khách hàng chỉ có thể truy cập ticket thuộc về tài khoản của mình, không thể xem ticket của người dùng khác.
+  tags:
+  - Ticket
+  security:
+  - bearerAuth: []
+  x-permission: CHECK_NEWUPDATE
+  parameters:
+  - name: user_id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/ticket/GetUserTicketDetailData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: ../../components/responses/StandardError422.yaml
+  x-error-responses:
+    '401':
+    - code: '4102'
+      category: Auth
+      message: Token không hợp lệ / hết hạn
+    - code: '4108'
+      category: Auth
+      message: IP không được phép truy cập
+    '422':
+    - code: '4200'
+      category: Input validation
+      message: Dữ liệu request không hợp lệ
+    '404':
+    - code: '4004'
+      category: Not Found
+      message: Không tìm thấy dữ liệu

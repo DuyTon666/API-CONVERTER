@@ -1,0 +1,21 @@
+type: object
+properties:
+  external_account_id:
+    type: integer
+    description: ID dịch vụ/account trong Internal Core System. Phải là số 
+      nguyên ≥ 1.
+  customer_id:
+    type: string
+    description: ID khách hàng trong Internal Core System (max 255 ký tự).
+  core_plan_id:
+    type: string
+    description: Plan ID của gói trong Core System. Lưu lại để đối soát. Max 100
+      ký tự.
+  plan_quantity:
+    type: integer
+    description: Số SAN cần cộng thêm. Số nguyên, min 1, max 100.
+required:
+  - external_account_id
+  - customer_id
+  - core_plan_id
+  - plan_quantity

@@ -1,5 +1,6 @@
 from core.errors import ErrorCode, http_error
 from api_utils.yaml_line import indent_of, extract_key, find_block_end
+import time
 
 
 # Parse XML từ `redocly lint --format checkstyle` thành list dict {ruleId, message, line, column}
@@ -122,6 +123,9 @@ def run(content: str, spectral: list[dict], redocly: list[dict]) -> dict:
     import anthropic
     import yaml as _yaml
 
+    spectral = [i for i in spectral if i.get("severity") == 0]
+    redocly = [i for i in redocly if i.get("severity") == "error"]
+
     lines = content.split("\n")
 
     resolved = []
@@ -200,27 +204,41 @@ def run(content: str, spectral: list[dict], redocly: list[dict]) -> dict:
         for i, m in enumerate(merged)
     ]
 
-    prompt = _build_batch_prompt(draft_patches)
+    # Gộp hết vào 1 prompt duy nhất từng gây lỗi 429 khi spec có nhiều lỗi lint
+    # (payload quá lớn vượt hạn mức của gateway) — chia thành từng batch nhỏ,
+    # gọi Claude riêng cho mỗi batch. Batch nào lỗi chỉ đánh dấu batch đó thất
+    # bại (rơi vào "failed" ở bước validate bên dưới), không làm hỏng các batch
+    # còn lại.
+    BATCH_SIZE = 25
+    fixed_by_id: dict[str, str] = {}
+    batch_call_failed_ids: set[str] = set()
 
-    try:
-        client = anthropic.Anthropic()
-        response = client.messages.create(
-            model="cc/claude-sonnet-4-6",
-            max_tokens=8192,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        raw = response.content[0].text.strip()
-    except Exception as e:
-        raise http_error(502, ErrorCode.AI_CALL_FAILED, f"Lỗi gọi AI: {e}")
+    for i in range(0, len(draft_patches), BATCH_SIZE):
+        batch = draft_patches[i : i + BATCH_SIZE]
+        prompt = _build_batch_prompt(batch)
+        try:
+            client = anthropic.Anthropic()
+            response = client.messages.create(
+                model="cc/claude-sonnet-4-6",
+                max_tokens=8192,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = response.content[0].text.strip()
+            suggestion = _parse_ai_json(raw)
+            for item in suggestion.get("patches") or []:
+                if (
+                    isinstance(item, dict)
+                    and item.get("id")
+                    and isinstance(item.get("fixed_text"), str)
+                ):
+                    fixed_by_id[item["id"]] = item["fixed_text"]
+        except Exception as e:
+            for p in batch:
+                batch_call_failed_ids.add(p["id"])
+            print(f"  [WARN] AI fix batch {i}-{i + len(batch)} failed: {e}")
 
-    suggestion = _parse_ai_json(raw)
-    fixed_by_id = {
-        item["id"]: item["fixed_text"]
-        for item in (suggestion.get("patches") or [])
-        if isinstance(item, dict)
-        and item.get("id")
-        and isinstance(item.get("fixed_text"), str)
-    }
+        if i + BATCH_SIZE < len(draft_patches):
+            time.sleep(1)
 
     # Validate từng fixed_text bằng cách ghép thử vào bản full-document gốc rồi parse YAML
     # — chỉ trong bộ nhớ, không ghi file. Patch nào không hợp lệ thì loại, không fail cả request.
@@ -253,10 +271,13 @@ def run(content: str, spectral: list[dict], redocly: list[dict]) -> dict:
                 }
             )
         else:
-            reason = "AI không trả về kết quả hợp lệ cho vị trí này"
+            reason = (
+                "Lỗi gọi AI cho nhóm này (xem log server)"
+                if p["id"] in batch_call_failed_ids
+                else "AI không trả về kết quả hợp lệ cho vị trí này"
+            )
             for issue in p["issues"]:
                 failed.append({**issue, "reason": reason})
-
     return {"patches": patches, "unresolved": unresolved, "failed": failed}
 
 

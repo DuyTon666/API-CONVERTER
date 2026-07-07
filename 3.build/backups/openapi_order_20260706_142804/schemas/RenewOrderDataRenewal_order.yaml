@@ -1,0 +1,49 @@
+type: object
+properties:
+  id:
+    type: integer
+    readOnly: true
+  order_number:
+    type: string
+  customer_id:
+    type: string
+  internal_product_code:
+    type: string
+  product_type:
+    type: string
+  cert_type:
+    type: string
+  years:
+    type: integer
+  subscription_start_date:
+    type: string
+  subscription_end_date:
+    type: string
+  primary_domain:
+    type: string
+  san_list:
+    type: array
+    items:
+      type: object
+  dcv_method:
+    type: string
+  status:
+    type: string
+  order_type:
+    type: string
+  parent_order_id:
+    type: integer
+  selected_provider:
+    type: object
+    properties:
+      provider_id:
+        type: integer
+      code:
+        type: string
+      provider_product_id:
+        type: integer
+      mapping_id:
+        type: integer
+  created_at:
+    type: string
+    readOnly: true

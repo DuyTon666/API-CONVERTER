@@ -1,0 +1,11 @@
+type: object
+example:
+  is_enabled: true
+  reason: Tạm ngưng bán theo quyết định CEO
+properties:
+  is_enabled:
+    type: boolean
+    example: true
+  reason:
+    type: string
+    example: Tạm ngưng bán theo quyết định CEO

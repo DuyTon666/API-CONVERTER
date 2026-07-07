@@ -1,0 +1,24 @@
+type: object
+properties:
+  Thuộc tính:
+    type: string
+  id:
+    type: string
+  internal_product_id:
+    type: string
+  provider_product_id:
+    type: string
+  provider_id:
+    type: string
+  routing_weight:
+    type: string
+  is_active:
+    type: string
+  notes:
+    type: string
+  created_by:
+    type: string
+  updated_by:
+    type: string
+  deleted_at:
+    type: string

@@ -1,0 +1,66 @@
+post:
+  summary: Tiếp nhận phản ánh góp ý của khách hàng
+  operationId: submitTicketFeedback
+  description: API cho phép khách hàng gửi phản ánh hoặc góp ý liên quan đến một ticket cụ thể sau khi được xử lý. Chỉ 
+    áp dụng cho ticket thuộc về đúng người dùng tương ứng với user_id được cung cấp.
+  tags:
+  - Ticket
+  security:
+  - bearerAuth: []
+  x-permission: CHECK_NEWUPDATE
+  parameters:
+  - name: user_id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+          example:
+            success: true
+            data:
+            error:
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: ../../components/responses/StandardError422.yaml
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          $ref: "../../components/schemas/ticket/SubmitTicketFeedbackRequest.yaml"
+  x-error-responses:
+    '401':
+    - code: '4102'
+      category: Auth
+      message: Token không hợp lệ / hết hạn
+    - code: '4108'
+      category: Auth
+      message: IP không được phép truy cập
+    '422':
+    - code: '4200'
+      category: Input validation
+      message: Dữ liệu request không hợp lệ
+    '404':
+    - code: '4004'
+      category: Not Found
+      message: Không tìm thấy dữ liệu

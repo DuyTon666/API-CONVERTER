@@ -12,6 +12,7 @@ from typing import Literal
 from core.config import CONFIG_DIR
 from core.errors import ErrorCode, http_error
 
+
 # Pool thread riêng để chạy job import (nặng, chậm) ở background, không chặn server.
 executor = ThreadPoolExecutor(max_workers=4)
 
@@ -153,7 +154,12 @@ def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
     )
     from import_flow.scanner import scan_source_root
     from pipeline_API import run_batch
-    from services.manual_edit_conflicts import _scan_manual_edits, _resolve_manual_edits_after_import
+    from services.manual_edit_conflicts import (
+        _scan_manual_edits,
+        _resolve_manual_edits_after_import,
+        _scan_manual_schema_edits,
+        _resolve_manual_schema_edits_after_import,
+    )
 
     job = import_jobs[job_id]
 
@@ -222,6 +228,7 @@ def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
 
             # Capture — giá trị field đã sửa tay trước khi run_batch() có thể đè file.
             captured = _scan_manual_edits(paths_dir)
+            captured_schemas = _scan_manual_schema_edits(schemas_dir_m)
 
             try:
                 run_batch(
@@ -250,6 +257,10 @@ def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
                 if captured:
                     _resolve_manual_edits_after_import(
                         paths_dir, captured, m["name"], now
+                    )
+                if captured_schemas:
+                    _resolve_manual_schema_edits_after_import(
+                        schemas_dir_m, captured_schemas, m["name"], now
                     )
 
             if m["name"] in registry_modules:

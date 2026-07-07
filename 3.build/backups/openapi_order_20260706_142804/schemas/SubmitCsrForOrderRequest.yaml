@@ -1,0 +1,126 @@
+type: object
+properties:
+  csr:
+    type: string
+    description: 'CSR PEM. Bắt buộc. Format: "-----BEGIN CERTIFICATE REQUEST-----...".
+      CN hoặc SAN phải chứa primary_domain.'
+  key_type:
+    type: string
+    description: Không còn sử dụng (ignored). Giữ lại để tương thích ngược.
+  web_server_type:
+    type: string
+    description: 'apache | nginx | iis | tomcat | cpanel | plesk | other. Mặc định:
+      other.'
+  signature_hash_algorithm:
+    type: string
+    description: SHA2-256 | SHA2-384 | SHA2-512. Mặc định SHA2-256.
+  auto_www:
+    type: boolean
+    description: Tự động thêm www.{primary_domain} vào SAN. Mặc định true.
+  cert_transparency:
+    type: boolean
+    description: Ghi vào Certificate Transparency log. Mặc định true.
+  dcv_method:
+    type: string
+    description: EMAIL | HTTP | CNAME. Bắt buộc. MULTI_DOMAIN/FLEX không cho 
+      phép EMAIL.
+  approver_email:
+    type: string
+    description: Email phê duyệt DCV. Bắt buộc khi dcv_method = EMAIL.
+  san_list:
+    type: array
+    description: Danh sách SAN. Chỉ áp dụng với MULTI_DOMAIN/FLEX — bị bỏ qua 
+      với cert_type khác. Không truyền hoặc [] → xóa san_list cũ.
+    items: {}
+  contact_admin:
+    type: object
+    description: Admin Contact. Bắt buộc mỗi lần gọi.
+    properties: {}
+  contact_admin.email:
+    type: string
+    description: RFC 5322.
+  contact_admin.first_name:
+    type: string
+    description: Tên.
+  contact_admin.last_name:
+    type: string
+    description: Họ.
+  contact_admin.phone:
+    type: string
+    description: E.164.
+  contact_admin.title:
+    type: string
+    description: Mr | Mrs | Ms | Dr | ...
+  contact_org:
+    type: object
+    description: Organization Contact. Bắt buộc mỗi lần gọi với mọi cert type.
+    properties: {}
+  contact_org.name:
+    type: string
+    description: Tên tổ chức.
+  contact_org.address:
+    type: string
+    description: Địa chỉ.
+  contact_org.province:
+    type: string
+    description: Tỉnh / Thành phố.
+  contact_org.country:
+    type: string
+    description: 'ISO 3166-1 alpha-2 (VD: VN, US).'
+  contact_org.postal_code:
+    type: string
+    description: Mã bưu chính.
+  contact_org.phone:
+    type: string
+    description: Số điện thoại tổ chức. E.164.
+  contact_org.business_number:
+    type: string
+    description: Số GPKD / mã số thuế. Bắt buộc với OV/EV.
+  contact_org.representative_name:
+    type: string
+    description: Tên người đại diện. Bắt buộc với OV/EV.
+  contact_org.duns:
+    type: string
+    description: D-U-N-S Number.
+  contact_tech:
+    type: object
+    description: Technical Contact. Bắt buộc mỗi lần gọi.
+    properties: {}
+  contact_tech.email:
+    type: string
+    description: RFC 5322.
+  contact_tech.first_name:
+    type: string
+    description: Tên.
+  contact_tech.last_name:
+    type: string
+    description: Họ.
+  contact_tech.phone:
+    type: string
+    description: E.164.
+  contact_tech.title:
+    type: string
+    description: Mr | Mrs | Ms | Dr | ...
+required:
+  - csr
+  - dcv_method
+  - approver_email
+  - contact_admin
+  - contact_admin.email
+  - contact_admin.first_name
+  - contact_admin.last_name
+  - contact_admin.phone
+  - contact_org
+  - contact_org.name
+  - contact_org.address
+  - contact_org.province
+  - contact_org.country
+  - contact_org.postal_code
+  - contact_org.phone
+  - contact_org.business_number
+  - contact_org.representative_name
+  - contact_tech
+  - contact_tech.email
+  - contact_tech.first_name
+  - contact_tech.last_name
+  - contact_tech.phone

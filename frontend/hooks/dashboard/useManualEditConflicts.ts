@@ -9,9 +9,8 @@ import {
 // Key dùng để biết đúng conflict nào đang được resolve, vì có thể hiện nhiều
 // conflict cùng lúc (giống "approving" trong useSuggestions.ts).
 function conflictKey(c: ManualEditConflict): string {
-  return `${c.operationId}::${c.field}`;
+  return `${c.kind}:${c.entityId}::${c.field}`;
 }
-
 export function useManualEditConflicts(backend: string) {
   const [conflicts, setConflicts] = useState<ManualEditConflict[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,8 +36,16 @@ export function useManualEditConflicts(backend: string) {
     setResolving(conflictKey(conflict));
     setResolveError("");
     try {
-      await resolveManualEditConflict(backend, conflict.operationId, conflict.field, choice);
-      setConflicts((prev) => prev.filter((c) => conflictKey(c) !== conflictKey(conflict)));
+      await resolveManualEditConflict(
+        backend,
+        conflict.kind,
+        conflict.entityId,
+        conflict.field,
+        choice,
+      );
+      setConflicts((prev) =>
+        prev.filter((c) => conflictKey(c) !== conflictKey(conflict)),
+      );
     } catch (e: unknown) {
       setResolveError(formatFetchError(e));
     } finally {

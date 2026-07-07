@@ -1,0 +1,44 @@
+type: object
+properties:
+  Nhóm / Trường:
+    type: string
+    description: Mô tả
+  (order fields):
+    type: string
+    description: Toàn bộ thông tin order — bao gồm san_list đầy đủ (khác với API
+      list chỉ trả san_count).
+  contact:
+    type: object
+    description: Thông tin liên hệ đã lưu khi tạo order. Không lộ password hay 
+      thông tin nhạy cảm.
+  install_target:
+    type: object
+    description: Thông tin cài đặt hosting. password field bị mask (không trả về
+      qua API này).
+  provider:
+    type: object
+    description: Provider + mapping được chọn lúc tạo order (denormalized từ 
+      orders bảng).
+  certificates:
+    type: string
+    description: Danh sách cert đã cấp (thường 1 cert active + các cert cũ đã 
+      revoke/expire).
+  certificates[].cert_pem:
+    type: string
+    description: Certificate PEM. Null nếu chưa cấp.
+  certificates[].chain_pem:
+    type: string
+    description: Intermediate chain PEM. Null nếu chưa có.
+  certificates[].has_private_key:
+    type: string
+    description: True nếu có private key được lưu (encrypted). Key không trả qua
+      API này.
+  dcv_records:
+    type: string
+    description: Các DCV record theo domain. Rỗng nếu chưa có DCV.
+  dcv_records[].token:
+    type: string
+    description: Token xác thực DCV (HTTP/DNS). Null nếu method=EMAIL.
+  dcv_records[].status:
+    type: string
+    description: PENDING | VERIFIED | FAILED | EXPIRED.

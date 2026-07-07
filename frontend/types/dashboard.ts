@@ -143,7 +143,8 @@ export type AiFixResolution = "original" | "fixed" | "both";
 // pipeline vừa sinh lại khi import — xem backend/routers/modules.py
 // (_resolve_manual_edits_after_import) và 3.build/reports/manual_edit_conflicts.json.
 export type ManualEditConflict = {
-  operationId: string;
+  kind: "operation" | "schema";
+  entityId: string;
   module: string;
   field: string;
   old_value: string;
@@ -191,6 +192,7 @@ export type OperationAiSuggestPayload = {
   description: string;
   parameters: OperationParameter[];
   responses: OperationResponseDescription[];
+  dataSchemas?: { request: SchemaGroup | null; response: SchemaGroup | null };
 };
 
 export type OperationAiSuggestResult = {
@@ -198,4 +200,38 @@ export type OperationAiSuggestResult = {
   description?: string;
   parameters?: OperationParameter[];
   responses?: OperationResponseDescription[];
+  dataSchemas?: {
+    request?: SchemaFieldUpdate[];
+    response?: SchemaFieldUpdate[];
+  };
+};
+
+// Sửa mô tả field trong schema (components/schemas) — mở rộng của Form Editor,
+// nhúng vào từng operation card thay vì tab riêng (xem SchemaFieldsEditor.tsx).
+export type SchemaFieldEntry = {
+  path: string;
+  label: string;
+  depth: number;
+  type: string;
+  description: string;
+  readOnly: boolean;
+};
+
+export type SchemaGroup = {
+  schemaName: string;
+  shared: boolean;
+  fields: SchemaFieldEntry[];
+  nested: SchemaGroup[];
+};
+
+export type OperationDataSchemas = {
+  operationId: string;
+  request: SchemaGroup | null;
+  response: SchemaGroup | null;
+};
+
+export type SchemaFieldUpdate = {
+  schemaName: string;
+  path: string;
+  description: string;
 };

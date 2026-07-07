@@ -1,0 +1,11 @@
+type: object
+properties:
+  descriptions:
+    type: string
+    description: Nội dung
+  files:
+    type: array
+    items:
+      type: string
+      format: binary
+    description: Tệp đính kèm

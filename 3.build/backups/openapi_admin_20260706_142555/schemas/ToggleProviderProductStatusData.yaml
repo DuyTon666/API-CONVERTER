@@ -1,0 +1,34 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: ID sản phẩm (BIGINT auto-increment)
+    readOnly: true
+  provider_id:
+    type: string
+    description: FK providers.id
+  provider_code:
+    type: string
+    description: Mã provider (reference)
+  provider_product_code:
+    type: string
+    description: Mã sản phẩm tại provider (reference)
+  is_enabled:
+    type: boolean
+    description: Trạng thái sau khi toggle
+  previous_is_enabled:
+    type: boolean
+    description: Trạng thái trước khi toggle
+  changed:
+    type: boolean
+    description: true nếu có thay đổi thực sự; false nếu is_enabled đã đúng giá 
+      trị (no-op)
+  changed_at:
+    type: string
+    description: Thời điểm thay đổi (UTC). Null nếu changed=false.
+  changed_by:
+    type: string
+    description: Admin ID thực hiện. Null nếu changed=false.
+  reason:
+    type: string
+    description: Lý do (nếu có trong request)

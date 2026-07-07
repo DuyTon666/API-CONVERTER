@@ -1,5 +1,5 @@
 node_modules/
-
+.claude/
 backend/.venv
 backend/.env
 

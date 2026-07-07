@@ -1,0 +1,105 @@
+get:
+  summary: Lấy danh sách sản phẩm nội bộ
+  operationId: listInternalProducts
+  description: Truy xuất danh sách tất cả sản phẩm nội bộ dành cho quản trị viên hệ thống. Chỉ người dùng có quyền admin
+    mới được phép truy cập endpoint này.
+  tags:
+  - Admin
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: page
+    in: query
+    required: false
+    schema:
+      type: integer
+      default: 1
+    description: Số trang (≥1)
+  - name: per_page
+    in: query
+    required: false
+    schema:
+      type: integer
+      default: 20
+    description: Record/trang (max 100)
+  - name: is_enabled
+    in: query
+    required: false
+    schema:
+      type: integer
+    description: 1=enabled, 0=disabled
+  - name: product_type
+    in: query
+    required: false
+    schema:
+      type: string
+    description: DV | OV | EV
+  - name: cert_type
+    in: query
+    required: false
+    schema:
+      type: string
+    description: SINGLE | WILDCARD | MULTI_DOMAIN | FLEX
+  - name: search
+    in: query
+    required: false
+    schema:
+      type: string
+    description: LIKE code hoặc name (min 2 chars)
+  - name: sort
+    in: query
+    required: false
+    schema:
+      type: string
+      default: display_order:asc
+    description: Format field:asc|desc
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/admin/ListInternalProductsData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  x-error-responses:
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)

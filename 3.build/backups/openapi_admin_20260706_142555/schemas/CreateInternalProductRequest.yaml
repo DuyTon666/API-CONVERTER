@@ -1,0 +1,28 @@
+type: object
+properties:
+  Thuộc tính:
+    type: string
+  id:
+    type: string
+  code:
+    type: string
+  name_en:
+    type: string
+  product_type:
+    type: string
+  cert_type:
+    type: string
+  description:
+    type: string
+  retail_price_vnd:
+    type: string
+  is_enabled:
+    type: string
+  display_order:
+    type: string
+  created_by:
+    type: string
+  updated_by:
+    type: string
+  deleted_at:
+    type: string

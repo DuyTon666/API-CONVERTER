@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SpectralIssue, RedoclyIssue } from "@/types/dashboard";
 import OperationsFormEditor from "./OperationsFormEditor";
 
@@ -37,6 +37,19 @@ export default function BundleEditorModal({
   onAiFix,
 }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("form");
+  const [aiFixElapsed, setAiFixElapsed] = useState(0);
+
+  useEffect(() => {
+    if (!aiFixing) {
+      setAiFixElapsed(0);
+      return;
+    }
+    const start = Date.now();
+    const interval = setInterval(() => {
+      setAiFixElapsed(Math.floor((Date.now() - start) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [aiFixing]);
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -106,7 +119,9 @@ export default function BundleEditorModal({
               }
               className="px-4 py-2 bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200 text-sm transition disabled:opacity-40"
             >
-              {aiFixing ? "AI đang sửa..." : "✨ AI tự fix lỗi"}
+              {aiFixing
+                ? `AI đang sửa...(${aiFixElapsed}s)`
+                : "✨ AI tự fix lỗi"}
             </button>
             <button
               onClick={onSave}

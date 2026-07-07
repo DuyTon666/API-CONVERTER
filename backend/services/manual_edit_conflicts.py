@@ -35,6 +35,23 @@ def _index_operations(paths_dir: Path) -> dict[str, tuple[Path, dict]]:
                     index[op_id] = (file, operation)
     return index
 
+# Quét toàn bộ file schema tầng 2 dưới schemas_dir (1 module), build map
+# schema_name (file.stem) -> (file, schema dict) — mirror của _index_operations()
+# nhưng file schema không có wrapper method-key, nội dung file chính là schema dict.
+def _index_schemas(schemas_dir: Path) -> dict[str, tuple[Path, dict]]:
+    import yaml as _yaml
+
+    index: dict[str, tuple[Path, dict]] = {}
+    if not schemas_dir.exists():
+        return index
+    for file in schemas_dir.glob("**/*.yaml"):
+        try:
+            doc = _yaml.safe_load(file.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if isinstance(doc, dict):
+            index[file.stem] = (file, doc)
+    return index
 
 # Lấy đúng giá trị hiện tại của các field được đánh dấu trong marker
 # x-manual-edit-fields — dùng cả lúc capture (giá trị trước import) và lúc lấy
@@ -61,6 +78,19 @@ def _scan_manual_edits(paths_dir: Path) -> dict:
         fields = _extract_marked_fields(operation, marker)
         if fields:
             captured[op_id] = {"file": file, "fields": fields}
+    return captured
+
+# Mirror của _scan_manual_edits() cho schema — tái dùng nguyên _extract_marked_fields()
+# (đã generic theo dict + field-path, không phân biệt operation hay schema).
+def _scan_manual_schema_edits(schemas_dir: Path) -> dict:
+    captured: dict[str, dict] = {}
+    for name, (file, schema) in _index_schemas(schemas_dir).items():
+        marker = schema.get("x-manual-edit-fields")
+        if not marker:
+            continue
+        fields = _extract_marked_fields(schema, marker)
+        if fields:
+            captured[name] = {"file": file, "fields": fields}
     return captured
 
 
@@ -133,7 +163,8 @@ def _resolve_manual_edits_after_import(
             else:
                 conflicts.append(
                     {
-                        "operationId": op_id,
+                        "kind": "operation",
+                        "entityId": op_id,
                         "module": module_name,
                         "field": field_key,
                         "old_value": old_value,
@@ -162,6 +193,61 @@ def _resolve_manual_edits_after_import(
 
     _append_manual_edit_conflicts(conflicts)
 
+# Mirror của _resolve_manual_edits_after_import() cho schema — tái dùng nguyên
+# _get_field_value(). Khác biệt: file schema không có method/operationId loop khi
+# ghi lại marker — set thẳng trên schema dict (toàn bộ nội dung file).
+def _resolve_manual_schema_edits_after_import(
+    schemas_dir: Path, captured: dict, module_name: str, detected_at: str
+) -> None:
+    from ruamel.yaml import YAML
+
+    fragment_yaml = YAML()
+    fragment_yaml.default_flow_style = False
+    fragment_yaml.indent(mapping=2, sequence=4, offset=2)
+
+    after_index = _index_schemas(schemas_dir)
+    conflicts = []
+
+    for name, cap in captured.items():
+        after = after_index.get(name)
+        if after is None:
+            continue
+
+        after_file, after_schema = after
+        kept_fields = []
+        for field_key, old_value in cap["fields"].items():
+            new_value = _get_field_value(after_schema, field_key)
+            if new_value is None:
+                continue
+            if new_value == old_value:
+                kept_fields.append(field_key)
+            else:
+                conflicts.append(
+                    {
+                        "kind": "schema",
+                        "entityId": name,
+                        "module": module_name,
+                        "field": field_key,
+                        "old_value": old_value,
+                        "new_value": new_value,
+                        "detected_at": detected_at,
+                    }
+                )
+
+        new_marker = _field_keys_to_marker(kept_fields)
+        try:
+            fragment = fragment_yaml.load(after_file.read_text(encoding="utf-8"))
+            if isinstance(fragment, dict):
+                if new_marker:
+                    fragment["x-manual-edit-fields"] = new_marker
+                else:
+                    fragment.pop("x-manual-edit-fields", None)
+            with after_file.open("w", encoding="utf-8") as f:
+                fragment_yaml.dump(fragment, f)
+        except Exception:
+            traceback.print_exc()
+
+    _append_manual_edit_conflicts(conflicts)
 
 # Trả về danh sách xung đột đang chờ duyệt — đọc thẳng manual_edit_conflicts.json
 # (ghi bởi _append_manual_edit_conflicts), dùng cho ManualEditConflictsCard.
@@ -187,16 +273,16 @@ def list_conflicts() -> list[dict]:
 def resolve_conflict(payload: dict) -> dict:
     import yaml as _yaml
     from import_flow.config import REPORT_DIR
-    from services.bundle_sync import Change, sync_operation_fields, _index_operation_files
 
-    op_id = payload.get("operationId")
+    kind = payload.get("kind", "operation")
+    entity_id = payload.get("entityId") or payload.get("operationId")
     field_key = payload.get("field")
     choice = payload.get("choice")
-    if not op_id or not field_key or choice not in ("keep_old", "accept_new"):
+    if not entity_id or not field_key or choice not in ("keep_old", "accept_new"):
         raise http_error(
             400,
             ErrorCode.INVALID_CONFLICT_RESOLVE,
-            "Thiếu operationId/field hoặc choice không hợp lệ (phải là 'keep_old'/'accept_new')",
+            "Thiếu entityId/field hoặc choice không hợp lệ (phải là 'keep_old'/'accept_new')",
         )
 
     path = REPORT_DIR / "manual_edit_conflicts.json"
@@ -206,8 +292,20 @@ def resolve_conflict(payload: dict) -> dict:
         )
     conflicts = json.loads(path.read_text(encoding="utf-8"))
 
+    # Fallback tương thích ngược: entry cũ trong file (ghi trước khi có
+    # kind/entityId) chỉ có "operationId" — coi như kind="operation".
+    def entry_id(c: dict) -> str:
+        return c.get("entityId", c.get("operationId"))
+
+    def entry_kind(c: dict) -> str:
+        return c.get("kind", "operation")
+
     match = next(
-        (c for c in conflicts if c["operationId"] == op_id and c["field"] == field_key),
+        (
+            c
+            for c in conflicts
+            if entry_kind(c) == kind and entry_id(c) == entity_id and c["field"] == field_key
+        ),
         None,
     )
     if match is None:
@@ -218,20 +316,27 @@ def resolve_conflict(payload: dict) -> dict:
         )
 
     if choice == "keep_old":
-        change = Change(kind="operation", key=op_id, path=field_key, new_value=match["old_value"])
         bundle_path = DIST_DIR / "openapi-bundled.yaml"
         bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
-        sync_operation_fields(bundle, [change], _index_operation_files())
+        if kind == "schema":
+            from services.bundle_sync import Change, sync_schema_fields, _index_schema_files
+
+            change = Change(kind="schema", key=entity_id, path=field_key, new_value=match["old_value"])
+            sync_schema_fields(bundle, [change], _index_schema_files())
+        else:
+            from services.bundle_sync import Change, sync_operation_fields, _index_operation_files
+
+            change = Change(kind="operation", key=entity_id, path=field_key, new_value=match["old_value"])
+            sync_operation_fields(bundle, [change], _index_operation_files())
         bundle_path.write_text(
             _yaml.dump(bundle, allow_unicode=True, sort_keys=False, default_flow_style=False),
             encoding="utf-8",
         )
 
-    # accept_new: không cần đụng file gì — giá trị mới đã sẵn ở đó từ lúc phát hiện conflict.
     remaining = [
         c
         for c in conflicts
-        if not (c["operationId"] == op_id and c["field"] == field_key)
+        if not (entry_kind(c) == kind and entry_id(c) == entity_id and c["field"] == field_key)
     ]
     path.write_text(
         json.dumps(remaining, ensure_ascii=False, indent=2), encoding="utf-8"

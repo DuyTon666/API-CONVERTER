@@ -1,0 +1,71 @@
+type: object
+properties:
+  id:
+    type: string
+    readOnly: true
+  provider_id:
+    type: string
+  provider_product_code:
+    type: string
+  product_name:
+    type: string
+  product_name_en:
+    type: string
+  brand:
+    type: string
+  product_type:
+    type: string
+  cert_type:
+    type: string
+  years_supported:
+    type: array
+    items:
+      type: integer
+  max_years:
+    type: integer
+  min_san:
+    type:
+      - string
+      - 'null'
+  max_san:
+    type:
+      - string
+      - 'null'
+  supported_dcv_methods:
+    type: array
+    items:
+      type: string
+  supported_server_types:
+    type: array
+    items:
+      type: string
+  wholesale_price_usd:
+    type: number
+  retail_price_vnd:
+    type: integer
+  warranty_amount_usd:
+    type: integer
+  is_reissue_supported:
+    type: boolean
+  description:
+    type: string
+  admin_note:
+    type: string
+  is_enabled:
+    type: boolean
+  display_order:
+    type: integer
+  created_at:
+    type: string
+    readOnly: true
+  updated_at:
+    type: string
+    readOnly: true
+  created_by:
+    type: string
+  updated_by:
+    type: string
+  deleted_at:
+    type:
+      - string
+      - 'null'

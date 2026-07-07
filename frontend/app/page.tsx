@@ -13,6 +13,10 @@ import StatTiles from "@/components/dashboard/StatTiles";
 import WorkflowStepper, {
   toSteps,
 } from "@/components/dashboard/WorkflowStepper";
+import StepSection, {
+  StepStatus,
+} from "@/components/dashboard/StepSection";
+import { useActiveStep } from "@/hooks/dashboard/useActiveStep";
 import { useScan } from "@/hooks/dashboard/useScan";
 import { useModuleRegistry } from "@/hooks/dashboard/useModuleRegistry";
 import { useUpload } from "@/hooks/dashboard/useUpload";
@@ -150,6 +154,9 @@ export default function Home() {
       label: "Tài liệu",
     },
   ]);
+  const activeIndex = useActiveStep(steps.map((s) => s.id));
+  const stepStatus = (i: number): StepStatus =>
+    i < activeIndex ? "done" : i === activeIndex ? "current" : "upcoming";
 
   return (
     <>
@@ -184,7 +191,7 @@ export default function Home() {
       </nav>
       <div className="sticky top-14 z-40 bg-gray-50/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-3">
-          <WorkflowStepper steps={steps} />
+          <WorkflowStepper steps={steps} activeIndex={activeIndex} />
         </div>
       </div>
       <main className="min-h-screen bg-gray-50">
@@ -218,10 +225,24 @@ export default function Home() {
             ]}
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Cột phụ trợ — bên phải trên desktop; mobile xen kẽ theo order */}
-            <div className="contents lg:block lg:order-2 lg:col-span-5 lg:space-y-6">
-              <div id="card-import" className="order-1 scroll-mt-32">
+          <ManualEditConflictsCard
+            conflicts={conflicts}
+            loading={conflictsLoading}
+            error={conflictsError}
+            resolving={conflictResolving}
+            resolveError={conflictResolveError}
+            conflictKey={conflictKey}
+            onResolve={handleResolveConflict}
+          />
+
+          <div>
+            <StepSection
+              id="card-import"
+              number={1}
+              label="Nguồn"
+              status={stepStatus(0)}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <ImportCard
                   files={uploadFiles}
                   uploading={uploading}
@@ -231,85 +252,85 @@ export default function Home() {
                   onRemoveFile={handleRemoveUploadFile}
                   onUpload={handleUpload}
                 />
-              </div>
-
-              <div className="order-2">
                 <ScanCard scan={scan} loading={scanLoading} error={scanError} />
               </div>
+            </StepSection>
 
-              <div id="card-docs" className="order-5 scroll-mt-32">
-                <SwaggerDocsCard
-                  docsBuilding={docsBuilding}
-                  docsResult={docsResult}
-                  docsError={docsError}
-                  bundleReady={bundleReady}
-                  htmlReady={htmlReady}
-                  relinting={relinting}
-                  deploying={deploying}
-                  onDeploy={handleDeploy}
-                  onBuildDocs={handleBuildDocs}
-                  onRelint={handleRelint}
-                  onOpenBundleEditor={openBundleEditor}
-                  onDownloadHtml={handleDownloadDocsHtml}
-                />
-              </div>
-            </div>
-
-            {/* Cột thao tác chính — bên trái trên desktop */}
-            <div className="contents lg:block lg:order-1 lg:col-span-7 lg:space-y-6">
-              <ManualEditConflictsCard
-                conflicts={conflicts}
-                loading={conflictsLoading}
-                error={conflictsError}
-                resolving={conflictResolving}
-                resolveError={conflictResolveError}
-                conflictKey={conflictKey}
-                onResolve={handleResolveConflict}
+            <StepSection
+              id="card-suggest"
+              number={2}
+              label="Phân loại"
+              status={stepStatus(1)}
+            >
+              <SuggestCard
+                suggestions={suggestions}
+                loading={suggestionsLoading}
+                error={suggestionsError}
+                actionError={suggestActionError}
+                suggestRunning={suggestRunning}
+                approving={approving}
+                approvingMulti={approvingMulti}
+                applying={applying}
+                applyResult={applyResult}
+                approveSkipped={approveSkipped}
+                overrideInputs={overrideInputs}
+                onOverrideChange={(file, value) =>
+                  setOverrideInputs((prev) => ({ ...prev, [file]: value }))
+                }
+                onRunSuggest={handleRunSuggest}
+                onApprove={handleApprove}
+                onApproveSelected={handleApproveSelected}
+                onApply={handleApply}
               />
+            </StepSection>
 
-              <div id="card-suggest" className="order-3 scroll-mt-32">
-                <SuggestCard
-                  suggestions={suggestions}
-                  loading={suggestionsLoading}
-                  error={suggestionsError}
-                  actionError={suggestActionError}
-                  suggestRunning={suggestRunning}
-                  approving={approving}
-                  approvingMulti={approvingMulti}
-                  applying={applying}
-                  applyResult={applyResult}
-                  approveSkipped={approveSkipped}
-                  overrideInputs={overrideInputs}
-                  onOverrideChange={(file, value) =>
-                    setOverrideInputs((prev) => ({ ...prev, [file]: value }))
-                  }
-                  onRunSuggest={handleRunSuggest}
-                  onApprove={handleApprove}
-                  onApproveSelected={handleApproveSelected}
-                  onApply={handleApply}
-                />
-              </div>
+            <StepSection
+              id="card-modules"
+              number={3}
+              label="Module"
+              status={stepStatus(2)}
+            >
+              <ModuleRegistryCard
+                moduleList={moduleList}
+                loading={modulesLoading}
+                error={modulesError}
+                activatingModule={activatingModule}
+                activateError={activateError}
+                onActivate={handleActivate}
+                deactivatingModule={deactivatingModule}
+                deactivateError={deactivateError}
+                onDeactivate={handleDeactivate}
+                importRunning={importRunning}
+                importTarget={importTarget}
+                importModules={importModules}
+                importDone={importDone}
+                importError={importError}
+                onImport={handleImport}
+              />
+            </StepSection>
 
-              <div id="card-modules" className="order-4 scroll-mt-32">
-                <ModuleRegistryCard
-                  moduleList={moduleList}
-                  loading={modulesLoading}
-                  error={modulesError}
-                  activatingModule={activatingModule}
-                  activateError={activateError}
-                  onActivate={handleActivate}
-                  deactivatingModule={deactivatingModule}
-                  deactivateError={deactivateError}
-                  onDeactivate={handleDeactivate}
-                  importRunning={importRunning}
-                  importTarget={importTarget}
-                  importModules={importModules}
-                  importDone={importDone}
-                  importError={importError}
-                  onImport={handleImport}
-                />
-              </div>
-            </div>
+            <StepSection
+              id="card-docs"
+              number={4}
+              label="Tài liệu"
+              status={stepStatus(3)}
+              isLast
+            >
+              <SwaggerDocsCard
+                docsBuilding={docsBuilding}
+                docsResult={docsResult}
+                docsError={docsError}
+                bundleReady={bundleReady}
+                htmlReady={htmlReady}
+                relinting={relinting}
+                deploying={deploying}
+                onDeploy={handleDeploy}
+                onBuildDocs={handleBuildDocs}
+                onRelint={handleRelint}
+                onOpenBundleEditor={openBundleEditor}
+                onDownloadHtml={handleDownloadDocsHtml}
+              />
+            </StepSection>
           </div>
         </div>
 

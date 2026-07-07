@@ -1,0 +1,31 @@
+type: object
+properties:
+  id:
+    type: string
+    description: ID provider
+    readOnly: true
+  code:
+    type: string
+    description: Mã provider (reference)
+  name:
+    type: string
+    description: Tên provider (reference)
+  is_enabled:
+    type: boolean
+    description: Trạng thái sau khi toggle
+  previous_is_enabled:
+    type: boolean
+    description: Trạng thái trước khi toggle
+  changed:
+    type: boolean
+    description: true nếu có thay đổi thực sự; false nếu is_enabled đã đúng 
+      (no-op)
+  changed_at:
+    type: string
+    description: Thời điểm thay đổi (UTC). Null nếu changed=false.
+  changed_by:
+    type: string
+    description: Admin ID thực hiện. Null nếu changed=false.
+  reason:
+    type: string
+    description: Lý do (nếu có trong request)
