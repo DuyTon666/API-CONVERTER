@@ -1,8 +1,8 @@
 post:
   summary: Mở lại ticket đã đóng của khách hàng
   operationId: reopenUserTicket
-  description: API cho phép mở lại ticket đã đóng hoặc đã giải quyết của khách hàng. Ticket phải ở trạng thái đóng trước
-    khi thực hiện thao tác mở lại, và người dùng phải có quyền truy cập vào ticket tương ứng.
+  description: API cho phép mở lại ticket đã đóng hoặc đã giải quyết của khách hàng. Chỉ áp dụng cho các ticket ở trạng 
+    thái closed hoặc resolved, ticket phải thuộc về đúng user_id được chỉ định.
   tags:
   - Ticket
   security:
@@ -14,11 +14,13 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'user_id'.
   - name: id
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công
@@ -41,9 +43,13 @@ post:
     '400':
       $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
     '409':
-      $ref: ../../components/responses/Conflict.yaml
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
   requestBody:
     required: false
     content:

@@ -1,8 +1,5 @@
 type: object
 properties:
-  Thuộc tính:
-    type: string
-    description: Mô tả
   id:
     type: string
     description: Primary key nội bộ (UUID v4).
@@ -10,6 +7,7 @@ properties:
   provider_id:
     type: string
     description: FK tới providers.id — provider sở hữu sản phẩm này.
+    readOnly: true
   provider_product_code:
     type: string
     description: 'Mã sản phẩm tại provider (VD Daousign: "101", "212"). UNIQUE trong
@@ -88,3 +86,4 @@ properties:
   deleted_at:
     type: string
     description: Soft delete timestamp. Null = chưa xóa.
+description: Schema `GetProviderProductDetailData`.

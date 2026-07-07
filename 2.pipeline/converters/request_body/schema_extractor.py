@@ -38,7 +38,11 @@ def build_request_schema_result(text: str):
                 validation_output=None,
             )
 
-    table_source = field_desc_section or _strip_entity_description_tail(body_section)
+    table_source = (
+        _strip_entity_description_tail(body_section)
+        if body_section
+        else field_desc_section
+    )
     if not table_source:
         return None
 

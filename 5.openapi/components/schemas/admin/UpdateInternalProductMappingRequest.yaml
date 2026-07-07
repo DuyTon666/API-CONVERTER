@@ -7,9 +7,13 @@ properties:
   routing_weight:
     type: integer
     example: 3
+    description: Trường `routing_weight`.
   is_active:
     type: boolean
     example: true
+    description: Trường `is_active`.
   notes:
     type: string
     example: Tăng weight Daousign vì price tốt hơn
+    description: Trường `notes`.
+description: Schema `UpdateInternalProductMappingRequest`.

@@ -30,8 +30,8 @@
     "errors:apply": "python3 2.pipeline/run_api_import.py apply-errors",
     "errors:audit:global": "python3 2.pipeline/run_api_import.py audit-global-usage",
     "errors:build-map": "python3 2.pipeline/run_api_import.py build-operation-map",
-    "errors:enrich": "python3 2.pipeline/run_api_import.py enrich-openapi",
-    "enrich:openapi": "python3 2.pipeline/run_api_import.py enrich-openapi --module order",
+    "errors:enrich": "python3 2.pipeline/run_api_import.py enrich-errors",
+    "enrich:errors": "python3 2.pipeline/run_api_import.py enrich-errors",
 
     "gen:path-stubs": "python3 6.path_stub/generate_path_stubs.py",
     "merge:openapi": "python3 6.path_stub/generate_path_stubs.py --merge",

@@ -1,24 +1,29 @@
 type: object
+example:
+  key_type: RSA_2048
+  org_name: Công ty Cổ phần Ví dụ
+  country: VN
+  state: TP. Hồ Chí Minh
+  email: admin@example.com
 properties:
   key_type:
     type: string
-    description: RSA_2048 | RSA_4096 | ECDSA_P256 | ECDSA_P384. Xác định loại và
-      độ dài khoá.
-    default: RSA_2048
+    example: RSA_2048
+    description: Trường `key_type`.
   org_name:
     type: string
-    description: Tên tổ chức. Ghi vào trường O= của CSR. Tối đa 64 ký tự.
-    default: N/A
+    example: Công ty Cổ phần Ví dụ
+    description: Trường `org_name`.
   country:
     type: string
-    description: Mã quốc gia ISO 3166-1 alpha-2 (2 ký tự). Ghi vào trường C= của
-      CSR.
-    default: US
+    example: VN
+    description: Trường `country`.
   state:
     type: string
-    description: Tỉnh / thành phố. Ghi vào trường ST= của CSR. Tối đa 128 ký tự.
-    default: N/A
+    example: TP. Hồ Chí Minh
+    description: Trường `state`.
   email:
     type: string
-    description: Email liên hệ. Dùng cho form TheSSLStore. Phải đúng format RFC 
-      5322 nếu cung cấp.
+    example: admin@example.com
+    description: Địa chỉ email.
+description: Schema `GenerateCsrForOrderRequest`.

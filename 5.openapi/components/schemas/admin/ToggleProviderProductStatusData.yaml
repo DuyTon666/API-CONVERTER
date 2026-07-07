@@ -7,6 +7,7 @@ properties:
   provider_id:
     type: string
     description: FK providers.id
+    readOnly: true
   provider_code:
     type: string
     description: Mã provider (reference)
@@ -32,3 +33,4 @@ properties:
   reason:
     type: string
     description: Lý do (nếu có trong request)
+description: Schema `ToggleProviderProductStatusData`.

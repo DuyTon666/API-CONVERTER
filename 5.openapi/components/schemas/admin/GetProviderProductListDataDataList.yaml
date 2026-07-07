@@ -7,6 +7,7 @@ properties:
   provider_id:
     type: string
     description: FK tới providers.id
+    readOnly: true
   provider_product_code:
     type: string
     description: Mã sản phẩm tại provider
@@ -41,3 +42,4 @@ properties:
     type: string
     description: Lần cập nhật gần nhất
     readOnly: true
+description: Schema `GetProviderProductListDataDataList`.

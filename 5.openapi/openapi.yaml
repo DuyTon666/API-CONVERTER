@@ -4,18 +4,32 @@ info:
   version: 1.0.0
   license:
     name: API
+    url: https://pavietnam.vn/license
   description: API cho hệ thống ticket hỗ trợ khách hàng
   contact:
     name: PA Vietnam
+    url: https://pavietnam.vn
     email: dev@pavietnam.vn
 servers:
 - url: https://apigateway.pavietnam.vn
   description: Production
 tags:
+- name: Admin
+  description: Các API quản trị nội bộ (provider, internal product, mapping)
+- name: Csr
+  description: Các API liên quan đến CSR (Certificate Signing Request)
+- name: Department
+  description: Các API liên quan đến phòng ban
+- name: Order
+  description: Các API liên quan đến đơn hàng
+- name: Service
+  description: Các API liên quan đến dịch vụ
+- name: Statistic
+  description: Các API liên quan đến thống kê
 - name: Ticket
   description: Các API liên quan đến ticket hỗ trợ khách hàng
-- name: Account
-  description: Các API liên quan đến tài khoản
+- name: Topup
+  description: Các API liên quan đến nạp tiền/gia hạn dịch vụ
 security:
 - bearerAuth: []
 components:
@@ -46,7 +60,7 @@ paths:
   /v1/users/{user_id}/tickets/{id}/change-assignee:
     $ref: ./paths/ticket/change_ticket_assignee.yaml
   /v1/users/{user_id}/tickets/{id}:
-    $ref: ./paths/ticket/get_user_ticket_detail.yaml
+    $ref: ./paths/ticket/get_ticket_detail_for_user.yaml
   /v1/users/{user_id}/tickets/{id}/reopen:
     $ref: ./paths/ticket/reopen_user_ticket.yaml
   /v1/users/{user_id}/tickets/{id}/conversations:
@@ -72,7 +86,7 @@ paths:
     post:
       $ref: ./paths/order/create_order.yaml#/post
     get:
-      $ref: ./paths/order/list_orders.yaml#/get
+      $ref: ./paths/order/get_order_list.yaml#/get
   /v1/admin/internal-products:
     post:
       $ref: ./paths/admin/create_internal_product.yaml#/post
@@ -134,7 +148,7 @@ paths:
   /v1/orders/{id}/dcv/records:
     $ref: ./paths/order/get_order_dcv_records.yaml
   /v1/orders/{id}/dcv/resend-email:
-    $ref: ./paths/order/resend_dcv_email_for_order.yaml
+    $ref: ./paths/order/resend_dcv_verification_email.yaml
   /v1/orders/{id}/dcv/validate:
     $ref: ./paths/order/validate_order_dcv.yaml
   /v1/orders/{id}:

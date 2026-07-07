@@ -1,88 +1,132 @@
 type: object
+example:
+  years: 1
+  dcv_method: HTTP
+  contact_admin: &id001
+    email: admin@example.com
+    first_name: Nguyen
+    last_name: Van A
+    phone: '+84901234567'
+    title: Manager
+  contact_org: &id002
+    name: Example Co. Ltd
+    address: 123 Le Loi, Ha Noi
+    province: Ha Noi
+    country: VN
+    postal_code: '100000'
+    phone: '+84243456789'
+    business_number: '0123456789'
+    representative_name: Nguyen Van A
+    duns: '123456789'
+  contact_tech: &id003
+    email: tech@example.com
+    first_name: Tran
+    last_name: Thi B
+    phone: '+84901234568'
+    title: Developer
+  note: Gia hạn theo yêu cầu khách hàng
 properties:
   years:
     type: integer
-    description: Số năm gia hạn. Integer 1–3. Mặc định kế thừa từ order gốc.
+    example: 1
+    description: Trường `years`.
   dcv_method:
     type: string
-    description: EMAIL | HTTP | HTTPS | CNAME. Mặc định kế thừa từ order gốc.
+    example: HTTP
+    description: Trường `dcv_method`.
   contact_admin:
     type: object
-    description: Ghi đè contact_admin. Null = kế thừa từ order gốc. Mọi 
-      sub-field tùy chọn.
-    properties: {}
-  contact_admin.email:
-    type: string
-    description: Email admin (RFC 5322).
-  contact_admin.first_name:
-    type: string
-    description: Tên (≤ 100 ký tự).
-  contact_admin.last_name:
-    type: string
-    description: Họ (≤ 100 ký tự).
-  contact_admin.phone:
-    type: string
-    description: 'Điện thoại E.164 (VD: +84901234567).'
-  contact_admin.title:
-    type: string
-    description: Chức danh (≤ 50 ký tự).
+    example: *id001
+    properties:
+      email:
+        type: string
+        example: admin@example.com
+        description: Địa chỉ email.
+      first_name:
+        type: string
+        example: Nguyen
+        description: Trường `first_name`.
+      last_name:
+        type: string
+        example: Van A
+        description: Trường `last_name`.
+      phone:
+        type: string
+        example: '+84901234567'
+        description: Số điện thoại.
+      title:
+        type: string
+        example: Manager
+        description: Trường `title`.
+    description: Trường `contact_admin`.
   contact_org:
     type: object
-    description: 'Ghi đè contact_org. Null = kế thừa từ order gốc. Nếu cung cấp: name,
-      address, country bắt buộc.'
-    properties: {}
-  contact_org.name:
-    type: string
-    description: Tên tổ chức (≤ 200 ký tự). *Bắt buộc khi cung cấp contact_org.
-  contact_org.address:
-    type: string
-    description: Địa chỉ (≤ 500 ký tự). *Bắt buộc khi cung cấp contact_org.
-  contact_org.province:
-    type: string
-    description: Tỉnh/thành phố (≤ 100 ký tự).
-  contact_org.country:
-    type: string
-    description: 'Mã quốc gia ISO 3166-1 alpha-2 (VD: VN). *Bắt buộc khi cung cấp
-      contact_org.'
-  contact_org.postal_code:
-    type: string
-    description: Mã bưu chính (≤ 20 ký tự).
-  contact_org.phone:
-    type: string
-    description: Điện thoại E.164.
-  contact_org.business_number:
-    type: string
-    description: Mã số thuế / số đăng ký kinh doanh (≤ 50 ký tự).
-  contact_org.representative_name:
-    type: string
-    description: Tên người đại diện (≤ 150 ký tự).
-  contact_org.duns:
-    type: string
-    description: Mã DUNS (≤ 50 ký tự).
+    example: *id002
+    properties:
+      name:
+        type: string
+        example: Example Co. Ltd
+        description: Tên hiển thị.
+      address:
+        type: string
+        example: 123 Le Loi, Ha Noi
+        description: Trường `address`.
+      province:
+        type: string
+        example: Ha Noi
+        description: Trường `province`.
+      country:
+        type: string
+        example: VN
+        description: Trường `country`.
+      postal_code:
+        type: string
+        example: '100000'
+        description: Trường `postal_code`.
+      phone:
+        type: string
+        example: '+84243456789'
+        description: Số điện thoại.
+      business_number:
+        type: string
+        example: '0123456789'
+        description: Trường `business_number`.
+      representative_name:
+        type: string
+        example: Nguyen Van A
+        description: Trường `representative_name`.
+      duns:
+        type: string
+        example: '123456789'
+        description: Trường `duns`.
+    description: Trường `contact_org`.
   contact_tech:
     type: object
-    description: Ghi đè contact_tech. Null = kế thừa từ order gốc. Mọi sub-field
-      tùy chọn.
-    properties: {}
-  contact_tech.email:
-    type: string
-    description: Email kỹ thuật (RFC 5322).
-  contact_tech.first_name:
-    type: string
-    description: Tên (≤ 100 ký tự).
-  contact_tech.last_name:
-    type: string
-    description: Họ (≤ 100 ký tự).
-  contact_tech.phone:
-    type: string
-    description: Điện thoại E.164.
-  contact_tech.title:
-    type: string
-    description: Chức danh (≤ 50 ký tự).
+    example: *id003
+    properties:
+      email:
+        type: string
+        example: tech@example.com
+        description: Địa chỉ email.
+      first_name:
+        type: string
+        example: Tran
+        description: Trường `first_name`.
+      last_name:
+        type: string
+        example: Thi B
+        description: Trường `last_name`.
+      phone:
+        type: string
+        example: '+84901234568'
+        description: Số điện thoại.
+      title:
+        type: string
+        example: Developer
+        description: Trường `title`.
+    description: Trường `contact_tech`.
   note:
     type: string
-    description: Ghi chú nội bộ (≤ 1000 ký tự).
-required:
-  - contact_org.name
-  - contact_org.address
-  - contact_org.country
+    example: Gia hạn theo yêu cầu khách hàng
+    description: Trường `note`.
+description: Schema `RenewOrderRequest`.

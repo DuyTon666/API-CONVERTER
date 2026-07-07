@@ -2,16 +2,27 @@ type: object
 properties:
   id:
     type: string
+    description: Định danh của bản ghi.
     readOnly: true
   internal_product_id:
     type: string
+    description: Trường `internal_product_id`.
+    readOnly: true
   provider_product_id:
     type: string
+    description: Trường `provider_product_id`.
+    readOnly: true
   provider_id:
     type: string
+    description: Trường `provider_id`.
+    readOnly: true
   deleted_at:
     type: string
+    description: Thời điểm xóa bản ghi.
   deleted_by:
     type: string
+    description: Người xóa bản ghi.
   reason:
     type: string
+    description: Lý do thực hiện thao tác.
+description: Schema `DeleteInternalProductMappingData`.

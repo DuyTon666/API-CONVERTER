@@ -1,8 +1,8 @@
 post:
   summary: Đặt kế hoạch nạp tiền vào tài khoản
   operationId: orderPlanTopup
-  description: API cho phép người dùng đặt lệnh nạp tiền theo gói kế hoạch đã chọn vào tài khoản. Yêu cầu thông tin gói 
-    nạp hợp lệ và số dư tài khoản phải đáp ứng điều kiện tối thiểu trước khi thực hiện giao dịch.
+  description: API cho phép người dùng đặt kế hoạch nạp tiền vào tài khoản theo gói dịch vụ đã chọn. Yêu cầu thông tin 
+    gói nạp và phương thức thanh toán hợp lệ trước khi thực hiện giao dịch.
   tags:
   - Topup
   security:

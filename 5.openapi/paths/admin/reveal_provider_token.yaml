@@ -1,8 +1,8 @@
 post:
   summary: Tiết lộ token xác thực của nhà cung cấp
   operationId: revealProviderToken
-  description: API này cho phép quản trị viên xem token xác thực bí mật của một nhà cung cấp cụ thể dựa trên ID. Chỉ 
-    những người dùng có quyền admin mới được phép thực hiện thao tác này nhằm đảm bảo bảo mật hệ thống.
+  description: API này cho phép quản trị viên xem token bí mật của nhà cung cấp dịch vụ theo ID. Chỉ tài khoản có quyền 
+    admin mới được phép thực hiện thao tác này nhằm đảm bảo bảo mật hệ thống.
   tags:
   - Admin
   security:
@@ -14,6 +14,7 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công

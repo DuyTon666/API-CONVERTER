@@ -1,8 +1,8 @@
 patch:
   summary: Bật/tắt trạng thái sản phẩm của nhà cung cấp
   operationId: toggleProviderProductStatus
-  description: Thay đổi trạng thái kích hoạt hoặc vô hiệu hóa một sản phẩm cụ thể của nhà cung cấp trong hệ thống. Chỉ 
-    quản trị viên có quyền thực hiện thao tác này và sản phẩm phải thuộc đúng nhà cung cấp được chỉ định.
+  description: Thay đổi trạng thái kích hoạt hoặc vô hiệu hóa một sản phẩm thuộc nhà cung cấp cụ thể trong hệ thống quản
+    trị. Chỉ quản trị viên có quyền thực hiện thao tác này và sản phẩm phải thuộc đúng nhà cung cấp được chỉ định.
   tags:
   - Admin
   security:
@@ -14,11 +14,13 @@ patch:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'provider_code'.
   - name: id
     in: path
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công

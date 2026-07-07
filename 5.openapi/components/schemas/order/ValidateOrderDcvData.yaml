@@ -9,7 +9,7 @@ properties:
     description: 'Trạng thái raw từ provider. VD Daousign: "Awaiting Validation (Full)"
       | "Valid" | "Reject" | "Revoked".'
   all_validated:
-    type: string
+    type: boolean
     description: True nếu tất cả dcv_records đều VALIDATED.
   dcv_records:
     type: string
@@ -21,3 +21,4 @@ properties:
   dcv_records[].validated_at:
     type: string
     description: Thời điểm xác thực thành công. Null nếu chưa validated.
+description: Schema `ValidateOrderDcvData`.

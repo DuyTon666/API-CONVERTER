@@ -3,6 +3,7 @@ functions:
   - enum-has-description
   - private-must-have-401-403
   - has-request-body-must-have-400
+  - has-2xx-response
   - server-id-must-be-readonly
   - client-id-must-not-be-readonly
   - property-must-have-description
@@ -90,12 +91,11 @@ rules:
       function: truthy
 
   post-must-have-2xx:
-    message: "POST phải có ít nhất một response 2xx."
+    message: "{{error}}"
     severity: warn
     given: "$.paths[*].post"
     then:
-      field: responses.200
-      function: truthy
+      function: has-2xx-response
 
   info-must-have-contact:
     message: "API phải có thông tin contact."

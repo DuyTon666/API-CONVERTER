@@ -1,8 +1,8 @@
 patch:
   summary: Cập nhật ánh xạ sản phẩm nội bộ theo ID
   operationId: updateInternalProductMapping
-  description: Cập nhật thông tin ánh xạ của sản phẩm nội bộ dựa trên ID sản phẩm và ID ánh xạ tương ứng. Chỉ quản trị 
-    viên có quyền thực hiện thao tác này và dữ liệu ánh xạ phải hợp lệ trước khi cập nhật.
+  description: Cập nhật thông tin ánh xạ của một sản phẩm nội bộ dựa trên ID sản phẩm và ID ánh xạ tương ứng. Chỉ quản 
+    trị viên có quyền thực hiện thao tác này nhằm đảm bảo tính nhất quán trong hệ thống quản lý sản phẩm.
   tags:
   - Admin
   security:
@@ -14,11 +14,13 @@ patch:
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'id'.
   - name: mapping_id
     in: path
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'mapping_id'.
   responses:
     '200':
       description: Thành công

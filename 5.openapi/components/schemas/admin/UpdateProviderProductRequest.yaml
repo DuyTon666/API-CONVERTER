@@ -12,18 +12,24 @@ properties:
   product_name:
     type: string
     example: PositiveSSL DV Single Domain (Updated)
+    description: Trường `product_name`.
   wholesale_price_usd:
     type: number
     example: 9.0
+    description: Trường `wholesale_price_usd`.
   years_supported:
     type: array
     example: *id001
     items:
       type: integer
       example: 1
+    description: Trường `years_supported`.
   max_san:
     type: integer
     example: 150
+    description: Trường `max_san`.
   admin_note:
     type: string
     example: Tăng giá theo policy 2026-Q2
+    description: Trường `admin_note`.
+description: Schema `UpdateProviderProductRequest`.

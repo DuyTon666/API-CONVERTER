@@ -1,8 +1,8 @@
 get:
   summary: Lấy danh sách nhân viên hỗ trợ ticket
   operationId: getSupportStaffsByTicket
-  description: API trả về danh sách nhân viên hỗ trợ cho một ticket cụ thể của người dùng. Chỉ người dùng sở hữu ticket 
-    mới có quyền xem danh sách nhân viên hỗ trợ tương ứng.
+  description: API trả về danh sách nhân viên hỗ trợ cho một ticket cụ thể của người dùng. Chỉ ticket thuộc về user_id 
+    hợp lệ mới được phép truy xuất thông tin nhân viên hỗ trợ.
   tags:
   - Ticket
   security:
@@ -14,11 +14,13 @@ get:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'user_id'.
   - name: id
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công
@@ -44,7 +46,13 @@ get:
     '400':
       $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
   x-error-responses:
     '401':
     - code: '4102'

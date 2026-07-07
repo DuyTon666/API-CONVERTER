@@ -82,6 +82,34 @@ modules:
         an upgrade request for a service plan
       classified_by: claude
       classified_at: '2026-07-04'
+    - segment: list-request-upgrade-plans
+      confidence: 0.72
+      reason: The segment starts with 'list' which is a verb indicating a listing
+        operation, making it an action phrase rather than a pure resource noun. However,
+        'request-upgrade-plans' could be interpreted as a resource collection.
+      classified_by: claude
+      classified_at: '2026-07-06'
+    - segment: list-services
+      confidence: 0.85
+      reason: list-services is a verb phrase starting with 'list', indicating an operation
+        to retrieve/list services, rather than a noun resource like 'services'
+      classified_by: claude
+      classified_at: '2026-07-06'
+    - segment: list-types
+      confidence: 0.7
+      reason: list-types uses 'list' as a verb prefix indicating a listing operation,
+        making it an action rather than a pure resource noun; however it could also
+        be interpreted as a resource named 'list-types' representing types of lists
+      classified_by: claude
+      classified_at: '2026-07-06'
+    - segment: list-upgrade-plans
+      confidence: 0.82
+      reason: The segment 'list-upgrade-plans' starts with the verb 'list', making
+        it an action/verb phrase indicating a listing operation, combined with 'upgrade-plans'
+        as the target resource. The use of a verb prefix classifies it as an action
+        rather than a pure resource noun.
+      classified_by: claude
+      classified_at: '2026-07-06'
     resource_segments:
     - segment: types
       confidence: 0.97

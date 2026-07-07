@@ -5,3 +5,5 @@ properties:
   reason:
     type: string
     example: Hủy mapping vì provider không còn cung cấp product này
+    description: Lý do thực hiện thao tác.
+description: Schema `DeleteInternalProductMappingRequest`.

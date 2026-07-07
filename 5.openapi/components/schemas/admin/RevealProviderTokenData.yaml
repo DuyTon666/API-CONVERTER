@@ -3,6 +3,7 @@ properties:
   provider_id:
     type: string
     description: ID provider
+    readOnly: true
   code:
     type: string
     description: Mã provider (reference)
@@ -19,3 +20,4 @@ properties:
   revealed_by:
     type: string
     description: Admin ID thực hiện reveal
+description: Schema `RevealProviderTokenData`.

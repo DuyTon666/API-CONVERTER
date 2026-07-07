@@ -6,6 +6,9 @@ properties:
   is_enabled:
     type: boolean
     example: true
+    description: Trường `is_enabled`.
   reason:
     type: string
     example: Tạm ngưng do sự cố API Daousign
+    description: Lý do thực hiện thao tác.
+description: Schema `ToggleProviderStatusRequest`.

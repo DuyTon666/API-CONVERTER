@@ -1,21 +1,20 @@
 get:
   summary: Lấy thống kê tổng quan cho khách hàng
   operationId: getUserStatistics
-  description: API trả về dữ liệu thống kê tổng hợp hiển thị trên trang tổng 
-    quan của khách hàng, bao gồm các chỉ số hoạt động quan trọng. Chỉ người dùng
-    có quyền hợp lệ mới được phép truy cập thống kê của tài khoản tương ứng với 
-    user_id được cung cấp.
+  description: API trả về dữ liệu thống kê tổng quan cho trang dashboard của khách hàng, bao gồm các chỉ số kinh doanh 
+    quan trọng. Chỉ người dùng có quyền hợp lệ mới được phép truy cập thống kê của chính họ theo user_id tương ứng.
   tags:
-    - Statistic
+  - Statistic
   security:
-    - bearerAuth: []
+  - bearerAuth: []
   x-permission: CHECK_UPDATE
   parameters:
-    - name: user_id
-      in: path
-      required: true
-      schema:
-        type: string
+  - name: user_id
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'user_id'.
   responses:
     '200':
       description: Thành công
@@ -23,11 +22,11 @@ get:
         application/json:
           schema:
             allOf:
-              - $ref: "../../components/schemas/common/StandardSuccess.yaml"
-              - type: object
-                properties:
-                  data:
-                    $ref: "../../components/schemas/statistic/GetUserStatisticsData.yaml"
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/statistic/GetUserStatisticsData.yaml"
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':
@@ -44,3 +43,21 @@ get:
       $ref: "../../components/responses/Conflict.yaml"
     '429':
       $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  x-error-responses:
+    '401':
+    - code: '4102'
+      category: Auth
+      message: Token không hợp lệ / hết hạn
+    - code: '4108'
+      category: Auth
+      message: IP không được phép truy cập
+    '422':
+    - code: '4200'
+      category: Input validation
+      message: Dữ liệu request không hợp lệ
+    '404':
+    - code: '4004'
+      category: Not Found
+      message: Không tìm thấy dữ liệu

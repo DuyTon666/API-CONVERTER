@@ -6,6 +6,7 @@ properties:
   provider_id:
     type: string
     description: ID nội bộ của provider.
+    readOnly: true
   dry_run:
     type: boolean
     description: true nếu chạy preview; false nếu đã ghi DB.
@@ -42,3 +43,5 @@ properties:
   sync_log_id:
     type: string
     description: ID record trong provider_sync_logs. Null nếu dry_run=true.
+    readOnly: true
+description: Schema `SyncProviderProductsData`.

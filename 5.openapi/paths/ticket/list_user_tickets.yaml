@@ -1,8 +1,8 @@
 get:
-  summary: Lấy danh sách ticket của khách hàng
+  summary: Hiển thị danh sách ticket của khách hàng
   operationId: listUserTickets
-  description: API cho phép lấy danh sách tất cả ticket thuộc về một khách hàng cụ thể dựa trên user_id. Chỉ khách hàng 
-    sở hữu hoặc nhân viên có quyền mới được phép xem danh sách ticket này.
+  description: Lấy danh sách tất cả ticket thuộc về một khách hàng cụ thể dựa trên user_id. Chỉ khách hàng sở hữu tài 
+    khoản hoặc quản trị viên mới có quyền xem danh sách ticket này.
   tags:
   - Ticket
   security:
@@ -14,6 +14,7 @@ get:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'user_id'.
   - name: page
     in: query
     required: false
@@ -33,11 +34,6 @@ get:
     required: false
     schema:
       type: string
-      enum:
-      - CREATED
-      - IN_PROGRESS
-      - PENDING
-      - CLOSED
     description: 'Tìm kiếm theo trạng thái:CREATED: Mới tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng'
   - name: keyword
     in: query
@@ -64,18 +60,12 @@ get:
     required: false
     schema:
       type: string
-      enum:
-      - LAST_UPDATED_DESC
-      - CREATED_DATE_DESC
     description: 'Kiểu sắp xếp:LAST_UPDATED_DESC:Ngày cập nhật giảm dầnCREATED_DATE_DESC: Ngày tạo giảm dần'
   - name: post_by
     in: query
     required: false
     schema:
       type: string
-      enum:
-      - USER
-      - SYSTEM
     description: 'Người tạo ticketUSER: user hiện tại (khách hàng)SYSTEM: hệ thống'
   responses:
     '200':
@@ -100,7 +90,13 @@ get:
     '400':
       $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
   x-error-responses:
     '401':
     - code: '4102'

@@ -1,0 +1,20 @@
+enabled: true
+
+property_fallback_template: "Trường `{field_name}`."
+component_fallback_template: "Schema `{schema_name}`."
+
+common_fields:
+  id: "Mã id."
+  code: "Mã số."
+  name: "Tên."
+  description: "Mô tả chi tiết."
+  status: "Trạng thái."
+  reason: "Lý do."
+  email: "Địa chỉ email."
+  phone: "Số điện thoại."
+  created_at: "Ngày tạo."
+  updated_at: "Ngày cập nhật."
+  deleted_at: "Ngày xóa."
+  created_by: "Được tạo bởi."
+  updated_by: "Được cập nhật bởi."
+  deleted_by: "Bị xóa bởi."

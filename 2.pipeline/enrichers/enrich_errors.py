@@ -1,4 +1,4 @@
-# enrich_openapi.py
+# enrich_errors.py
 # Gắn x-error-responses vào OpenAPI YAML theo Hướng D:
 #   - x-error-responses nằm ở cấp operation (cùng cấp responses)
 #   - responses giữ $ref thuần, không wrap allOf
@@ -217,7 +217,7 @@ def enrich_yaml_file(yaml_path: str, operation_data: dict, code_lookup: dict, dr
     return True
 
 
-def cmd_enrich_openapi(module: str, file: str = None, folder: str = None,
+def cmd_enrich_errors(module: str, file: str = None, folder: str = None,
                        output: str = None, dry_run: bool = False) -> None:
     """
     Entry point từ run_api_import.py.
@@ -248,7 +248,7 @@ def cmd_enrich_openapi(module: str, file: str = None, folder: str = None,
         print(f" Không có operation nào trong map của module '{module}'.")
         return
 
-    print(f"[enrich-openapi] module={module}, {len(operations)} operation, dry_run={dry_run}")
+    print(f"[enrich-errors] module={module}, {len(operations)} operation, dry_run={dry_run}")
 
     success = 0
     skip = 0

@@ -1,8 +1,8 @@
 delete:
-  summary: Xóa mapping của sản phẩm nội bộ
+  summary: Xóa ánh xạ sản phẩm nội bộ theo ID
   operationId: deleteInternalProductMapping
-  description: Xóa liên kết mapping của một sản phẩm nội bộ theo ID mapping cụ thể. Chỉ quản trị viên có quyền thực hiện
-    thao tác này và mapping phải thuộc sản phẩm nội bộ tương ứng.
+  description: Xóa một ánh xạ cụ thể của sản phẩm nội bộ dựa trên ID sản phẩm và ID ánh xạ. Thao tác này không thể hoàn 
+    tác và chỉ được thực hiện bởi quản trị viên có quyền hạn phù hợp.
   tags:
   - Admin
   security:
@@ -14,11 +14,13 @@ delete:
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'id'.
   - name: mapping_id
     in: path
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'mapping_id'.
   responses:
     '200':
       description: Thành công

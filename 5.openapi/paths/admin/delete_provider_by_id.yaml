@@ -1,8 +1,8 @@
 delete:
   summary: Xóa nhà cung cấp theo ID
   operationId: deleteProviderById
-  description: Xóa thông tin một nhà cung cấp khỏi hệ thống dựa trên ID được chỉ định. Chỉ quản trị viên có quyền thực 
-    hiện thao tác này và nhà cung cấp không thể khôi phục sau khi đã xóa.
+  description: Xóa vĩnh viễn một nhà cung cấp khỏi hệ thống dựa trên ID được chỉ định. Chỉ quản trị viên mới có quyền 
+    thực hiện thao tác này và nhà cung cấp không thể khôi phục sau khi xóa.
   tags:
   - Admin
   security:
@@ -14,6 +14,7 @@ delete:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công

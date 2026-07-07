@@ -1,9 +1,9 @@
 get:
-  summary: Lấy danh sách các loại dịch vụ hỗ trợ
+  summary: Lấy danh sách loại dịch vụ hỗ trợ
   operationId: getServiceTypes
   description: API trả về danh sách tất cả các loại dịch vụ hiện có trong hệ thống support, giúp người dùng hoặc hệ 
-    thống client xác định đúng loại dịch vụ cần sử dụng. Chỉ các loại dịch vụ đang hoạt động và được kích hoạt mới được 
-    trả về trong kết quả.
+    thống client xác định đúng loại dịch vụ khi tạo yêu cầu hỗ trợ. Dữ liệu trả về chỉ bao gồm các loại dịch vụ đang 
+    hoạt động và được phép sử dụng trong hệ thống.
   tags:
   - Service
   security:
@@ -15,7 +15,6 @@ get:
     required: false
     schema:
       type: integer
-      default: 'null'
     description: Không truyền sẽ trả về tất cả loại dịch vụ
   responses:
     '200':
