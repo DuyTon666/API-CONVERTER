@@ -1,32 +1,32 @@
 get:
   summary: Lấy danh sách mapping của sản phẩm nội bộ
   operationId: listInternalProductMappings
-  description: Truy xuất danh sách các mapping liên kết với sản phẩm nội bộ theo ID chỉ định. API chỉ dành cho quản trị 
-    viên nội bộ và yêu cầu ID sản phẩm hợp lệ.
+  description: Lấy danh sách các mapping liên kết của một sản phẩm nội bộ theo 
+    ID. Chỉ dành cho quản trị viên, yêu cầu ID sản phẩm hợp lệ và tồn tại trong 
+    hệ thống.
   tags:
-  - Admin
+    - Admin
   security:
-  - bearerAuth: []
+    - bearerAuth: []
   x-permission: ''
   parameters:
-  - name: id
-    in: path
-    required: true
-    schema:
-      type: integer
-    description: Tham số đường dẫn 'id'.
-  - name: is_active
-    in: query
-    required: false
-    schema:
-      type: integer
-    description: 1=active, 0=inactive
-  - name: provider_code
-    in: query
-    required: false
-    schema:
-      type: string
-    description: Filter theo provider code
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    - name: is_active
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: 1=active, 0=inactive
+    - name: provider_code
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Filter theo provider code
   responses:
     '200':
       description: Thành công
@@ -34,49 +34,60 @@ get:
         application/json:
           schema:
             allOf:
-            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
-            - type: object
-              properties:
-                data:
-                  $ref: "../../components/schemas/admin/ListInternalProductMappingsData.yaml"
+              - $ref: '#/components/schemas/StandardSuccess'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ListInternalProductMappingsData'
+                  internal_product_id:
+                    type: string
+                    readOnly: true
+                  provider_product_id:
+                    type: string
+                    readOnly: true
+                  provider_id:
+                    type: string
+                    readOnly: true
     '401':
-      $ref: "../../components/responses/Unauthorized.yaml"
+      $ref: ../../components/responses/Unauthorized.yaml
     '403':
-      $ref: "../../components/responses/Forbidden.yaml"
+      $ref: ../../components/responses/Forbidden.yaml
     '404':
-      $ref: "../../components/responses/NotFound.yaml"
+      $ref: ../../components/responses/NotFound.yaml
     '500':
-      $ref: "../../components/responses/InternalError.yaml"
+      $ref: ../../components/responses/InternalError.yaml
     '400':
-      $ref: "../../components/responses/BadRequest.yaml"
+      $ref: ../../components/responses/BadRequest.yaml
     '422':
-      $ref: "../../components/responses/StandardError422.yaml"
+      $ref: ../../components/responses/StandardError422.yaml
     '409':
-      $ref: "../../components/responses/Conflict.yaml"
+      $ref: ../../components/responses/Conflict.yaml
     '429':
-      $ref: "../../components/responses/TooManyRequests.yaml"
+      $ref: ../../components/responses/TooManyRequests.yaml
     '502':
-      $ref: "../../components/responses/BadGateway.yaml"
+      $ref: ../../components/responses/BadGateway.yaml
   x-error-responses:
     '401':
-    - code: '4101'
-      category: Auth
-      message: Thiếu Authorization header
-    - code: '4102'
-      category: Auth
-      message: Bearer Token không hợp lệ / hết hạn
+      - code: '4101'
+        category: Auth
+        message: Thiếu Authorization header
+      - code: '4102'
+        category: Auth
+        message: Bearer Token không hợp lệ / hết hạn
     '403':
-    - code: '4103'
-      category: Auth
-      message: Client không có scope=admin
-    - code: '4108'
-      category: Auth
-      message: IP không được phép
+      - code: '4103'
+        category: Auth
+        message: Client không có scope=admin
+      - code: '4108'
+        category: Auth
+        message: IP không được phép
     '422':
-    - code: '4200'
-      category: Input
-      message: Dữ liệu request không hợp lệ (validate chung)
+      - code: '4200'
+        category: Input
+        message: Dữ liệu request không hợp lệ (validate chung)
     '404':
-    - code: '6004'
-      category: Not Found
-      message: Internal product không tồn tại (hoặc đã soft-deleted)
+      - code: '6004'
+        category: Not Found
+        message: Internal product không tồn tại (hoặc đã soft-deleted)
+  x-manual-edit-fields:
+    - responses[200].content.application/json.schema.allOf

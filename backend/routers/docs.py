@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Request
 from fastapi.responses import FileResponse, PlainTextResponse
 
-from services import ai_fix, bundle_content, docs_build, operations
+from services import ai_fix, bundle_content, docs_build, operations, schema_fields
 
 router = APIRouter()
 
@@ -75,3 +75,14 @@ def update_operations(updates: list = Body(...)):
 def ai_suggest_operation(payload: dict = Body(...)):
     """Gợi ý bằng Claude cho các field đang trống (summary/description/parameter & response description)."""
     return operations.ai_suggest_operation(payload)
+
+@router.get("/docs/schema-fields")
+def get_schema_fields():
+    """Trả danh sách các schema field theo từng operation (request/reponse data schema)
+    để hiển thị trong section 'Trường dữ liệu' của Form Editor."""
+    return schema_fields.list_operation_data_schemas()
+
+@router.patch("/docs/schema-fields")
+def update_schema_fields(updates: list = Body(...)):
+    """Cập nhật description của field bên trong components/schemas."""
+    return schema_fields.update_schema_fields(updates)

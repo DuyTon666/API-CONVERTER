@@ -61,6 +61,24 @@ def _enrich_redocly_with_line_col(
 def build_and_lint(project_root: Path, do_bundle: bool = True) -> dict:
     """Chạy bundle (tuỳ chọn) → lint Spectral/Redocly → build Swagger UI HTML."""
     if do_bundle:
+        path_stub_result = subprocess.run(
+            ["npm", "run", "gen:path-stubs"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+        )
+        if path_stub_result.returncode != 0:
+            raise http_error(500, ErrorCode.PATH_STUB_FAILED, path_stub_result.stderr)
+
+        merge_result = subprocess.run(
+            ["npm", "run", "merge:openapi"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+        )
+        if merge_result.returncode != 0:
+            raise http_error(500, ErrorCode.PATH_STUB_FAILED, merge_result.stderr)
+
         DIST_DIR.mkdir(parents=True, exist_ok=True)
         bundle_result = subprocess.run(
             ["npm", "run", "bundle:api"],
@@ -70,7 +88,6 @@ def build_and_lint(project_root: Path, do_bundle: bool = True) -> dict:
         )
         if bundle_result.returncode != 0:
             raise http_error(500, ErrorCode.PIPELINE_FAILED, bundle_result.stderr)
-
     spectral_result = subprocess.run(
         ["npm", "run", "--silent", "lint:spectral"],
         cwd=str(project_root),

@@ -1,0 +1,109 @@
+post:
+  summary: Đồng bộ sản phẩm từ nhà cung cấp
+  operationId: syncProviderProducts
+  description: Thực hiện đồng bộ danh sách sản phẩm từ nhà cung cấp (provider) vào hệ thống theo mã nhà cung cấp chỉ 
+    định. Chỉ quản trị viên mới có quyền thực hiện thao tác này và mỗi lần đồng bộ sẽ cập nhật toàn bộ thông tin sản 
+    phẩm hiện có.
+  tags:
+  - Admin
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: provider_code
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: dry_run
+    in: query
+    required: false
+    schema:
+      type: boolean
+    description: Mặc định false. true = preview danh sách sẽ INSERT mà KHÔNG INSERT/ghi audit/ghi sync_log.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/admin/SyncProviderProductsData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: false
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/admin/SyncProviderProductsRequest.yaml"
+  x-error-responses:
+    '409':
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
+    - code: '5413'
+      category: Concurrency
+      message: Đã có một tiến trình sync đang chạy cho provider này — chờ hoàn tất
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    - code: '4409'
+      category: Business
+      message: Provider không tồn tại hoặc đã bị tắt — không thể tạo/cập nhật sản phẩm cho provider này
+    - code: '5405'
+      category: Business
+      message: Provider đã soft-deleted, không thể thao tác
+    - code: '5410'
+      category: Business
+      message: Provider không hỗ trợ đồng bộ sản phẩm (không có API list-products)
+    - code: '5411'
+      category: Config
+      message: Field mapping config rỗng hoặc thiếu cho provider — cần admin cấu hình bảng 
+        provider_product_field_mappings trước
+    '404':
+    - code: '5004'
+      category: Not Found
+      message: Không tìm thấy provider với id được cho (hoặc đã soft-deleted)
+    '502':
+    - code: '5412'
+      category: Upstream
+      message: Provider API trả lỗi hoặc timeout khi đồng bộ

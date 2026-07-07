@@ -1,0 +1,7 @@
+type: object
+example:
+  reason: Sản phẩm ngừng bán — provider đã discontinue
+properties:
+  reason:
+    type: string
+    example: Sản phẩm ngừng bán — provider đã discontinue

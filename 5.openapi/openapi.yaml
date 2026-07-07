@@ -39,54 +39,6 @@ components:
       scheme: bearer
       bearerFormat: JWT
 paths:
-  /v1/departments:
-    $ref: ./paths/department/get_department_list.yaml
-  /v1/orders/{id}/certificates/{certId}/download:
-    $ref: ./paths/order/download_order_certificate.yaml
-  /v1/services/types:
-    $ref: ./paths/service/get_service_types.yaml
-  /v1/users/{user_id}/services:
-    $ref: ./paths/service/get_user_services.yaml
-  /v1/services/{service_id}/temporary-open:
-    $ref: ./paths/service/temporary_open_service.yaml
-  /v1/users/{user_id}/services/{id}/upgrade-plans:
-    $ref: ./paths/service/get_service_upgrade_plans.yaml
-  /v1/users/{user_id}/services/{id}/request-upgrade-plans:
-    $ref: ./paths/service/create_service_upgrade_plan_request.yaml
-  /v1/users/{user_id}/services/{id}/change-password:
-    $ref: ./paths/service/change_service_password.yaml
-  /v1/users/{user_id}/statistics:
-    $ref: ./paths/statistic/get_user_statistics.yaml
-  /v1/users/{user_id}/tickets/{id}/change-assignee:
-    $ref: ./paths/ticket/change_ticket_assignee.yaml
-  /v1/users/{user_id}/tickets/{id}:
-    $ref: ./paths/ticket/get_ticket_detail_for_user.yaml
-  /v1/users/{user_id}/tickets/{id}/reopen:
-    $ref: ./paths/ticket/reopen_user_ticket.yaml
-  /v1/users/{user_id}/tickets/{id}/conversations:
-    $ref: ./paths/ticket/create_ticket_conversation.yaml
-  /v1/users/{user_id}/tickets/{id}/feedback:
-    $ref: ./paths/ticket/submit_ticket_feedback.yaml
-  /v1/users/{user_id}/tickets:
-    post:
-      $ref: ./paths/ticket/create_user_ticket.yaml#/post
-    get:
-      $ref: ./paths/ticket/list_user_tickets.yaml#/get
-  /v1/users/{user_id}/tickets/{id}/close:
-    $ref: ./paths/ticket/close_user_ticket.yaml
-  /v1/users/{user_id}/tickets/{ticket_id}/ratings:
-    $ref: ./paths/ticket/create_ticket_rating.yaml
-  /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
-    $ref: ./paths/ticket/update_ticket_feedback.yaml
-  /v1/users/{user_id}/tickets/{id}/support-staffs:
-    $ref: ./paths/ticket/get_support_staffs_by_ticket.yaml
-  /v1/csr/generate:
-    $ref: ./paths/csr/generate_csr_request.yaml
-  /v1/orders:
-    post:
-      $ref: ./paths/order/create_order.yaml#/post
-    get:
-      $ref: ./paths/order/get_order_list.yaml#/get
   /v1/admin/internal-products:
     post:
       $ref: ./paths/admin/create_internal_product.yaml#/post
@@ -143,12 +95,23 @@ paths:
     $ref: ./paths/admin/reveal_provider_token.yaml
   /v1/admin/providers/{id}/status:
     $ref: ./paths/admin/toggle_provider_status.yaml
+  /v1/csr/generate:
+    $ref: ./paths/csr/generate_csr_request.yaml
+  /v1/departments:
+    $ref: ./paths/department/get_department_list.yaml
+  /v1/orders/{id}/certificates/{certId}/download:
+    $ref: ./paths/order/download_order_certificate.yaml
+  /v1/orders:
+    post:
+      $ref: ./paths/order/create_order.yaml#/post
+    get:
+      $ref: ./paths/order/get_order_list.yaml#/get
   /v1/orders/{id}/dcv/change:
     $ref: ./paths/order/change_order_dcv_method.yaml
   /v1/orders/{id}/dcv/records:
     $ref: ./paths/order/get_order_dcv_records.yaml
   /v1/orders/{id}/dcv/resend-email:
-    $ref: ./paths/order/resend_dcv_verification_email.yaml
+    $ref: ./paths/order/resend_dcv_email.yaml
   /v1/orders/{id}/dcv/validate:
     $ref: ./paths/order/validate_order_dcv.yaml
   /v1/orders/{id}:
@@ -165,5 +128,42 @@ paths:
     $ref: ./paths/order/submit_csr_for_order.yaml
   /v1/orders/{id}/sync-status:
     $ref: ./paths/order/sync_order_status.yaml
+  /v1/services/types:
+    $ref: ./paths/service/get_service_types.yaml
+  /v1/users/{user_id}/services:
+    $ref: ./paths/service/get_user_services.yaml
+  /v1/services/{service_id}/temporary-open:
+    $ref: ./paths/service/temporary_open_service.yaml
+  /v1/users/{user_id}/services/{id}/upgrade-plans:
+    $ref: ./paths/service/get_service_upgrade_plans.yaml
+  /v1/users/{user_id}/services/{id}/request-upgrade-plans:
+    $ref: ./paths/service/create_service_upgrade_plan_request.yaml
+  /v1/users/{user_id}/services/{id}/change-password:
+    $ref: ./paths/service/change_service_password.yaml
+  /v1/users/{user_id}/statistics:
+    $ref: ./paths/statistic/get_user_statistics.yaml
+  /v1/users/{user_id}/tickets/{id}/change-assignee:
+    $ref: ./paths/ticket/change_ticket_assignee.yaml
+  /v1/users/{user_id}/tickets/{id}:
+    $ref: ./paths/ticket/get_ticket_detail.yaml
+  /v1/users/{user_id}/tickets/{id}/reopen:
+    $ref: ./paths/ticket/reopen_user_ticket.yaml
+  /v1/users/{user_id}/tickets/{id}/conversations:
+    $ref: ./paths/ticket/create_ticket_conversation.yaml
+  /v1/users/{user_id}/tickets/{id}/feedback:
+    $ref: ./paths/ticket/submit_ticket_feedback.yaml
+  /v1/users/{user_id}/tickets:
+    post:
+      $ref: ./paths/ticket/create_user_ticket.yaml#/post
+    get:
+      $ref: ./paths/ticket/list_user_tickets.yaml#/get
+  /v1/users/{user_id}/tickets/{id}/close:
+    $ref: ./paths/ticket/close_user_ticket.yaml
+  /v1/users/{user_id}/tickets/{ticket_id}/ratings:
+    $ref: ./paths/ticket/create_ticket_rating.yaml
+  /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
+    $ref: ./paths/ticket/update_ticket_feedback.yaml
+  /v1/users/{user_id}/tickets/{id}/support-staffs:
+    $ref: ./paths/ticket/get_support_staffs_by_ticket.yaml
   /v1/topup:
     $ref: ./paths/topup/order_plan_topup.yaml

@@ -1,0 +1,15 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Id của đánh giá
+  review_service:
+    type: integer
+    description: Số sao cho chất lượng dịch vụNhỏ nhất 1Lớn nhất 5
+  review_employee:
+    type: integer
+    description: Số sao cho chất lượng phục vụNhỏ nhất 1Lớn nhất 5
+required:
+  - id
+  - review_service
+  - review_employee

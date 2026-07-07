@@ -1,26 +1,25 @@
 get:
   summary: Lấy chi tiết sản phẩm của nhà cung cấp
   operationId: getProviderProductDetail
-  description: Lấy thông tin chi tiết của một sản phẩm cụ thể thuộc nhà cung cấp dựa trên mã nhà cung cấp và ID sản 
-    phẩm. Chỉ quản trị viên có quyền truy cập thông tin này để phục vụ mục đích quản lý và kiểm soát danh mục sản phẩm.
+  description: Truy xuất thông tin chi tiết của một sản phẩm cụ thể thuộc nhà 
+    cung cấp dựa trên mã nhà cung cấp và ID sản phẩm. Chỉ quản trị viên có quyền
+    truy cập mới được phép thực hiện thao tác này.
   tags:
-  - Admin
+    - Admin
   security:
-  - bearerAuth: []
+    - bearerAuth: []
   x-permission: ''
   parameters:
-  - name: provider_code
-    in: path
-    required: true
-    schema:
-      type: string
-    description: Tham số đường dẫn 'provider_code'.
-  - name: id
-    in: path
-    required: true
-    schema:
-      type: integer
-    description: Tham số đường dẫn 'id'.
+    - name: provider_code
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
   responses:
     '200':
       description: Thành công
@@ -28,52 +27,57 @@ get:
         application/json:
           schema:
             allOf:
-            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
-            - type: object
-              properties:
-                data:
-                  $ref: "../../components/schemas/admin/GetProviderProductDetailData.yaml"
+              - $ref: '#/components/schemas/StandardSuccess'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/GetProviderProductDetailData'
+                  provider_id:
+                    type: string
+                    readOnly: true
     '401':
-      $ref: "../../components/responses/Unauthorized.yaml"
+      $ref: ../../components/responses/Unauthorized.yaml
     '403':
-      $ref: "../../components/responses/Forbidden.yaml"
+      $ref: ../../components/responses/Forbidden.yaml
     '404':
-      $ref: "../../components/responses/NotFound.yaml"
+      $ref: ../../components/responses/NotFound.yaml
     '500':
-      $ref: "../../components/responses/InternalError.yaml"
+      $ref: ../../components/responses/InternalError.yaml
     '400':
-      $ref: "../../components/responses/BadRequest.yaml"
+      $ref: ../../components/responses/BadRequest.yaml
     '422':
-      $ref: "../../components/responses/StandardError422.yaml"
+      $ref: ../../components/responses/StandardError422.yaml
     '409':
-      $ref: "../../components/responses/Conflict.yaml"
+      $ref: ../../components/responses/Conflict.yaml
     '429':
-      $ref: "../../components/responses/TooManyRequests.yaml"
+      $ref: ../../components/responses/TooManyRequests.yaml
     '502':
-      $ref: "../../components/responses/BadGateway.yaml"
+      $ref: ../../components/responses/BadGateway.yaml
   x-error-responses:
     '401':
-    - code: '4101'
-      category: Auth
-      message: Thiếu Authorization header
-    - code: '4102'
-      category: Auth
-      message: Bearer Token không hợp lệ / hết hạn
+      - code: '4101'
+        category: Auth
+        message: Thiếu Authorization header
+      - code: '4102'
+        category: Auth
+        message: Bearer Token không hợp lệ / hết hạn
     '403':
-    - code: '4103'
-      category: Auth
-      message: Client không có scope=admin
-    - code: '4108'
-      category: Auth
-      message: IP không được phép
+      - code: '4103'
+        category: Auth
+        message: Client không có scope=admin
+      - code: '4108'
+        category: Auth
+        message: IP không được phép
     '422':
-    - code: '4200'
-      category: Input
-      message: Dữ liệu request không hợp lệ (validate chung)
-    - code: '4409'
-      category: Business
-      message: Provider không tồn tại hoặc đã bị tắt
+      - code: '4200'
+        category: Input
+        message: Dữ liệu request không hợp lệ (validate chung)
+      - code: '4409'
+        category: Business
+        message: Provider không tồn tại hoặc đã bị tắt
     '404':
-    - code: '4004'
-      category: Not Found
-      message: Không tìm thấy sản phẩm với id được cho (hoặc đã soft-deleted)
+      - code: '4004'
+        category: Not Found
+        message: Không tìm thấy sản phẩm với id được cho (hoặc đã soft-deleted)
+  x-manual-edit-fields:
+    - responses[200].content.application/json.schema.allOf

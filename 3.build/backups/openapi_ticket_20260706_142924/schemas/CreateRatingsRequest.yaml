@@ -1,0 +1,33 @@
+type: object
+properties:
+  ratings:
+    type: array
+    items:
+      type: object
+      properties:
+        supporter_id:
+          type: integer
+          description: ID nhân viên hỗ trợ
+        stars:
+          type: integer
+          description: Số sao
+        descriptions:
+          type: string
+          description: Nội dung đánh giá
+      required:
+        - supporter_id
+        - stars
+    description: Danh sách các đánh giá
+  supporter_id:
+    type: integer
+    description: ID nhân viên hỗ trợ
+  stars:
+    type: integer
+    description: Số sao
+  descriptions:
+    type: string
+    description: Nội dung đánh giá
+required:
+  - ratings
+  - supporter_id
+  - stars

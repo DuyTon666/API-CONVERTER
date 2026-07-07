@@ -1,0 +1,11 @@
+type: object
+example:
+  is_enabled: true
+  reason: Tạm ngưng do sự cố API Daousign
+properties:
+  is_enabled:
+    type: boolean
+    example: true
+  reason:
+    type: string
+    example: Tạm ngưng do sự cố API Daousign

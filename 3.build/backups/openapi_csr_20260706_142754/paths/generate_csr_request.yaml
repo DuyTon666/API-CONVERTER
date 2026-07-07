@@ -1,0 +1,46 @@
+post:
+  summary: Tạo yêu cầu ký chứng chỉ CSR
+  operationId: generateCsrRequest
+  description: Tạo một yêu cầu ký chứng chỉ (Certificate Signing Request) mới 
+    dựa trên thông tin được cung cấp. Yêu cầu phải bao gồm đầy đủ thông tin định
+    danh hợp lệ và tuân thủ các tiêu chuẩn mã hóa được quy định.
+  tags:
+    - Csr
+  security:
+    - bearerAuth: []
+  x-permission: ''
+  parameters: []
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/csr/GenerateCsrRequestData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/csr/GenerateCsrRequest.yaml"

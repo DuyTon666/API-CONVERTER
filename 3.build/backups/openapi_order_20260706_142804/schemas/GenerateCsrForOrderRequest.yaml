@@ -1,0 +1,24 @@
+type: object
+properties:
+  key_type:
+    type: string
+    description: RSA_2048 | RSA_4096 | ECDSA_P256 | ECDSA_P384. Xác định loại và
+      độ dài khoá.
+    default: RSA_2048
+  org_name:
+    type: string
+    description: Tên tổ chức. Ghi vào trường O= của CSR. Tối đa 64 ký tự.
+    default: N/A
+  country:
+    type: string
+    description: Mã quốc gia ISO 3166-1 alpha-2 (2 ký tự). Ghi vào trường C= của
+      CSR.
+    default: US
+  state:
+    type: string
+    description: Tỉnh / thành phố. Ghi vào trường ST= của CSR. Tối đa 128 ký tự.
+    default: N/A
+  email:
+    type: string
+    description: Email liên hệ. Dùng cho form TheSSLStore. Phải đúng format RFC 
+      5322 nếu cung cấp.

@@ -1,0 +1,41 @@
+type: object
+properties:
+  id:
+    type: string
+    readOnly: true
+  code:
+    type: string
+  name:
+    type: string
+  name_en:
+    type: string
+  product_type:
+    type: string
+  cert_type:
+    type: string
+  description:
+    type: string
+  retail_price_vnd:
+    type: integer
+  is_enabled:
+    type: boolean
+  display_order:
+    type: integer
+  created_at:
+    type: string
+    readOnly: true
+  updated_at:
+    type: string
+    readOnly: true
+  created_by:
+    type: string
+  updated_by:
+    type: string
+  deleted_at:
+    type:
+      - string
+      - 'null'
+  mappings_summary:
+    type: array
+    items:
+      type: object

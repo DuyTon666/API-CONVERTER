@@ -1,0 +1,7 @@
+type: object
+example:
+  reason: Sản phẩm ngừng bán — thay bằng SKU mới
+properties:
+  reason:
+    type: string
+    example: Sản phẩm ngừng bán — thay bằng SKU mới

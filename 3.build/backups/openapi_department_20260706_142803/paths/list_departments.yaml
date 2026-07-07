@@ -1,0 +1,62 @@
+get:
+  summary: API Contract - API lấy list phòng ban gửi ticket
+  operationId: listDepartments
+  description: ''
+  tags:
+    - Department
+  security:
+    - bearerAuth: []
+  x-permission: ''
+  parameters:
+    - name: support_company
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Các giá trị hợp lệ:'
+    - name: id
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: Id phòng ban
+    - name: title
+      in: query
+      required: false
+      schema:
+        type: string
+        default: Tiêu đề
+    - name: name
+      in: query
+      required: false
+      schema:
+        type: string
+        default: Tên phòng ban
+    - name: comment
+      in: query
+      required: false
+      schema:
+        type: string
+        default: Mô tả/ ghi chú của phòng ban
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/department/ListDepartmentsData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"

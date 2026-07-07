@@ -1,0 +1,133 @@
+post:
+  summary: Gia hạn đơn hàng theo ID được chỉ định
+  operationId: renewOrder
+  description: Gia hạn đơn hàng hiện có dựa trên ID được cung cấp, cho phép kéo dài thời hạn sử dụng hoặc dịch vụ liên 
+    quan đến đơn hàng đó. Đơn hàng phải ở trạng thái hợp lệ và chưa hết hạn quá thời gian cho phép gia hạn.
+  tags:
+  - Order
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+  responses:
+    '201':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/order/RenewOrderData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/order/RenewOrderRequest.yaml"
+  x-error-responses:
+    '409':
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4100'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    - code: '4107'
+      category: State
+      message: 'Trạng thái đơn hàng không cho phép gia hạn. data: {current_status}'
+    - code: '4100'
+      category: Business
+      message: 'Chứng chỉ chưa đến thời điểm gia hạn. data: {days_left, renewal_early_days}'
+    - code: '4109'
+      category: Business
+      message: 'Đã có đơn gia hạn đang xử lý. data: {renewal_order_id, renewal_order_number}'
+    - code: '4110'
+      category: Routing
+      message: 'Thiếu provider mapping cho gia hạn (order còn hạn). data: null'
+    - code: '4111'
+      category: Data
+      message: 'Đơn hàng thiếu subscription_end_date. data: null'
+    - code: '4112'
+      category: Routing
+      message: 'Không có provider khả dụng (order EXPIRED). data: {internal_product_id, years}'
+    - code: '4113'
+      category: Format
+      message: 'years không hợp lệ (phải là integer 1–3). data: errors'
+    - code: '4114'
+      category: Format
+      message: 'dcv_method không hợp lệ (EMAIL | HTTP | HTTPS | CNAME). data: errors'
+    - code: '4241'
+      category: Contact
+      message: contact_admin.email không đúng định dạng RFC 5322
+    - code: '4242'
+      category: Contact
+      message: contact_admin.phone không đúng định dạng E.164
+    - code: '4251'
+      category: Contact
+      message: contact_org.name bắt buộc khi cung cấp contact_org
+    - code: '4252'
+      category: Contact
+      message: contact_org.address bắt buộc khi cung cấp contact_org
+    - code: '4253'
+      category: Contact
+      message: contact_org.country bắt buộc khi cung cấp contact_org
+    - code: '4254'
+      category: Contact
+      message: contact_org.country không đúng định dạng ISO 3166-1 alpha-2
+    - code: '4255'
+      category: Contact
+      message: contact_org.phone không đúng định dạng E.164
+    - code: '4261'
+      category: Contact
+      message: contact_tech.email không đúng định dạng RFC 5322
+    - code: '4262'
+      category: Contact
+      message: contact_tech.phone không đúng định dạng E.164
+    '404':
+    - code: '4001'
+      category: Not Found
+      message: Order gốc không tồn tại

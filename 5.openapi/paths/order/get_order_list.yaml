@@ -1,82 +1,73 @@
 get:
   summary: Lấy danh sách đơn hàng của hệ thống
   operationId: getOrderList
-  description: Truy xuất danh sách tất cả đơn hàng trong hệ thống theo các tiêu chí lọc được chỉ định. API này chỉ trả 
-    về các đơn hàng mà người dùng hiện tại có quyền truy cập, đảm bảo tính bảo mật và phân quyền dữ liệu.
+  description: API trả về danh sách tất cả đơn hàng trong hệ thống, hỗ trợ lọc 
+    theo trạng thái, ngày tạo và khách hàng. Chỉ người dùng có quyền truy cập 
+    mới có thể xem thông tin đơn hàng, đảm bảo tính bảo mật và phân quyền trong 
+    nghiệp vụ quản lý bán hàng.
   tags:
-  - Order
+    - Order
   security:
-  - bearerAuth: []
+    - bearerAuth: []
   x-permission: ''
   parameters:
-  - name: customer_id
-    in: query
-    required: false
-    schema:
-      type: string
-    description: Tham số truy vấn 'customer_id'.
-  - name: status
-    in: query
-    required: false
-    schema:
-      type: string
-    description: Tham số truy vấn 'status'.
-  - name: product_type
-    in: query
-    required: false
-    schema:
-      type: string
-    description: Tham số truy vấn 'product_type'.
-  - name: cert_type
-    in: query
-    required: false
-    schema:
-      type: string
-    description: Tham số truy vấn 'cert_type'.
-  - name: domain
-    in: query
-    required: false
-    schema:
-      type: string
-    description: Tham số truy vấn 'domain'.
-  - name: date_from
-    in: query
-    required: false
-    schema:
-      type: string
-      format: date-time
-    description: Tham số truy vấn 'date_from'.
-  - name: date_to
-    in: query
-    required: false
-    schema:
-      type: string
-      format: date-time
-    description: Tham số truy vấn 'date_to'.
-  - name: page
-    in: query
-    required: false
-    schema:
-      type: integer
-    description: Tham số truy vấn 'page'.
-  - name: per_page
-    in: query
-    required: false
-    schema:
-      type: integer
-    description: Tham số truy vấn 'per_page'.
-  - name: sort_by
-    in: query
-    required: false
-    schema:
-      type: string
-    description: Tham số truy vấn 'sort_by'.
-  - name: sort_dir
-    in: query
-    required: false
-    schema:
-      type: string
-    description: Tham số truy vấn 'sort_dir'.
+    - name: customer_id
+      in: query
+      required: false
+      schema:
+        type: string
+    - name: status
+      in: query
+      required: false
+      schema:
+        type: string
+    - name: product_type
+      in: query
+      required: false
+      schema:
+        type: string
+    - name: cert_type
+      in: query
+      required: false
+      schema:
+        type: string
+    - name: domain
+      in: query
+      required: false
+      schema:
+        type: string
+    - name: date_from
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+    - name: date_to
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+    - name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+    - name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+    - name: sort_by
+      in: query
+      required: false
+      schema:
+        type: string
+    - name: sort_dir
+      in: query
+      required: false
+      schema:
+        type: string
   responses:
     '200':
       description: Thành công
@@ -84,74 +75,31 @@ get:
         application/json:
           schema:
             allOf:
-            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
-            - type: object
-              properties:
-                data:
-                  $ref: "../../components/schemas/order/GetOrderListData.yaml"
+              - $ref: '#/components/schemas/StandardSuccess'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/GetOrderListData'
+                  customer_id:
+                    type: string
+                    readOnly: true
     '401':
-      $ref: "../../components/responses/Unauthorized.yaml"
+      $ref: ../../components/responses/Unauthorized.yaml
     '403':
-      $ref: "../../components/responses/Forbidden.yaml"
+      $ref: ../../components/responses/Forbidden.yaml
     '404':
-      $ref: "../../components/responses/NotFound.yaml"
+      $ref: ../../components/responses/NotFound.yaml
     '500':
-      $ref: "../../components/responses/InternalError.yaml"
+      $ref: ../../components/responses/InternalError.yaml
     '400':
-      $ref: "../../components/responses/BadRequest.yaml"
+      $ref: ../../components/responses/BadRequest.yaml
     '422':
-      $ref: "../../components/responses/StandardError422.yaml"
+      $ref: ../../components/responses/StandardError422.yaml
     '409':
-      $ref: "../../components/responses/Conflict.yaml"
+      $ref: ../../components/responses/Conflict.yaml
     '429':
-      $ref: "../../components/responses/TooManyRequests.yaml"
+      $ref: ../../components/responses/TooManyRequests.yaml
     '502':
-      $ref: "../../components/responses/BadGateway.yaml"
-  x-error-responses:
-    '409':
-    - code: '4090'
-      category: Idempotency
-      message: Idempotency-Key đang xử lý (concurrent)
-    - code: '4091'
-      category: Idempotency
-      message: Double submit — payload trùng trong dedup window
-    '401':
-    - code: '4101'
-      category: Auth
-      message: Thiếu Authorization header
-    - code: '4102'
-      category: Auth
-      message: Bearer Token không hợp lệ / hết hạn
-    '403':
-    - code: '4103'
-      category: Auth
-      message: Client không có scope=admin
-    - code: '4108'
-      category: Auth
-      message: IP không được phép
-    '422':
-    - code: '4200'
-      category: Input
-      message: Dữ liệu request không hợp lệ (validate chung)
-    '400':
-    - code: '4211'
-      category: Format
-      message: status không thuộc tập giá trị hợp lệ
-    - code: '4212'
-      category: Format
-      message: product_type không thuộc tập giá trị hợp lệ (DV/OV/EV)
-    - code: '4213'
-      category: Format
-      message: cert_type không thuộc tập giá trị hợp lệ
-    - code: '4214'
-      category: Format
-      message: date_from hoặc date_to không đúng định dạng YYYY-MM-DD
-    - code: '4215'
-      category: Business
-      message: date_to nhỏ hơn date_from
-    - code: '4216'
-      category: Format
-      message: page < 1 hoặc per_page ngoài [1, 100]
-    - code: '4217'
-      category: Format
-      message: sort_by hoặc sort_dir không hợp lệ
+      $ref: ../../components/responses/BadGateway.yaml
+  x-manual-edit-fields:
+    - responses[200].content.application/json.schema.allOf

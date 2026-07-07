@@ -1,88 +1,91 @@
 get:
   summary: Tải xuống chứng chỉ của đơn hàng
   operationId: downloadOrderCertificate
-  description: Tải xuống tệp chứng chỉ theo mã đơn hàng và mã chứng chỉ tương ứng. Yêu cầu đơn hàng phải tồn tại và 
-    chứng chỉ phải được cấp phát hợp lệ trước khi thực hiện tải xuống.
+  description: Tải xuống tệp chứng chỉ thuộc về một đơn hàng cụ thể dựa trên mã 
+    đơn hàng và mã chứng chỉ. Yêu cầu đơn hàng phải tồn tại và chứng chỉ phải 
+    thuộc về đơn hàng đó mới được phép tải xuống.
   tags:
-  - Order
+    - Order
   security:
-  - bearerAuth: []
+    - bearerAuth: []
   x-permission: ''
   parameters:
-  - name: id
-    in: path
-    required: true
-    schema:
-      type: string
-    description: Tham số đường dẫn 'id'.
-  - name: certId
-    in: path
-    required: true
-    schema:
-      type: string
-    description: Tham số đường dẫn 'certId'.
-  - name: format
-    in: query
-    required: false
-    schema:
-      type: string
-      enum:
-      - zip
-      - json
-      description: zip (mặc định) — trả file ZIP bundle. json — trả JSON với PEM strings.
-    description: zip (mặc định) — trả file ZIP bundle. json — trả JSON với PEM strings.
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: certId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: format
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - zip
+          - json
+        description: 'Định dạng file tải về: zip — trả file ZIP bundle; json — trả
+          JSON với PEM strings.'
+      description: zip (mặc định) — trả file ZIP bundle. json — trả JSON với PEM
+        strings.
   responses:
     '200':
       description: Thành công
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            $ref: ../../components/schemas/common/StandardSuccess.yaml
           example:
             success: true
             data:
             error:
     '401':
-      $ref: "../../components/responses/Unauthorized.yaml"
+      $ref: ../../components/responses/Unauthorized.yaml
     '403':
-      $ref: "../../components/responses/Forbidden.yaml"
+      $ref: ../../components/responses/Forbidden.yaml
     '404':
-      $ref: "../../components/responses/NotFound.yaml"
+      $ref: ../../components/responses/NotFound.yaml
     '500':
-      $ref: "../../components/responses/InternalError.yaml"
+      $ref: ../../components/responses/InternalError.yaml
     '400':
-      $ref: "../../components/responses/BadRequest.yaml"
+      $ref: ../../components/responses/BadRequest.yaml
     '422':
-      $ref: "../../components/responses/StandardError422.yaml"
+      $ref: ../../components/responses/StandardError422.yaml
     '409':
-      $ref: "../../components/responses/Conflict.yaml"
+      $ref: ../../components/responses/Conflict.yaml
     '429':
-      $ref: "../../components/responses/TooManyRequests.yaml"
+      $ref: ../../components/responses/TooManyRequests.yaml
     '502':
-      $ref: "../../components/responses/BadGateway.yaml"
+      $ref: ../../components/responses/BadGateway.yaml
   x-error-responses:
     '401':
-    - code: '4101'
-      category: Auth
-      message: Thiếu Authorization header
-    - code: '4102'
-      category: Auth
-      message: Bearer Token không hợp lệ / hết hạn
+      - code: '4101'
+        category: Auth
+        message: Thiếu Authorization header
+      - code: '4102'
+        category: Auth
+        message: Bearer Token không hợp lệ / hết hạn
     '403':
-    - code: '4108'
-      category: Auth
-      message: IP không được phép
-    - code: '4103'
-      category: Auth
-      message: Không có quyền
+      - code: '4108'
+        category: Auth
+        message: IP không được phép
+      - code: '4103'
+        category: Auth
+        message: Không có quyền
     '404':
-    - code: '4001'
-      category: Not Found
-      message: Order hoặc Certificate không tồn tại
+      - code: '4001'
+        category: Not Found
+        message: Order hoặc Certificate không tồn tại
     '422':
-    - code: '4310'
-      category: State
-      message: Certificate không ở trạng thái ISSUED — không thể download
-    - code: '4302'
-      category: State
-      message: Certificate PEM chưa có — cert được cấp chưa hoàn chỉnh
+      - code: '4310'
+        category: State
+        message: Certificate không ở trạng thái ISSUED — không thể download
+      - code: '4302'
+        category: State
+        message: Certificate PEM chưa có — cert được cấp chưa hoàn chỉnh
+  x-manual-edit-fields:
+    - parameters[name=format].schema.description

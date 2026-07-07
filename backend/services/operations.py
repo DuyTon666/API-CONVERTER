@@ -1,3 +1,4 @@
+from services import ai_fix, schema_fields
 from core.config import DIST_DIR
 from core.errors import ErrorCode, http_error
 from services import ai_fix
@@ -115,6 +116,7 @@ def ai_suggest_operation(payload: dict) -> dict:
     description = payload.get("description") or ""
     parameters = payload.get("parameters") or []
     responses = payload.get("responses") or []
+    data_schemas = payload.get("dataSchemas") or {}
 
     empty_param_names = [
         p.get("name")
@@ -127,7 +129,19 @@ def ai_suggest_operation(payload: dict) -> dict:
         if isinstance(r, dict) and not r.get("description")
     ]
 
-    if summary and description and not empty_param_names and not empty_response_codes:
+    request_fields = schema_fields.flatten_schema_group(data_schemas.get("request"))
+    response_fields = schema_fields.flatten_schema_group(data_schemas.get("response"))
+    empty_request_fields = [f for f in request_fields if not f.get("description")]
+    empty_response_fields = [f for f in response_fields if not f.get("description")]
+
+    if (
+        summary
+        and description
+        and not empty_param_names
+        and not empty_response_codes
+        and not empty_request_fields
+        and not empty_response_fields
+    ):
         return {}
 
     prompt_lines = [
@@ -136,11 +150,26 @@ def ai_suggest_operation(payload: dict) -> dict:
         f"operationId: {op_id}",
         f"Tham số cần viết mô tả: {', '.join(empty_param_names) or 'không có'}",
         f"Response code cần viết mô tả: {', '.join(empty_response_codes) or 'không có'}",
+    ]
+    if empty_request_fields:
+        prompt_lines.append(
+            "Field dữ liệu gửi lên cần viết mô tả (schema.path — kiểu dữ liệu): "
+            + "; ".join(f"{f['schemaName']}.{f['path']} ({f['type']})" for f in empty_request_fields)
+        )
+    if empty_response_fields:
+        prompt_lines.append(
+            "Field dữ liệu trả về cần viết mô tả (schema.path — kiểu dữ liệu): "
+            + "; ".join(f"{f['schemaName']}.{f['path']} ({f['type']})" for f in empty_response_fields)
+        )
+    prompt_lines += [
         "Chỉ trả JSON, không thêm chữ nào khác, theo cấu trúc:",
         '{"summary": "...", "description": "...", '
         '"parameters": [{"name": "...", "description": "..."}], '
-        '"responses": [{"code": "...", "description": "..."}]}',
-        "summary tối đa 10 từ. description 1-2 câu. Bỏ qua key nào không cần điền.",
+        '"responses": [{"code": "...", "description": "..."}], '
+        '"dataSchemas": {"request": [{"schemaName": "...", "path": "...", "description": "..."}], '
+        '"response": [{"schemaName": "...", "path": "...", "description": "..."}]}}',
+        "summary tối đa 10 từ. description 1-2 câu. Mô tả field ngắn gọn 1 câu.",
+        "Bỏ qua key nào không cần điền.",
         "Toàn bộ nội dung bằng tiếng Việt.",
     ]
     if summary:
@@ -154,7 +183,7 @@ def ai_suggest_operation(payload: dict) -> dict:
         client = anthropic.Anthropic()
         response = client.messages.create(
             model="cc/claude-sonnet-4-6",
-            max_tokens=500,
+            max_tokens=4000,
             messages=[{"role": "user", "content": "\n".join(prompt_lines)}],
         )
         raw = response.content[0].text.strip()
@@ -184,4 +213,29 @@ def ai_suggest_operation(payload: dict) -> dict:
             and r.get("code") in empty_response_codes
             and r.get("description")
         ]
+
+    suggested_schemas = suggestion.get("dataSchemas") or {}
+    if empty_request_fields:
+        allowed = {(f["schemaName"], f["path"]) for f in empty_request_fields}
+        req = [
+            f
+            for f in (suggested_schemas.get("request") or [])
+            if isinstance(f, dict)
+            and (f.get("schemaName"), f.get("path")) in allowed
+            and f.get("description")
+        ]
+        if req:
+            result.setdefault("dataSchemas", {})["request"] = req
+    if empty_response_fields:
+        allowed = {(f["schemaName"], f["path"]) for f in empty_response_fields}
+        resp = [
+            f
+            for f in (suggested_schemas.get("response") or [])
+            if isinstance(f, dict)
+            and (f.get("schemaName"), f.get("path")) in allowed
+            and f.get("description")
+        ]
+        if resp:
+            result.setdefault("dataSchemas", {})["response"] = resp
+
     return result

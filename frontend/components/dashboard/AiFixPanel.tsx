@@ -1,7 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { AiFixPatch, AiFixResolution, AiFixUnresolved } from "@/types/dashboard";
+import {
+  AiFixPatch,
+  AiFixResolution,
+  AiFixUnresolved,
+} from "@/types/dashboard";
 import { useRef } from "react";
 
 // DiffEditor cần chạy ở browser (Monaco không hỗ trợ SSR) — import dynamic giống

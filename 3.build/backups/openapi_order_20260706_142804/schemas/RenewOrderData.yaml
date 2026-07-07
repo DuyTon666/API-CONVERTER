@@ -1,0 +1,16 @@
+type: object
+properties:
+  renewal_order:
+    $ref: "./RenewOrderDataRenewal_order.yaml"
+  parent_order:
+    type: object
+    properties:
+      id:
+        type: integer
+        readOnly: true
+      order_number:
+        type: string
+      status:
+        type: string
+      expires_at:
+        type: string

@@ -1,0 +1,62 @@
+post:
+  summary: API Contract - API phản hồi ticket
+  operationId: createConversations
+  description: Thêm phản hồi vào ticket của người dùng được chỉ định.
+  tags:
+    - Ticket
+  security:
+    - bearerAuth: []
+  x-permission: CHECK_NEWUPDATE
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID định danh của người dùng.
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID định danh của ticket.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
+              - type: object
+                properties:
+                  data:
+                    $ref: 
+                      ../../components/schemas/ticket/CreateConversationsData.yaml
+    '401':
+      $ref: ../../components/responses/Unauthorized.yaml
+    '403':
+      $ref: ../../components/responses/Forbidden.yaml
+    '404':
+      $ref: ../../components/responses/NotFound.yaml
+    '500':
+      $ref: ../../components/responses/InternalError.yaml
+    '400':
+      $ref: ../../components/responses/BadRequest.yaml
+    '422':
+      description: "4200 — Dữ liệu request không hợp lệ\n4463 — Tạo phản hồi thất
+        bại\n4464 — Câu hỏi đã đóng"
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/StandardError.yaml
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          $ref: ../../components/schemas/ticket/CreateConversationsRequest.yaml
+  x-manual-edit-fields:
+    - description
+    - parameters[name=id].description
+    - parameters[name=user_id].description

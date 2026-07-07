@@ -1,0 +1,195 @@
+post:
+  summary: Gửi CSR cho đơn hàng theo ID
+  operationId: submitCsrForOrder
+  description: API cho phép gửi yêu cầu ký chứng chỉ (CSR) cho một đơn hàng cụ thể dựa trên ID. Đơn hàng phải tồn tại và
+    ở trạng thái hợp lệ trước khi thực hiện thao tác này.
+  tags:
+  - Order
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/order/SubmitCsrForOrderData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/order/SubmitCsrForOrderRequest.yaml"
+  x-error-responses:
+    '409':
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    - code: '4601'
+      category: State
+      message: Order không ở trạng thái INIT hoặc FAILED — không thể lưu CSR
+    - code: '4602'
+      category: State
+      message: Order đang ở trạng thái CSR_READY (đang chờ worker submit lên provider) — không thể ghi đè
+    - code: '4605'
+      category: Business
+      message: Order đã được submit thành công lên provider (provider_order_id đã có giá trị) — không thể ghi đè
+    - code: '4606'
+      category: Business
+      message: Đơn gia hạn (RENEWAL) yêu cầu đơn gốc đã được submit lên provider (provider_order_id IS NULL)
+    - code: '4610'
+      category: Validation
+      message: csr là bắt buộc — không được null hoặc bỏ trống
+    - code: '4611'
+      category: Validation
+      message: key_type không thuộc tập hợp lệ (RSA_2048 / RSA_4096 / ECDSA_P256 / ECDSA_P384)
+    - code: '4612'
+      category: Validation
+      message: web_server_type không thuộc tập hợp lệ
+    - code: '4613'
+      category: Validation
+      message: signature_hash_algorithm không thuộc tập hợp lệ (SHA2-256 / SHA2-384 / SHA2-512)
+    - code: '4614'
+      category: Validation
+      message: approver_email không đúng định dạng RFC 5322
+    - code: '4621'
+      category: Validation
+      message: dcv_method không thuộc tập hợp lệ (EMAIL / HTTP / HTTPS / CNAME)
+    - code: '4622'
+      category: Validation
+      message: dcv_config[domain].method không thuộc tập hợp lệ
+    - code: '4623'
+      category: Validation
+      message: dcv_config[domain].approver_email không đúng định dạng RFC 5322
+    - code: '4631'
+      category: Validation
+      message: contact_admin.email không hợp lệ (RFC 5322)
+    - code: '4632'
+      category: Validation
+      message: contact_admin.first_name bắt buộc
+    - code: '4633'
+      category: Validation
+      message: contact_admin.last_name bắt buộc
+    - code: '4634'
+      category: Validation
+      message: contact_admin.phone bắt buộc / không đúng định dạng E.164
+    - code: '4635'
+      category: Validation
+      message: contact_admin bắt buộc — không được null hoặc bỏ trống
+    - code: '4643'
+      category: Validation
+      message: contact_org bắt buộc — không được null hoặc bỏ trống
+    - code: '4644'
+      category: Validation
+      message: contact_org.name bắt buộc
+    - code: '4645'
+      category: Validation
+      message: contact_org.address bắt buộc
+    - code: '4646'
+      category: Validation
+      message: contact_org.province bắt buộc
+    - code: '4647'
+      category: Validation
+      message: contact_org.country bắt buộc / không đúng định dạng ISO 3166-1 alpha-2
+    - code: '4648'
+      category: Validation
+      message: contact_org.postal_code bắt buộc
+    - code: '4649'
+      category: Validation
+      message: contact_org.phone bắt buộc / không đúng định dạng E.164
+    - code: '4651'
+      category: Validation
+      message: contact_tech.email không hợp lệ (RFC 5322)
+    - code: '4652'
+      category: Validation
+      message: contact_tech.first_name bắt buộc
+    - code: '4653'
+      category: Validation
+      message: contact_tech.last_name bắt buộc
+    - code: '4654'
+      category: Validation
+      message: contact_tech.phone bắt buộc / không đúng định dạng E.164
+    - code: '4655'
+      category: Validation
+      message: contact_tech bắt buộc — không được null hoặc bỏ trống
+    - code: '4661'
+      category: Validation
+      message: contact_org.business_number bắt buộc với OV/EV
+    - code: '4662'
+      category: Validation
+      message: contact_org.representative_name bắt buộc với OV/EV
+    - code: '4708'
+      category: Business
+      message: cert_type MULTI_DOMAIN/FLEX không hỗ trợ dcv_method=EMAIL — chỉ cho phép HTTP/HTTPS/CNAME
+    - code: '4709'
+      category: Validation
+      message: dcv_method là bắt buộc
+    '404':
+    - code: '4001'
+      category: Not Found
+      message: Order không tồn tại
+    '400':
+    - code: '4701'
+      category: Format
+      message: CSR PEM không hợp lệ (sai format, không parse được)
+    - code: '4702'
+      category: Business
+      message: CN/SAN trong CSR không chứa primary_domain của order
+    - code: '4706'
+      category: Business
+      message: approver_email bắt buộc khi dcv_method=EMAIL nhưng không được cung cấp
+    - code: '4707'
+      category: Business
+      message: san_list chứa wildcard entry (*.domain) — không được phép; wildcard coverage áp dụng tự động theo sản 
+        phẩm

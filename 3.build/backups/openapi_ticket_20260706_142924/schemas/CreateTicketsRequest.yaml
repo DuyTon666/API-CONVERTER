@@ -1,0 +1,25 @@
+type: object
+properties:
+  department_id:
+    type: integer
+    description: Phòng ban muốn được hỗ trợ
+  service_id:
+    type: integer
+    description: Dịch vụ cần hỗ trợ
+  title:
+    type: string
+    description: Tiêu đề
+  descriptions:
+    type: string
+    description: Nội dung yêu cầu
+  files:
+    type: array
+    items:
+      type: string
+      format: binary
+    description: Tệp đính kèm
+required:
+  - department_id
+  - service_id
+  - title
+  - descriptions

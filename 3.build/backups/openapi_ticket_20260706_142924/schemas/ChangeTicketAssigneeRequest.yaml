@@ -1,0 +1,8 @@
+type: object
+properties:
+  reason:
+    type: string
+    maxLength: 4000
+    description: Lý do từ chối.Tối đa 4000 ký tự.
+required:
+  - reason

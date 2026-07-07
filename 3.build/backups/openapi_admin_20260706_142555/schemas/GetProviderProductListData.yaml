@@ -1,0 +1,31 @@
+type: object
+properties:
+  current_page:
+    type: integer
+    description: Trang hiện tại
+  per_page:
+    type: integer
+    description: Số record/trang
+  from:
+    type: integer
+    description: Số thứ tự bản ghi đầu của trang
+  to:
+    type: integer
+    description: Số thứ tự bản ghi cuối của trang
+  total:
+    type: integer
+    description: Tổng số record thỏa filter
+  first_page_url:
+    type: string
+    description: URL trang đầu tiên
+  next_page_url:
+    type: string
+    description: URL trang kế tiếp
+  prev_page_url:
+    type: string
+    description: URL trang trước
+  data:
+    type: array
+    items:
+      type: object
+    description: Danh sách sản phẩm (schema mục

@@ -1,0 +1,14 @@
+type: object
+properties:
+  incomplete_profiles:
+    type: integer
+    description: Số hồ sơ chưa hoàn thành.
+  unpaid_orders:
+    type: integer
+    description: Số đơn hàng chờ thanh toán
+  expiring_soon_services:
+    type: integer
+    description: Số dịch vụ sắp hết hạn (30 ngày trước khi hết hạn)
+  expiried_services:
+    type: integer
+    description: Số dịch vụ đã hết hạn

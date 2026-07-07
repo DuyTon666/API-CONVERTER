@@ -1,0 +1,112 @@
+post:
+  summary: Thay đổi phương thức xác thực DCV của đơn hàng
+  operationId: changeOrderDcvMethod
+  description: API cho phép thay đổi phương thức xác minh quyền kiểm soát tên miền (DCV) cho một đơn hàng cụ thể. Chỉ áp
+    dụng cho các đơn hàng đang trong trạng thái chờ xác thực và yêu cầu ID đơn hàng hợp lệ.
+  tags:
+  - Order
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/order/ChangeOrderDcvMethodData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/order/ChangeOrderDcvMethodRequest.yaml"
+  x-error-responses:
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    - code: '4103'
+      category: Auth
+      message: Không có quyền
+    '422':
+    - code: '4761'
+      category: ''
+      message: domain là bắt buộc
+    - code: '4762'
+      category: ''
+      message: method là bắt buộc
+    - code: '4763'
+      category: ''
+      message: 'method không hợp lệ — chỉ cho: EMAIL, HTTP, CNAME'
+    - code: '4764'
+      category: ''
+      message: approver_email không đúng định dạng email
+    - code: '4765'
+      category: ''
+      message: approver_email bắt buộc khi method=EMAIL
+    - code: '4751'
+      category: State
+      message: Cert không ở trạng thái PENDING hoặc REISSUE_PENDING
+    - code: '4766'
+      category: Business
+      message: Phương thức DCV không hợp lệ cho cert_type này — WILDCARD/FLEX chỉ cho CNAME hoặc EMAIL
+    - code: '4767'
+      category: Business
+      message: Primary domain là địa chỉ IP, chỉ hỗ trợ phương thức HTTP
+    - code: '4768'
+      category: Business
+      message: WILDCARD/FLEX không hỗ trợ primary domain là địa chỉ IP — cấu hình sản phẩm không hợp lệ
+    - code: '4752'
+      category: Business
+      message: Domain không tồn tại trong dcv_records của cert
+    - code: '4755'
+      category: Business
+      message: Domain đã được xác minh (VALIDATED), không thể đổi phương thức DCV
+    - code: '4757'
+      category: Business
+      message: Không tìm thấy provider cho đơn hàng
+    '404':
+    - code: '4001'
+      category: Not Found
+      message: Order không tồn tại (hoặc đã bị xóa)
+    '502':
+    - code: '4851'
+      category: Provider
+      message: Provider API lỗi khi cập nhật phương thức DCV

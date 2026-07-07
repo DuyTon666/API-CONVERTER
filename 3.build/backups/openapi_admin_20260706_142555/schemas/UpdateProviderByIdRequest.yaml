@@ -1,0 +1,61 @@
+type: object
+example:
+  name: Daousign Vietnam (Updated)
+  production_base_url: https://api-v2.daousign.com
+  production_token: pr_live_NEW_TOKEN_xxxx
+  registered_ip: 203.162.10.99
+  auth_extra: &id001
+    api_id: PAVIETNAM-002
+  list_products_endpoint: /products/all
+  list_products_method: POST
+  list_products_request_template: &id002
+    PartnerCode: '{{auth_extra.partner_code}}'
+    AuthToken: '{{token}}'
+  list_products_response_path: $
+  list_products_timeout_seconds: 30
+  display_order: 5
+properties:
+  name:
+    type: string
+    example: Daousign Vietnam (Updated)
+  production_base_url:
+    type: string
+    example: https://api-v2.daousign.com
+  production_token:
+    type: string
+    example: pr_live_NEW_TOKEN_xxxx
+  registered_ip:
+    type: string
+    example: 203.162.10.99
+  auth_extra:
+    type: object
+    example: *id001
+    properties:
+      api_id:
+        type: string
+        example: PAVIETNAM-002
+  list_products_endpoint:
+    type: string
+    example: /products/all
+  list_products_method:
+    type: string
+    example: POST
+  list_products_request_template:
+    type: object
+    example: *id002
+    properties:
+      PartnerCode:
+        type: string
+        example: '{{auth_extra.partner_code}}'
+      AuthToken:
+        type: string
+        example: '{{token}}'
+  list_products_response_path:
+    type: string
+    example: $
+  list_products_timeout_seconds:
+    type: integer
+    example: 30
+  display_order:
+    type: integer
+    example: 5
