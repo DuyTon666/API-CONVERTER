@@ -1,8 +1,8 @@
 get:
   summary: Hiển thị chi tiết ticket của khách hàng
-  operationId: getUserTicketDetail
-  description: API cho phép khách hàng xem thông tin chi tiết của một ticket cụ thể dựa trên ID người dùng và ID ticket.
-    Khách hàng chỉ có thể truy cập ticket thuộc về tài khoản của mình, không thể xem ticket của người dùng khác.
+  operationId: getTicketDetailForUser
+  description: API cho phép khách hàng xem thông tin chi tiết của một ticket cụ thể dựa trên user_id và ticket id. Khách
+    hàng chỉ có thể truy cập ticket thuộc sở hữu của chính mình, không thể xem ticket của người dùng khác.
   tags:
   - Ticket
   security:
@@ -14,11 +14,13 @@ get:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'user_id'.
   - name: id
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công
@@ -30,7 +32,7 @@ get:
             - type: object
               properties:
                 data:
-                  $ref: "../../components/schemas/ticket/GetUserTicketDetailData.yaml"
+                  $ref: "../../components/schemas/ticket/GetTicketDetailForUserData.yaml"
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':
@@ -42,7 +44,13 @@ get:
     '400':
       $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
   x-error-responses:
     '401':
     - code: '4102'

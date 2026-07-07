@@ -1,8 +1,8 @@
 post:
   summary: Tạo sản phẩm mới cho nhà cung cấp
   operationId: createProviderProduct
-  description: Tạo một sản phẩm mới thuộc nhà cung cấp được chỉ định bởi provider_code. Chỉ quản trị viên có quyền thực 
-    hiện thao tác này và provider_code phải tồn tại trong hệ thống.
+  description: Tạo một sản phẩm mới thuộc nhà cung cấp được chỉ định qua provider_code. Yêu cầu thông tin sản phẩm hợp 
+    lệ và nhà cung cấp phải tồn tại trong hệ thống trước khi thực hiện.
   tags:
   - Admin
   security:
@@ -14,6 +14,7 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'provider_code'.
   responses:
     '201':
       description: Thành công

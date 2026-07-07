@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-03T15:47:18.700786",
+  "generated_at": "2026-07-07T15:19:42.341914",
   "module": "order",
-  "batch_timestamp": "2026-07-03 15:45:25",
+  "batch_timestamp": "2026-07-07 15:19:40",
   "operations": {
     "downloadOrderCertificate": {
       "method": "get",
@@ -477,11 +477,11 @@
         ]
       }
     },
-    "resendDcvEmailForOrder": {
+    "resendDcvVerificationEmail": {
       "method": "post",
       "path": "/v1/orders/{id}/dcv/resend-email",
       "source_file": "API_order_dcv_resend_email.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/resend_dcv_email_for_order.yaml",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/resend_dcv_verification_email.yaml",
       "errors": {
         "401": [
           {
@@ -815,11 +815,11 @@
         ]
       }
     },
-    "listOrders": {
+    "getOrderList": {
       "method": "get",
       "path": "/v1/orders",
       "source_file": "API_order_list.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/list_orders.yaml",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/order/get_order_list.yaml",
       "errors": {
         "409": [
           {

@@ -30,7 +30,7 @@ properties:
     type: string
     description: Intermediate chain PEM. Null nếu chưa có.
   certificates[].has_private_key:
-    type: string
+    type: boolean
     description: True nếu có private key được lưu (encrypted). Key không trả qua
       API này.
   dcv_records:
@@ -42,3 +42,4 @@ properties:
   dcv_records[].status:
     type: string
     description: PENDING | VERIFIED | FAILED | EXPIRED.
+description: Schema `GetOrderDetailData`.

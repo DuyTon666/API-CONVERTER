@@ -22,3 +22,4 @@ properties:
   reason:
     type: string
     description: Lý do xóa (nếu có trong request)
+description: Schema `DeleteProviderByIdData`.

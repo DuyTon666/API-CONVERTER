@@ -1,8 +1,8 @@
 post:
   summary: Tiếp nhận phản ánh góp ý của khách hàng
   operationId: submitTicketFeedback
-  description: API cho phép khách hàng gửi phản ánh hoặc góp ý liên quan đến một ticket cụ thể sau khi được xử lý. Chỉ 
-    áp dụng cho ticket thuộc về đúng người dùng tương ứng với user_id được cung cấp.
+  description: API tiếp nhận phản ánh và góp ý của khách hàng sau khi xử lý ticket, giúp đánh giá chất lượng dịch vụ. 
+    Khách hàng chỉ được gửi feedback cho ticket thuộc về tài khoản của mình và ticket phải ở trạng thái đã hoàn thành.
   tags:
   - Ticket
   security:
@@ -14,11 +14,13 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'user_id'.
   - name: id
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công
@@ -41,7 +43,13 @@ post:
     '400':
       $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
   requestBody:
     required: true
     content:

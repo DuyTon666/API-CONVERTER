@@ -1,8 +1,8 @@
 post:
-  summary: Gia hạn đơn hàng theo ID được chỉ định
+  summary: Gia hạn đơn hàng theo ID
   operationId: renewOrder
-  description: Gia hạn đơn hàng hiện có dựa trên ID được cung cấp, cho phép kéo dài thời hạn sử dụng hoặc dịch vụ liên 
-    quan đến đơn hàng đó. Đơn hàng phải ở trạng thái hợp lệ và chưa hết hạn quá thời gian cho phép gia hạn.
+  description: API cho phép gia hạn một đơn hàng hiện có dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng đang 
+    hoạt động và chưa hết hạn, đơn hàng đã hủy hoặc hoàn thành sẽ không được gia hạn.
   tags:
   - Order
   security:
@@ -14,6 +14,7 @@ post:
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'id'.
   responses:
     '201':
       description: Thành công

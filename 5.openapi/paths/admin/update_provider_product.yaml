@@ -1,8 +1,8 @@
 patch:
   summary: Cập nhật sản phẩm của nhà cung cấp
   operationId: updateProviderProduct
-  description: Cập nhật thông tin sản phẩm thuộc nhà cung cấp cụ thể theo mã nhà cung cấp và ID sản phẩm. Chỉ quản trị 
-    viên mới có quyền thực hiện thao tác này, đảm bảo dữ liệu sản phẩm luôn chính xác và đồng bộ trong hệ thống.
+  description: Cập nhật thông tin sản phẩm thuộc nhà cung cấp được chỉ định. Chỉ quản trị viên mới có quyền thực hiện 
+    thao tác này và cần cung cấp đúng mã nhà cung cấp cùng ID sản phẩm hợp lệ.
   tags:
   - Admin
   security:
@@ -14,11 +14,13 @@ patch:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'provider_code'.
   - name: id
     in: path
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công

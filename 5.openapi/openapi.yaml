@@ -4,18 +4,32 @@ info:
   version: 1.0.0
   license:
     name: API
+    url: https://pavietnam.vn/license
   description: API cho hệ thống ticket hỗ trợ khách hàng
   contact:
     name: PA Vietnam
+    url: https://pavietnam.vn
     email: dev@pavietnam.vn
 servers:
 - url: https://apigateway.pavietnam.vn
   description: Production
 tags:
+- name: Admin
+  description: Các API quản trị nội bộ (provider, internal product, mapping)
+- name: Csr
+  description: Các API liên quan đến CSR (Certificate Signing Request)
+- name: Department
+  description: Các API liên quan đến phòng ban
+- name: Order
+  description: Các API liên quan đến đơn hàng
+- name: Service
+  description: Các API liên quan đến dịch vụ
+- name: Statistic
+  description: Các API liên quan đến thống kê
 - name: Ticket
   description: Các API liên quan đến ticket hỗ trợ khách hàng
-- name: Account
-  description: Các API liên quan đến tài khoản
+- name: Topup
+  description: Các API liên quan đến nạp tiền/gia hạn dịch vụ
 security:
 - bearerAuth: []
 components:

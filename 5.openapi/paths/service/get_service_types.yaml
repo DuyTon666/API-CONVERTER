@@ -1,5 +1,5 @@
 get:
-  summary: Lấy danh sách các loại dịch vụ hỗ trợ
+  summary: Lấy danh sách loại dịch vụ hỗ trợ
   operationId: getServiceTypes
   description: API trả về danh sách tất cả các loại dịch vụ hiện có trong hệ 
     thống support, giúp người dùng hoặc hệ thống client xác định đúng loại dịch 

@@ -25,3 +25,4 @@ properties:
   reason:
     type: string
     description: Lý do (nếu có)
+description: Schema `ToggleInternalProductStatusData`.

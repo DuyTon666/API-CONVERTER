@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from contract_profile.run_error_parser import cmd_parse_errors, cmd_apply_errors, cmd_resolve_error, cmd_audit_global_usage, cmd_build_operation_map
 from contract_profile.http_status_review import cmd_resolve_http_status, cmd_apply_http_status_review
-from enrichers.enrich_errors import cmd_enrich_openapi
+from enrichers.enrich_errors import cmd_enrich_errors
 from import_flow.module_rule_approver import cmd_approve_module_rule
 from import_flow.config import REPORT_DIR, RUNNER
 from import_flow.scanner import scan_source_root
@@ -101,13 +101,16 @@ def main():
     p_resolve.add_argument("--source-file", default=None, help="Dùng khi 1 code xuất hiện nhiều entry trong report, để chọn đúng")
     p_resolve.add_argument("--report", default=None, help="Path report JSON (mặc định: 3.build/reports/error_codes_review.json)")
 
-    #enrich
-    p_enrich = subparsers.add_parser("enrich-openapi", help="Build contract profile hints và patch OpenAPI YAML output")
-    p_enrich.add_argument("--module", required=True)
-    p_enrich.add_argument("--file")
-    p_enrich.add_argument("--folder")
-    p_enrich.add_argument("--output")
-    p_enrich.add_argument("--dry-run", action="store_true")
+    # enrich-errors
+    p_enrich_errors = subparsers.add_parser(
+        "enrich-errors",
+        help="Gắn x-error-responses vào OpenAPI operation YAML từ operation_error_map"
+    )
+    p_enrich_errors.add_argument("--module", required=True)
+    p_enrich_errors.add_argument("--file")
+    p_enrich_errors.add_argument("--folder")
+    p_enrich_errors.add_argument("--output")
+    p_enrich_errors.add_argument("--dry-run", action="store_true")
 
     # resolve-http-status
     p_resolve_http = subparsers.add_parser("resolve-http-status", help="Điền http_status cho 1 mã trong pending_review.yaml")
@@ -187,8 +190,8 @@ def main():
     elif args.command == "convert-folder":
         cmd_convert_folder(folder=args.folder, module=args.module)
 
-    elif args.command == "enrich-openapi":
-        cmd_enrich_openapi(
+    elif args.command == "enrich-errors":
+        cmd_enrich_errors(
             module=args.module,
             file=args.file,
             folder=args.folder,

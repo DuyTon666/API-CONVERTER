@@ -1,21 +1,20 @@
 get:
   summary: Lấy danh sách phòng ban gửi ticket
   operationId: getDepartmentList
-  description: API trả về danh sách các phòng ban có quyền gửi ticket trong hệ 
-    thống. Chỉ các phòng ban đang hoạt động và được cấu hình mới được hiển thị 
-    trong kết quả trả về.
+  description: API trả về danh sách các phòng ban có quyền gửi ticket trong hệ thống. Dữ liệu được sử dụng để hiển thị 
+    lựa chọn phòng ban khi người dùng tạo hoặc lọc ticket.
   tags:
-    - Department
+  - Department
   security:
-    - bearerAuth: []
+  - bearerAuth: []
   x-permission: ''
   parameters:
-    - name: support_company
-      in: query
-      required: false
-      schema:
-        type: string
-      description: 'Các giá trị hợp lệ:'
+  - name: support_company
+    in: query
+    required: false
+    schema:
+      type: string
+    description: 'Các giá trị hợp lệ:'
   responses:
     '200':
       description: Thành công
@@ -23,11 +22,11 @@ get:
         application/json:
           schema:
             allOf:
-              - $ref: "../../components/schemas/common/StandardSuccess.yaml"
-              - type: object
-                properties:
-                  data:
-                    $ref: "../../components/schemas/department/GetDepartmentListData.yaml"
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/department/GetDepartmentListData.yaml"
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':
@@ -44,3 +43,5 @@ get:
       $ref: "../../components/responses/Conflict.yaml"
     '429':
       $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"

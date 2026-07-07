@@ -17,8 +17,11 @@ column_aliases:
   field_name:
     - "Tên"
     - "Trường"
+    - "Thuộc tính"
     - "Field"
     - "Name"
+    - "Property"
+    - "Attribute"
 
   required:
     - "Bắt buộc"
@@ -27,6 +30,7 @@ column_aliases:
 
   type:
     - "Kiểu"
+    - "Kiểu dữ liệu"
     - "Type"
     - "Data Type"
     - "Datatype"

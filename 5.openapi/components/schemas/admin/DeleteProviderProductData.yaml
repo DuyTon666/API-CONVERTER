@@ -7,6 +7,7 @@ properties:
   provider_id:
     type: string
     description: FK providers.id
+    readOnly: true
   provider_code:
     type: string
     description: Mã provider (reference debug)
@@ -25,3 +26,4 @@ properties:
   reason:
     type: string
     description: Lý do xóa (nếu có trong request)
+description: Schema `DeleteProviderProductData`.

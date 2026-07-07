@@ -1,8 +1,8 @@
 put:
   summary: Đóng ticket hỗ trợ của khách hàng
   operationId: closeUserTicket
-  description: API cho phép đóng ticket hỗ trợ của khách hàng dựa trên user_id và ticket id tương ứng. Chỉ ticket đang 
-    hoạt động mới có thể được đóng, ticket đã đóng hoặc không tồn tại sẽ trả về lỗi.
+  description: API cho phép đóng ticket hỗ trợ của khách hàng dựa trên user_id và ticket id. Chỉ ticket đang ở trạng 
+    thái mở hoặc đang xử lý mới có thể được đóng.
   tags:
   - Ticket
   security:
@@ -14,11 +14,13 @@ put:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'user_id'.
   - name: id
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công
@@ -41,9 +43,13 @@ put:
     '400':
       $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
     '409':
-      $ref: ../../components/responses/Conflict.yaml
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
   x-error-responses:
     '401':
     - code: '4102'

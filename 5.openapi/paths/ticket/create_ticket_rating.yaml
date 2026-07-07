@@ -1,8 +1,8 @@
 post:
   summary: Tạo đánh giá cho ticket của khách hàng
   operationId: createTicketRating
-  description: API cho phép khách hàng tạo đánh giá (rating) cho một ticket hỗ trợ cụ thể sau khi ticket đã được xử lý. 
-    Mỗi ticket chỉ được phép đánh giá một lần và phải thuộc về đúng người dùng tương ứng với user_id được cung cấp.
+  description: API cho phép khách hàng gửi đánh giá (rating) cho một ticket hỗ trợ cụ thể sau khi ticket đã được xử lý. 
+    Mỗi ticket chỉ được đánh giá một lần và phải thuộc về đúng user_id tương ứng.
   tags:
   - Ticket
   security:
@@ -14,11 +14,13 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'user_id'.
   - name: ticket_id
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'ticket_id'.
   responses:
     '200':
       description: Thành công
@@ -41,9 +43,13 @@ post:
     '400':
       $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
     '409':
-      $ref: ../../components/responses/Conflict.yaml
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
   requestBody:
     required: true
     content:

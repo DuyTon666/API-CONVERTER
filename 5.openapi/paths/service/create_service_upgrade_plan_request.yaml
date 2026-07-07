@@ -1,8 +1,8 @@
 post:
   summary: Tạo yêu cầu nâng cấp gói dịch vụ người dùng
   operationId: createServiceUpgradePlanRequest
-  description: API cho phép người dùng tạo yêu cầu nâng cấp gói dịch vụ hiện tại lên gói cao hơn. Yêu cầu chỉ được xử lý
-    khi người dùng đang sử dụng dịch vụ hợp lệ và có quyền thực hiện nâng cấp.
+  description: API cho phép người dùng tạo yêu cầu nâng cấp gói dịch vụ hiện tại lên gói cao hơn. Yêu cầu được gửi dựa 
+    trên ID người dùng và ID dịch vụ cụ thể, cần đảm bảo dịch vụ đang hoạt động trước khi thực hiện nâng cấp.
   tags:
   - Service
   security:
@@ -14,11 +14,13 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'user_id'.
   - name: id
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công

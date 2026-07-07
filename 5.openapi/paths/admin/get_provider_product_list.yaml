@@ -1,8 +1,8 @@
 get:
   summary: Lấy danh sách sản phẩm của nhà cung cấp
   operationId: getProviderProductList
-  description: Truy xuất danh sách tất cả sản phẩm thuộc một nhà cung cấp cụ thể dựa trên mã nhà cung cấp 
-    (provider_code). API chỉ dành cho quản trị viên và yêu cầu mã nhà cung cấp hợp lệ trong hệ thống.
+  description: Truy xuất danh sách tất cả sản phẩm thuộc một nhà cung cấp cụ thể dựa trên mã nhà cung cấp. Chỉ tài khoản
+    quản trị viên mới có quyền truy cập thông tin này.
   tags:
   - Admin
   security:
@@ -14,6 +14,7 @@ get:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'provider_code'.
   - name: page
     in: query
     required: false
@@ -83,6 +84,7 @@ get:
     required: false
     schema:
       type: integer
+      default: 0
     description: 1 = bao gồm soft-deleted. Mặc định 0.
   responses:
     '200':

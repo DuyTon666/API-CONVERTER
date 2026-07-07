@@ -1,5 +1,5 @@
 post:
-  summary: Gửi CSR cho đơn hàng theo ID
+  summary: Nộp CSR cho đơn hàng
   operationId: submitCsrForOrder
   description: API cho phép gửi yêu cầu ký chứng chỉ (CSR) cho một đơn hàng cụ 
     thể dựa trên ID. Đơn hàng phải tồn tại và ở trạng thái hợp lệ trước khi thực

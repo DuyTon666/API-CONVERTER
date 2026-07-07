@@ -1,77 +1,499 @@
 export ANTHROPIC_API_KEY=""
 echo $ANTHROPIC_API_KEY
 
-## Bảng lệnh flow đầy đủ (version mới)
+##scan
 
-| Bước | Lệnh | Mục đích | Output |
-|------|-------|----------|--------|
-| 1 | `python3 2.pipeline/run_api_import.py scan` | Xem hiện trạng folder và file | In ra màn hình |
-| 2 | `python3 2.pipeline/run_api_import.py suggest-root` | Phân tích file ở root, gợi ý module | `import_suggestions.json` |
-| 3 | `python3 2.pipeline/run_api_import.py review-suggestions` | Xem bảng gợi ý, kiểm tra module và approval status | In ra màn hình |
-| 4 | `python3 2.pipeline/run_api_import.py approve-suggestions --all` | Approve tất cả item pending | `import_suggestions.json` (cập nhật) |
-| 5 | `python3 2.pipeline/run_api_import.py apply-suggestions` | Copy file vào folder module, update registry | `module_registry.yaml` + `import_applied_suggestions.json` |
-| 6 | `python3 2.pipeline/run_api_import.py list-modules` | Xem danh sách module và status | In ra màn hình |
-| 7 | `python3 2.pipeline/run_api_import.py activate-module --module <tên>` | Activate module sau khi verify paths | `module_registry.yaml` (cập nhật) |
-| 8 | `python3 2.pipeline/run_api_import.py import` | Convert tất cả module active sang OpenAPI YAML | `5.openapi/paths/` + `5.openapi/components/schemas/` |
-| 9 | `python3 2.pipeline/run_api_import.py list-modules` | Verify stats sau import | In ra màn hình |
-
----
-
-## Variants
+Scan source_root, liệt kê folder module và file unassigned.
 
 ```bash
-# Approve theo module cụ thể
-python3 2.pipeline/run_api_import.py approve-suggestions --module ticket
+npm run scan
 
-# Approve 1 file, override module
-python3 2.pipeline/run_api_import.py approve-suggestions --file "tên_file.pdf" --module service
-
-# Import 1 module cụ thể
-python3 2.pipeline/run_api_import.py import --module ticket
-
-# Import tất cả, bỏ qua registry status
-python3 2.pipeline/run_api_import.py import --all
-
-# Apply + convert luôn (bỏ qua bước 8)
-python3 2.pipeline/run_api_import.py apply-suggestions --convert
-
-# Move thay vì copy
-python3 2.pipeline/run_api_import.py apply-suggestions --move-files
-```
-
----
-
-## Module lifecycle
-
-```bash
-# draft → active
-python3 2.pipeline/run_api_import.py activate-module --module <tên>
-
-# active → deprecated
-python3 2.pipeline/run_api_import.py deactivate-module --module <tên>
-
-# deprecated → active
-python3 2.pipeline/run_api_import.py reactivate-module --module <tên>
-```
-
----
-
-## Reset sạch từ đầu
-
-```bash
-# Xóa folder module đã tạo
-rm -rf 1.docs/source/api_contract/ticket \
-       1.docs/source/api_contract/service \
-       1.docs/source/api_contract/department \
-       1.docs/source/api_contract/statistic
-
-# Xóa report cũ
-rm -f 3.build/reports/import_suggestions.json \
-      3.build/reports/import_applied_suggestions.json
-
-# Xóa registry
-echo "modules: {}" > 4.config/module_registry.yaml
-
-# Chạy lại từ bước 1
+Raw command:
 python3 2.pipeline/run_api_import.py scan
-```
+
+##suggest-root
+
+Parse file unassigned ở source_root, gợi ý module theo endpoint.
+
+npm run suggest:module
+
+Raw command:
+python3 2.pipeline/run_api_import.py suggest-root
+
+##review-suggestions
+In bảng review suggestions.
+
+npm run review:suggest
+
+Dùng file suggestions mặc định:
+
+python3 2.pipeline/run_api_import.py review-suggestions
+
+Dùng file suggestions riêng:
+
+python3 2.pipeline/run_api_import.py review-suggestions \
+  --suggestions 3.build/reports/import_suggestions.json
+
+##approve-module-rule
+
+Approve endpoint prefix vào module rule và register module nếu chưa có.
+
+npm run approve:module:rule -- \
+  --module <module> \
+  --path-prefix "<path_prefix>" \
+  --actor "<name>"
+
+Ví dụ:
+
+npm run approve:module:rule -- \
+  --module admin \
+  --path-prefix "/v1/admin" \
+  --actor "ren"
+
+Dry-run:
+
+npm run approve:module:rule -- \
+  --module admin \
+  --path-prefix "/v1/admin" \
+  --actor "ren" \
+  --dry-run
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py approve-module-rule \
+  --module admin \
+  --path-prefix "/v1/admin" \
+  --actor "ren" \
+  --dry-run
+
+##approve-suggestions
+
+Approve items trong import_suggestions.json.
+
+Approve tất cả:
+
+npm run approve
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py approve-suggestions \
+  --all
+
+##Approve theo module:
+
+python3 2.pipeline/run_api_import.py approve-suggestions \
+  --module <module>
+
+Ví dụ:
+
+python3 2.pipeline/run_api_import.py approve-suggestions \
+  --module admin
+
+##Approve theo file:
+
+python3 2.pipeline/run_api_import.py approve-suggestions \
+  --file "<file_name>"
+
+Override module cho một file:
+
+python3 2.pipeline/run_api_import.py approve-suggestions \
+  --file "<file_name>" \
+  --override-module <module>
+
+Dùng suggestions file riêng:
+
+python3 2.pipeline/run_api_import.py approve-suggestions \
+  --suggestions 3.build/reports/import_suggestions.json \
+  --all
+
+##apply-suggestions
+
+Apply suggestions: copy/move file vào folder module.
+
+npm run update:registry
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py apply-suggestions
+
+Dùng suggestions file riêng:
+
+python3 2.pipeline/run_api_import.py apply-suggestions \
+  --suggestions 3.build/reports/import_suggestions.json
+
+Move file thật:
+
+python3 2.pipeline/run_api_import.py apply-suggestions \
+  --move-files
+
+Move file và convert luôn:
+
+python3 2.pipeline/run_api_import.py apply-suggestions \
+  --move-files \
+  --convert
+convert-folder
+
+Convert tất cả file trong một folder.
+
+python3 2.pipeline/run_api_import.py convert-folder \
+  --folder "<folder_path>" \
+  --module <module>
+
+Ví dụ:
+
+python3 2.pipeline/run_api_import.py convert-folder \
+  --folder "1.docs/source/api_contract/admin" \
+  --module admin
+parse-errors
+
+Đọc bảng error code trong module, xuất report để review.
+
+npm run errors:parse -- \
+  --module <module>
+
+Ví dụ:
+
+npm run errors:parse -- \
+  --module admin
+
+Dry-run:
+
+npm run errors:parse -- \
+  --module admin \
+  --dry-run
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py parse-errors \
+  --module admin \
+  --dry-run
+apply-errors
+
+Ghi error code đã approve vào error_code_map.yaml.
+
+npm run errors:apply -- \
+  --module <module>
+
+Ví dụ:
+
+npm run errors:apply -- \
+  --module admin
+
+Dùng report riêng:
+
+npm run errors:apply -- \
+  --module admin \
+  --report 3.build/reports/error_codes_review.json
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py apply-errors \
+  --module admin \
+  --report 3.build/reports/error_codes_review.json
+audit-global-usage
+
+Audit toàn hệ thống, phát hiện module dùng global code sai nghĩa.
+
+npm run errors:audit:global
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py audit-global-usage
+build-operation-map
+
+Build operation_error_map.json từ batch_log + parsed_error_tables.
+
+Build cho một module:
+
+npm run errors:build-map -- \
+  --module <module>
+
+Ví dụ:
+
+npm run errors:build-map -- \
+  --module admin
+
+Force rebuild:
+
+npm run errors:build-map -- \
+  --module admin \
+  --force
+
+Build tất cả module:
+
+npm run errors:build-map
+
+Force tất cả:
+
+npm run errors:build-map -- \
+  --force
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py build-operation-map \
+  --module admin \
+  --force
+resolve
+
+Điền resolution cho một entry trong report. Chỉ sửa report, không ghi catalog.
+
+Decision hợp lệ:
+
+reassign
+keep_existing
+approve_new
+repair_existing
+
+Approve mã mới:
+
+npm run errors:resolve -- \
+  --module <module> \
+  --code <code> \
+  --decision approve_new \
+  --approved-by "<name>"
+
+Ví dụ:
+
+npm run errors:resolve -- \
+  --module admin \
+  --code 5405 \
+  --decision approve_new \
+  --approved-by "ren"
+
+Giữ mã cũ:
+
+npm run errors:resolve -- \
+  --module admin \
+  --code 5405 \
+  --decision keep_existing \
+  --approved-by "ren"
+
+Repair existing:
+
+npm run errors:resolve -- \
+  --module admin \
+  --code 5405 \
+  --decision repair_existing \
+  --approved-by "ren"
+
+Reassign sang mã mới:
+
+npm run errors:resolve -- \
+  --module admin \
+  --code 5405 \
+  --decision reassign \
+  --new-code 5416 \
+  --approved-by "ren"
+
+Nếu một code xuất hiện nhiều entry, chọn đúng source file:
+
+npm run errors:resolve -- \
+  --module admin \
+  --code 5405 \
+  --decision approve_new \
+  --approved-by "ren" \
+  --source-file "API_provider_update.docx"
+
+Dùng report riêng:
+
+npm run errors:resolve -- \
+  --module admin \
+  --code 5405 \
+  --decision approve_new \
+  --approved-by "ren" \
+  --report 3.build/reports/error_codes_review.json
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py resolve \
+  --module admin \
+  --code 5405 \
+  --decision approve_new \
+  --approved-by "ren"
+enrich-errors
+
+Gắn x-error-responses vào OpenAPI operation YAML từ operation_error_map.
+
+Dry-run, không ghi file:
+
+npm run errors:enrich -- \
+  --module <module> \
+  --dry-run
+
+Ví dụ:
+
+npm run errors:enrich -- \
+  --module admin \
+  --dry-run
+
+Chạy thật:
+
+npm run errors:enrich -- \
+  --module admin
+
+Alias:
+
+npm run enrich:errors -- \
+  --module admin
+
+Dùng file source riêng nếu cần:
+
+python3 2.pipeline/run_api_import.py enrich-errors \
+  --module admin \
+  --file "<file_path>"
+
+Dùng folder riêng nếu cần:
+
+python3 2.pipeline/run_api_import.py enrich-errors \
+  --module admin \
+  --folder "<folder_path>"
+
+Ghi output report riêng nếu command có dùng output:
+
+python3 2.pipeline/run_api_import.py enrich-errors \
+  --module admin \
+  --output "<output_path>"
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py enrich-errors \
+  --module admin \
+  --dry-run
+resolve-http-status
+
+Điền http_status cho một mã trong pending_review.yaml.
+
+python3 2.pipeline/run_api_import.py resolve-http-status \
+  --module <module> \
+  --code <code> \
+  --http-status <status> \
+  --approved-by "<name>" \
+  --reason "<reason>"
+
+Ví dụ:
+
+python3 2.pipeline/run_api_import.py resolve-http-status \
+  --module service \
+  --code 5014 \
+  --http-status 500 \
+  --approved-by "ren" \
+  --reason "Lỗi lấy giá provider nên map 500"
+
+Nếu đã thêm script package.json:
+
+npm run errors:resolve-http-status -- \
+  --module service \
+  --code 5014 \
+  --http-status 500 \
+  --approved-by "ren" \
+  --reason "Lỗi lấy giá provider nên map 500"
+apply-http-status-review
+
+Apply tất cả pending đã resolved vào http_status_overrides.yaml.
+
+python3 2.pipeline/run_api_import.py apply-http-status-review \
+  --module <module>
+
+Ví dụ:
+
+python3 2.pipeline/run_api_import.py apply-http-status-review \
+  --module service
+
+Nếu đã thêm script package.json:
+
+npm run errors:apply-http-status-review -- \
+  --module service
+convert-root
+
+Convert file unassigned ở source_root.
+
+python3 2.pipeline/run_api_import.py convert-root \
+  --module <module>
+
+Ví dụ:
+
+python3 2.pipeline/run_api_import.py convert-root \
+  --module admin
+activate-module
+
+Chuyển module draft sang active.
+
+npm run activate:module -- \
+  --module <module>
+
+Ví dụ:
+
+npm run activate:module -- \
+  --module topup
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py activate-module \
+  --module topup
+deactivate-module
+
+Chuyển module active sang deprecated.
+
+python3 2.pipeline/run_api_import.py deactivate-module \
+  --module <module>
+
+Ví dụ:
+
+python3 2.pipeline/run_api_import.py deactivate-module \
+  --module old_module
+reactivate-module
+
+Chuyển module deprecated sang active.
+
+python3 2.pipeline/run_api_import.py reactivate-module \
+  --module <module>
+
+Ví dụ:
+
+python3 2.pipeline/run_api_import.py reactivate-module \
+  --module old_module
+list-modules
+
+In bảng tất cả module trong registry.
+
+npm run list:module
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py list-modules
+import
+
+Auto convert tất cả folder con trong source_root.
+
+Convert module cụ thể:
+
+npm run convert:api -- \
+  --module <module>
+
+Ví dụ:
+
+npm run convert:api -- \
+  --module admin
+
+Force convert module:
+
+npm run convert:api -- \
+  --module admin \
+  --force
+
+Convert tất cả module active:
+
+npm run convert:api -- \
+  --all
+
+Force convert tất cả:
+
+npm run convert:api -- \
+  --all \
+  --force
+
+Raw command:
+
+python3 2.pipeline/run_api_import.py import \
+  --module admin \
+  --force

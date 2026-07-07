@@ -1,5 +1,5 @@
 delete:
-  summary: Xóa mapping của sản phẩm nội bộ
+  summary: Xóa ánh xạ sản phẩm nội bộ theo ID
   operationId: deleteInternalProductMapping
   description: Xóa liên kết mapping của một sản phẩm nội bộ theo ID mapping cụ 
     thể. Chỉ quản trị viên có quyền thực hiện thao tác này và mapping phải thuộc
