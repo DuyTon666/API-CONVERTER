@@ -64,18 +64,21 @@ function extractOperations(spec: Record<string, unknown>): Operation[] {
 export default function PortalPage() {
   const yamlPath = path.join(process.cwd(), "..", "dist", "openapi-bundled.yaml");
   let operations: Operation[] = [];
+  let baseUrl = "";
 
   try {
     const raw = fs.readFileSync(yamlPath, "utf-8");
     const spec = yaml.load(raw) as Record<string, unknown>;
     operations = extractOperations(spec);
+    const servers = spec.servers as { url?: string }[] | undefined;
+    baseUrl = servers?.[0]?.url ?? "";
   } catch {
     // file chưa tồn tại hoặc lỗi parse
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
-      <PortalSearch operations={operations} />
+    <div className="flex h-screen overflow-hidden bg-[#FBFBFA]">
+      <PortalSearch operations={operations} baseUrl={baseUrl} />
     </div>
   );
 }
