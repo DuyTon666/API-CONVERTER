@@ -72,7 +72,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _site
           publish_branch: ${{ steps.target.outputs.branch }}
-          force_orphan: true
+          force_orphan: false
 
   # notify:
   #   name: Notify Slack
