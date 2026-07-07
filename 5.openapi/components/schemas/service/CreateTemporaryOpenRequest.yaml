@@ -1,5 +1,0 @@
-type: object
-properties:
-  reason:
-    type: string
-    description: Lý do cần mở tạm

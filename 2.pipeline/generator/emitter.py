@@ -46,6 +46,71 @@ def _ref(path: str) -> dict:
     return {"$ref": Q(path)}
 
 
+_OMIT_DEFAULT = object()
+
+
+def _schema_type_set(schema: dict) -> set[str]:
+    raw_type = schema.get("type")
+
+    if isinstance(raw_type, list):
+        return {str(item) for item in raw_type}
+
+    if raw_type:
+        return {str(raw_type)}
+
+    return set()
+
+
+def _normalize_schema_default(raw_default, schema: dict):
+    """
+    Normalize default trước khi emit OpenAPI.
+
+    - Không emit default null/None/"null" cho primitive schema.
+    - Cast default theo schema type để tránh lỗi kiểu:
+      type: integer + default: "null"
+      type: integer + default: "1"
+    """
+    if raw_default is None:
+        return _OMIT_DEFAULT
+
+    if isinstance(raw_default, str):
+        value = raw_default.strip()
+
+        if value.lower() in {"", "null", "none"}:
+            return _OMIT_DEFAULT
+    else:
+        value = raw_default
+
+    schema_types = _schema_type_set(schema)
+
+    if "integer" in schema_types:
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return _OMIT_DEFAULT
+
+    if "number" in schema_types:
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return _OMIT_DEFAULT
+
+    if "boolean" in schema_types:
+        if isinstance(value, bool):
+            return value
+
+        if isinstance(value, str):
+            lowered = value.lower()
+            if lowered in {"true", "1", "yes", "y", "có"}:
+                return True
+            if lowered in {"false", "0", "no", "n", "không", "khong"}:
+                return False
+
+        return _OMIT_DEFAULT
+
+    return value
+
+
 def _has_canonical_request_schema(op: ParsedOperation) -> bool:
     result = getattr(op, "request_schema_result", None)
     return bool(result and getattr(result, "root", None))
@@ -72,6 +137,7 @@ def _request_schema_name(operation_id: str) -> str:
     
     return base + "Request"
 
+
 def _schema_node_to_openapi(node, schema_kind: str = "request") -> dict:
     node_type = getattr(node, "type", "string") or "string"
 
@@ -90,7 +156,9 @@ def _schema_node_to_openapi(node, schema_kind: str = "request") -> dict:
         schema["enum"] = node.enum
 
     if getattr(node, "has_default", False):
-        schema["default"] = node.default
+        default_value = _normalize_schema_default(node.default, schema)
+        if default_value is not _OMIT_DEFAULT:
+            schema["default"] = default_value
 
     if getattr(node, "has_example", False):
         schema["example"] = node.example
@@ -114,6 +182,7 @@ def _schema_node_to_openapi(node, schema_kind: str = "request") -> dict:
             if prop is None:
                 continue
 
+            prop = _ensure_schema_description(prop, field_name)
             properties[field_name] = prop
 
         schema["properties"] = properties
@@ -155,6 +224,7 @@ def _apply_server_managed_rules(field_name: str, prop: dict, schema_kind: str) -
 
     return prop
 
+
 def _resolve_response_schema(op: ParsedOperation) -> dict:
     """..."""
     standard_ref = _ref(_CONFIG.get(
@@ -176,6 +246,7 @@ def _resolve_response_schema(op: ParsedOperation) -> dict:
     else:
         return standard_ref
     return {"allOf": [standard_ref, {"type": "object", "properties": {"data": data_schema}}]}
+    
 
 def _load_config(config_dir: str) -> dict:
     cfg = Path(config_dir)
@@ -211,6 +282,15 @@ def _load_config(config_dir: str) -> dict:
     else:
         print(f"    [WARN] Không tìm thấy: {registry_path}")
         result["schema_registry"] = {}
+
+    # --- schema_description_policy.yaml ---
+    desc_policy_path = cfg / "schema_description_policy.yaml"
+    if desc_policy_path.exists():
+        result["schema_description_policy"] = (
+            yaml.safe_load(desc_policy_path.read_text(encoding="utf-8")) or {}
+        )
+    else:
+        result["schema_description_policy"] = {"enabled": False}
 
     # --- global/response_refs.yaml ---
     refs_path = cfg / "global" / "response_refs.yaml"
@@ -259,6 +339,151 @@ def init_config(config_dir: str) -> None:
     RESPONSE_READONLY_FIELDS   = set(_CONFIG.get("response_readonly_fields", []))
 
 
+def _parameter_description(param: dict, location: str) -> str:
+    existing = str(param.get("description") or "").strip()
+    if existing:
+        return existing
+
+    name = str(param.get("name") or "").strip()
+    if not name:
+        return "Tham số API"
+
+    if location == "path":
+        return f"Tham số đường dẫn '{name}'."
+    
+    if location == "query":
+        return f"Tham số truy vấn '{name}'."
+
+    return f"Tham số  '{name}'."
+
+
+def _normalize_parameter_default(value, schema_type: str):
+    if value is None:
+        return None
+
+    schema_type = str(schema_type or "").lower()
+
+    if isinstance(value, str):
+        text = value.strip()
+        if not text or text.lower() in {"null", "none", "n/a"}:
+            return None
+
+        if schema_type == "integer":
+            try:
+                return int(text)
+            except ValueError:
+                return None
+
+        if schema_type == "number":
+            try:
+                return float(text)
+            except ValueError:
+                return None
+
+        if schema_type == "boolean":
+            lowered = text.lower()
+            if lowered in {"true", "1", "yes"}:
+                return True
+            if lowered in {"false", "0", "no"}:
+                return False
+            return None
+        
+        return text
+
+    if schema_type == "integer":
+        if isinstance(value, int) and not isinstance(value, bool):
+            return value
+        return None
+
+    if schema_type == "number":
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            return value
+        return None
+
+    if schema_type == "boolean":
+        if isinstance(value, bool):
+            return value
+        return None
+
+    return value
+
+
+def _format_description_template(template: str, **values) -> str:
+    try:
+        return str(template).format(**values)
+    except (KeyError, IndexError, ValueError):
+        return str(template)
+
+
+def _schema_description_policy() -> dict:
+    return _CONFIG.get("schema_description_policy", {}) or {}
+
+
+def _generated_description_enabled() -> bool:
+    policy = _schema_description_policy()
+    return bool(policy.get("enabled", False))
+
+
+def _schema_property_description(field_name: str, existing: str | None = None) -> str:
+    existing = str(existing or "").strip()
+    if existing:
+        return existing
+
+    if not _generated_description_enabled():
+        return ""
+
+    name =str(field_name or "").strip()
+    if not name:
+        return ""
+
+    policy = _schema_description_policy()
+    common_fields = policy.get("common_fields", {}) or {}
+
+    configured = str(common_fields.get(name) or "").strip()
+    if configured:
+        return configured
+
+    template = policy.get("property_fallback_template", "Trường '{field_name}'.")
+    return _format_description_template(
+        template,
+        field_name=name,
+        field_label=name.replace("_", " "),
+    )
+
+
+def _schema_component_description(schema_name: str, existing: str | None = None) -> str:
+    existing =str(existing or "").strip()
+    if existing:
+        return existing
+
+    if not  _generated_description_enabled():
+        return ""
+
+    name = str(schema_name or "").strip()
+    if not name:
+        return ""
+
+    policy = _schema_description_policy()
+    template = policy.get("component_fallback_template", "Schema '{schema_name}'.")
+    return _format_description_template(template, schema_name=name)
+
+
+def _ensure_schema_description(schema: dict, name: str, *, component: bool = False) -> dict:
+    if not isinstance(schema, dict):
+        return schema
+
+    description = (
+        _schema_component_description(name, schema.get("description"))
+        if component
+        else _schema_property_description(name, schema.get("description"))
+    )
+
+    if description:
+        schema["description"] = description
+
+    return schema
+
+
 def _build_structure(op: ParsedOperation) -> dict:
     """
     Xây dựng toàn bộ cấu trúc OpenAPI từ ParsedOperation.
@@ -267,30 +492,42 @@ def _build_structure(op: ParsedOperation) -> dict:
 
     # --- PHẦN 1: XÂY PARAMETERS ---
     parameters = []
+
     for p in op.parameters:
         # Mỗi path parameter cần: name, in, required, schema
         parameters.append({
             "name": p["name"],
             "in": "path",            # path parameter vì nằm trong URL
             "required": p["required"],
-            "schema": {"type": p["type"].lower()}  # lower() vì OpenAPI dùng "integer" không phải "Integer"
+            "schema": {"type": p["type"].lower()} , # lower() vì OpenAPI dùng "integer" không phải "Integer"
+            "description": _parameter_description(p, "path"),
         })
+
     for p in op.query_parameters:
-        schema = {"type": p["type"]}
+        schema_type = str(p.get("type") or "string").strip().lower()
+        description = _parameter_description(p, "query")
+
+        schema = {"type": schema_type}
+
         if p.get("is_enum") and p.get("enum_values"):
             schema["enum"] = p["enum_values"]
+            schema["description"] = description
+
         if p.get("format"):
             schema["format"] = p["format"]
+        
+        default_value = _normalize_parameter_default(p.get("default"), schema_type)
+        if default_value is not None:
+            schema["default"] = default_value
+
         param = {
             "name": p["name"],
             "in": "query",
             "required": False,
             "schema": schema,
+            "description": description,
         }
-        if p.get("default"):
-            param["schema"]["default"] = p["default"]
-        if p.get("description"):
-            param["description"] = p["description"]
+
         parameters.append(param)
 
     # --- PHẦN 2: GROUP ERROR CODES THEO HTTP STATUS ---
@@ -383,6 +620,7 @@ def emit_request_schema(op: ParsedOperation, schemas_dir: str):
             op.request_schema_result.root,
             schema_kind="request",
         )
+        data = _ensure_schema_description(data, schema_name, component=True)
 
         yaml = YAML()
         yaml.default_flow_style = False
@@ -419,8 +657,9 @@ def emit_request_schema(op: ParsedOperation, schemas_dir: str):
                         sp = {"type": "string"}
                         if sf.get("max_length"):
                             sp["maxLength"] = sf["max_length"]
-                    if sf.get("description"):
-                        sp["description"] = sf["description"]
+                    description = _schema_property_description(sf["name"], sf.get("description"))
+                    if description:
+                        sp["description"] = description
                     sub_props[sf["name"]] = sp
                     if sf["required"]:
                         sub_required.append(sf["name"])
@@ -442,21 +681,25 @@ def emit_request_schema(op: ParsedOperation, schemas_dir: str):
             if f.get("max_length"):
                 prop["maxLength"] = f["max_length"]
 
-        if f.get("description"):
-            prop["description"] = f["description"]
-
         field_name = f["name"]
+
+        description = _schema_property_description(field_name, f.get("description"))
+        if description:
+            prop["description"] = description
+
         prop = _apply_server_managed_rules(field_name, prop, schema_kind="request")
 
         # id/created_at/updated_at không được nằm trong request schema
         if prop is None:
             continue
+        prop = _ensure_schema_description(prop, field_name)
 
         properties[field_name] = prop
         if f["required"]:
             required_fields.append(field_name)
 
     data = {"type": "object", "properties": properties}
+    data = _ensure_schema_description(data, schema_name, component=True)
     if required_fields:
         data["required"] = required_fields
 
@@ -540,13 +783,17 @@ def _build_properties(fields: list, parent_path: str = "", all_schemas: dict = N
         else:
             prop = _scalar_schema(dtype)
 
-        if f.get("description"):
-            prop["description"] = f["description"]
         field_name = f["name"]
+
+        description = _schema_property_description(field_name, f.get("description"))
+        if description:
+            prop["description"] = description
+
         prop = _apply_server_managed_rules(field_name, prop, schema_kind="response")
 
         if prop is None:
             continue
+        prop = _ensure_schema_description(prop, field_name)
 
         properties[field_name] = prop
 
@@ -601,6 +848,7 @@ def emit_response_schemas(op: ParsedOperation, schemas_dir: str):
                 prefix=prefix,
             )
         }
+        sub_data = _ensure_schema_description(sub_data, sub_name, component=True)
 
         sub_path.parent.mkdir(parents=True, exist_ok=True)
         with open(sub_path, "w", encoding="utf-8") as f:

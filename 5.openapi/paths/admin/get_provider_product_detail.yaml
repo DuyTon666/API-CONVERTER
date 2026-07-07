@@ -1,8 +1,8 @@
 get:
   summary: Lấy chi tiết sản phẩm của nhà cung cấp
   operationId: getProviderProductDetail
-  description: Truy xuất thông tin chi tiết của một sản phẩm cụ thể thuộc nhà cung cấp dựa trên mã nhà cung cấp và ID 
-    sản phẩm. Chỉ quản trị viên có quyền truy cập mới được phép thực hiện thao tác này.
+  description: Lấy thông tin chi tiết của một sản phẩm cụ thể thuộc nhà cung cấp dựa trên mã nhà cung cấp và ID sản 
+    phẩm. Chỉ quản trị viên có quyền truy cập thông tin này để phục vụ mục đích quản lý và kiểm soát danh mục sản phẩm.
   tags:
   - Admin
   security:
@@ -14,11 +14,13 @@ get:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'provider_code'.
   - name: id
     in: path
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công

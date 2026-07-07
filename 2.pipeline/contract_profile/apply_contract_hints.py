@@ -40,7 +40,7 @@ def _default_hints_output(module: str) -> Path:
     return PROJECT_ROOT / "3.build/reports" / f"contract_profile_hints_{module}.json"
 
 
-def cmd_enrich_openapi(
+def cmd_apply_contract_hints(
     module: str,
     file: str | None = None,
     folder: str | None = None,

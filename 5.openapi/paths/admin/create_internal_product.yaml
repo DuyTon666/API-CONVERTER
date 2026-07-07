@@ -1,8 +1,8 @@
 post:
   summary: Tạo sản phẩm nội bộ mới trong hệ thống
   operationId: createInternalProduct
-  description: Tạo mới một sản phẩm nội bộ dành cho quản trị viên, cho phép định nghĩa thông tin sản phẩm chỉ sử dụng 
-    trong phạm vi nội bộ của hệ thống. Chỉ các tài khoản có quyền admin mới được phép thực hiện thao tác này.
+  description: Tạo một sản phẩm nội bộ mới dành cho quản trị viên, sản phẩm này chỉ hiển thị và sử dụng trong phạm vi 
+    nội bộ của hệ thống. Yêu cầu quyền admin và các thông tin bắt buộc như tên, mã sản phẩm phải được cung cấp đầy đủ.
   tags:
   - Admin
   security:

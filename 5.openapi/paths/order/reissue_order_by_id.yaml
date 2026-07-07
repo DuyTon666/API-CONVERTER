@@ -2,7 +2,7 @@ post:
   summary: Tái cấp phát đơn hàng theo ID
   operationId: reissueOrderById
   description: Tái cấp phát đơn hàng đã tồn tại dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng đủ điều kiện tái
-    cấp phát và không ở trạng thái đã hủy hoặc đang xử lý.
+    cấp phát và yêu cầu quyền hạn phù hợp để thực hiện thao tác này.
   tags:
   - Order
   security:
@@ -14,6 +14,7 @@ post:
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'id'.
   responses:
     '202':
       description: Thành công

@@ -1,8 +1,8 @@
 post:
-  summary: Tạo mapping cho sản phẩm nội bộ
+  summary: Tạo ánh xạ cho sản phẩm nội bộ
   operationId: createInternalProductMapping
-  description: Tạo liên kết mapping mới cho sản phẩm nội bộ theo ID được chỉ định. Chỉ quản trị viên có quyền thực hiện 
-    thao tác này và mỗi sản phẩm phải đảm bảo tính duy nhất trong cấu hình mapping.
+  description: Tạo mới một ánh xạ liên kết cho sản phẩm nội bộ theo ID được chỉ định. Chỉ quản trị viên có quyền thực 
+    hiện thao tác này và sản phẩm phải tồn tại trong hệ thống.
   tags:
   - Admin
   security:
@@ -14,6 +14,7 @@ post:
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'id'.
   responses:
     '201':
       description: Thành công

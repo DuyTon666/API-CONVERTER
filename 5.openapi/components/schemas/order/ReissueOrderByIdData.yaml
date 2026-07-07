@@ -25,3 +25,4 @@ properties:
   message:
     type: string
     description: Thông báo xác nhận yêu cầu đã xếp hàng.
+description: Schema `ReissueOrderByIdData`.

@@ -1,8 +1,8 @@
 post:
   summary: Đồng bộ trạng thái đơn hàng theo ID
   operationId: syncOrderStatus
-  description: Đồng bộ hóa trạng thái của đơn hàng với hệ thống bên ngoài dựa trên ID đơn hàng được cung cấp. Yêu cầu 
-    đơn hàng phải tồn tại và đang ở trạng thái hợp lệ để thực hiện đồng bộ.
+  description: Đồng bộ trạng thái của đơn hàng với hệ thống bên ngoài dựa trên ID đơn hàng. Chỉ áp dụng cho các đơn hàng
+    đang trong quá trình xử lý và yêu cầu đơn hàng phải tồn tại trong hệ thống.
   tags:
   - Order
   security:
@@ -14,6 +14,7 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công
@@ -43,3 +44,9 @@ post:
       $ref: "../../components/responses/TooManyRequests.yaml"
     '502':
       $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/order/SyncOrderStatusRequest.yaml"

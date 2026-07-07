@@ -20,3 +20,4 @@ properties:
     type: string
     description: '"sslstore" — CSR được sinh bởi TheSSLStore API. "internal" — CSR
       được sinh bởi openssl nội bộ (fallback).'
+description: Schema `GenerateCsrForOrderData`.

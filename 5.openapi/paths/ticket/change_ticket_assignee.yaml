@@ -1,8 +1,8 @@
 post:
   summary: Yêu cầu đổi nhân viên hỗ trợ ticket
   operationId: changeTicketAssignee
-  description: API cho phép người dùng gửi yêu cầu thay đổi nhân viên hỗ trợ (assignee) cho một ticket cụ thể. Yêu cầu 
-    chỉ được thực hiện khi ticket đang ở trạng thái mở và người dùng có quyền thực hiện thay đổi trên ticket đó.
+  description: API cho phép người dùng gửi yêu cầu thay đổi nhân viên hỗ trợ cho một ticket cụ thể. Yêu cầu chỉ được 
+    thực hiện khi ticket đang ở trạng thái mở và người dùng có quyền thao tác trên ticket đó.
   tags:
   - Ticket
   security:
@@ -14,11 +14,13 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'user_id'.
   - name: id
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công
@@ -41,9 +43,13 @@ post:
     '400':
       $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
     '429':
-      $ref: ../../components/responses/TooManyRequests.yaml
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
   requestBody:
     required: true
     content:

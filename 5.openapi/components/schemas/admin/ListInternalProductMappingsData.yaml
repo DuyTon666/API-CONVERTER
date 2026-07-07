@@ -1,8 +1,5 @@
 type: object
 properties:
-  Thuộc tính:
-    type: string
-    description: Mô tả
   id:
     type: string
     description: Primary key UUID v4.
@@ -10,13 +7,16 @@ properties:
   internal_product_id:
     type: string
     description: FK tới internal_products.id.
+    readOnly: true
   provider_product_id:
     type: string
     description: FK tới provider_products.id.
+    readOnly: true
   provider_id:
     type: string
     description: DENORMALIZED — copy từ provider_products.provider_id để enforce
       UNIQUE(internal_product_id, provider_id) ở DB layer.
+    readOnly: true
   routing_weight:
     type: integer
     description: 'Trọng số Weighted Round-Robin (WRR) cho routing đơn hàng. Default
@@ -46,3 +46,4 @@ properties:
   deleted_at:
     type: string
     description: Soft delete timestamp. Null = chưa xóa.
+description: Schema `ListInternalProductMappingsData`.

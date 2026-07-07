@@ -1,7 +1,10 @@
 import re
 import unicodedata
 import json
+import yaml
 
+from functools import lru_cache
+from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Optional
 from converters.models import ParsedOperation
@@ -367,6 +370,43 @@ def _parse_request_body(text: str) -> tuple:
     return True, required
 
 
+REQUEST_SCHEMA_PROFILE_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "4.config"
+    / "request_schema_profiles.yaml"
+)
+
+
+def _normalize_header_alias(value: str) -> str:
+    text = str(value or "").strip().lower()
+    return re.sub(r"\s+", " ", text)
+
+
+@lru_cache(maxsize=1)
+def _load_request_schema_profile() -> dict:
+    with open(REQUEST_SCHEMA_PROFILE_PATH, encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+def _get_column_aliases(canonical_name: str) -> set[str]:
+    profile = _load_request_schema_profile()
+    aliases = (
+        profile
+        .get("column_aliases", {})
+        .get(canonical_name, [])
+        or []
+    )
+    return {_normalize_header_alias(alias) for alias in aliases}
+
+
+def _is_field_header_name(value: str) -> bool:
+    return _normalize_header_alias(value) in _get_column_aliases("field_name")
+
+
+def _is_type_header_name(value: str) -> bool:
+    return _normalize_header_alias(value) in _get_column_aliases("type")
+
+
 def _parse_request_body_fields(text: str) -> list:
     """Extract từng field trong bảng 4.3 Request Body"""
     section = re.search(
@@ -385,7 +425,7 @@ def _parse_request_body_fields(text: str) -> list:
             continue
         name = cols[0]
         # Bỏ header row và dòng trống
-        if not name or name.lower() in {"tên", "field", "name"}:
+        if not name or _is_field_header_name(name):
             continue
         if len(cols) >= 4 and cols[1].strip().lower() in {"string", "integer", "int", "boolean", "bool", "number", "decimal", "array", "object", "enum"}:
             dtype = cols[1]
@@ -486,8 +526,8 @@ def _parse_response_schemas(text: str) -> dict:
             dtype_key = dtype.lower()
 
             is_header_row = (
-                name_key in {"field", "trường", "ten", "tên", "name"}
-                and dtype_key in {"type", "kiểu", "kieu"}
+                _is_field_header_name(name)
+                and _is_type_header_name(dtype)
             )
             if not name or is_header_row:
                 continue
@@ -539,8 +579,8 @@ def _parse_response_schemas(text: str) -> dict:
                 dtype_key = dtype.lower()
 
                 is_header_row = (
-                    name_key in {"field", "trường", "ten", "tên", "name"}
-                    and dtype_key in {"type", "kiểu", "kieu"}
+                    _is_field_header_name(name)
+                    and _is_type_header_name(dtype)
                 )
                 if not name or is_header_row:
                     continue

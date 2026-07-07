@@ -124,3 +124,4 @@ required:
   - contact_tech.first_name
   - contact_tech.last_name
   - contact_tech.phone
+description: Schema `SubmitCsrForOrderRequest`.

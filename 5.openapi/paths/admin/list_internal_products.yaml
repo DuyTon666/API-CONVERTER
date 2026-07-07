@@ -1,7 +1,7 @@
 get:
   summary: Lấy danh sách sản phẩm nội bộ
   operationId: listInternalProducts
-  description: Truy xuất danh sách tất cả sản phẩm nội bộ dành cho quản trị viên hệ thống. Chỉ người dùng có quyền admin
+  description: Truy xuất danh sách toàn bộ sản phẩm nội bộ dành cho quản trị viên hệ thống. Chỉ tài khoản có quyền admin
     mới được phép truy cập endpoint này.
   tags:
   - Admin

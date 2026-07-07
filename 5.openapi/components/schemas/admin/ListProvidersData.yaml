@@ -5,3 +5,4 @@ properties:
     items:
       type: object
     description: Danh sách provider (schema xem
+description: Schema `ListProvidersData`.

@@ -69,5 +69,5 @@ properties:
   conversations:
     type: array
     items:
-      $ref: ./GetUserTicketDetailDataConversations.yaml
+      $ref: ./GetTicketDetailForUserDataConversations.yaml
     description: Danh sách các phản hồi (xem thêm bên dưới)

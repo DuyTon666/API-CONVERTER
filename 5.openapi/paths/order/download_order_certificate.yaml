@@ -1,8 +1,8 @@
 get:
   summary: Tải xuống chứng chỉ của đơn hàng
   operationId: downloadOrderCertificate
-  description: Tải xuống tệp chứng chỉ thuộc về một đơn hàng cụ thể dựa trên mã đơn hàng và mã chứng chỉ. Yêu cầu đơn 
-    hàng phải tồn tại và chứng chỉ phải thuộc về đơn hàng đó mới được phép tải xuống.
+  description: Tải xuống tệp chứng chỉ theo mã đơn hàng và mã chứng chỉ tương ứng. Yêu cầu đơn hàng phải tồn tại và 
+    chứng chỉ phải được cấp phát hợp lệ trước khi thực hiện tải xuống.
   tags:
   - Order
   security:
@@ -14,11 +14,13 @@ get:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   - name: certId
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'certId'.
   - name: format
     in: query
     required: false
@@ -27,6 +29,7 @@ get:
       enum:
       - zip
       - json
+      description: zip (mặc định) — trả file ZIP bundle. json — trả JSON với PEM strings.
     description: zip (mặc định) — trả file ZIP bundle. json — trả JSON với PEM strings.
   responses:
     '200':

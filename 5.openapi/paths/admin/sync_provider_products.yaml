@@ -1,9 +1,8 @@
 post:
   summary: Đồng bộ sản phẩm từ nhà cung cấp
   operationId: syncProviderProducts
-  description: Thực hiện đồng bộ danh sách sản phẩm từ nhà cung cấp (provider) vào hệ thống theo mã nhà cung cấp chỉ 
-    định. Chỉ quản trị viên mới có quyền thực hiện thao tác này và mỗi lần đồng bộ sẽ cập nhật toàn bộ thông tin sản 
-    phẩm hiện có.
+  description: Đồng bộ danh sách sản phẩm từ nhà cung cấp chỉ định vào hệ thống admin. Chỉ áp dụng cho các nhà cung cấp 
+    đã được kích hoạt và yêu cầu quyền quản trị viên để thực thi.
   tags:
   - Admin
   security:
@@ -15,6 +14,7 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'provider_code'.
   - name: dry_run
     in: query
     required: false

@@ -13,6 +13,7 @@ properties:
   customer_id:
     type: string
     description: ID khách hàng từ Internal Core System.
+    readOnly: true
   internal_product_code:
     type: string
     description: Mã sản phẩm nội bộ (master catalog).
@@ -59,3 +60,4 @@ properties:
   pagination.total_pages:
     type: integer
     description: Tổng số trang = ceil(total_items / per_page).
+description: Schema `GetOrderListData`.

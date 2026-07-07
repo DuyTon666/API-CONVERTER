@@ -1,8 +1,8 @@
 post:
-  summary: Tạo phản hồi ticket cho khách hàng
+  summary: Tạo phản hồi mới cho ticket của khách hàng
   operationId: createTicketConversation
-  description: API cho phép tạo phản hồi mới trong ticket hỗ trợ của khách hàng. Chỉ người dùng có quyền truy cập ticket
-    mới có thể thêm phản hồi vào cuộc hội thoại.
+  description: API cho phép tạo phản hồi mới trong một ticket hỗ trợ của khách hàng. Yêu cầu xác định đúng user_id và id
+    của ticket tồn tại trong hệ thống trước khi gửi phản hồi.
   tags:
   - Ticket
   security:
@@ -14,11 +14,13 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'user_id'.
   - name: id
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công
@@ -42,9 +44,13 @@ post:
     '400':
       $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
     '409':
-      $ref: ../../components/responses/Conflict.yaml
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
   x-error-responses:
     '401':
     - code: '4102'

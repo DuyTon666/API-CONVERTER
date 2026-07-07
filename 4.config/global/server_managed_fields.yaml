@@ -6,3 +6,9 @@ response_readonly_fields:
   - id
   - created_at
   - updated_at
+  - customer_id
+  - internal_product_id
+  - provider_product_id
+  - provider_id
+  - sync_log_id
+  - certificate_id

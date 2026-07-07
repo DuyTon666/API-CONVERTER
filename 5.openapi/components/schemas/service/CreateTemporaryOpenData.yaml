@@ -1,8 +1,0 @@
-type: object
-properties:
-  temp_open_day:
-    type: integer
-    description: Số ngày được mở tạm
-  temp_expired_date:
-    type: string
-    description: Ngày hết hạn tạm

@@ -1,9 +1,9 @@
 post:
   summary: Mở tạm thời dịch vụ theo ID
   operationId: temporaryOpenService
-  description: API cho phép mở tạm thời một dịch vụ đang bị tạm ngừng dựa trên service_id được cung cấp. Chức năng này 
-    áp dụng trong trường hợp khách hàng cần khôi phục dịch vụ tạm thời trong khoảng thời gian cho phép theo quy định 
-    nghiệp vụ.
+  description: API cho phép mở tạm thời một dịch vụ đang tạm dừng hoặc bị khóa dựa trên service_id. Chức năng này được 
+    sử dụng trong trường hợp cần kích hoạt dịch vụ trong thời gian giới hạn, yêu cầu người dùng có quyền hạn phù hợp để 
+    thực hiện thao tác.
   tags:
   - Service
   security:
@@ -15,6 +15,7 @@ post:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'service_id'.
   responses:
     '200':
       description: Thành công

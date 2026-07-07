@@ -12,24 +12,33 @@ properties:
   name:
     type: string
     example: SSL DV Single Domain (cập nhật)
+    description: Tên hiển thị.
   name_en:
     type: string
     example: '...'
+    description: Trường `name_en`.
   description:
     type: string
     example: '...'
+    description: Mô tả chi tiết.
   retail_price_vnd:
     type: integer
     example: 280000
+    description: Trường `retail_price_vnd`.
   is_enabled:
     type: boolean
     example: true
+    description: Trường `is_enabled`.
   display_order:
     type: integer
     example: 15
+    description: Trường `display_order`.
   default_san:
     type: integer
     example: 0
+    description: Trường `default_san`.
   max_san:
     type: integer
     example: 10
+    description: Trường `max_san`.
+description: Schema `UpdateInternalProductRequest`.

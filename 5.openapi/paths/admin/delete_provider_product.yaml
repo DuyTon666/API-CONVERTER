@@ -14,11 +14,13 @@ delete:
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'provider_code'.
   - name: id
     in: path
     required: true
     schema:
       type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công

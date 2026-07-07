@@ -2,7 +2,7 @@ delete:
   summary: Xóa sản phẩm nội bộ theo ID
   operationId: deleteInternalProduct
   description: Xóa vĩnh viễn một sản phẩm nội bộ khỏi hệ thống dựa trên ID được cung cấp. Chỉ quản trị viên có quyền 
-    thực hiện thao tác này và sản phẩm không thể khôi phục sau khi xóa.
+    thực hiện thao tác này và sản phẩm sẽ không thể khôi phục sau khi xóa.
   tags:
   - Admin
   security:
@@ -14,6 +14,7 @@ delete:
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công

@@ -30,3 +30,4 @@ properties:
   routing_info.candidates:
     type: string
     description: Snapshot tất cả candidates + score để audit quyết định routing.
+description: Schema `CreateOrderData`.

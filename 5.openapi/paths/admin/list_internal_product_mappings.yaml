@@ -1,8 +1,8 @@
 get:
   summary: Lấy danh sách mapping của sản phẩm nội bộ
   operationId: listInternalProductMappings
-  description: Lấy danh sách các mapping liên kết của một sản phẩm nội bộ theo ID. Chỉ dành cho quản trị viên, yêu cầu 
-    ID sản phẩm hợp lệ và tồn tại trong hệ thống.
+  description: Truy xuất danh sách các mapping liên kết với sản phẩm nội bộ theo ID chỉ định. API chỉ dành cho quản trị 
+    viên nội bộ và yêu cầu ID sản phẩm hợp lệ.
   tags:
   - Admin
   security:
@@ -14,6 +14,7 @@ get:
     required: true
     schema:
       type: integer
+    description: Tham số đường dẫn 'id'.
   - name: is_active
     in: query
     required: false

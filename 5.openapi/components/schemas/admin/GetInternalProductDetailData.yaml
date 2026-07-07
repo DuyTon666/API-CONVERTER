@@ -1,8 +1,5 @@
 type: object
 properties:
-  Thuộc tính:
-    type: string
-    description: Mô tả
   id:
     type: string
     description: Primary key UUID v4 — auto generate.
@@ -54,3 +51,4 @@ properties:
   deleted_at:
     type: string
     description: Soft delete timestamp. Null = chưa xóa.
+description: Schema `GetInternalProductDetailData`.

@@ -4,7 +4,7 @@ LLM Schema Generator
 Sinh JSON Schema cho response data từ docx text.
 Gọi LLM với context từ docx, trả về schema YAML file.
 
-Dùng trong enrich-openapi khi hints_builder detect json_wrapper response
+Dùng trong apply-contract-hints khi hints_builder detect json_wrapper response
 nhưng schema data chưa có trong components.
 """
 from __future__ import annotations
