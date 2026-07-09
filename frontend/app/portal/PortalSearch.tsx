@@ -21,7 +21,9 @@ export default function PortalSearch({
   baseUrl: string;
 }) {
   const [query, setQuery] = useState("");
-  const [selectedMethods, setSelectedMethods] = useState<Set<string>>(new Set());
+  const [selectedMethods, setSelectedMethods] = useState<Set<string>>(
+    new Set(),
+  );
   const [selectedTag, setSelectedTag] = useState("");
   const [selected, setSelected] = useState<Operation | null>(null);
 
@@ -47,7 +49,10 @@ export default function PortalSearch({
   useEffect(() => {
     function onMove(e: MouseEvent) {
       if (!draggingRef.current) return;
-      const next = Math.min(MAX_SIDEBAR_WIDTH, Math.max(MIN_SIDEBAR_WIDTH, e.clientX));
+      const next = Math.min(
+        MAX_SIDEBAR_WIDTH,
+        Math.max(MIN_SIDEBAR_WIDTH, e.clientX),
+      );
       setSidebarWidth(next);
     }
     function onUp() {
@@ -94,22 +99,23 @@ export default function PortalSearch({
       new Fuse(operations, {
         keys: [
           { name: "operationId", weight: 0.3 },
-          { name: "summary",     weight: 0.3 },
-          { name: "path",        weight: 0.2 },
-          { name: "tags",        weight: 0.1 },
+          { name: "summary", weight: 0.3 },
+          { name: "path", weight: 0.2 },
+          { name: "tags", weight: 0.1 },
           { name: "description", weight: 0.1 },
         ],
         threshold: 0.4,
       }),
-    [operations]
+    [operations],
   );
 
   const results = useMemo(() => {
-    let list = query.trim() ? fuse.search(query).map((r) => r.item) : operations;
+    let list = query.trim()
+      ? fuse.search(query).map((r) => r.item)
+      : operations;
     if (selectedMethods.size > 0)
       list = list.filter((op) => selectedMethods.has(op.method));
-    if (selectedTag)
-      list = list.filter((op) => op.tags.includes(selectedTag));
+    if (selectedTag) list = list.filter((op) => op.tags.includes(selectedTag));
     return list;
   }, [query, fuse, operations, selectedMethods, selectedTag]);
 
@@ -142,19 +148,33 @@ export default function PortalSearch({
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 rounded-full bg-[#1F6C9F]" />
-              <span className="text-base font-bold text-[#2F3437] whitespace-nowrap">Developer Portal</span>
+              <span className="text-base font-bold text-[#2F3437] whitespace-nowrap">
+                Developer Portal
+              </span>
             </div>
             <button
               onClick={toggleCollapsed}
               title="Thu gọn sidebar"
               className="shrink-0 w-6 h-6 flex items-center justify-center rounded-md text-gray-400 hover:text-gray-600 hover:bg-[#F7F6F3] transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7M19 19l-7-7 7-7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11 19l-7-7 7-7M19 19l-7-7 7-7"
+                />
               </svg>
             </button>
           </div>
-          <p className="text-sm text-gray-400 pl-4.5 whitespace-nowrap">{operations.length} endpoints</p>
+          <p className="text-sm text-gray-400 pl-4.5 whitespace-nowrap">
+            {operations.length} endpoints
+          </p>
         </div>
 
         {/* Search + filters */}
@@ -176,10 +196,15 @@ export default function PortalSearch({
                   key={m}
                   onClick={() => toggleMethod(m)}
                   className={`px-2.5 py-1 text-xs font-semibold tracking-wide rounded-full transition-colors ${
-                    active ? `${tone.solid} ${tone.solidText}` : `${tone.bg} ${tone.text} hover:brightness-95`
+                    active
+                      ? `${tone.solid} ${tone.solidText}`
+                      : `${tone.bg} ${tone.text} hover:brightness-95`
                   }`}
                 >
-                  {m} {methodCounts[m] ? <span className="opacity-70">({methodCounts[m]})</span> : null}
+                  {m}{" "}
+                  {methodCounts[m] ? (
+                    <span className="opacity-70">({methodCounts[m]})</span>
+                  ) : null}
                 </button>
               );
             })}
@@ -193,11 +218,18 @@ export default function PortalSearch({
                 className="flex-1 px-2.5 py-1.5 text-sm text-gray-600 border border-[#EAEAEA] rounded-lg bg-white focus:outline-none"
               >
                 <option value="">Tất cả tag</option>
-                {allTags.map((t) => <option key={t} value={t}>{t}</option>)}
+                {allTags.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
               </select>
             )}
             {hasFilter && (
-              <button onClick={clearFilters} className="text-sm text-gray-400 hover:text-gray-600 whitespace-nowrap">
+              <button
+                onClick={clearFilters}
+                className="text-sm text-gray-400 hover:text-gray-600 whitespace-nowrap"
+              >
                 Xoá
               </button>
             )}
@@ -207,13 +239,18 @@ export default function PortalSearch({
         {/* Endpoint list */}
         <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1.5">
           {results.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-6">Không tìm thấy.</p>
+            <p className="text-sm text-gray-400 text-center py-6">
+              Không tìm thấy.
+            </p>
           ) : (
             results.map((op) => (
               <EndpointCard
                 key={op.operationId || `${op.method}-${op.path}`}
                 op={op}
-                active={selected?.operationId === op.operationId && selected?.path === op.path}
+                active={
+                  selected?.operationId === op.operationId &&
+                  selected?.path === op.path
+                }
                 onClick={() => setSelected(op)}
               />
             ))
@@ -222,7 +259,9 @@ export default function PortalSearch({
 
         {hasFilter && (
           <div className="px-4 py-2.5 border-t border-[#F0F0EE]">
-            <p className="text-sm text-gray-400">{results.length} / {operations.length} kết quả</p>
+            <p className="text-sm text-gray-400">
+              {results.length} / {operations.length} kết quả
+            </p>
           </div>
         )}
       </aside>
@@ -243,14 +282,28 @@ export default function PortalSearch({
             title="Mở sidebar"
             className="fixed left-3 top-3 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white border border-[#EAEAEA] text-gray-400 hover:text-gray-600 hover:border-[#D8D8D6] transition-colors shadow-sm"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13 5l7 7-7 7M5 5l7 7-7 7"
+              />
             </svg>
           </button>
         )}
         {selected ? (
-          <div className="max-w-[1400px] mx-auto py-10 px-10">
-            <EndpointDetailDrawer op={selected} baseUrl={baseUrl} onClose={() => setSelected(null)} />
+          <div className="max-w-350 mx-auto py-10 px-10">
+            <EndpointDetailDrawer
+              op={selected}
+              baseUrl={baseUrl}
+              onClose={() => setSelected(null)}
+            />
           </div>
         ) : (
           <div className="relative h-full overflow-y-auto">
@@ -263,15 +316,28 @@ export default function PortalSearch({
               }}
             />
 
-            <div className="relative max-w-[1400px] mx-auto px-12 py-16">
+            <div className="relative max-w-350 mx-auto px-12 py-16">
               <div className="w-16 h-16 rounded-2xl bg-[#E1F3FE] flex items-center justify-center mb-6">
-                <svg className="w-8 h-8 text-[#1F6C9F]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                <svg
+                  className="w-8 h-8 text-[#1F6C9F]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
                 </svg>
               </div>
-              <p className="text-2xl text-[#2F3437] font-semibold mb-2">Chọn một endpoint để xem chi tiết</p>
+              <p className="text-2xl text-[#2F3437] font-semibold mb-2">
+                Chọn một endpoint để xem chi tiết
+              </p>
               <p className="text-base text-gray-400 mb-10">
-                {operations.length} endpoints trên {allTags.length} module — gõ để tìm hoặc lọc theo method/tag bên trái.
+                {operations.length} endpoints trên {allTags.length} module — gõ
+                để tìm hoặc lọc theo method/tag bên trái.
               </p>
 
               {/* Method breakdown */}
@@ -284,10 +350,14 @@ export default function PortalSearch({
                       onClick={() => setSelectedMethods(new Set([m]))}
                       className={`rounded-xl border border-[#EAEAEA] bg-white px-4 py-5 text-left hover:border-[#D8D8D6] transition-colors`}
                     >
-                      <span className={`inline-block text-xs font-semibold tracking-wide px-2 py-1 rounded-full ${tone.bg} ${tone.text} mb-3`}>
+                      <span
+                        className={`inline-block text-xs font-semibold tracking-wide px-2 py-1 rounded-full ${tone.bg} ${tone.text} mb-3`}
+                      >
                         {m}
                       </span>
-                      <p className="text-3xl font-semibold text-[#2F3437]">{methodCounts[m] ?? 0}</p>
+                      <p className="text-3xl font-semibold text-[#2F3437]">
+                        {methodCounts[m] ?? 0}
+                      </p>
                     </button>
                   );
                 })}
@@ -308,7 +378,10 @@ export default function PortalSearch({
                       >
                         {tag}
                         <span className="text-gray-300 ml-1.5">
-                          {operations.filter((o) => o.tags.includes(tag)).length}
+                          {
+                            operations.filter((o) => o.tags.includes(tag))
+                              .length
+                          }
                         </span>
                       </button>
                     ))}

@@ -34,11 +34,12 @@ get:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/StandardSuccess'
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
               - type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/ListInternalProductMappingsData'
+                    $ref: 
+                      ../../components/schemas/admin/ListInternalProductMappingsData.yaml
                   internal_product_id:
                     type: string
                     readOnly: true

@@ -1,0 +1,54 @@
+@startuml 04_seq_content_review
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title Chỉnh sửa & duyệt nội dung (UC05 — thay luồng approve/reject/export cũ đã bị xóa khỏi code)
+
+actor "Người dùng" as User
+participant "Frontend\n(BundleEditorModal)" as FE
+participant "Backend" as BE
+participant "Tầng 2\n(5.openapi/paths,schemas)" as T2
+participant "Tầng 3\n(dist/openapi-bundled.yaml)" as T3
+
+== Tab "Chỉnh sửa nội dung" (Form Editor) ==
+User -> FE: Mở operation muốn sửa
+FE -> BE: GET /docs/operations\nGET /docs/schema-fields
+BE -> T3: Đọc bundle hiện tại
+BE --> FE: summary/description/parameter/\nschema field description
+
+User -> FE: Sửa nội dung, bấm Lưu
+FE -> BE: PATCH /docs/operations\nPATCH /docs/schema-fields
+BE -> T2: Ghi field + marker\nx-manual-edit-fields (ruamel.yaml, giữ format)
+BE -> T3: Ghi field tương ứng (đồng bộ 2 tầng)
+BE --> FE: 200 { updated: n }
+
+== Tab "YAML thô" (field bất kỳ, không giới hạn Form Editor) ==
+User -> FE: Chuyển tab YAML thô
+FE -> BE: GET /docs/bundle-content
+BE -> T3: Đọc toàn bộ nội dung
+BE --> FE: YAML content (Monaco Editor)
+
+User -> FE: Sửa trực tiếp, bấm Lưu
+FE -> BE: PUT /docs/bundle-content
+alt YAML sai cú pháp
+  BE --> FE: 400 BUNDLE_INVALID_YAML
+else Hợp lệ
+  BE -> T2: Diff & ghi field thay đổi + marker field-path
+  BE -> T3: Ghi verbatim (giữ format gốc)
+  BE --> FE: 200 OK
+end
+
+== Xung đột khi import lại đè lên sửa tay ==
+note over BE: Nếu import lại phát hiện tầng 1 đã đổi\nVÀ giá trị mới khác giá trị đã sửa tay\n→ ghi vào manual_edit_conflicts.json
+User -> FE: Mở "Xung đột sửa tay khi import lại"
+FE -> BE: GET /modules/manual-edit-conflicts
+BE --> FE: { operationId, field, old_value, new_value }
+User -> FE: Chọn "Giữ bản cũ" hoặc "Lấy bản mới"
+FE -> BE: POST /modules/manual-edit-conflicts/resolve
+BE -> T2: Ghi lại theo lựa chọn (nếu giữ bản cũ)
+BE -> T3: Ghi lại theo lựa chọn
+BE --> FE: 200 OK
+
+@enduml

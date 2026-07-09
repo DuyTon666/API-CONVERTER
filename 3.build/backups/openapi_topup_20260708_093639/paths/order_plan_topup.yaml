@@ -1,0 +1,119 @@
+post:
+  summary: Đặt kế hoạch nạp tiền vào tài khoản
+  operationId: orderPlanTopup
+  description: API cho phép người dùng đặt kế hoạch nạp tiền vào tài khoản theo gói dịch vụ đã chọn. Yêu cầu thông tin 
+    gói nạp và phương thức thanh toán hợp lệ trước khi thực hiện giao dịch.
+  tags:
+  - Topup
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters: []
+  responses:
+    '201':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/topup/OrderPlanTopupData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/topup/OrderPlanTopupRequest.yaml"
+  x-error-responses:
+    '422':
+    - code: '4221'
+      category: ''
+      message: external_account_id là bắt buộc.
+    - code: '4222'
+      category: ''
+      message: external_account_id phải là số nguyên ≥ 1.
+    - code: '4223'
+      category: ''
+      message: customer_id là bắt buộc.
+    - code: '4224'
+      category: ''
+      message: customer_id không được vượt quá 255 ký tự.
+    - code: '6010'
+      category: ''
+      message: core_plan_id là bắt buộc.
+    - code: '6011'
+      category: ''
+      message: core_plan_id không được vượt quá 100 ký tự.
+    - code: '6012'
+      category: ''
+      message: plan_quantity là bắt buộc.
+    - code: '6013'
+      category: ''
+      message: plan_quantity phải là số nguyên ≥ 1.
+    - code: '6014'
+      category: ''
+      message: plan_quantity không được vượt quá 100.
+    - code: '6002'
+      category: ''
+      message: Đơn hàng tìm được không phải loại Multi-Domain/FLEX.
+    - code: '6003'
+      category: ''
+      message: Đơn hàng ở trạng thái không cho phép top-up (EXPIRED, FAILED, CANCELED...).
+    - code: '6005'
+      category: ''
+      message: Tổng SAN sau top-up vượt quá giới hạn tối đa (max_san).
+    - code: '6006'
+      category: ''
+      message: Đơn hàng chưa được gán provider (chưa qua routing).
+    - code: '4200'
+      category: ''
+      message: Dữ liệu request không hợp lệ (validate chung)
+    '404':
+    - code: '6001'
+      category: ''
+      message: Không tìm thấy đơn hàng MULTI_DOMAIN/FLEX đang active cho account này.
+    - code: '6004'
+      category: ''
+      message: Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn hàng.
+    '409':
+    - code: '4090'
+      category: ''
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: ''
+      message: Double submit — payload trùng trong dedup window
+    '401':
+    - code: '4101'
+      category: ''
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: ''
+      message: Bearer Token không hợp lệ / hết hạn
+    - code: '4108'
+      category: ''
+      message: IP không được phép
+    '403':
+    - code: '4103'
+      category: ''
+      message: Client không có scope=admin

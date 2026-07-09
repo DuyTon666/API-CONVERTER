@@ -1,0 +1,54 @@
+@startuml UC12_activity
+skinparam ActivityBackgroundColor #F8FAFC
+skinparam ActivityBorderColor #94A3B8
+skinparam ArrowColor #64748B
+skinparam ActivityDiamondBackgroundColor #FEF9C3
+skinparam ActivityStartColor #4F46E5
+skinparam ActivityEndColor #4F46E5
+skinparam SwimlaneBorderColor #CBD5E1
+
+title UC12 — Deploy tài liệu
+
+|Người dùng|
+start
+if (Lint đã chạy & 0 lỗi?) then (Không)
+  :Nút "Deploy tài liệu" bị disable;
+  stop
+else (Có)
+endif
+:Bấm "Deploy tài liệu";
+
+|Hệ thống|
+:Kiểm tra branch đích tồn tại\nqua GitHub REST API;
+if (Branch tồn tại?) then (Không)
+  :Trả lỗi rõ ràng\n"Branch chưa tồn tại";
+  stop
+else (Có)
+endif
+
+:Tính hash blob SHA-1\nso sánh 5.openapi/** cục bộ với GitHub;
+if (Có thay đổi?) then (Không)
+  :Không tạo commit;
+  stop
+else (Có)
+endif
+
+:Tạo blob cho từng file thay đổi;
+:Tạo tree mới, tạo commit,\ntạo ref nhánh auto/update-openapi-<timestamp>;
+:Dispatch workflow create-doc-pr.yaml;
+
+|GitHub Actions|
+:Mở Pull Request;
+if (CI (validate) pass?) then (Không)
+  :PR chờ xử lý thủ công;
+  stop
+else (Có)
+  :Auto-merge PR;
+endif
+:deploy.yaml build Swagger UI\n→ GitHub Pages;
+
+|Người dùng|
+:Nhận thông báo kết quả (toast);
+
+stop
+@enduml

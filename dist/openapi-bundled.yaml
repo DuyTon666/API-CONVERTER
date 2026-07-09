@@ -3655,6 +3655,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: ID định danh duy nhất của đơn hàng cần nộp CSR.
       responses:
         '200':
           description: Thành công
@@ -3837,6 +3838,7 @@ paths:
             category: Validation
             message: dcv_method là bắt buộc
       x-manual-edit-fields:
+        - parameters[name=id].description
         - responses[200].content.application/json.schema.allOf
   /v1/orders/{id}/sync-status:
     post:
@@ -5761,6 +5763,52 @@ components:
           example: 10
           description: Trường `max_san`.
       description: Schema `UpdateInternalProductRequest`.
+    ListInternalProductMappingsData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Primary key UUID v4.
+          readOnly: true
+        internal_product_id:
+          type: string
+          description: FK tới internal_products.id.
+          readOnly: true
+        provider_product_id:
+          type: string
+          description: FK tới provider_products.id.
+          readOnly: true
+        provider_id:
+          type: string
+          description: DENORMALIZED — copy từ provider_products.provider_id để enforce UNIQUE(internal_product_id, provider_id) ở DB layer.
+          readOnly: true
+        routing_weight:
+          type: integer
+          description: 'Trọng số Weighted Round-Robin (WRR) cho routing đơn hàng. Default 1, range [1, 100]. VD: mapping Daousign weight=2, mapping TheSSLStore weight=1 cho cùng 1 internal product → 2/3 đơn về Daousign. Set 0 = tạm tắt routing nhưng giữ mapping (tương đương is_active=false).'
+        is_active:
+          type: boolean
+          description: Default true. False = tạm tắt mapping nhưng giữ lịch sử audit.
+        notes:
+          type: string
+          description: Ghi chú admin (≤ 500 ký tự).
+        created_at:
+          type: string
+          description: Thời điểm tạo (UTC).
+          readOnly: true
+        updated_at:
+          type: string
+          description: Thời điểm cập nhật gần nhất (UTC).
+          readOnly: true
+        created_by:
+          type: string
+          description: Admin ID người tạo.
+        updated_by:
+          type: string
+          description: Admin ID người cập nhật gần nhất.
+        deleted_at:
+          type: string
+          description: Soft delete timestamp. Null = chưa xóa.
+      description: Schema `ListInternalProductMappingsData`.
     CreateInternalProductMappingRequest:
       type: object
       properties:
@@ -5873,6 +5921,35 @@ components:
           example: Hủy mapping vì provider không còn cung cấp product này
           description: Lý do thực hiện thao tác.
       description: Schema `DeleteInternalProductMappingRequest`.
+    DeleteInternalProductMappingData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Định danh của bản ghi.
+          readOnly: true
+        internal_product_id:
+          type: string
+          description: Trường `internal_product_id`.
+          readOnly: true
+        provider_product_id:
+          type: string
+          description: Trường `provider_product_id`.
+          readOnly: true
+        provider_id:
+          type: string
+          description: Trường `provider_id`.
+          readOnly: true
+        deleted_at:
+          type: string
+          description: Thời điểm xóa bản ghi.
+        deleted_by:
+          type: string
+          description: Người xóa bản ghi.
+        reason:
+          type: string
+          description: Lý do thực hiện thao tác.
+      description: Schema `DeleteInternalProductMappingData`.
     UpdateInternalProductMappingRequest:
       type: object
       example:
@@ -6521,6 +6598,95 @@ components:
             - 'null'
           description: Thời điểm xóa bản ghi.
       description: Schema `CreateProviderProductData`.
+    GetProviderProductDetailData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Primary key nội bộ (UUID v4).
+          readOnly: true
+        provider_id:
+          type: string
+          description: FK tới providers.id — provider sở hữu sản phẩm này.
+          readOnly: true
+        provider_product_code:
+          type: string
+          description: 'Mã sản phẩm tại provider (VD Daousign: "101", "212"). UNIQUE trong phạm vi 1 provider.'
+        product_name:
+          type: string
+          description: Tên sản phẩm đầy đủ.
+        product_name_en:
+          type: string
+          description: Tên tiếng Anh (nếu có).
+        brand:
+          type: string
+          description: Thương hiệu CA (Sectigo, Comodo, PositiveSSL...).
+        product_type:
+          type: string
+          description: 'Mức xác thực: DV | OV | EV.'
+        cert_type:
+          type: string
+          description: 'Kiểu cert: SINGLE | WILDCARD | MULTI_DOMAIN | FLEX.'
+        years_supported:
+          type: string
+          description: 'Số năm hỗ trợ. VD: [1, 2]. Không rỗng.'
+        max_years:
+          type: integer
+          description: Tự tính = max(years_supported).
+        min_san:
+          type: integer
+          description: Áp dụng MULTI_DOMAIN và FLEX. Mặc định 3.
+        max_san:
+          type: integer
+          description: 'Áp dụng MULTI_DOMAIN và FLEX. VD: 100.'
+        supported_dcv_methods:
+          type: string
+          description: 'DCV methods: [EMAIL, HTTP, CNAME]. Không rỗng.'
+        supported_server_types:
+          type: string
+          description: Loại server (Apache, IIS, Nginx...).
+        wholesale_price_usd:
+          type: number
+          description: Giá sỉ Daousign (USD/năm).
+        retail_price_vnd:
+          type: number
+          description: Giá bán lẻ đề xuất (VND/năm).
+        warranty_amount_usd:
+          type: number
+          description: Mức bảo hiểm CA (USD).
+        is_reissue_supported:
+          type: boolean
+          description: Có hỗ trợ reissue không.
+        description:
+          type: string
+          description: Mô tả ngắn sản phẩm.
+        admin_note:
+          type: string
+          description: Ghi chú nội bộ admin.
+        is_enabled:
+          type: boolean
+          description: Bật/tắt theo chiến lược kinh doanh. true=bán, false=tạm dừng.
+        display_order:
+          type: integer
+          description: Thứ tự hiển thị UI (ascending). Mặc định 0.
+        created_at:
+          type: string
+          description: Thời điểm tạo (UTC).
+          readOnly: true
+        updated_at:
+          type: string
+          description: Thời điểm cập nhật gần nhất (UTC).
+          readOnly: true
+        created_by:
+          type: string
+          description: Admin ID người tạo.
+        updated_by:
+          type: string
+          description: Admin ID người cập nhật gần nhất.
+        deleted_at:
+          type: string
+          description: Soft delete timestamp. Null = chưa xóa.
+      description: Schema `GetProviderProductDetailData`.
     DeleteProviderProductRequest:
       type: object
       example:
@@ -6531,6 +6697,36 @@ components:
           example: Sản phẩm ngừng bán — provider đã discontinue
           description: Lý do thực hiện thao tác.
       description: Schema `DeleteProviderProductRequest`.
+    DeleteProviderProductData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID sản phẩm đã xóa
+          readOnly: true
+        provider_id:
+          type: string
+          description: FK providers.id
+          readOnly: true
+        provider_code:
+          type: string
+          description: Mã provider (reference debug)
+        provider_product_code:
+          type: string
+          description: Mã sản phẩm tại provider (để reference)
+        is_enabled:
+          type: boolean
+          description: Luôn false sau khi xóa
+        deleted_at:
+          type: string
+          description: Timestamp soft delete (UTC)
+        deleted_by:
+          type: string
+          description: Admin ID thực hiện xóa
+        reason:
+          type: string
+          description: Lý do xóa (nếu có trong request)
+      description: Schema `DeleteProviderProductData`.
     UpdateProviderProductRequest:
       type: object
       example:
@@ -6575,6 +6771,51 @@ components:
       example: {}
       properties: {}
       description: Schema `SyncProviderProductsRequest`.
+    SyncProviderProductsData:
+      type: object
+      properties:
+        provider_code:
+          type: string
+          description: Mã provider vừa sync (echo từ path).
+        provider_id:
+          type: string
+          description: ID nội bộ của provider.
+          readOnly: true
+        dry_run:
+          type: boolean
+          description: true nếu chạy preview; false nếu đã ghi DB.
+        started_at:
+          type: string
+          description: Thời điểm bắt đầu sync (UTC, ISO 8601).
+        finished_at:
+          type: string
+          description: Thời điểm kết thúc sync (UTC).
+        duration_ms:
+          type: integer
+          description: Tổng thời gian thực thi (ms).
+        summary.total_remote:
+          type: integer
+          description: Tổng số sản phẩm provider trả về.
+        summary.added:
+          type: integer
+          description: Số sản phẩm mới INSERT (hoặc sẽ INSERT nếu dry_run).
+        summary.skipped_existing:
+          type: integer
+          description: Số sản phẩm đã tồn tại, bị SKIP.
+        summary.failed:
+          type: integer
+          description: Số item gặp lỗi mapping/validate.
+        added_items:
+          type: string
+          description: 'Danh sách sản phẩm được thêm (hoặc preview) — field chính: provider_product_code, product_name, brand, is_enabled (luôn false). Mapping tới internal_products làm qua API riêng /admin/internal-products/{id}/mappings.'
+        failed_items:
+          type: string
+          description: Danh sách item lỗi — kèm reason (mapping_error / validate_error).
+        sync_log_id:
+          type: string
+          description: ID record trong provider_sync_logs. Null nếu dry_run=true.
+          readOnly: true
+      description: Schema `SyncProviderProductsData`.
     ToggleProviderProductStatusRequest:
       type: object
       example:
@@ -6590,6 +6831,42 @@ components:
           example: Tạm ngưng bán theo quyết định CEO
           description: Lý do thực hiện thao tác.
       description: Schema `ToggleProviderProductStatusRequest`.
+    ToggleProviderProductStatusData:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID sản phẩm (BIGINT auto-increment)
+          readOnly: true
+        provider_id:
+          type: string
+          description: FK providers.id
+          readOnly: true
+        provider_code:
+          type: string
+          description: Mã provider (reference)
+        provider_product_code:
+          type: string
+          description: Mã sản phẩm tại provider (reference)
+        is_enabled:
+          type: boolean
+          description: Trạng thái sau khi toggle
+        previous_is_enabled:
+          type: boolean
+          description: Trạng thái trước khi toggle
+        changed:
+          type: boolean
+          description: true nếu có thay đổi thực sự; false nếu is_enabled đã đúng giá trị (no-op)
+        changed_at:
+          type: string
+          description: Thời điểm thay đổi (UTC). Null nếu changed=false.
+        changed_by:
+          type: string
+          description: Admin ID thực hiện. Null nếu changed=false.
+        reason:
+          type: string
+          description: Lý do (nếu có trong request)
+      description: Schema `ToggleProviderProductStatusData`.
     RevealProviderTokenRequest:
       type: object
       example:
@@ -6605,6 +6882,29 @@ components:
           example: PRODUCTION
           description: Trường `env`.
       description: Schema `RevealProviderTokenRequest`.
+    RevealProviderTokenData:
+      type: object
+      properties:
+        provider_id:
+          type: string
+          description: ID provider
+          readOnly: true
+        code:
+          type: string
+          description: Mã provider (reference)
+        env:
+          type: string
+          description: Môi trường đã reveal (SANDBOX | PRODUCTION)
+        token:
+          type: string
+          description: Token plaintext đầy đủ — CHỈ có trong response này, không lưu ở đâu khác
+        revealed_at:
+          type: string
+          description: Thời điểm reveal (UTC)
+        revealed_by:
+          type: string
+          description: Admin ID thực hiện reveal
+      description: Schema `RevealProviderTokenData`.
     ToggleProviderStatusRequest:
       type: object
       example:
@@ -6730,6 +7030,68 @@ components:
         comment:
           type: string
           description: Mô tả/ ghi chú của phòng ban
+    GetOrderListData:
+      type: object
+      properties:
+        items:
+          type: string
+          description: Mảng các order summary theo bộ lọc và phân trang.
+        id:
+          type: string
+          description: Order UUID (PK).
+          readOnly: true
+        order_number:
+          type: string
+          description: Mã đơn hàng format SSL-YYYY-NNNNNN.
+        customer_id:
+          type: string
+          description: ID khách hàng từ Internal Core System.
+          readOnly: true
+        internal_product_code:
+          type: string
+          description: Mã sản phẩm nội bộ (master catalog).
+        product_type:
+          type: string
+          description: DV | OV | EV.
+        cert_type:
+          type: string
+          description: SINGLE | WILDCARD | MULTI_DOMAIN | FLEX.
+        years:
+          type: integer
+          description: Số năm đăng ký.
+        subscription_start_date:
+          type: string
+          description: Ngày bắt đầu hiệu lực (YYYY-MM-DD).
+        subscription_end_date:
+          type: string
+          description: Ngày hết hạn (start + years × 366 ngày).
+        primary_domain:
+          type: string
+          description: Domain chính của chứng chỉ.
+        san_count:
+          type: integer
+          description: Số lượng SAN (0 nếu SINGLE/WILDCARD).
+        dcv_method:
+          type: string
+          description: EMAIL | HTTP | CNAME.
+        status:
+          type: string
+          description: Trạng thái hiện tại của order (xem mục 6).
+        provider_code:
+          type: string
+          description: Code của provider đang xử lý order (denormalized để hiển thị nhanh).
+        note:
+          type: string
+          description: Ghi chú nội bộ. Null nếu không có.
+        created_at / updated_at:
+          type: string
+          description: Timestamp ISO 8601 UTC.
+        pagination.total_items:
+          type: integer
+          description: Tổng số order thỏa bộ lọc (trước khi phân trang).
+        pagination.total_pages:
+          type: integer
+          description: Tổng số trang = ceil(total_items / per_page).
     CreateOrderData:
       type: object
       properties:
@@ -7321,6 +7683,29 @@ components:
         - contact_tech.last_name
         - contact_tech.phone
       description: Schema `SubmitCsrForOrderRequest`.
+    SubmitCsrForOrderData:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Luôn là CSR_READY sau khi API thành công.
+        csr_saved_at:
+          type: string
+          description: Thời điểm lưu CSR. Null nếu chưa có.
+        server_generated_key:
+          type: boolean
+          description: True nếu hệ thống tự generate CSR + private key.
+        has_private_key:
+          type: boolean
+          description: True nếu có private key lưu (encrypted). Chỉ khi server_generated_key=true.
+        certificate_id:
+          type: integer
+          description: ID (BIGINT) của certificate record vừa tạo/cập nhật trong bảng certificates.
+          readOnly: true
+        next_step:
+          type: string
+          description: Hướng dẫn bước tiếp theo — Worker sẽ submit lên Provider tự động.
+      description: Schema `SubmitCsrForOrderData`.
     SyncOrderStatusRequest:
       type: object
       example: {}

@@ -1,0 +1,88 @@
+post:
+  summary: Xác thực DCV cho đơn hàng
+  operationId: validateOrderDcv
+  description: Xác thực kiểm soát xác minh tên miền (DCV) cho đơn hàng chứng chỉ SSL theo ID. Yêu cầu đơn hàng phải ở 
+    trạng thái chờ xác thực và thông tin DCV phải hợp lệ trước khi cấp phát chứng chỉ.
+  tags:
+  - Order
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+    description: Tham số đường dẫn 'id'.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/order/ValidateOrderDcvData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  x-error-responses:
+    '409':
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    - code: '4615'
+      category: State
+      message: Order không ở trạng thái PENDING hoặc DCV_PENDING — không thể trigger DCV validate
+    '400':
+    - code: '4201'
+      category: Format
+      message: id không phải số nguyên dương hợp lệ (BIGINT, không phải UUID)
+    '404':
+    - code: '4001'
+      category: Not Found
+      message: Order không tồn tại
+    '502':
+    - code: '4820'
+      category: Provider
+      message: Provider API trả về lỗi khi kiểm tra DCV status. Chi tiết trong error.data.provider_message

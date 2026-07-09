@@ -1,0 +1,17 @@
+type: object
+properties:
+  domain:
+    type: string
+    description: Trường `domain`.
+  method:
+    type: string
+    description: Trường `method`.
+  approver_email:
+    type:
+      - string
+      - 'null'
+    description: Trường `approver_email`.
+  status:
+    type: string
+    description: Trạng thái xử lý.
+description: Schema `ChangeOrderDcvMethodData`.

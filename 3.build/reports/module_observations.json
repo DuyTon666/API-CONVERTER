@@ -1,0 +1,164 @@
+{
+  "ticket": {
+    "endpoints": [
+      "/v1/users/{user_id}/tickets/{id}/change-assignee",
+      "/v1/users/{user_id}/tickets/{id}",
+      "/v1/users/{user_id}/tickets/{id}/reopen",
+      "/v1/users/{user_id}/tickets/{id}/conversations",
+      "/v1/users/{user_id}/tickets/{id}/feedback",
+      "/v1/users/{user_id}/tickets",
+      "/v1/users/{user_id}/tickets/{id}/close",
+      "/v1/users/{user_id}/tickets/{ticket_id}/ratings",
+      "/v1/departments",
+      "/v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}",
+      "/v1/users/{user_id}/tickets/{id}/support-staffs"
+    ],
+    "resources": [
+      "tickets",
+      "conversations",
+      "ratings",
+      "departments",
+      "support-staffs"
+    ],
+    "suggested_patterns": [
+      "/tickets",
+      "/conversations",
+      "/ratings",
+      "/departments",
+      "/support-staffs"
+    ]
+  },
+  "service": {
+    "endpoints": [
+      "/v1/services/types",
+      "/v1/users/{user_id}/services",
+      "/v1/services/{service_id}/temporary-open",
+      "/v1/users/{user_id}/services/{id}/upgrade-plans",
+      "/v1/users/{user_id}/services/{id}/request-upgrade-plans",
+      "/v1/users/{user_id}/services/{id}/change-password"
+    ],
+    "resources": [
+      "types",
+      "services",
+      "upgrade-plans",
+      "request-upgrade-plans"
+    ],
+    "suggested_patterns": [
+      "/types",
+      "/services",
+      "/upgrade-plans",
+      "/request-upgrade-plans"
+    ]
+  },
+  "department": {
+    "endpoints": [
+      "/v1/departments"
+    ],
+    "resources": [
+      "departments"
+    ],
+    "suggested_patterns": [
+      "/departments"
+    ]
+  },
+  "statistic": {
+    "endpoints": [
+      "/v1/users/{user_id}/statistics"
+    ],
+    "resources": [
+      "statistics"
+    ],
+    "suggested_patterns": [
+      "/statistics"
+    ]
+  },
+  "unknown": {
+    "endpoints": [
+      ""
+    ],
+    "resources": [],
+    "suggested_patterns": []
+  },
+  "order": {
+    "endpoints": [
+      "/v1/orders/{id}/certificates/{certId}/download",
+      "/v1/orders",
+      "/v1/orders/{id}/dcv/change",
+      "/v1/orders/{id}/dcv/records",
+      "/v1/orders/{id}/dcv/resend-email",
+      "/v1/orders/{id}/dcv/validate",
+      "/v1/orders/{id}",
+      "/v1/orders/{id}/generate-csr",
+      "/v1/orders/{id}/reissue",
+      "/v1/orders/{id}/renew",
+      "/v1/orders/{id}/revoke",
+      "/v1/orders/{id}/submit-csr",
+      "/v1/orders/{id}/sync-status"
+    ],
+    "resources": [
+      "certificates",
+      "orders",
+      "records",
+      "sync-status"
+    ],
+    "suggested_patterns": [
+      "/certificates",
+      "/orders",
+      "/records",
+      "/sync-status"
+    ]
+  },
+  "csr": {
+    "endpoints": [
+      "/v1/csr/generate"
+    ],
+    "resources": [
+      "generate"
+    ],
+    "suggested_patterns": [
+      "/generate"
+    ]
+  },
+  "admin": {
+    "endpoints": [
+      "/v1/admin/internal-products",
+      "/v1/admin/internal-products/{id}",
+      "/v1/admin/internal-products/{id}/mappings",
+      "/v1/admin/internal-products/{id}/mappings/{mapping_id}",
+      "/v1/admin/internal-products/{id}/status",
+      "/v1/admin/providers",
+      "/v1/admin/providers/{id}",
+      "/v1/admin/providers/{provider_code}/products",
+      "/v1/admin/providers/{provider_code}/products/{id}",
+      "/v1/admin/providers/{provider_code}/products/sync",
+      "/v1/admin/providers/{provider_code}/products/{id}/status",
+      "/v1/admin/providers/{id}/reveal-token",
+      "/v1/admin/providers/{id}/status"
+    ],
+    "resources": [
+      "internal-products",
+      "mappings",
+      "status",
+      "providers",
+      "products"
+    ],
+    "suggested_patterns": [
+      "/internal-products",
+      "/mappings",
+      "/status",
+      "/providers",
+      "/products"
+    ]
+  },
+  "topup": {
+    "endpoints": [
+      "/v1/topup"
+    ],
+    "resources": [
+      "topup"
+    ],
+    "suggested_patterns": [
+      "/topup"
+    ]
+  }
+}

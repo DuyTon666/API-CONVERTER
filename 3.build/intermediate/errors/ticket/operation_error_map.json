@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-07-07T13:07:01.493116",
+  "generated_at": "2026-07-08T13:44:32.932565",
   "module": "ticket",
-  "batch_timestamp": "2026-07-07 13:06:35",
+  "batch_timestamp": "2026-07-08 09:36:39",
   "operations": {
     "changeTicketAssignee": {
       "method": "post",
-      "path": "/v1/users/{user_id}/tickets/{id}/change-assignee",
+      "path": "",
       "source_file": "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/change_ticket_assignee.yaml",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/change_ticket_assignee.yaml",
       "errors": {
         "401": [
           {
@@ -49,11 +49,11 @@
         ]
       }
     },
-    "getTicketDetailForUser": {
+    "getTicketDetail": {
       "method": "get",
-      "path": "/v1/users/{user_id}/tickets/{id}",
+      "path": "",
       "source_file": "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/get_ticket_detail_for_user.yaml",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/get_ticket_detail.yaml",
       "errors": {
         "401": [
           {
@@ -89,9 +89,9 @@
     },
     "reopenUserTicket": {
       "method": "post",
-      "path": "/v1/users/{user_id}/tickets/{id}/reopen",
+      "path": "",
       "source_file": "API Ticket - API mở lại ticket của khách hàng.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/reopen_user_ticket.yaml",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/reopen_user_ticket.yaml",
       "errors": {
         "401": [
           {
@@ -139,11 +139,11 @@
         ]
       }
     },
-    "createTicketConversation": {
+    "replyTicketConversation": {
       "method": "post",
-      "path": "/v1/users/{user_id}/tickets/{id}/conversations",
-      "source_file": "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/create_ticket_conversation.yaml",
+      "path": "",
+      "source_file": "API Contract - API phản hồi ticket.pdf",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/reply_ticket_conversation.yaml",
       "errors": {
         "401": [
           {
@@ -169,7 +169,7 @@
           {
             "code": "4463",
             "category": "",
-            "message": "Tạo phản hồi thất bại",
+            "message": "Tạo phản hồi thất bai",
             "http_status_source": "override"
           }
         ],
@@ -193,9 +193,9 @@
     },
     "submitTicketFeedback": {
       "method": "post",
-      "path": "/v1/users/{user_id}/tickets/{id}/feedback",
+      "path": "",
       "source_file": "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/submit_ticket_feedback.yaml",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/submit_ticket_feedback.yaml",
       "errors": {
         "401": [
           {
@@ -231,9 +231,9 @@
     },
     "createUserTicket": {
       "method": "post",
-      "path": "/v1/users/{user_id}/tickets",
+      "path": "",
       "source_file": "API Ticket - Tạo ticket cho khách hàng.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/create_user_ticket.yaml",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_user_ticket.yaml",
       "errors": {
         "401": [
           {
@@ -275,9 +275,9 @@
     },
     "closeUserTicket": {
       "method": "put",
-      "path": "/v1/users/{user_id}/tickets/{id}/close",
+      "path": "",
       "source_file": "API Ticket - API đóng ticket của khách hàng.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/close_user_ticket.yaml",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/close_user_ticket.yaml",
       "errors": {
         "401": [
           {
@@ -327,9 +327,9 @@
     },
     "createTicketRating": {
       "method": "post",
-      "path": "/v1/users/{user_id}/tickets/{ticket_id}/ratings",
+      "path": "",
       "source_file": "API Ticket - API tạo ratting ticket cho khách hàng.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/create_ticket_rating.yaml",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_ticket_rating.yaml",
       "errors": {
         "401": [
           {
@@ -379,9 +379,9 @@
     },
     "updateTicketFeedback": {
       "method": "post",
-      "path": "/v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}",
+      "path": "",
       "source_file": "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/update_ticket_feedback.yaml",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/update_ticket_feedback.yaml",
       "errors": {
         "401": [
           {
@@ -417,9 +417,9 @@
     },
     "getSupportStaffsByTicket": {
       "method": "get",
-      "path": "/v1/users/{user_id}/tickets/{id}/support-staffs",
+      "path": "",
       "source_file": "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/get_support_staffs_by_ticket.yaml",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/get_support_staffs_by_ticket.yaml",
       "errors": {
         "401": [
           {
@@ -453,11 +453,63 @@
         ]
       }
     },
+    "createTicketConversation": {
+      "method": "post",
+      "path": "",
+      "source_file": "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_ticket_conversation.yaml",
+      "errors": {
+        "401": [
+          {
+            "code": "4102",
+            "category": "Auth",
+            "message": "Token không hợp lệ / hết hạn",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép truy cập",
+            "http_status_source": "global_map"
+          }
+        ],
+        "422": [
+          {
+            "code": "4200",
+            "category": "Input validation",
+            "message": "Dữ liệu request không hợp lệ",
+            "http_status_source": "global_map"
+          },
+          {
+            "code": "4463",
+            "category": "",
+            "message": "Tạo phản hồi thất bại",
+            "http_status_source": "override"
+          }
+        ],
+        "404": [
+          {
+            "code": "4004",
+            "category": "Not Found",
+            "message": "Không tìm thấy dữ liệu",
+            "http_status_source": "global_map"
+          }
+        ],
+        "409": [
+          {
+            "code": "4464",
+            "category": "",
+            "message": "Câu hỏi đã đóng, không được thực hiện phản hồi",
+            "http_status_source": "override"
+          }
+        ]
+      }
+    },
     "listUserTickets": {
       "method": "get",
-      "path": "/v1/users/{user_id}/tickets",
+      "path": "",
       "source_file": "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/list_user_tickets.yaml",
+      "output_yaml": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/list_user_tickets.yaml",
       "errors": {
         "401": [
           {

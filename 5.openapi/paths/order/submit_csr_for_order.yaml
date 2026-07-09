@@ -15,6 +15,7 @@ post:
       required: true
       schema:
         type: integer
+      description: ID định danh duy nhất của đơn hàng cần nộp CSR.
   responses:
     '200':
       description: Thành công
@@ -22,11 +23,12 @@ post:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/StandardSuccess'
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
               - type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/SubmitCsrForOrderData'
+                    $ref: 
+                      ../../components/schemas/order/SubmitCsrForOrderData.yaml
                   certificate_id:
                     type: string
                     readOnly: true
@@ -207,4 +209,5 @@ post:
         message: san_list chứa wildcard entry (*.domain) — không được phép; 
           wildcard coverage áp dụng tự động theo sản phẩm
   x-manual-edit-fields:
+    - parameters[name=id].description
     - responses[200].content.application/json.schema.allOf

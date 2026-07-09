@@ -1,0 +1,19 @@
+type: object
+example:
+  domain: example.com
+  method: HTTP
+  approver_email: admin@example.com
+properties:
+  domain:
+    type: string
+    example: example.com
+    description: Trường `domain`.
+  method:
+    type: string
+    example: HTTP
+    description: Trường `method`.
+  approver_email:
+    type: string
+    example: admin@example.com
+    description: Trường `approver_email`.
+description: Schema `ChangeOrderDcvMethodRequest`.

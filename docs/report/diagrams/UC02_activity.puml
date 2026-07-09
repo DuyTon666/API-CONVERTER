@@ -1,0 +1,61 @@
+@startuml UC02_PhanLoaiFileVaoModule_Act
+skinparam ActivityBackgroundColor #F8FAFC
+skinparam ActivityBorderColor #94A3B8
+skinparam ArrowColor #64748B
+skinparam ActivityDiamondBackgroundColor #FEF9C3
+skinparam ActivityStartColor #4F46E5
+skinparam ActivityEndColor #4F46E5
+
+title UC02 — Phân loại file vào module
+
+|Người dùng|
+start
+:Bấm "Gợi ý module";
+
+|Hệ thống|
+:Đọc từng file\ntrích xuất endpoint path & service field;
+if (Tìm được module?) then (Không)
+  :confidence = low\nstatus = needs_review;
+else (Có)
+  if (Conflict endpoint\nvs service field?) then (Có)
+    :confidence = medium\nĐánh dấu conflict;
+  else (Không)
+    :confidence = high;
+  endif
+endif
+:Hiển thị danh sách gợi ý\nkèm module, lý do, confidence;
+
+|Người dùng|
+if (Nhập override module?) then (Có)
+  :Nhập tên module vào ô override;
+else (Không)
+endif
+
+if (File đã được duyệt?) then (Có)
+  :Bỏ qua\ncheckbox bị disable;
+else (Không)
+  :Chọn file & bấm "Duyệt (n) file";
+  |Hệ thống|
+  :Đánh dấu "Đã duyệt"\nLưu vào import_suggestions.json;
+endif
+
+|Người dùng|
+if (Còn file chưa xử lý?) then (Có)
+  :Xem xét file tiếp theo;
+  detach
+else (Không)
+endif
+
+if (Có file đã duyệt?) then (Không)
+  :Nút "Apply suggestions" bị disable;
+  stop
+else (Có)
+  :Bấm "Apply suggestions";
+endif
+
+|Hệ thống|
+:Sao chép file vào\n1.docs/source/api_contract/<module>/;
+:Cập nhật registry\nHiển thị kết quả applied / skipped;
+
+stop
+@enduml

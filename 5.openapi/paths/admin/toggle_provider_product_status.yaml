@@ -27,11 +27,12 @@ patch:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/StandardSuccess'
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
               - type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/ToggleProviderProductStatusData'
+                    $ref: 
+                      ../../components/schemas/admin/ToggleProviderProductStatusData.yaml
                   provider_id:
                     type: string
                     readOnly: true

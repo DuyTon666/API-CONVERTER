@@ -30,11 +30,12 @@ post:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/StandardSuccess'
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
               - type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/SyncProviderProductsData'
+                    $ref: 
+                      ../../components/schemas/admin/SyncProviderProductsData.yaml
                   provider_id:
                     type: string
                     readOnly: true

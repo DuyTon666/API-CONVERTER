@@ -1,0 +1,54 @@
+type: object
+properties:
+  id:
+    type: string
+    description: Primary key UUID v4 — auto generate.
+    readOnly: true
+  code:
+    type: string
+    description: Mã nội bộ — admin define lúc tạo. UNIQUE, IMMUTABLE. Regex 
+      ^[A-Z0-9_-]{2,64}$ (VD "PA-SSL-DV-SINGLE-1Y").
+  name:
+    type: string
+    description: Tên hiển thị tiếng Việt (≤ 200 ký tự).
+  name_en:
+    type: string
+    description: Tên tiếng Anh (optional, ≤ 200 ký tự).
+  product_type:
+    type: string
+    description: 'Mức xác thực: DV | OV | EV. IMMUTABLE sau create (định danh bản
+      chất sản phẩm).'
+  cert_type:
+    type: string
+    description: 'Kiểu cert: SINGLE | WILDCARD | MULTI_DOMAIN | FLEX. IMMUTABLE sau
+      create.'
+  description:
+    type: string
+    description: Mô tả hiển thị UI.
+  retail_price_vnd:
+    type: number
+    description: Giá bán lẻ đề xuất (VND/năm) cho customer UI.
+  is_enabled:
+    type: boolean
+    description: Bật/tắt hiển thị/bán. true = được chọn cho order mới.
+  display_order:
+    type: integer
+    description: Thứ tự hiển thị UI (ascending). Mặc định 0.
+  created_at:
+    type: string
+    description: Thời điểm tạo (UTC).
+    readOnly: true
+  updated_at:
+    type: string
+    description: Thời điểm cập nhật gần nhất (UTC).
+    readOnly: true
+  created_by:
+    type: string
+    description: Admin ID người tạo.
+  updated_by:
+    type: string
+    description: Admin ID người cập nhật gần nhất.
+  deleted_at:
+    type: string
+    description: Soft delete timestamp. Null = chưa xóa.
+description: Schema `GetInternalProductDetailData`.

@@ -43,8 +43,12 @@ export function useDocsBuilder(backend: string) {
   // bản AI sửa/cả hai) — xử lý từ dòng cuối lên đầu để patch chưa xử lý không bị lệch số dòng.
   // Nhận "editedPatches" từ AiFixPanel (đã đọc đúng nội dung người dùng vừa sửa tay
   // trực tiếp từ editor) thay vì dùng aiFixPatches gốc trong state.
-  // Lưu luôn xuống backend (PUT /docs/bundle-content) ngay sau khi ghép — bấm "Áp dụng"
-  // là lưu, không cần bấm "Lưu" riêng (route đó giờ đã đồng bộ cả tầng 2 + tầng 3).
+  // Lưu + relint ngay xuống backend sau khi ghép — bấm "Áp dụng" là lưu, không cần bấm
+  // "Lưu" riêng. Relint là bắt buộc (không chỉ lưu): patch AI sửa thường lệch số dòng so
+  // với đoạn gốc, nên docsResult.spectral/redocly (line/range) cũ sẽ trỏ sai vị trí trong
+  // nội dung mới. Nếu không relint, lần "AI tự fix lỗi" kế tiếp sẽ cắt nhầm đoạn YAML theo
+  // range cũ → AI sửa sai chỗ → sinh lỗi mới, lặp vài lần thì mọi patch đều hỏng YAML và bị
+  // validate loại hết, trông như "gọi lại không sửa được gì".
   const applyAiFixResolutions = async (editedPatches: AiFixPatch[]) => {
     if (bundleContent === null) return;
     const lines = bundleContent.split("\n");
@@ -73,7 +77,7 @@ export function useDocsBuilder(backend: string) {
 
     setSavingBundle(true);
     try {
-      await putBundleContent(merged);
+      await saveThenRelint(merged);
     } finally {
       setSavingBundle(false);
     }
@@ -164,23 +168,33 @@ export function useDocsBuilder(backend: string) {
     }
   };
 
+  // Lưu content rồi relint ngay, cập nhật docsResult — dùng chung cho saveAndRelint và
+  // applyAiFixResolutions (xem lý do bắt buộc relint sau khi áp AI-fix ở comment trên
+  // applyAiFixResolutions). Trả false khi lưu hoặc relint lỗi (đã alert).
+  const saveThenRelint = async (content: string): Promise<boolean> => {
+    const saved = await putBundleContent(content);
+    if (!saved) return false;
+    setRelinting(true);
+    try {
+      const data = await relintDocs(backend);
+      setDocsResult(data);
+      return true;
+    } catch (e) {
+      alert("Lỗi kiểm tra lại: " + formatFetchError(e));
+      return false;
+    } finally {
+      setRelinting(false);
+    }
+  };
+
   const saveAndRelint = async () => {
     if (bundleContent === null) return;
     setSavingBundle(true);
     try {
-      const saved = await putBundleContent(bundleContent);
-      if (!saved) return;
-      setRelinting(true);
-      try {
-        const data = await relintDocs(backend);
-        setDocsResult(data);
-        setBundleContent(null);
-      } catch (e) {
-        alert("Lỗi kiểm tra lại: " + formatFetchError(e));
-      }
+      const ok = await saveThenRelint(bundleContent);
+      if (ok) setBundleContent(null);
     } finally {
       setSavingBundle(false);
-      setRelinting(false);
     }
   };
 

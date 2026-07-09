@@ -1,0 +1,103 @@
+patch:
+  summary: Cập nhật sản phẩm của nhà cung cấp
+  operationId: updateProviderProduct
+  description: Cập nhật thông tin sản phẩm thuộc nhà cung cấp được chỉ định. Chỉ quản trị viên mới có quyền thực hiện 
+    thao tác này và cần cung cấp đúng mã nhà cung cấp cùng ID sản phẩm hợp lệ.
+  tags:
+  - Admin
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: provider_code
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'provider_code'.
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+    description: Tham số đường dẫn 'id'.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+          example:
+            success: true
+            data:
+            error:
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/admin/UpdateProviderProductRequest.yaml"
+  x-error-responses:
+    '409':
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    - code: '4403'
+      category: Business
+      message: Kết hợp product_type + cert_type không hợp lệ
+    - code: '4404'
+      category: Business
+      message: years_supported rỗng hoặc không hợp lệ
+    - code: '4409'
+      category: Business
+      message: Provider không tồn tại hoặc đã bị tắt
+    - code: '4405'
+      category: Business
+      message: MULTI_DOMAIN nhưng thiếu min_san/max_san
+    - code: '4406'
+      category: Business
+      message: Request chứa trường immutable không cho phép cập nhật
+    '404':
+    - code: '4004'
+      category: Not Found
+      message: Không tìm thấy sản phẩm

@@ -7,6 +7,7 @@ from services.bundle_sync import (
     _index_schema_files
 )
 from api_utils.field_paths import set_value_at_path
+from api_utils.yaml_io import load_yaml_cached, dump_yaml_fast
 
 # 2 scheme wrapper chung, không phải dữ liệu nghiệp vụ riêng của operation nào,
 # loại khỏi kết quả resolve response (StandardSuccess.data mới là cái cần quan tâm).
@@ -170,14 +171,12 @@ def _build_schema_group(schema_name: str, schemas: dict, fan_in: dict[str, set[s
 # Logic cho route GET /docs/schema-fields — trả 1 entry/operation, request/response
 # có thể null (operation không có requestBody, hoặc chỉ trả StandardSuccess trần).
 def list_operation_data_schemas() -> list[dict]:
-    import yaml as _yaml
-
     bundle_path = DIST_DIR / "openapi-bundled.yaml"
     if not bundle_path.exists():
         raise http_error(
             404, ErrorCode.BUNDLE_NOT_FOUND, "Bundle chưa được tạo, hãy build tài liệu trước"
         )
-    bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
+    bundle = load_yaml_cached(bundle_path)
     schemas = (bundle.get("components") or {}).get("schemas") or {}
 
     resolved: dict[str, dict[str, str | None]] = {}
@@ -222,7 +221,6 @@ def list_operation_data_schemas() -> list[dict]:
 # viết engine ghi mới.
 def update_schema_fields(updates: list) -> dict:
     import copy
-    import yaml as _yaml
 
     bundle_path = DIST_DIR / "openapi-bundled.yaml"
     if not bundle_path.exists():
@@ -230,7 +228,7 @@ def update_schema_fields(updates: list) -> dict:
             404, ErrorCode.BUNDLE_NOT_FOUND, "Bundle chưa được tạo, hãy build tài liệu trước"
         )
 
-    old_bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
+    old_bundle = load_yaml_cached(bundle_path)
     new_bundle = copy.deepcopy(old_bundle)
     schemas = (new_bundle.get("components") or {}).get("schemas") or {}
 
@@ -247,10 +245,7 @@ def update_schema_fields(updates: list) -> dict:
     changes = diff_bundle(old_bundle, new_bundle)
     sync_schema_fields(new_bundle, changes, _index_schema_files())
 
-    bundle_path.write_text(
-        _yaml.dump(new_bundle, allow_unicode=True, sort_keys=False, default_flow_style=False),
-        encoding="utf-8",
-    )
+    bundle_path.write_text(dump_yaml_fast(new_bundle), encoding="utf-8")
     return {"ok": True, "updated": updated}
 
 # Làm phẳng 1 SchemaGroup (kể cả nested không shared) thành list field kèm

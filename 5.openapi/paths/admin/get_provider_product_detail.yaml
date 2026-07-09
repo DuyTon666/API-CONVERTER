@@ -27,11 +27,12 @@ get:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/StandardSuccess'
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
               - type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/GetProviderProductDetailData'
+                    $ref: 
+                      ../../components/schemas/admin/GetProviderProductDetailData.yaml
                   provider_id:
                     type: string
                     readOnly: true

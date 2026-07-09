@@ -1,0 +1,63 @@
+@startuml UC06_BuildXuatBanTaiLieu_Seq
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title UC06 — Build & xuất bản tài liệu
+
+actor "Người dùng" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "Redocly CLI" as Redocly
+participant "Spectral CLI" as Spectral
+participant "File System" as FS
+
+User -> FE: Bấm "Build tài liệu Swagger UI"
+FE -> BE: POST /docs/build
+
+BE -> Redocly: redocly bundle\nopenapi/openapi.yaml
+Redocly -> FS: Đọc toàn bộ YAML\ntrong 5.openapi/
+FS --> Redocly: YAML files
+
+alt $ref broken
+  Redocly --> BE: exit 1\n{ error: "$ref không tìm thấy" }
+  BE --> FE: 500\n{ detail: "Bundle thất bại" }
+  FE --> User: Hiển thị lỗi
+else Bundle thành công
+  Redocly -> FS: Ghi dist/openapi-bundled.yaml
+  Redocly --> BE: exit 0
+end
+
+BE -> Spectral: spectral lint\ndist/openapi-bundled.yaml
+Spectral --> BE: issues[]\n{ code, message, severity, path }
+
+BE -> Redocly: redocly lint\ndist/openapi-bundled.yaml
+Redocly --> BE: issues[]\n{ ruleId, message, severity }
+
+BE -> FS: Build Swagger UI HTML\n→ public/api-docs.html
+FS --> BE: OK
+
+BE --> FE: 200 OK\n{ spectral: [...], redocly: [...],\n  bundle_ready: true, html_ready: true }
+FE --> User: Hiển thị kết quả lint
+
+opt Người dùng muốn sửa bundle
+  User -> FE: Bấm "Xem / Sửa lỗi bundle"
+  FE -> BE: GET /bundle-content
+  BE -> FS: Đọc dist/openapi-bundled.yaml
+  FS --> BE: YAML content
+  BE --> FE: YAML content
+  FE --> User: Mở editor bundle
+  User -> FE: Chỉnh sửa & lưu
+  FE -> BE: PUT /bundle-content\n(YAML đã sửa)
+  BE -> FS: Ghi đè dist/openapi-bundled.yaml
+end
+
+User -> FE: Bấm "Tải HTML"
+FE -> BE: GET /download-html
+BE -> FS: Đọc public/api-docs.html
+FS --> BE: HTML content
+BE --> FE: File api-docs.html
+FE --> User: Tải về
+
+@enduml

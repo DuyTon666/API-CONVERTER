@@ -1,0 +1,42 @@
+@startuml 05_seq_deploy
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title Deploy tài liệu — GitHub Git Data API (UC12, không dùng git cục bộ)
+
+actor "Người dùng" as User
+participant "Frontend\n(SwaggerDocsCard)" as FE
+participant "Next.js Server Route\n(/api/deploy-docs)" as ROUTE
+participant "GitHub REST API" as GH
+participant "GitHub Actions" as GHA
+
+User -> FE: Bấm "Deploy tài liệu"\n(chỉ bật khi lint = 0 lỗi)
+FE -> ROUTE: POST /api/deploy-docs { baseBranch }
+
+ROUTE -> GH: GET /git/ref/heads/{baseBranch}
+alt Branch không tồn tại
+  GH --> ROUTE: 404
+  ROUTE --> FE: 400 lỗi rõ ràng
+else Tồn tại
+  GH --> ROUTE: baseSha
+  ROUTE -> ROUTE: Đọc 5.openapi/** cục bộ,\ntính hash blob SHA-1 so với GitHub
+  alt Không có gì thay đổi
+    ROUTE --> FE: Không tạo commit
+  else Có thay đổi
+    ROUTE -> GH: Tạo blob cho từng file thay đổi
+    ROUTE -> GH: Tạo tree mới từ baseSha + blob
+    ROUTE -> GH: Tạo commit từ tree
+    ROUTE -> GH: Tạo ref nhánh\nauto/update-openapi-<timestamp>
+    ROUTE -> GH: Dispatch workflow create-doc-pr.yaml\n(ref: baseBranch)
+    GH -> GHA: Trigger workflow
+    GHA -> GHA: Mở Pull Request
+    GHA -> GHA: Auto-merge nếu CI (validate) pass
+    GHA -> GHA: deploy.yaml build Swagger UI\n→ GitHub Pages
+    ROUTE --> FE: 200 OK
+  end
+end
+FE --> User: Thông báo kết quả (toast)
+
+@enduml

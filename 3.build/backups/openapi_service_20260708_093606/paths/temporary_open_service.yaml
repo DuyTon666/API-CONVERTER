@@ -1,0 +1,80 @@
+post:
+  summary: Mở tạm thời dịch vụ theo ID
+  operationId: temporaryOpenService
+  description: API cho phép mở tạm thời một dịch vụ đang tạm dừng hoặc bị khóa dựa trên service_id. Chức năng này được 
+    sử dụng trong trường hợp cần kích hoạt dịch vụ trong thời gian giới hạn, yêu cầu người dùng có quyền hạn phù hợp để 
+    thực hiện thao tác.
+  tags:
+  - Service
+  security:
+  - bearerAuth: []
+  x-permission: 'null'
+  parameters:
+  - name: service_id
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'service_id'.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/service/TemporaryOpenServiceData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: false
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/service/TemporaryOpenServiceRequest.yaml"
+  x-error-responses:
+    '401':
+    - code: '4102'
+      category: Auth
+      message: Token không hợp lệ / hết hạn
+    - code: '4108'
+      category: Auth
+      message: IP không được phép truy cập
+    '422':
+    - code: '4200'
+      category: Input validation
+      message: Dữ liệu request không hợp lệ
+    - code: '4481'
+      category: ''
+      message: Dịch vụ không hỗ trợ mở tạm
+    - code: '4482'
+      category: ''
+      message: Dịch vụ không đủ điều kiện mở tạm
+    '404':
+    - code: '4004'
+      category: Not Found
+      message: Không tìm thấy dữ liệu
+    '409':
+    - code: '4483'
+      category: ''
+      message: Thời gian xin gia hạn lần trước vẫn còn. Không thể thực hiện tiếp

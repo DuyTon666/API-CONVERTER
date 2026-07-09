@@ -27,11 +27,12 @@ delete:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/StandardSuccess'
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
               - type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/DeleteInternalProductMappingData'
+                    $ref: 
+                      ../../components/schemas/admin/DeleteInternalProductMappingData.yaml
                   internal_product_id:
                     type: string
                     readOnly: true

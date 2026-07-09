@@ -1,0 +1,62 @@
+@startuml UC06_BuildXuatBanTaiLieu_Act
+skinparam ActivityBackgroundColor #F8FAFC
+skinparam ActivityBorderColor #94A3B8
+skinparam ArrowColor #64748B
+skinparam ActivityDiamondBackgroundColor #FEF9C3
+skinparam ActivityStartColor #4F46E5
+skinparam ActivityEndColor #4F46E5
+
+title UC06 — Build & xuất bản tài liệu
+
+|Người dùng|
+start
+
+if (Bundle đã tồn tại?) then (Có)
+  :Xem giao diện:\nXem/Sửa bundle, Kiểm tra lỗi,\nTải HTML, Build lại;
+else (Không)
+  :Bấm "Build tài liệu Swagger UI";
+endif
+
+|Hệ thống|
+if (Có file YAML trong 5.openapi/?) then (Không)
+  :Hiển thị lỗi\n"Chưa có file YAML để bundle";
+  stop
+else (Có)
+endif
+
+:Bundle toàn bộ YAML\n→ dist/openapi-bundled.yaml\n(Redocly bundle);
+
+if (Bundle thành công?) then (Không)
+  :Hiển thị lỗi $ref broken;
+  stop
+else (Có)
+endif
+
+:Lint bundle\n(Spectral + Redocly);
+:Build Swagger UI HTML\n→ public/api-docs.html;
+:Hiển thị kết quả lint\n(số error / warning);
+
+|Người dùng|
+if (Có lỗi lint?) then (Có)
+  if (Muốn sửa bundle?) then (Có)
+    :Bấm "Xem / Sửa lỗi bundle"\nChỉnh sửa trực tiếp trong editor;
+    |Hệ thống|
+    if (YAML hợp lệ sau khi sửa?) then (Không)
+      :Hiển thị lỗi cú pháp\nKhông build HTML;
+      stop
+    else (Có)
+      :Chạy lại lint (Relint);
+    endif
+  else (Không)
+  endif
+else (Không)
+endif
+
+|Người dùng|
+:Bấm "Tải HTML";
+
+|Hệ thống|
+:Trả về file api-docs.html\ncho người dùng tải về;
+
+stop
+@enduml

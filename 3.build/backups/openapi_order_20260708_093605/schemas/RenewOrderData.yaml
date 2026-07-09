@@ -1,0 +1,23 @@
+type: object
+properties:
+  renewal_order:
+    $ref: "./RenewOrderDataRenewal_order.yaml"
+    description: Trường `renewal_order`.
+  parent_order:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Định danh của bản ghi.
+        readOnly: true
+      order_number:
+        type: string
+        description: Trường `order_number`.
+      status:
+        type: string
+        description: Trạng thái xử lý.
+      expires_at:
+        type: string
+        description: Trường `expires_at`.
+    description: Trường `parent_order`.
+description: Schema `RenewOrderData`.

@@ -1,0 +1,25 @@
+type: object
+properties:
+  id:
+    type: string
+    description: ID provider đã xóa
+    readOnly: true
+  code:
+    type: string
+    description: Mã provider (reference)
+  name:
+    type: string
+    description: Tên provider (reference)
+  is_enabled:
+    type: boolean
+    description: Luôn false sau khi xóa
+  deleted_at:
+    type: string
+    description: Timestamp soft delete (UTC)
+  deleted_by:
+    type: string
+    description: Admin ID thực hiện xóa
+  reason:
+    type: string
+    description: Lý do xóa (nếu có trong request)
+description: Schema `DeleteProviderByIdData`.

@@ -5,6 +5,7 @@ from pathlib import Path
 from core.config import DIST_DIR
 from core.errors import ErrorCode, http_error
 from api_utils.field_paths import get_value_at_path
+from api_utils.yaml_io import load_yaml_cached, dump_yaml_fast
 
 
 # Set các key hợp lệ trong 1 path item của OpenAPI — bản riêng cho
@@ -16,14 +17,12 @@ _HTTP_METHODS = {"get", "post", "put", "patch", "delete", "head", "options", "tr
 # Quét toàn bộ file tầng 2 dưới paths_dir, build map operationId -> (file, operation
 # dict) — dùng chung cho cả lúc capture (trước import) và compare (sau import).
 def _index_operations(paths_dir: Path) -> dict[str, tuple[Path, dict]]:
-    import yaml as _yaml
-
     index: dict[str, tuple[Path, dict]] = {}
     if not paths_dir.exists():
         return index
     for file in paths_dir.glob("**/*.yaml"):
         try:
-            doc = _yaml.safe_load(file.read_text(encoding="utf-8"))
+            doc = load_yaml_cached(file)
         except Exception:
             continue
         if not isinstance(doc, dict):
@@ -39,14 +38,12 @@ def _index_operations(paths_dir: Path) -> dict[str, tuple[Path, dict]]:
 # schema_name (file.stem) -> (file, schema dict) — mirror của _index_operations()
 # nhưng file schema không có wrapper method-key, nội dung file chính là schema dict.
 def _index_schemas(schemas_dir: Path) -> dict[str, tuple[Path, dict]]:
-    import yaml as _yaml
-
     index: dict[str, tuple[Path, dict]] = {}
     if not schemas_dir.exists():
         return index
     for file in schemas_dir.glob("**/*.yaml"):
         try:
-            doc = _yaml.safe_load(file.read_text(encoding="utf-8"))
+            doc = load_yaml_cached(file)
         except Exception:
             continue
         if isinstance(doc, dict):
@@ -271,7 +268,6 @@ def list_conflicts() -> list[dict]:
 # Cả 2 case: xoá entry khỏi hàng đợi. Logic rút từ route
 # POST /modules/manual-edit-conflicts/resolve.
 def resolve_conflict(payload: dict) -> dict:
-    import yaml as _yaml
     from import_flow.config import REPORT_DIR
 
     kind = payload.get("kind", "operation")
@@ -317,21 +313,18 @@ def resolve_conflict(payload: dict) -> dict:
 
     if choice == "keep_old":
         bundle_path = DIST_DIR / "openapi-bundled.yaml"
-        bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
+        bundle = load_yaml_cached(bundle_path)
         if kind == "schema":
             from services.bundle_sync import Change, sync_schema_fields, _index_schema_files
 
             change = Change(kind="schema", key=entity_id, path=field_key, new_value=match["old_value"])
             sync_schema_fields(bundle, [change], _index_schema_files())
         else:
-            from services.bundle_sync import Change, sync_operation_fields, _index_operation_files
+            from services.bundle_sync import Change, sync_operation_fields 
 
             change = Change(kind="operation", key=entity_id, path=field_key, new_value=match["old_value"])
-            sync_operation_fields(bundle, [change], _index_operation_files())
-        bundle_path.write_text(
-            _yaml.dump(bundle, allow_unicode=True, sort_keys=False, default_flow_style=False),
-            encoding="utf-8",
-        )
+            sync_operation_fields(bundle, [change])
+        bundle_path.write_text(dump_yaml_fast(bundle),encoding="utf-8")
 
     remaining = [
         c

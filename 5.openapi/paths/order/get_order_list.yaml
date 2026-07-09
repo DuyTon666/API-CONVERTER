@@ -75,11 +75,11 @@ get:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/StandardSuccess'
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
               - type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/GetOrderListData'
+                    $ref: ../../components/schemas/order/GetOrderListData.yaml
                   customer_id:
                     type: string
                     readOnly: true

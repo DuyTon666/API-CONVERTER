@@ -1,0 +1,36 @@
+@startuml UC01_QuanLyTaiLieuDauVao_Seq
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title UC01 — Quản lý tài liệu đầu vào
+
+actor "Người dùng" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "File System" as FS
+
+User -> FE: Kéo thả hoặc chọn file\n(PDF / DOCX / TXT)
+FE -> BE: POST /upload\n(multipart/form-data)
+
+alt Định dạng không hợp lệ
+  BE --> FE: 400 Bad Request\n{ detail: "Định dạng không hỗ trợ" }
+  FE --> User: Hiển thị lỗi
+else Định dạng hợp lệ
+  BE -> FS: Lưu file vào\n1.docs/source/api_contract/
+  FS --> BE: OK
+  BE --> FE: 200 OK\n{ files: [{ name, size }] }
+  FE --> User: Hiển thị danh sách file\nkèm tên và dung lượng
+end
+
+User -> FE: Bấm "Quét nguồn dữ liệu"
+FE -> BE: POST /scan
+
+BE -> FS: Quét thư mục\n1.docs/source/api_contract/
+FS --> BE: Danh sách file & folder
+
+BE --> FE: 200 OK\n{ modules: [...], unassigned: [...] }
+FE --> User: Hiển thị module folders\nvà file chưa gán
+
+@enduml

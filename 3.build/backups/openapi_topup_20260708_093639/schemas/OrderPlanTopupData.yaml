@@ -1,0 +1,37 @@
+type: object
+properties:
+  topup_order_id:
+    type: integer
+    description: ID của SAN_TOPUP order vừa tạo.
+  topup_order_number:
+    type: string
+    description: Số đơn của SAN_TOPUP order (format SSL-YYYY-NNNNNN).
+  parent_order_id:
+    type: integer
+    description: ID của parent order (MULTI_DOMAIN/FLEX).
+  parent_order_number:
+    type: string
+    description: Số đơn của parent order.
+  external_account_id:
+    type: integer
+    description: Account ID từ Core System (echo lại).
+  core_plan_id:
+    type: string
+    description: Plan ID từ Core System (echo lại, để đối soát).
+  san_added:
+    type: integer
+    description: Số SAN đã cộng thêm (= plan_quantity).
+  san_limit_before:
+    type: integer
+    description: Tổng SAN trước khi top-up.
+  san_limit_after:
+    type: integer
+    description: Tổng SAN sau khi top-up.
+  san_limit_max:
+    type: integer
+    description: Giới hạn SAN tối đa của ProviderProduct. null nếu không giới 
+      hạn.
+  san_remaining_capacity:
+    type: integer
+    description: Số SAN còn có thể top-up thêm. null nếu san_limit_max không xác
+      định.

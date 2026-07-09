@@ -1,0 +1,140 @@
+get:
+  summary: Lấy danh sách sản phẩm của nhà cung cấp
+  operationId: getProviderProductList
+  description: Truy xuất danh sách tất cả sản phẩm thuộc một nhà cung cấp cụ thể dựa trên mã nhà cung cấp. Chỉ tài khoản
+    quản trị viên mới có quyền truy cập thông tin này.
+  tags:
+  - Admin
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: provider_code
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'provider_code'.
+  - name: page
+    in: query
+    required: false
+    schema:
+      type: integer
+      default: 1
+    description: Số trang
+  - name: limit
+    in: query
+    required: false
+    schema:
+      type: integer
+      default: 20
+    description: Số record/trang (max 100)
+  - name: keyword
+    in: query
+    required: false
+    schema:
+      type: string
+    description: Tìm theo product_name, provider_product_code, brand. Tối thiểu 2 ký tự.
+  - name: product_type
+    in: query
+    required: false
+    schema:
+      type: string
+    description: 'Filter: DV | OV | EV'
+  - name: cert_type
+    in: query
+    required: false
+    schema:
+      type: string
+    description: 'Filter: SINGLE | WILDCARD | MULTI_DOMAIN | FLEX'
+  - name: brand
+    in: query
+    required: false
+    schema:
+      type: string
+    description: Filter theo brand (tìm kiếm chính xác)
+  - name: is_enabled
+    in: query
+    required: false
+    schema:
+      type: integer
+    description: 'Filter trạng thái: 1=enabled, 0=disabled, không truyền=tất cả'
+  - name: min_years
+    in: query
+    required: false
+    schema:
+      type: integer
+    description: Filter sản phẩm hỗ trợ ≥ min_years
+  - name: sort_by
+    in: query
+    required: false
+    schema:
+      type: string
+      default: display_order
+    description: display_order | product_name | created_at | updated_at | wholesale_price_usd
+  - name: sort_order
+    in: query
+    required: false
+    schema:
+      type: string
+      default: asc
+    description: asc | desc
+  - name: include_deleted
+    in: query
+    required: false
+    schema:
+      type: integer
+      default: 0
+    description: 1 = bao gồm soft-deleted. Mặc định 0.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - type: object
+              properties:
+                data:
+                  $ref: "../../components/schemas/admin/GetProviderProductListData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  x-error-responses:
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    - code: '4409'
+      category: Business
+      message: Provider không tồn tại hoặc đã bị tắt

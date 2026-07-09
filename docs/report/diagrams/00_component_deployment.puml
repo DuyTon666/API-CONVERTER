@@ -1,0 +1,32 @@
+@startuml 02_component_deployment
+!pragma layout smetana
+skinparam componentStyle rectangle
+skinparam ArrowColor #64748B
+skinparam ComponentBackgroundColor #F8FAFC
+skinparam ComponentBorderColor #94A3B8
+
+package "Máy chủ nội bộ" {
+  [Frontend\n(Next.js :3000)] as FE
+  [Backend\n(FastAPI :8000)] as BE
+  [Pipeline\n(2.pipeline/, import trực tiếp\ncùng process với Backend)] as PL
+  [Redocly / Spectral CLI] as LINT
+}
+
+cloud "Dịch vụ ngoài" {
+  [Claude AI\n(qua gateway nội bộ công ty)] as CLAUDE
+  [GitHub REST API] as GH_API
+  [GitHub Actions\ncreate-doc-pr.yaml / deploy.yaml] as GHA
+  [GitHub Pages] as PAGES
+}
+
+FE --> BE : REST + SSE
+FE --> GH_API : POST /api/deploy-docs\n(blob→tree→commit→ref)
+BE --> PL : import trực tiếp\n(sys.path inject)
+BE --> LINT : subprocess (npm)
+BE --> CLAUDE : enrich / ai-fix / ai-suggest
+PL --> CLAUDE : enrich metadata (UC08)
+
+GH_API --> GHA : dispatch workflow
+GHA --> PAGES : deploy Swagger UI
+
+@enduml

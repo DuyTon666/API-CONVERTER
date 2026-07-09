@@ -1,0 +1,51 @@
+@startuml UC03_QuanLyModuleRegistry_Act
+skinparam ActivityBackgroundColor #F8FAFC
+skinparam ActivityBorderColor #94A3B8
+skinparam ArrowColor #64748B
+skinparam ActivityDiamondBackgroundColor #FEF9C3
+skinparam ActivityStartColor #4F46E5
+skinparam ActivityEndColor #4F46E5
+
+title UC03 — Quản lý module registry
+
+|Người dùng|
+start
+:Truy cập dashboard;
+
+|Hệ thống|
+:Đọc module_registry.yaml;
+
+if (Registry rỗng?) then (Có)
+  :Hiển thị "Chưa có module nào";
+  stop
+else (Không)
+endif
+
+:Hiển thị danh sách module\nkèm trạng thái, số file,\nsố endpoint, lần import gần nhất;
+
+|Người dùng|
+if (Muốn kích hoạt module?) then (Không)
+  stop
+else (Có)
+endif
+
+if (Module đã active?) then (Có)
+  :Nút Activate không hiển thị\nDùng nút Import thay thế;
+  stop
+else (Không)
+  :Bấm "Activate" trên module draft;
+endif
+
+|Hệ thống|
+:Cập nhật trạng thái\ndraft → active trong registry;
+
+if (Kích hoạt thành công?) then (Không)
+  :Hiển thị thông báo lỗi\nTrạng thái không thay đổi;
+  stop
+else (Có)
+endif
+
+:Hiển thị lại bảng module\nvới trạng thái đã cập nhật;
+
+stop
+@enduml

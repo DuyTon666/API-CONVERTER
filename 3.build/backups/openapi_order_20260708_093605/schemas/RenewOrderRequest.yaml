@@ -1,0 +1,132 @@
+type: object
+example:
+  years: 1
+  dcv_method: HTTP
+  contact_admin: &id001
+    email: admin@example.com
+    first_name: Nguyen
+    last_name: Van A
+    phone: '+84901234567'
+    title: Manager
+  contact_org: &id002
+    name: Example Co. Ltd
+    address: 123 Le Loi, Ha Noi
+    province: Ha Noi
+    country: VN
+    postal_code: '100000'
+    phone: '+84243456789'
+    business_number: '0123456789'
+    representative_name: Nguyen Van A
+    duns: '123456789'
+  contact_tech: &id003
+    email: tech@example.com
+    first_name: Tran
+    last_name: Thi B
+    phone: '+84901234568'
+    title: Developer
+  note: Gia hạn theo yêu cầu khách hàng
+properties:
+  years:
+    type: integer
+    example: 1
+    description: Trường `years`.
+  dcv_method:
+    type: string
+    example: HTTP
+    description: Trường `dcv_method`.
+  contact_admin:
+    type: object
+    example: *id001
+    properties:
+      email:
+        type: string
+        example: admin@example.com
+        description: Địa chỉ email.
+      first_name:
+        type: string
+        example: Nguyen
+        description: Trường `first_name`.
+      last_name:
+        type: string
+        example: Van A
+        description: Trường `last_name`.
+      phone:
+        type: string
+        example: '+84901234567'
+        description: Số điện thoại.
+      title:
+        type: string
+        example: Manager
+        description: Trường `title`.
+    description: Trường `contact_admin`.
+  contact_org:
+    type: object
+    example: *id002
+    properties:
+      name:
+        type: string
+        example: Example Co. Ltd
+        description: Tên hiển thị.
+      address:
+        type: string
+        example: 123 Le Loi, Ha Noi
+        description: Trường `address`.
+      province:
+        type: string
+        example: Ha Noi
+        description: Trường `province`.
+      country:
+        type: string
+        example: VN
+        description: Trường `country`.
+      postal_code:
+        type: string
+        example: '100000'
+        description: Trường `postal_code`.
+      phone:
+        type: string
+        example: '+84243456789'
+        description: Số điện thoại.
+      business_number:
+        type: string
+        example: '0123456789'
+        description: Trường `business_number`.
+      representative_name:
+        type: string
+        example: Nguyen Van A
+        description: Trường `representative_name`.
+      duns:
+        type: string
+        example: '123456789'
+        description: Trường `duns`.
+    description: Trường `contact_org`.
+  contact_tech:
+    type: object
+    example: *id003
+    properties:
+      email:
+        type: string
+        example: tech@example.com
+        description: Địa chỉ email.
+      first_name:
+        type: string
+        example: Tran
+        description: Trường `first_name`.
+      last_name:
+        type: string
+        example: Thi B
+        description: Trường `last_name`.
+      phone:
+        type: string
+        example: '+84901234568'
+        description: Số điện thoại.
+      title:
+        type: string
+        example: Developer
+        description: Trường `title`.
+    description: Trường `contact_tech`.
+  note:
+    type: string
+    example: Gia hạn theo yêu cầu khách hàng
+    description: Trường `note`.
+description: Schema `RenewOrderRequest`.

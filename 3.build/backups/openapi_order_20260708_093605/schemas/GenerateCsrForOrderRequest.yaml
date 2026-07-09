@@ -1,0 +1,29 @@
+type: object
+example:
+  key_type: RSA_2048
+  org_name: Công ty Cổ phần Ví dụ
+  country: VN
+  state: TP. Hồ Chí Minh
+  email: admin@example.com
+properties:
+  key_type:
+    type: string
+    example: RSA_2048
+    description: Trường `key_type`.
+  org_name:
+    type: string
+    example: Công ty Cổ phần Ví dụ
+    description: Trường `org_name`.
+  country:
+    type: string
+    example: VN
+    description: Trường `country`.
+  state:
+    type: string
+    example: TP. Hồ Chí Minh
+    description: Trường `state`.
+  email:
+    type: string
+    example: admin@example.com
+    description: Địa chỉ email.
+description: Schema `GenerateCsrForOrderRequest`.

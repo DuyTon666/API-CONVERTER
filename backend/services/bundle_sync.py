@@ -1,4 +1,7 @@
-from dataclasses import dataclass
+from api_utils.yaml_io import load_yaml_cached
+from dataclasses import dataclass, replace
+import os
+import re
 from pathlib import Path
 from typing import Literal
 
@@ -40,12 +43,11 @@ def _apply_operation_update(operation: dict, upd: dict) -> dict:
 
 def _index_operation_files() -> dict[str, Path]:
     """Quét toàn bộ file tầng 2 (5.openapi/paths/**), build map operationId -> đường dẫn file."""
-    import yaml as _yaml
 
     index: dict[str, Path] = {}
     for file in OUTPUT_DIR.glob("paths/**/*.yaml"):
         try:
-            doc = _yaml.safe_load(file.read_text(encoding="utf-8"))
+            doc = load_yaml_cached(file)
         except Exception:
             continue
         if not isinstance(doc, dict):
@@ -63,6 +65,34 @@ def _index_schema_files() -> dict[str, Path]:
     File schema không có wrapper key (khác file path/) — tên file (không .yaml)
     chính là tên schema, đúng với key trong bundle['components']['schemas']."""
     return {f.stem: f for f in OUTPUT_DIR.glob("components/schemas/**/*.yaml")}
+
+
+_BUNDLE_SCHEMA_REF_RE = re.compile(r"^#/components/schemas/(.+)$")
+
+# Dịch mọi $ref kiểu bundle nội bộ (#/components/schemas/X — chỉ đúng khi đang nằm
+# trong 1 file bundle gộp) thành đường dẫn tương đối tới đúng file schema thật ở
+# tầng 2, tính từ vị trí target_file. Đệ quy vào dict/list vì $ref có thể nằm lồng
+# sâu (vd bên trong allOf -> properties -> data).
+def _rewrite_bundle_refs_for_file(value: object, target_file: Path, schema_index: dict[str, Path]) -> object:
+    if isinstance(value, dict):
+        new_dict = {}
+        for key, val in value.items():
+            if key == "$ref" and isinstance(val, str):
+                match = _BUNDLE_SCHEMA_REF_RE.match(val)
+                if match:
+                    schema_file = schema_index.get(match.group(1))
+                    if schema_file is not None:
+                        rel_path = os.path.relpath(schema_file, target_file.parent)
+                        new_dict[key] = rel_path.replace(os.sep, "/")
+                        continue
+                new_dict[key] = val
+            else:
+                new_dict[key] = _rewrite_bundle_refs_for_file(val, target_file,schema_index)
+        return new_dict
+    if isinstance(value, list):
+        return [_rewrite_bundle_refs_for_file(item, target_file, schema_index) for item in value]
+    return value
+
 
 def _diff_recursive(old: dict, new: dict, prefix: list[PathSegment]) -> list[tuple[str, object]]:
     """So sánh 2 dict, trả list (path_str, giá_trị_mới) cho mọi field khác nhau ở bất kỳ độ sâu."""
@@ -165,7 +195,7 @@ def _apply_changes_and_mark(node: dict, changes: list[Change]) -> None:
         node["x-manual-edit-fields"] = _merge_marker(node.get("x-manual-edit-fields"), touched_paths)
 
 
-def sync_operation_fields(bundle: dict, changes: list[Change], op_index: dict[str, Path]) -> None:
+def sync_operation_fields(bundle: dict, changes: list[Change]) -> None:
     """Áp field đổi (kind='operation') vào tầng 3 (node trong bundle) + tầng 2 (file tương ứng),
     gắn marker x-manual-edit-fields ở cả 2 nơi. Lỗi đọc/ghi 1 file thì bỏ qua, không fail cả request."""
     from ruamel.yaml import YAML
@@ -178,6 +208,8 @@ def sync_operation_fields(bundle: dict, changes: list[Change], op_index: dict[st
         return
 
     bundle_ops = _index_operations_by_id(bundle)
+    op_index = _index_operation_files()
+    schema_index = _index_schema_files()
     fragment_yaml = YAML()
     fragment_yaml.default_flow_style = False
     fragment_yaml.indent(mapping=2, sequence=4, offset=2)
@@ -192,13 +224,17 @@ def sync_operation_fields(bundle: dict, changes: list[Change], op_index: dict[st
             continue
         try:
             fragment = fragment_yaml.load(file_path.read_text(encoding="utf-8"))
+            file_changes = [
+                replace(c, new_value=_rewrite_bundle_refs_for_file(c.new_value, file_path, schema_index))
+                for c in op_changes
+            ]
             for method, f_operation in fragment.items():
                 if (
                     method in _HTTP_METHODS
                     and isinstance(f_operation, dict)
                     and f_operation.get("operationId") == op_id
                 ):
-                    _apply_changes_and_mark(f_operation, op_changes)
+                    _apply_changes_and_mark(f_operation, file_changes)
             with file_path.open("w", encoding="utf-8") as f:
                 fragment_yaml.dump(fragment, f)
         except Exception:
@@ -232,8 +268,12 @@ def sync_schema_fields(bundle: dict, changes: list[Change], schema_index: dict[s
             continue
         try:
             fragment = fragment_yaml.load(file_path.read_text(encoding="utf-8"))
-            if isinstance(fragment, dict):
-                _apply_changes_and_mark(fragment, schema_changes)
+            file_changes = [
+                replace(c, new_value=_rewrite_bundle_refs_for_file(c.new_value, file_path, schema_index))
+                for c in schema_changes
+            ]
+            if isinstance(fragment, dict):                
+                _apply_changes_and_mark(fragment, file_changes)
             with file_path.open("w", encoding="utf-8") as f:
                 fragment_yaml.dump(fragment, f)
         except Exception:

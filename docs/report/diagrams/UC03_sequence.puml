@@ -1,0 +1,37 @@
+@startuml UC03_QuanLyModuleRegistry_Seq
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title UC03 — Quản lý module registry
+
+actor "Người dùng" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "module_registry\n.yaml" as Registry
+
+User -> FE: Truy cập dashboard
+FE -> BE: GET /modules
+BE -> Registry: Đọc danh sách module
+Registry --> BE: { modules: [...] }
+BE --> FE: 200 OK\n{ modules: [{ name, status,\n  file_count, endpoint_count,\n  last_import_at }] }
+FE --> User: Hiển thị bảng module
+
+User -> FE: Bấm "Activate"\ntrên module draft
+FE -> BE: POST /modules/activate\n{ module: "<name>" }
+
+BE -> Registry: Cập nhật status\ndraft → active
+Registry --> BE: OK
+
+alt Kích hoạt thành công
+  BE --> FE: 200 OK
+  FE -> BE: GET /modules
+  BE --> FE: Danh sách module đã cập nhật
+  FE --> User: Hiển thị trạng thái active
+else Kích hoạt thất bại
+  BE --> FE: 500 Internal Server Error\n{ detail: "..." }
+  FE --> User: Hiển thị thông báo lỗi
+end
+
+@enduml

@@ -1,0 +1,28 @@
+type: object
+properties:
+  order_id:
+    type: integer
+    description: orders.id — BIGINT auto-increment.
+  order_number:
+    type: string
+    description: Mã đơn hàng hiển thị (ví dụ SSL-2026-000042).
+  new_cert_id:
+    type: integer
+    description: certificates.id của cert REISSUE_QUEUED vừa tạo. Worker sẽ gọi 
+      provider với cert này.
+  replaces_cert_id:
+    type: integer
+    description: certificates.id của cert hiện tại sẽ bị thay thế 
+      (replaces_cert_id FK). null nếu không có cert trước đó.
+  cert_seq:
+    type: integer
+    description: 'Số thứ tự reissue: cert gốc = 1, reissue lần 1 = 2, v.v. Dùng để
+      track chuỗi reissue.'
+  status:
+    type: string
+    description: REISSUE_QUEUED — cert đã được tạo trong DB, chờ worker gửi lên 
+      provider.
+  message:
+    type: string
+    description: Thông báo xác nhận yêu cầu đã xếp hàng.
+description: Schema `ReissueOrderByIdData`.

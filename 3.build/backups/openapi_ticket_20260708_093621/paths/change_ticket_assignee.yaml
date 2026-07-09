@@ -1,0 +1,78 @@
+post:
+  summary: Yêu cầu đổi nhân viên hỗ trợ ticket
+  operationId: changeTicketAssignee
+  description: API cho phép người dùng gửi yêu cầu thay đổi nhân viên hỗ trợ cho một ticket cụ thể. Yêu cầu chỉ được 
+    thực hiện khi ticket đang ở trạng thái mở và người dùng có quyền thao tác trên ticket đó.
+  tags:
+  - Ticket
+  security:
+  - bearerAuth: []
+  x-permission: CHECK_NEWUPDATE
+  parameters:
+  - name: user_id
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'user_id'.
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'id'.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+          example:
+            success: true
+            data:
+            error:
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/ticket/ChangeTicketAssigneeRequest.yaml"
+  x-error-responses:
+    '401':
+    - code: '4102'
+      category: Auth
+      message: Token không hợp lệ / hết hạn
+    - code: '4108'
+      category: Auth
+      message: IP không được phép truy cập
+    '422':
+    - code: '4200'
+      category: Input validation
+      message: Dữ liệu request không hợp lệ
+    '404':
+    - code: '4004'
+      category: Not Found
+      message: Không tìm thấy dữ liệu
+    '429':
+    - code: '4468'
+      category: ''
+      message: Đang chờ nhân viên tiếp nhận, không thể yêu cầu liên tục.

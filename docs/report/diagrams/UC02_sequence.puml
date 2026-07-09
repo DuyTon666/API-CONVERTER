@@ -1,0 +1,45 @@
+@startuml UC02_PhanLoaiFileVaoModule_Seq
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title UC02 — Phân loại file vào module
+
+actor "Người dùng" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "module_resolution\n.yaml" as Config
+participant "File System" as FS
+
+User -> FE: Bấm "Gợi ý module"
+FE -> BE: POST /suggest-root
+
+BE -> FS: Đọc từng file\ntrích xuất endpoint & service field
+FS --> BE: Danh sách endpoint
+
+BE -> Config: Load endpoint rules
+Config --> BE: { patterns, modules }
+
+BE -> BE: So khớp endpoint với rules\nTính confidence score
+BE --> FE: 200 OK\n{ items: [{ file, module, score, conflict }],\n  summary: { pending, approved } }
+FE --> User: Hiển thị danh sách gợi ý
+
+User -> FE: Xem xét, nhập override (nếu cần)\nChọn file & bấm "Duyệt (n) file"
+FE -> BE: POST /approve-suggestions\n{ files: [{ file, override_module }] }
+
+BE -> FS: Cập nhật trạng thái\nvào import_suggestions.json
+FS --> BE: OK
+BE --> FE: 200 OK\n{ approved: n }
+FE --> User: Cập nhật trạng thái "Đã duyệt"
+
+User -> FE: Bấm "Apply suggestions"
+FE -> BE: POST /apply-suggestions
+
+BE -> FS: Sao chép file vào\n1.docs/source/api_contract/<module>/
+FS --> BE: OK
+BE -> FS: Cập nhật import_applied\n_suggestions.json
+BE --> FE: 200 OK\n{ applied: [...], skipped: [...] }
+FE --> User: Hiển thị kết quả applied / skipped
+
+@enduml

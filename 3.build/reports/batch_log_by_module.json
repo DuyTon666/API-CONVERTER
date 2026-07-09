@@ -1,0 +1,735 @@
+{
+  "modules": {
+    "statistic": {
+      "mixed": {
+        "module": "statistic",
+        "source_type": "api_contract",
+        "source_format": "mixed",
+        "timestamp": "2026-07-08 09:36:21",
+        "total": 1,
+        "success": 0,
+        "failed": 0,
+        "skipped": 1,
+        "success_files": [],
+        "skipped_files": [
+          {
+            "file": "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/statistic/get_user_statistics.yaml",
+            "source_format": "pdf"
+          }
+        ],
+        "errors": [],
+        "needs_review": [],
+        "needs_review_count": 0,
+        "error_groups": {
+          "method_missing": [],
+          "path_missing": [],
+          "permission_missing": [],
+          "error_codes_not_parsed": [],
+          "request_body_fields_empty": [],
+          "operation_id_empty": [],
+          "summary_empty": []
+        }
+      }
+    },
+    "department": {
+      "mixed": {
+        "module": "department",
+        "source_type": "api_contract",
+        "source_format": "mixed",
+        "timestamp": "2026-07-08 09:36:05",
+        "total": 1,
+        "success": 0,
+        "failed": 0,
+        "skipped": 1,
+        "success_files": [],
+        "skipped_files": [
+          {
+            "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/department/get_department_list.yaml",
+            "source_format": "pdf"
+          }
+        ],
+        "errors": [],
+        "needs_review": [],
+        "needs_review_count": 0,
+        "error_groups": {
+          "method_missing": [],
+          "path_missing": [],
+          "permission_missing": [],
+          "error_codes_not_parsed": [],
+          "request_body_fields_empty": [],
+          "operation_id_empty": [],
+          "summary_empty": []
+        }
+      }
+    },
+    "service": {
+      "mixed": {
+        "module": "service",
+        "source_type": "api_contract",
+        "source_format": "mixed",
+        "timestamp": "2026-07-08 09:36:19",
+        "total": 6,
+        "success": 0,
+        "failed": 0,
+        "skipped": 6,
+        "success_files": [],
+        "skipped_files": [
+          {
+            "file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/get_service_types.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/get_user_services.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Contract - API mở tạm dịch vụ.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/temporary_open_service.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Service - API lấy danh sách các gói nâng cấp của một dịch vụ.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/get_service_upgrade_plans.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.2",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/create_service_upgrade_plan_request.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/change_service_password.yaml",
+            "source_format": "pdf"
+          }
+        ],
+        "errors": [],
+        "needs_review": [],
+        "needs_review_count": 0,
+        "error_groups": {
+          "method_missing": [],
+          "path_missing": [],
+          "permission_missing": [],
+          "error_codes_not_parsed": [],
+          "request_body_fields_empty": [],
+          "operation_id_empty": [],
+          "summary_empty": []
+        }
+      }
+    },
+    "ticket": {
+      "mixed": {
+        "module": "ticket",
+        "source_type": "api_contract",
+        "source_format": "mixed",
+        "timestamp": "2026-07-08 09:36:39",
+        "total": 19,
+        "success": 0,
+        "failed": 0,
+        "skipped": 19,
+        "success_files": [],
+        "skipped_files": [
+          {
+            "file": "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/change_ticket_assignee.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Contract - API hiển thị chi tiết ticket cho khách hàng.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/get_ticket_detail.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/reopen_user_ticket.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Contract - API phản hồi ticket.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/reply_ticket_conversation.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/submit_ticket_feedback.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Contract - API tạo ticket cho khách hàng.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_user_ticket.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Contract - API đóng ticket của khách hàng.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/close_user_ticket.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_ticket_rating.yaml",
+            "source_format": "pdf"
+          },
+          {
+            "file": "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/change_ticket_assignee.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/update_ticket_feedback.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/get_support_staffs_by_ticket.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API Ticket - API mở lại ticket của khách hàng.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/reopen_user_ticket.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/submit_ticket_feedback.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_ticket_conversation.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API Ticket - API tạo ratting ticket cho khách hàng.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_ticket_rating.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API Ticket - API đóng ticket của khách hàng.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/close_user_ticket.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/get_ticket_detail.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
+            "reason": "version_unchanged",
+            "version": "1.2",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/list_user_tickets.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API Ticket - Tạo ticket cho khách hàng.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_user_ticket.yaml",
+            "source_format": "docx"
+          }
+        ],
+        "errors": [],
+        "needs_review": [],
+        "needs_review_count": 0,
+        "error_groups": {
+          "method_missing": [],
+          "path_missing": [],
+          "permission_missing": [],
+          "error_codes_not_parsed": [],
+          "request_body_fields_empty": [],
+          "operation_id_empty": [],
+          "summary_empty": []
+        }
+      }
+    },
+    "test_domain": {
+      "mixed": {
+        "module": "test_domain",
+        "source_type": "api_contract",
+        "source_format": "mixed",
+        "timestamp": "2026-06-18 14:32:51",
+        "total": 1,
+        "success": 0,
+        "failed": 1,
+        "skipped": 0,
+        "success_files": [],
+        "skipped_files": [],
+        "errors": [
+          {
+            "file": "test_source.pdf",
+            "error": "No /Root object! - Is this really a PDF?"
+          }
+        ],
+        "needs_review": [],
+        "needs_review_count": 0,
+        "error_groups": {
+          "method_missing": [],
+          "path_missing": [],
+          "permission_missing": [],
+          "error_codes_not_parsed": [],
+          "request_body_fields_empty": [],
+          "operation_id_empty": [],
+          "summary_empty": []
+        }
+      }
+    },
+    "admin": {
+      "mixed": {
+        "module": "admin",
+        "source_type": "api_contract",
+        "source_format": "mixed",
+        "timestamp": "2026-07-08 09:36:03",
+        "total": 24,
+        "success": 0,
+        "failed": 0,
+        "skipped": 24,
+        "success_files": [],
+        "skipped_files": [
+          {
+            "file": "API_internal_product_create.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_internal_product.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_internal_product_delete.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_internal_product.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_internal_product_detail.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_internal_product_detail.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_internal_product_list.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_internal_products.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_internal_product_mapping_create.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_internal_product_mapping.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_internal_product_mapping_delete.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_internal_product_mapping.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_internal_product_mapping_list.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_internal_product_mappings.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_internal_product_mapping_update.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_internal_product_mapping.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_internal_product_toggle.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_internal_product_status.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_internal_product_update.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_internal_product.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_create.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_provider.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_delete.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_provider_by_id.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_detail.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_detail.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_list.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_providers.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_product_create.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_provider_product.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_product_delete.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_provider_product.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_product_detail.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_product_detail.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_product_list.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_product_list.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_product_sync.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/sync_provider_products.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_product_toggle.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_provider_product_status.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_product_update.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_provider_product.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_reveal_token.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/reveal_provider_token.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_toggle.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_provider_status.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_provider_update.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_provider_by_id.yaml",
+            "source_format": "docx"
+          }
+        ],
+        "errors": [],
+        "needs_review": [],
+        "needs_review_count": 0,
+        "error_groups": {
+          "method_missing": [],
+          "path_missing": [],
+          "permission_missing": [],
+          "error_codes_not_parsed": [],
+          "request_body_fields_empty": [],
+          "operation_id_empty": [],
+          "summary_empty": []
+        }
+      }
+    },
+    "csr": {
+      "mixed": {
+        "module": "csr",
+        "source_type": "api_contract",
+        "source_format": "mixed",
+        "timestamp": "2026-07-08 09:36:03",
+        "total": 1,
+        "success": 0,
+        "failed": 0,
+        "skipped": 1,
+        "success_files": [],
+        "skipped_files": [
+          {
+            "file": "API_csr_generate.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/csr/generate_csr_request.yaml",
+            "source_format": "docx"
+          }
+        ],
+        "errors": [],
+        "needs_review": [],
+        "needs_review_count": 0,
+        "error_groups": {
+          "method_missing": [],
+          "path_missing": [],
+          "permission_missing": [],
+          "error_codes_not_parsed": [],
+          "request_body_fields_empty": [],
+          "operation_id_empty": [],
+          "summary_empty": []
+        }
+      }
+    },
+    "order": {
+      "mixed": {
+        "module": "order",
+        "source_type": "api_contract",
+        "source_format": "mixed",
+        "timestamp": "2026-07-08 09:36:06",
+        "total": 15,
+        "success": 0,
+        "failed": 0,
+        "skipped": 15,
+        "success_files": [],
+        "skipped_files": [
+          {
+            "file": "API_cert_download.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/download_order_certificate.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_certificate.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/download_order_certificate.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_create.docx",
+            "reason": "version_unchanged",
+            "version": "4.4",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/create_order.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_dcv_change.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/change_order_dcv_method.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_dcv_records.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_dcv_records.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_dcv_resend_email.docx",
+            "reason": "version_unchanged",
+            "version": "3.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/resend_dcv_email.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_dcv_validate.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/validate_order_dcv.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_detail.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_detail.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_generate_csr.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/generate_csr_for_order.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_list.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_list.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_reissue.docx",
+            "reason": "version_unchanged",
+            "version": "1.7",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/reissue_order_by_id.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_renew.docx",
+            "reason": "version_unchanged",
+            "version": "2.2",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/renew_order.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_revoke.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/revoke_order_by_id.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_submit_csr.docx",
+            "reason": "version_unchanged",
+            "version": "1.3",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/submit_csr_for_order.yaml",
+            "source_format": "docx"
+          },
+          {
+            "file": "API_order_sync_status.docx",
+            "reason": "version_unchanged",
+            "version": "1.1",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/sync_order_status.yaml",
+            "source_format": "docx"
+          }
+        ],
+        "errors": [],
+        "needs_review": [],
+        "needs_review_count": 0,
+        "error_groups": {
+          "method_missing": [],
+          "path_missing": [],
+          "permission_missing": [],
+          "error_codes_not_parsed": [],
+          "request_body_fields_empty": [],
+          "operation_id_empty": [],
+          "summary_empty": []
+        }
+      }
+    },
+    "topup": {
+      "mixed": {
+        "module": "topup",
+        "source_type": "api_contract",
+        "source_format": "mixed",
+        "timestamp": "2026-07-08 09:36:39",
+        "total": 1,
+        "success": 0,
+        "failed": 0,
+        "skipped": 1,
+        "success_files": [],
+        "skipped_files": [
+          {
+            "file": "API_order_plan_topup.docx",
+            "reason": "version_unchanged",
+            "version": "1.0",
+            "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/topup/order_plan_topup.yaml",
+            "source_format": "docx"
+          }
+        ],
+        "errors": [],
+        "needs_review": [],
+        "needs_review_count": 0,
+        "error_groups": {
+          "method_missing": [],
+          "path_missing": [],
+          "permission_missing": [],
+          "error_codes_not_parsed": [],
+          "request_body_fields_empty": [],
+          "operation_id_empty": [],
+          "summary_empty": []
+        }
+      }
+    }
+  },
+  "timestamp": "2026-07-08 09:36:39",
+  "summary": {
+    "total_modules": 9,
+    "total_files": 69,
+    "success": 0,
+    "failed": 1,
+    "skipped": 68
+  }
+}

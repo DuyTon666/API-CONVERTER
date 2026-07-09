@@ -1,0 +1,47 @@
+type: object
+properties:
+  provider_code:
+    type: string
+    description: Mã provider vừa sync (echo từ path).
+  provider_id:
+    type: string
+    description: ID nội bộ của provider.
+    readOnly: true
+  dry_run:
+    type: boolean
+    description: true nếu chạy preview; false nếu đã ghi DB.
+  started_at:
+    type: string
+    description: Thời điểm bắt đầu sync (UTC, ISO 8601).
+  finished_at:
+    type: string
+    description: Thời điểm kết thúc sync (UTC).
+  duration_ms:
+    type: integer
+    description: Tổng thời gian thực thi (ms).
+  summary.total_remote:
+    type: integer
+    description: Tổng số sản phẩm provider trả về.
+  summary.added:
+    type: integer
+    description: Số sản phẩm mới INSERT (hoặc sẽ INSERT nếu dry_run).
+  summary.skipped_existing:
+    type: integer
+    description: Số sản phẩm đã tồn tại, bị SKIP.
+  summary.failed:
+    type: integer
+    description: Số item gặp lỗi mapping/validate.
+  added_items:
+    type: string
+    description: 'Danh sách sản phẩm được thêm (hoặc preview) — field chính: provider_product_code,
+      product_name, brand, is_enabled (luôn false). Mapping tới internal_products
+      làm qua API riêng /admin/internal-products/{id}/mappings.'
+  failed_items:
+    type: string
+    description: Danh sách item lỗi — kèm reason (mapping_error / 
+      validate_error).
+  sync_log_id:
+    type: string
+    description: ID record trong provider_sync_logs. Null nếu dry_run=true.
+    readOnly: true
+description: Schema `SyncProviderProductsData`.

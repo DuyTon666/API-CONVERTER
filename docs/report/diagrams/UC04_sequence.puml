@@ -1,0 +1,58 @@
+@startuml 03_seq_import_module
+skinparam SequenceArrowColor #64748B
+skinparam SequenceBoxBorderColor #CBD5E1
+skinparam ParticipantBackgroundColor #F8FAFC
+skinparam ParticipantBorderColor #94A3B8
+
+title Import Module — luồng thực tế (backend/services/import_jobs.py)
+
+actor "Người dùng" as User
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "Pipeline" as PL
+participant "Claude AI" as AI
+
+User -> FE: Bấm "Import" (module hoặc tất cả)
+FE -> BE: POST /modules/import { module? }
+
+alt Không có module active / module chưa active
+  BE --> FE: 400 NO_ACTIVE_MODULE / MODULE_NOT_ACTIVE
+  FE --> User: Hiển thị lỗi
+else Hợp lệ
+  BE -> BE: Tạo job_id, giao ThreadPoolExecutor\nchạy nền (trả lời ngay, không chờ)
+  BE --> FE: 200 { job_id }
+  FE -> BE: GET /modules/import/{job_id}/stream (SSE)
+
+  loop Với từng module active trong job
+    BE -> BE: Backup tầng 2 hiện tại\n→ 3.build/backups/
+    BE -> BE: Capture giá trị đã sửa tay\n(_scan_manual_edits)
+    BE -> PL: run_batch(module)
+
+    loop Với từng file trong module
+      alt Hash file không đổi
+        PL -> PL: Bỏ qua (skipped)
+      else File mới/thay đổi
+        PL -> PL: Parse → ParsedOperation
+        PL -> AI: Enrich metadata
+        alt Claude AI thành công
+          AI --> PL: summary/operationId/description
+        else Claude AI lỗi/timeout
+          PL -> PL: Fallback rule-based\n+ ghi human_review_queue.json
+        end
+        PL -> PL: Generate YAML → Post-process
+      end
+    end
+
+    PL --> BE: batch_log { success, failed, skipped, needs_review }
+    BE -> BE: So sánh capture cũ vs file mới\n(_resolve_manual_edits_after_import)\n→ ghi manual_edit_conflicts.json nếu lệch
+    BE -> BE: Cập nhật module_registry.yaml\n(last_import_at, endpoint_count)
+    note right of BE: SSE chỉ phát 1 lần khi\n**cả module** xong — chưa\nstream tiến trình từng file
+    BE --> FE: SSE: { name, status: done,\nsuccess, failed, skipped }
+  end
+
+  BE --> FE: SSE: { event: "done" }
+end
+
+FE --> User: Hiển thị tiến trình & tổng kết
+
+@enduml

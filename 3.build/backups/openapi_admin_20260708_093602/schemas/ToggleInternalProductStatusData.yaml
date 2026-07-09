@@ -1,0 +1,28 @@
+type: object
+properties:
+  id:
+    type: string
+    description: Internal product id
+    readOnly: true
+  code:
+    type: string
+    description: Reference
+  is_enabled:
+    type: boolean
+    description: Trạng thái sau toggle
+  previous_is_enabled:
+    type: boolean
+    description: Trạng thái trước toggle
+  changed:
+    type: boolean
+    description: true nếu có thay đổi; false = no-op
+  changed_at:
+    type: string
+    description: Thời điểm thay đổi
+  changed_by:
+    type: string
+    description: Admin thực hiện
+  reason:
+    type: string
+    description: Lý do (nếu có)
+description: Schema `ToggleInternalProductStatusData`.

@@ -1,0 +1,33 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: ID (BIGINT auto-increment) của order — dùng cho tất cả các API 
+      tiếp theo.
+    readOnly: true
+  order_number:
+    type: string
+    description: Mã đơn hàng SSL-YYYY-NNNNNN. Hệ thống bán dùng mã này để truy 
+      vấn và hiển thị.
+  external_account_id:
+    type: integer
+    description: Echo lại ID account từ hệ thống bán (BIGINT) — để xác nhận đã 
+      lưu.
+  status:
+    type: string
+    description: Luôn là INIT ở bước tạo. Chưa có CSR/DCV.
+  contact:
+    type: object
+    description: Echo lại thông tin contact đã lưu (contact_admin, contact_org, 
+      contact_tech).
+  selected_provider:
+    type: object
+    description: Provider + provider_product được WRR chọn. Bao gồm mapping_id 
+      để trace.
+  routing_info.selection_method:
+    type: string
+    description: SINGLE_CANDIDATE (1 mapping) | WRR (≥ 2 mappings).
+  routing_info.candidates:
+    type: string
+    description: Snapshot tất cả candidates + score để audit quyết định routing.
+description: Schema `CreateOrderData`.

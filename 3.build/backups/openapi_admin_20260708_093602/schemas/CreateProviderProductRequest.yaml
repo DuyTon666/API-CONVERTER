@@ -1,0 +1,118 @@
+type: object
+example:
+  provider_product_code: '101'
+  product_name: PositiveSSL DV Single Domain
+  product_name_en: PositiveSSL DV Single Domain
+  brand: Sectigo
+  product_type: DV
+  cert_type: SINGLE
+  years_supported: &id001
+    - 1
+    - 2
+  min_san: null
+  max_san: null
+  supported_dcv_methods: &id002
+    - EMAIL
+    - HTTP
+    - CNAME
+  supported_server_types: &id003
+    - Apache
+    - IIS
+    - Nginx
+  wholesale_price_usd: 8.5
+  retail_price_vnd: 250000
+  warranty_amount_usd: 50000
+  is_reissue_supported: true
+  description: SSL DV Single Domain
+  admin_note: Nhập khẩu Daousign tháng 04/2026
+  is_enabled: true
+  display_order: 10
+properties:
+  provider_product_code:
+    type: string
+    example: '101'
+    description: Trường `provider_product_code`.
+  product_name:
+    type: string
+    example: PositiveSSL DV Single Domain
+    description: Trường `product_name`.
+  product_name_en:
+    type: string
+    example: PositiveSSL DV Single Domain
+    description: Trường `product_name_en`.
+  brand:
+    type: string
+    example: Sectigo
+    description: Trường `brand`.
+  product_type:
+    type: string
+    example: DV
+    description: Trường `product_type`.
+  cert_type:
+    type: string
+    example: SINGLE
+    description: Trường `cert_type`.
+  years_supported:
+    type: array
+    example: *id001
+    items:
+      type: integer
+      example: 1
+    description: Trường `years_supported`.
+  min_san:
+    type:
+      - string
+      - 'null'
+    description: Trường `min_san`.
+  max_san:
+    type:
+      - string
+      - 'null'
+    description: Trường `max_san`.
+  supported_dcv_methods:
+    type: array
+    example: *id002
+    items:
+      type: string
+      example: EMAIL
+    description: Trường `supported_dcv_methods`.
+  supported_server_types:
+    type: array
+    example: *id003
+    items:
+      type: string
+      example: Apache
+    description: Trường `supported_server_types`.
+  wholesale_price_usd:
+    type: number
+    example: 8.5
+    description: Trường `wholesale_price_usd`.
+  retail_price_vnd:
+    type: integer
+    example: 250000
+    description: Trường `retail_price_vnd`.
+  warranty_amount_usd:
+    type: integer
+    example: 50000
+    description: Trường `warranty_amount_usd`.
+  is_reissue_supported:
+    type: boolean
+    example: true
+    description: Trường `is_reissue_supported`.
+  description:
+    type: string
+    example: SSL DV Single Domain
+    description: Mô tả chi tiết.
+  admin_note:
+    type: string
+    example: Nhập khẩu Daousign tháng 04/2026
+    description: Trường `admin_note`.
+  is_enabled:
+    type: boolean
+    example: true
+    description: Trường `is_enabled`.
+  display_order:
+    type: integer
+    example: 10
+    description: Trường `display_order`.
+description: Schema `CreateProviderProductRequest`.

@@ -1,0 +1,95 @@
+get:
+  summary: Lấy danh sách bản ghi DCV của đơn hàng
+  operationId: getOrderDcvRecords
+  description: Truy xuất danh sách các bản ghi xác thực kiểm soát tên miền (DCV) liên quan đến một đơn hàng cụ thể. API 
+    yêu cầu ID đơn hàng hợp lệ và chỉ trả về dữ liệu nếu đơn hàng tồn tại trong hệ thống.
+  tags:
+  - Order
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+    description: Tham số đường dẫn 'id'.
+  - name: domain
+    in: query
+    required: false
+    schema:
+      type: string
+    description: 'Filter theo tên domain. Nếu cung cấp: chỉ trả record của domain đó. Nếu không: trả tất cả.'
+  - name: status
+    in: query
+    required: false
+    schema:
+      type: string
+    description: 'Filter theo trạng thái: PENDING | VALIDATED | FAILED. Nếu không cung cấp: trả tất cả.'
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+          example:
+            success: true
+            data:
+            error:
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  x-error-responses:
+    '409':
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    '404':
+    - code: '4001'
+      category: Not Found
+      message: Order không tồn tại (hoặc đã bị xóa)
+    '400':
+    - code: '4210'
+      category: Format
+      message: id không phải số nguyên dương hợp lệ (BIGINT, không phải UUID)
+    - code: '4200'
+      category: Input
+      message: Giá trị query param status không hợp lệ

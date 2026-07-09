@@ -1,0 +1,55 @@
+@startuml 01_usecase_overview
+!pragma layout smetana
+left to right direction
+skinparam ArrowColor #64748B
+skinparam UsecaseBackgroundColor #F8FAFC
+skinparam UsecaseBorderColor #94A3B8
+skinparam ActorBorderColor #94A3B8
+
+actor "Người dùng" as User
+actor "Claude AI" as AI
+actor "Redocly / Spectral" as Lint
+actor "GitHub Actions" as GHA
+
+rectangle "API Converter" {
+  usecase "UC01\nQuản lý tài liệu đầu vào" as UC01
+  usecase "UC02\nPhân loại file vào module" as UC02
+  usecase "UC03\nQuản lý module registry" as UC03
+  usecase "UC04\nImport module" as UC04
+  usecase "UC05\nChỉnh sửa & duyệt nội dung" as UC05
+  usecase "UC06\nBuild & xuất bản tài liệu" as UC06
+  usecase "UC07\nXem tài liệu API" as UC07
+  usecase "UC08\nEnrich metadata API" as UC08
+  usecase "UC09\nBundle YAML" as UC09
+  usecase "UC10\nLint theo chuẩn OpenAPI" as UC10
+  usecase "UC11\nLint theo governance rules" as UC11
+  usecase "UC12\nDeploy tài liệu" as UC12
+}
+
+User -- UC01
+User -- UC02
+User -- UC03
+User -- UC04
+User -- UC05
+User -- UC06
+User -- UC07
+User -- UC12
+
+UC04 .> UC08 : <<include>>
+UC08 -- AI
+
+UC06 .> UC09 : <<include>>
+UC06 .> UC10 : <<include>>
+UC06 .> UC11 : <<include>>
+UC05 .> UC09 : <<include>>
+UC05 .> UC10 : <<include>>
+UC05 .> UC11 : <<include>>
+
+UC09 -- Lint
+UC10 -- Lint
+UC11 -- Lint
+
+UC12 .> UC06 : <<extend>>
+UC12 -- GHA
+
+@enduml
