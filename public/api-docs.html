@@ -138,8 +138,6 @@ paths:
                     properties:
                       data:
                         \$ref: '#/components/schemas/CreateInternalProductData'
-        '400':
-          \$ref: '#/components/responses/BadRequest'
         '401':
           \$ref: '#/components/responses/Unauthorized'
         '403':
@@ -199,7 +197,7 @@ paths:
             message: 'Kết hợp product_type + cert_type không hợp lệ (VD: EV + WILDCARD)'
     get:
       summary: Lấy danh sách sản phẩm nội bộ
-      operationId: listInternalProducts
+      operationId: list_internal_products
       description: Truy xuất danh sách toàn bộ sản phẩm nội bộ dành cho quản trị viên hệ thống. Chỉ tài khoản có quyền admin mới được phép truy cập endpoint này.
       tags:
         - Admin
@@ -393,7 +391,6 @@ paths:
     get:
       summary: Lấy chi tiết sản phẩm nội bộ theo ID
       operationId: getInternalProductDetail
-      description: Truy xuất thông tin chi tiết của một sản phẩm nội bộ dựa trên ID được cung cấp. Chỉ quản trị viên có quyền truy cập mới được phép xem thông tin sản phẩm nội bộ này.
       tags:
         - Admin
       security:
@@ -4983,7 +4980,6 @@ paths:
               - IN_PROGRESS
               - PENDING
               - CLOSED
-            description: 'Trạng thái ticket: CREATED — Mới tạo; IN_PROGRESS — Đang xử lý; PENDING — Chờ phản hồi; CLOSED — Đóng'
           description: 'Tìm kiếm theo trạng thái:CREATED: Mới tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng'
         - name: keyword
           in: query
@@ -5544,7 +5540,6 @@ components:
           description: Tên hiển thị tiếng Việt (≤ 200 ký tự).
         name_en:
           type: string
-          description: Tên tiếng Anh (optional, ≤ 200 ký tự).
         product_type:
           type: string
           description: 'Mức xác thực: DV | OV | EV. IMMUTABLE sau create (định danh bản chất sản phẩm).'
@@ -5556,7 +5551,6 @@ components:
           description: Mô tả hiển thị UI.
         retail_price_vnd:
           type: number
-          description: Giá bán lẻ đề xuất (VND/năm) cho customer UI.
         is_enabled:
           type: boolean
           description: Bật/tắt hiển thị/bán. true = được chọn cho order mới.
