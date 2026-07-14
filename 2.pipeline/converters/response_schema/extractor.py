@@ -3,37 +3,12 @@ import re
 from typing import Any
 
 
-def parse_success_response_json_sample(text: str) -> dict[str, list[dict]]:
+def _find_success_response_json(text: str) -> tuple[str, dict] | None:
     """
-    Fallback generic:
-    - Tìm block Success Response / Response thành công
-    - Lấy JSON object đầu tiên trong block
-    - Đọc payload["data"]
-    - Convert keys trong data thành response_schemas
+    Duyệt qua TỪNG chỗ khớp "Response thành công" / "Success Response",
+    thử extract + parse JSON thật ở mỗi chỗ, trả về block+payload đầu
+    tiên PARSE THÀNH CÔNG và có key "data".
     """
-    block = _find_success_response_block(text)
-    if not block:
-        return {}
-
-    raw_json = _extract_first_json_object(block)
-    if not raw_json:
-        return {}
-
-    try:
-        payload = json.loads(raw_json)
-    except Exception:
-        return {}
-
-    data = payload.get("data")
-    if not isinstance(data, dict):
-        return {}
-
-    schemas: dict[str, list[dict]] = {}
-    _collect_schema_from_object(data, "data", schemas)
-    return schemas
-
-
-def _find_success_response_block(text: str) -> str:
     marker_pattern = r"(Response thành công|Success Response)"
 
     for match in re.finditer(marker_pattern, text, re.IGNORECASE):
@@ -46,10 +21,83 @@ def _find_success_response_block(text: str) -> str:
             flags=re.IGNORECASE,
         )[0]
 
-        if "{" in block and "data" in block:
-            return block
+        raw_json = _extract_first_json_object(block)
+        if not raw_json:
+            continue
 
-    return ""
+        try:
+            payload = json.loads(raw_json)
+        except Exception:
+            continue
+
+        if not isinstance(payload, dict) or "data" not in payload:
+            continue
+
+        return block, payload
+
+    return None
+
+
+def find_table_block_after_json_sample(text: str) -> str:
+    """
+    Fallback khi response table không có heading số thứ tự đứng trước
+    (bảng nối thẳng ngay sau JSON mẫu trong Success Response).
+    Trả về đoạn text ngay sau dấu đóng JSON để caller tự parse
+    tab-separated table, hoặc "" nếu không tìm được JSON mẫu.
+    """
+    found = _find_success_response_json(text)
+    if not found:
+        return ""
+    block, _payload = found
+    raw_json = _extract_first_json_object(block)
+    if not raw_json:
+        return ""
+    end_index = block.find(raw_json)
+    if end_index < 0:
+        return ""
+    end_index += len(raw_json)
+    return block[end_index:end_index + 2000]
+
+
+def parse_success_response_json_sample(text: str) -> dict[str, list[dict]]:
+    """
+    Fallback generic:
+    - Tìm block Success Response / Response thành công có JSON parse được thật
+    - Đọc payload["data"]
+    - Convert keys trong data thành response_schemas
+    """
+    found = _find_success_response_json(text)
+    if not found:
+        return {}
+
+    _block, payload = found
+    data = payload.get("data")
+    schemas: dict[str, list[dict]] = {}
+
+    if isinstance(data, dict):
+        _collect_schema_from_object(data, "data", schemas)
+        return schemas
+
+    if isinstance(data, list) and data and isinstance(data[0], dict):
+        _collect_schema_from_object(data[0], "data[]", schemas)
+        return schemas
+
+    return {}
+
+
+def detect_data_root_is_array(text: str) -> bool:
+    """
+    Phát hiện "data" trong Response thành công có phải array hay không,
+    dựa trên payload JSON đã parse thành công thật (dùng chung
+    _find_success_response_json với parse_success_response_json_sample
+    thay vì tự tìm lại bằng substring check riêng).
+    """
+    found = _find_success_response_json(text)
+    if not found:
+        return False
+
+    _block, payload = found
+    return isinstance(payload.get("data"), list)
 
 
 def _extract_first_json_object(text: str) -> str:

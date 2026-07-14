@@ -4,10 +4,14 @@ properties:
     type: integer
     description: Số thứ tự trang hiện tại
   next_page_url:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Link đến trang tiếp theo
   prev_page_url:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Link đến trang trước
   first_page_url:
     type: string
@@ -26,3 +30,4 @@ properties:
     items:
       $ref: "./ListUserTicketsDataData.yaml"
     description: Danh sách các ticket
+description: Schema `ListUserTicketsData`.

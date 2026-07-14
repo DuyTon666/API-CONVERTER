@@ -28,62 +28,15 @@ properties:
     type: string
     description: 'Kiểu cert: SINGLE | WILDCARD | MULTI_DOMAIN | FLEX.'
   years_supported:
-    type: string
+    type: array
+    items: {}
     description: 'Số năm hỗ trợ. VD: [1, 2]. Không rỗng.'
-  max_years:
-    type: integer
-    description: Tự tính = max(years_supported).
-  min_san:
-    type: integer
-    description: Áp dụng MULTI_DOMAIN và FLEX. Mặc định 3.
-  max_san:
-    type: integer
-    description: 'Áp dụng MULTI_DOMAIN và FLEX. VD: 100.'
   supported_dcv_methods:
-    type: string
+    type: array
+    items: {}
     description: 'DCV methods: [EMAIL, HTTP, CNAME]. Không rỗng.'
   supported_server_types:
-    type: string
+    type: array
+    items: {}
     description: Loại server (Apache, IIS, Nginx...).
-  wholesale_price_usd:
-    type: number
-    description: Giá sỉ Daousign (USD/năm).
-  retail_price_vnd:
-    type: number
-    description: Giá bán lẻ đề xuất (VND/năm).
-  warranty_amount_usd:
-    type: number
-    description: Mức bảo hiểm CA (USD).
-  is_reissue_supported:
-    type: boolean
-    description: Có hỗ trợ reissue không.
-  description:
-    type: string
-    description: Mô tả ngắn sản phẩm.
-  admin_note:
-    type: string
-    description: Ghi chú nội bộ admin.
-  is_enabled:
-    type: boolean
-    description: Bật/tắt theo chiến lược kinh doanh. true=bán, false=tạm dừng.
-  display_order:
-    type: integer
-    description: Thứ tự hiển thị UI (ascending). Mặc định 0.
-  created_at:
-    type: string
-    description: Thời điểm tạo (UTC).
-    readOnly: true
-  updated_at:
-    type: string
-    description: Thời điểm cập nhật gần nhất (UTC).
-    readOnly: true
-  created_by:
-    type: string
-    description: Admin ID người tạo.
-  updated_by:
-    type: string
-    description: Admin ID người cập nhật gần nhất.
-  deleted_at:
-    type: string
-    description: Soft delete timestamp. Null = chưa xóa.
 description: Schema `GetProviderProductDetailData`.

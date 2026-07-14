@@ -1,8 +1,8 @@
 post:
-  summary: Tạo ticket hỗ trợ cho khách hàng
+  summary: Tạo ticket hỗ trợ mới cho khách hàng
   operationId: createUserTicket
   description: Tạo một ticket hỗ trợ mới cho khách hàng dựa trên user_id được cung cấp. Yêu cầu thông tin hợp lệ về vấn 
-    đề cần hỗ trợ và khách hàng phải tồn tại trong hệ thống.
+    đề cần hỗ trợ và khách hàng phải tồn tại trong hệ thống trước khi tạo ticket.
   tags:
   - Ticket
   security:

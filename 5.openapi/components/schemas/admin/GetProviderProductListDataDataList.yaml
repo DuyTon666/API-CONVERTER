@@ -24,22 +24,7 @@ properties:
     type: string
     description: SINGLE | WILDCARD | MULTI_DOMAIN | FLEX
   years_supported:
-    type: string
+    type: array
+    items: {}
     description: Số năm hỗ trợ
-  max_years:
-    type: integer
-    description: Số năm tối đa
-  wholesale_price_usd:
-    type: number
-    description: Giá sỉ USD/năm
-  is_enabled:
-    type: boolean
-    description: Trạng thái bật/tắt
-  display_order:
-    type: integer
-    description: Thứ tự hiển thị
-  updated_at:
-    type: string
-    description: Lần cập nhật gần nhất
-    readOnly: true
 description: Schema `GetProviderProductListDataDataList`.

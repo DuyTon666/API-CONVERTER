@@ -10,30 +10,55 @@ example:
 properties:
   common_name:
     type: string
+    description: Tên miền đã chuẩn hóa. Ghi vào CN=. Tối đa 255 ký tự.
     example: example.com
-    description: Trường `common_name`.
+    maxLength: 255
   org_name:
     type: string
+    description: Tên tổ chức. Ghi vào O= và OU=. Tối đa 64 ký tự.
+    default: N/A
     example: Công ty Cổ phần Pavietnam
-    description: Trường `org_name`.
+    maxLength: 64
   locality:
     type: string
+    description: Tỉnh/Thành phố. Ghi vào L= và ST=. Tối đa 128 ký tự.
+    default: N/A
     example: TP. Hồ Chí Minh
-    description: Trường `locality`.
+    maxLength: 128
   country:
     type: string
+    description: Mã quốc gia ISO 3166-1 alpha-2 (2 ký tự hoa). Ghi vào C=.
+    format: iso3166-alpha2
+    default: US
     example: VN
-    description: Trường `country`.
+    minLength: 2
+    maxLength: 2
   email:
     type: string
+    description: Email liên hệ. RFC 5322 nếu cung cấp.
+    format: email
     example: ssl@pavietnam.vn
-    description: Địa chỉ email.
   key_size:
     type: integer
+    description: 2048 (RSA) | 4096 (RSA) | 256 (ECDSA P-256) | 384 (ECDSA 
+      P-384).
+    enum:
+      - 2048
+      - 4096
+      - 256
+      - 384
+    default: 2048
     example: 2048
-    description: Trường `key_size`.
   signature_algorithm:
     type: string
+    description: SHA-2 / SHA-256 / SHA-384 / SHA-512. SHA-2 tương đương SHA-256.
+    enum:
+      - SHA-2
+      - SHA-256
+      - SHA-384
+      - SHA-512
+    default: SHA-2
     example: SHA-2
-    description: Trường `signature_algorithm`.
+required:
+  - common_name
 description: Schema `GenerateCsrRequest`.

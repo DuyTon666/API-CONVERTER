@@ -1,5 +1,12 @@
 type: object
 properties:
+  order_id:
+    type: string
+    description: Trường `order_id`.
+    readOnly: true
+  order_number:
+    type: string
+    description: Trường `order_number`.
   status:
     type: string
     description: Luôn là CSR_READY sau khi API thành công.

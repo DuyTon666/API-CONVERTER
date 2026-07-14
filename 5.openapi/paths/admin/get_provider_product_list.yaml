@@ -1,8 +1,8 @@
 get:
   summary: Lấy danh sách sản phẩm của nhà cung cấp
   operationId: getProviderProductList
-  description: Truy xuất danh sách tất cả sản phẩm thuộc một nhà cung cấp cụ thể dựa trên mã nhà cung cấp. Chỉ tài khoản
-    quản trị viên mới có quyền truy cập thông tin này.
+  description: Truy xuất danh sách tất cả sản phẩm thuộc một nhà cung cấp cụ thể dựa trên mã nhà cung cấp 
+    (provider_code). API này chỉ dành cho quản trị viên và yêu cầu mã nhà cung cấp hợp lệ trong đường dẫn.
   tags:
   - Admin
   security:

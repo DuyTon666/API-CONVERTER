@@ -111,14 +111,46 @@ def _normalize_schema_default(raw_default, schema: dict):
     return value
 
 
-def _has_canonical_request_schema(op: ParsedOperation) -> bool:
-    result = getattr(op, "request_schema_result", None)
-    return bool(result and getattr(result, "root", None))
+def _has_canonical_request_schema(
+    op: ParsedOperation,
+) -> bool:
+    result = getattr(
+        op,
+        "request_schema_result",
+        None,
+    )
+    root = getattr(result, "root", None)
+
+    if root is None:
+        return False
+
+    example = getattr(root, "example", None)
+
+    if isinstance(
+        example,
+        (str, bytes, dict, list, tuple, set),
+    ):
+        has_meaningful_example = bool(example)
+    else:
+        has_meaningful_example = example is not None
+
+    return bool(
+        getattr(root, "properties", None)
+        or getattr(root, "items", None) is not None
+        or getattr(root, "required", None)
+        or (
+            getattr(root, "has_example", False)
+            and has_meaningful_example
+        )
+    )
 
 
-def _can_emit_request_schema(op: ParsedOperation) -> bool:
+def _can_emit_request_schema(
+    op: ParsedOperation,
+) -> bool:
     return bool(
         op.operation_id
+        and getattr(op, "has_request_body", False)
         and (
             _has_canonical_request_schema(op)
             or op.request_body_fields
@@ -226,7 +258,6 @@ def _apply_server_managed_rules(field_name: str, prop: dict, schema_kind: str) -
 
 
 def _resolve_response_schema(op: ParsedOperation) -> dict:
-    """..."""
     standard_ref = _ref(_CONFIG.get(
         "standard_success_ref",
         "../../components/schemas/common/StandardSuccess.yaml"
@@ -601,6 +632,9 @@ def emit_request_schema(op: ParsedOperation, schemas_dir: str):
     """Tạo file RequestSchema.yaml từ request body schema"""
     if not op.operation_id:
         return None
+    
+    if not getattr(op, "has_request_body", False):
+        return None
 
     has_canonical_schema = _has_canonical_request_schema(op)
 
@@ -728,15 +762,72 @@ def _scalar_schema(dtype: str) -> dict:
 
 
 def _array_items_schema(field: dict) -> dict:
-    item_type = (field.get("item_type") or "").lower()
+    """
+    Sinh schema cho items của array dựa trên evidence thực tế.
 
-    if item_type in {"string", "integer", "number", "boolean"}:
+    Không có item_type thường xảy ra khi JSON sample là [].
+    Trường hợp đó không được tự suy luận thành object.
+    """
+    item_type = str(
+        field.get("item_type") or ""
+    ).strip().lower()
+
+    if item_type in {
+        "string",
+        "integer",
+        "number",
+        "boolean",
+        "object",
+    }:
         return {"type": item_type}
 
     if item_type == "null":
         return {"type": ["string", "null"]}
 
-    return {"type": "object"}
+    return {}
+
+
+def _apply_nullable_schema(
+    schema: dict,
+    field: dict,
+) -> dict:
+    """
+    Chuyển nullable evidence thành OpenAPI 3.1 type union.
+
+    Ví dụ:
+      object + nullable
+      → type: [object, null]
+    """
+    if not field.get("nullable"):
+        return schema
+
+    schema_type = schema.get("type")
+
+    if isinstance(schema_type, str):
+        schema["type"] = [
+            schema_type,
+            "null",
+        ]
+        return schema
+
+    if isinstance(schema_type, list):
+        if "null" not in schema_type:
+            schema["type"] = [
+                *schema_type,
+                "null",
+            ]
+
+        return schema
+
+    if "$ref" in schema:
+        return {
+            "anyOf": [
+                schema,
+                {"type": "null"},
+            ]
+        }
+
+    return schema
 
 
 def _build_properties(fields: list, parent_path: str = "", all_schemas: dict = None, prefix: str = "") -> dict:
@@ -782,6 +873,11 @@ def _build_properties(fields: list, parent_path: str = "", all_schemas: dict = N
                 prop = {"type": "object"}
         else:
             prop = _scalar_schema(dtype)
+            
+        prop = _apply_nullable_schema(
+            prop,
+            f,
+        )
 
         field_name = f["name"]
 

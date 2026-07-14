@@ -1,6 +1,10 @@
 request_auto_remove_fields:
   - created_at
   - updated_at
+  - deleted_at
+  - created_by
+  - updated_by
+  - deleted_by
 
 response_readonly_fields:
   - id
@@ -12,3 +16,5 @@ response_readonly_fields:
   - provider_id
   - sync_log_id
   - certificate_id
+  - mapping_id
+  - order_id

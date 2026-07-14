@@ -1,8 +1,50 @@
 post:
   summary: Thay đổi phương thức xác thực DCV của đơn hàng
   operationId: changeOrderDcvMethod
-  description: Thay đổi phương thức xác thực tên miền (DCV) cho đơn hàng chứng chỉ SSL đang xử lý. Chỉ áp dụng khi đơn 
-    hàng chưa hoàn tất xác thực và phương thức mới phải được tổ chức CA hỗ trợ.
+  x-side-effects:
+    schema_version: '1.1'
+    meta:
+      detected_by: rule_based
+      confidence: 0.75
+      review_status: pending
+      last_updated: '2026-07-14'
+    effects:
+    - type: state_change
+      trigger: on_success
+      target:
+        entity: order
+        field: null
+        from: null
+        to: null
+      description: Thay đổi thuộc tính của order
+      confirmed: false
+      effect_id: order_change_state_change_001
+      source: rule_based
+      evidence:
+        source: module
+        matched_keyword: change
+        rule_id: action_verbs.change
+        resource_source: module
+        template_index: 0
+    - type: write
+      trigger: on_success
+      target:
+        entity: order_history
+      description: Ghi lịch sử thay đổi order
+      confirmed: false
+      effect_id: order_change_write_002
+      source: rule_based
+      evidence:
+        source: module
+        matched_keyword: change
+        rule_id: action_verbs.change
+        resource_source: module
+        template_index: 1
+    review:
+      required: true
+      reason: Side effects được suy luận từ action endpoint, chưa được xác nhận từ source document.
+      note: null
+  description: Thay đổi phương thức xác thực tên miền (DCV) cho đơn hàng chứng chỉ SSL đang xử lý. Chỉ áp dụng khi đơn hàng chưa hoàn tất xác thực và phương thức mới phải được tổ chức CA hỗ trợ.
   tags:
   - Order
   security:
@@ -22,35 +64,35 @@ post:
         application/json:
           schema:
             allOf:
-            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - $ref: ../../components/schemas/common/StandardSuccess.yaml
             - type: object
               properties:
                 data:
-                  $ref: "../../components/schemas/order/ChangeOrderDcvMethodData.yaml"
+                  $ref: ../../components/schemas/order/ChangeOrderDcvMethodData.yaml
     '401':
-      $ref: "../../components/responses/Unauthorized.yaml"
+      $ref: ../../components/responses/Unauthorized.yaml
     '403':
-      $ref: "../../components/responses/Forbidden.yaml"
+      $ref: ../../components/responses/Forbidden.yaml
     '404':
-      $ref: "../../components/responses/NotFound.yaml"
+      $ref: ../../components/responses/NotFound.yaml
     '500':
-      $ref: "../../components/responses/InternalError.yaml"
+      $ref: ../../components/responses/InternalError.yaml
     '400':
-      $ref: "../../components/responses/BadRequest.yaml"
+      $ref: ../../components/responses/BadRequest.yaml
     '422':
-      $ref: "../../components/responses/StandardError422.yaml"
+      $ref: ../../components/responses/StandardError422.yaml
     '409':
-      $ref: "../../components/responses/Conflict.yaml"
+      $ref: ../../components/responses/Conflict.yaml
     '429':
-      $ref: "../../components/responses/TooManyRequests.yaml"
+      $ref: ../../components/responses/TooManyRequests.yaml
     '502':
-      $ref: "../../components/responses/BadGateway.yaml"
+      $ref: ../../components/responses/BadGateway.yaml
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/order/ChangeOrderDcvMethodRequest.yaml"
+          $ref: ../../components/schemas/order/ChangeOrderDcvMethodRequest.yaml
   x-error-responses:
     '401':
     - code: '4101'

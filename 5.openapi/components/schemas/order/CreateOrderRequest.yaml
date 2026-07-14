@@ -1,0 +1,189 @@
+type: object
+example:
+  external_account_id: 1
+  customer_id: 1
+  internal_product_code: PA-SSL-DV-SINGLE-1Y
+  years: 1
+  primary_domain: example.com
+  contact: &id001
+    contact_admin: &id002
+      email: admin@example.com
+      first_name: Van A
+      last_name: Nguyen
+      phone: '+84901234567'
+      title: Mr
+    contact_org: &id003
+      name: PAVIETNAM Co., Ltd.
+      address: 182 Le Dai Hanh
+      province: Ho Chi Minh
+      country: VN
+      postal_code: '70000'
+      phone: '+84281234567'
+      business_number: '0300685209'
+      representative_name: Nguyen Van B
+      duns: null
+    contact_tech: &id004
+      email: tech@example.com
+      first_name: Van C
+      last_name: Tran
+      phone: '+84902345678'
+      title: Mr
+  note: Đơn hàng khách VIP - ưu tiên xử lý
+properties:
+  external_account_id:
+    type: integer
+    description: ID dịch vụ / đơn hàng bên hệ thống bán (BIGINT, ≥ 1) — dùng cho
+      đối soát. Không unique constraint (1 account có thể có nhiều order SSL).
+    example: 1
+    minimum: 1
+    maximum: 1
+  customer_id:
+    type: integer
+    description: ID khách hàng trong Internal Core System. Được verify qua 
+      Internal Core API.
+    example: 1
+  internal_product_code:
+    type: string
+    description: Mã sản phẩm nội bộ (bảng internal_products). Hệ thống tự 
+      resolve sang internal_product_id.
+    example: PA-SSL-DV-SINGLE-1Y
+    pattern: ^[A-Z0-9_-]{2,64}$
+  years:
+    type: integer
+    description: Số năm đăng ký (≥ 1). Phải có ít nhất 1 mapping với 
+      provider_product.max_years ≥ years.
+    example: 1
+    minimum: 1
+  primary_domain:
+    type: string
+    description: FQDN chính. Dạng *.example.com nếu cert_type=WILDCARD.
+    format: hostname
+    example: example.com
+  contact:
+    type: object
+    description: Thông tin liên hệ. Tùy chọn tại bước tạo đơn — có thể bổ sung 
+      sau. Xem mục b, c, d bên dưới.
+    example: *id001
+    properties:
+      contact_admin:
+        type: object
+        format: email
+        example: *id002
+        properties:
+          email:
+            type: string
+            description: Email người quản lý. RFC 5322.
+            example: admin@example.com
+          first_name:
+            type: string
+            description: Tên.
+            example: Van A
+          last_name:
+            type: string
+            description: Họ.
+            example: Nguyen
+          phone:
+            type: string
+            description: Số điện thoại. E.164.
+            example: '+84901234567'
+          title:
+            type: string
+            description: 'Chức danh: Mr | Mrs | Ms | Dr | ...'
+            example: Mr
+        description: Trường `contact_admin`.
+      contact_org:
+        type: object
+        format: iso3166-alpha2
+        example: *id003
+        properties:
+          name:
+            type: string
+            description: Tên tổ chức / công ty. Bắt buộc nếu contact_org được 
+              cung cấp.
+            example: PAVIETNAM Co., Ltd.
+          address:
+            type: string
+            description: Địa chỉ đường phố. Bắt buộc nếu contact_org được cung 
+              cấp.
+            example: 182 Le Dai Hanh
+          province:
+            type: string
+            description: Tỉnh / Thành phố.
+            example: Ho Chi Minh
+          country:
+            type: string
+            description: 'Mã quốc gia ISO 3166-1 alpha-2. VD: VN, US. Bắt buộc nếu
+              contact_org được cung cấp.'
+            example: VN
+          postal_code:
+            type: string
+            description: Mã bưu chính.
+            example: '70000'
+          phone:
+            type: string
+            description: Số điện thoại tổ chức. E.164.
+            example: '+84281234567'
+          business_number:
+            type: string
+            description: Số giấy phép kinh doanh / mã số thuế. Tùy chọn với mọi 
+              loại chứng chỉ.
+            example: '0300685209'
+          representative_name:
+            type: string
+            description: Tên người đại diện pháp lý. Tùy chọn với mọi loại chứng
+              chỉ.
+            example: Nguyen Van B
+          duns:
+            type:
+              - string
+              - 'null'
+            description: D-U-N-S Number.
+        required:
+          - business_number
+          - representative_name
+          - name
+          - address
+          - country
+        description: Trường `contact_org`.
+      contact_tech:
+        type: object
+        format: email
+        example: *id004
+        properties:
+          email:
+            type: string
+            description: Email kỹ thuật viên. Bắt buộc nếu contact_tech != null.
+            example: tech@example.com
+          first_name:
+            type: string
+            description: Tên.
+            example: Van C
+          last_name:
+            type: string
+            description: Họ.
+            example: Tran
+          phone:
+            type: string
+            description: Số điện thoại. E.164.
+            example: '+84902345678'
+          title:
+            type: string
+            description: 'Chức danh: Mr | Mrs | Ms | Dr | ...'
+            example: Mr
+        required:
+          - email
+          - first_name
+          - last_name
+          - phone
+        description: Trường `contact_tech`.
+  note:
+    type: string
+    description: Ghi chú nội bộ (≤ 500 ký tự).
+    example: Đơn hàng khách VIP - ưu tiên xử lý
+required:
+  - external_account_id
+  - customer_id
+  - internal_product_code
+  - years
+  - primary_domain
+description: Schema `CreateOrderRequest`.

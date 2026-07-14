@@ -1,8 +1,50 @@
 put:
   summary: Đóng ticket hỗ trợ của khách hàng
   operationId: closeUserTicket
-  description: API cho phép đóng ticket hỗ trợ của khách hàng dựa trên user_id và ticket id. Chỉ ticket đang ở trạng 
-    thái mở hoặc đang xử lý mới có thể được đóng.
+  x-side-effects:
+    schema_version: '1.1'
+    meta:
+      detected_by: rule_based
+      confidence: 0.85
+      review_status: pending
+      last_updated: '2026-07-14'
+    effects:
+    - type: state_change
+      trigger: on_success
+      target:
+        entity: ticket
+        field: status
+        from: null
+        to: closed
+      description: ticket chuyển sang trạng thái closed
+      confirmed: false
+      effect_id: ticket_close_state_change_001
+      source: rule_based
+      evidence:
+        source: path
+        matched_keyword: close
+        rule_id: action_verbs.close
+        resource_source: path
+        template_index: 0
+    - type: write
+      trigger: on_success
+      target:
+        entity: ticket_history
+      description: Ghi lịch sử thao tác ticket
+      confirmed: false
+      effect_id: ticket_close_write_002
+      source: rule_based
+      evidence:
+        source: path
+        matched_keyword: close
+        rule_id: action_verbs.close
+        resource_source: path
+        template_index: 1
+    review:
+      required: true
+      reason: Side effects được suy luận từ action endpoint, chưa được xác nhận từ source document.
+      note: null
+  description: API cho phép đóng ticket hỗ trợ của khách hàng dựa trên user_id và ticket id tương ứng. Chỉ ticket đang ở trạng thái mở hoặc đang xử lý mới có thể được đóng thông qua thao tác này.
   tags:
   - Ticket
   security:
@@ -27,29 +69,29 @@ put:
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            $ref: ../../components/schemas/common/StandardSuccess.yaml
           example:
             success: true
-            data:
-            error:
+            data: null
+            error: null
     '401':
-      $ref: "../../components/responses/Unauthorized.yaml"
+      $ref: ../../components/responses/Unauthorized.yaml
     '403':
-      $ref: "../../components/responses/Forbidden.yaml"
+      $ref: ../../components/responses/Forbidden.yaml
     '404':
-      $ref: "../../components/responses/NotFound.yaml"
+      $ref: ../../components/responses/NotFound.yaml
     '500':
-      $ref: "../../components/responses/InternalError.yaml"
+      $ref: ../../components/responses/InternalError.yaml
     '400':
-      $ref: "../../components/responses/BadRequest.yaml"
+      $ref: ../../components/responses/BadRequest.yaml
     '422':
-      $ref: "../../components/responses/StandardError422.yaml"
+      $ref: ../../components/responses/StandardError422.yaml
     '409':
-      $ref: "../../components/responses/Conflict.yaml"
+      $ref: ../../components/responses/Conflict.yaml
     '429':
-      $ref: "../../components/responses/TooManyRequests.yaml"
+      $ref: ../../components/responses/TooManyRequests.yaml
     '502':
-      $ref: "../../components/responses/BadGateway.yaml"
+      $ref: ../../components/responses/BadGateway.yaml
   x-error-responses:
     '401':
     - code: '4102'

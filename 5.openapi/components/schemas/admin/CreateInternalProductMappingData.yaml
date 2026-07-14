@@ -2,7 +2,7 @@ type: object
 properties:
   id:
     type: string
-    description: Định danh của bản ghi.
+    description: Mã id.
     readOnly: true
   internal_product_id:
     type: string
@@ -27,20 +27,20 @@ properties:
     description: Trường `notes`.
   created_at:
     type: string
-    description: Thời điểm tạo bản ghi.
+    description: Ngày tạo.
     readOnly: true
   created_by:
     type: string
-    description: Người tạo bản ghi.
+    description: Được tạo bởi.
   provider:
     type: object
     properties:
       code:
         type: string
-        description: Mã định danh.
+        description: Mã số.
       name:
         type: string
-        description: Tên hiển thị.
+        description: Tên.
       is_enabled:
         type: boolean
         description: Trường `is_enabled`.

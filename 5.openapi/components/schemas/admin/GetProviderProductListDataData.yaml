@@ -1,0 +1,47 @@
+type: object
+properties:
+  id:
+    type: string
+    description: Mã id.
+    readOnly: true
+  provider_id:
+    type: string
+    description: Trường `provider_id`.
+    readOnly: true
+  provider_product_code:
+    type: string
+    description: Trường `provider_product_code`.
+  product_name:
+    type: string
+    description: Trường `product_name`.
+  brand:
+    type: string
+    description: Trường `brand`.
+  product_type:
+    type: string
+    description: Trường `product_type`.
+  cert_type:
+    type: string
+    description: Trường `cert_type`.
+  years_supported:
+    type: array
+    items:
+      type: integer
+    description: Trường `years_supported`.
+  max_years:
+    type: integer
+    description: Trường `max_years`.
+  wholesale_price_usd:
+    type: number
+    description: Trường `wholesale_price_usd`.
+  is_enabled:
+    type: boolean
+    description: Trường `is_enabled`.
+  display_order:
+    type: integer
+    description: Trường `display_order`.
+  updated_at:
+    type: string
+    description: Ngày cập nhật.
+    readOnly: true
+description: Schema `GetProviderProductListDataData`.

@@ -5,6 +5,6 @@ properties:
     description: Tên group
   upgrade_plans:
     type: array
-    items:
-      type: object
+    items: {}
     description: Các gói nâng cấp
+description: Schema `GetServiceUpgradePlansDataUpgrade_plans_with_groupsList`.

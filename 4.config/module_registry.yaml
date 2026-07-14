@@ -12,10 +12,10 @@ modules:
     deprecated_by: null
     file_count: 19
     source_files_count: 19
-    selected_files_count: 0
-    skipped_duplicate_count: 0
-    endpoint_count: 12
-    last_import_at: '2026-07-06T15:32:28'
+    selected_files_count: 11
+    skipped_duplicate_count: 8
+    endpoint_count: 11
+    last_import_at: '2026-07-14T14:02:28'
     last_import_status: success
     notes: null
   service:
@@ -31,10 +31,10 @@ modules:
     deprecated_by: null
     file_count: 6
     source_files_count: 6
-    selected_files_count: 0
+    selected_files_count: 6
     skipped_duplicate_count: 0
     endpoint_count: 6
-    last_import_at: '2026-07-06T15:31:32'
+    last_import_at: '2026-07-14T13:35:42'
     last_import_status: success
     notes: null
   department:
@@ -53,7 +53,7 @@ modules:
     selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
-    last_import_at: '2026-07-06T15:30:24'
+    last_import_at: '2026-07-14T13:34:39'
     last_import_status: success
     notes: null
   statistic:
@@ -72,7 +72,7 @@ modules:
     selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
-    last_import_at: '2026-07-06T15:32:20'
+    last_import_at: '2026-07-14T13:36:42'
     last_import_status: success
     notes: null
   order:
@@ -88,10 +88,10 @@ modules:
     deprecated_by: null
     file_count: 15
     source_files_count: 15
-    selected_files_count: 0
+    selected_files_count: 15
     skipped_duplicate_count: 0
-    endpoint_count: 14
-    last_import_at: '2026-07-06T15:30:30'
+    endpoint_count: 15
+    last_import_at: '2026-07-14T14:42:54'
     last_import_status: success
     notes: null
   csr:
@@ -107,10 +107,10 @@ modules:
     deprecated_by: null
     file_count: 1
     source_files_count: 1
-    selected_files_count: 0
+    selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
-    last_import_at: '2026-07-06T15:30:20'
+    last_import_at: '2026-07-14T13:34:35'
     last_import_status: success
     notes: null
   admin:
@@ -126,10 +126,10 @@ modules:
     deprecated_by: null
     file_count: 24
     source_files_count: 24
-    selected_files_count: 0
+    selected_files_count: 24
     skipped_duplicate_count: 0
     endpoint_count: 24
-    last_import_at: '2026-07-06T15:28:43'
+    last_import_at: '2026-07-14T14:29:49'
     last_import_status: success
     notes: null
   topup:
@@ -148,6 +148,6 @@ modules:
     selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
-    last_import_at: '2026-07-06T15:34:13'
+    last_import_at: '2026-07-14T13:37:47'
     last_import_status: success
     notes: null

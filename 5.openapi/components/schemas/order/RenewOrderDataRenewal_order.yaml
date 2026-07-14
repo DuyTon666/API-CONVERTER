@@ -2,7 +2,7 @@ type: object
 properties:
   id:
     type: integer
-    description: Định danh của bản ghi.
+    description: Mã id.
     readOnly: true
   order_number:
     type: string
@@ -34,15 +34,14 @@ properties:
     description: Trường `primary_domain`.
   san_list:
     type: array
-    items:
-      type: object
+    items: {}
     description: Trường `san_list`.
   dcv_method:
     type: string
     description: Trường `dcv_method`.
   status:
     type: string
-    description: Trạng thái xử lý.
+    description: Trạng thái.
   order_type:
     type: string
     description: Trường `order_type`.
@@ -58,7 +57,7 @@ properties:
         readOnly: true
       code:
         type: string
-        description: Mã định danh.
+        description: Mã số.
       provider_product_id:
         type: integer
         description: Trường `provider_product_id`.
@@ -66,9 +65,10 @@ properties:
       mapping_id:
         type: integer
         description: Trường `mapping_id`.
+        readOnly: true
     description: Trường `selected_provider`.
   created_at:
     type: string
-    description: Thời điểm tạo bản ghi.
+    description: Ngày tạo.
     readOnly: true
 description: Schema `RenewOrderDataRenewal_order`.

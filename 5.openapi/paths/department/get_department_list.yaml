@@ -1,8 +1,8 @@
 get:
   summary: Lấy danh sách phòng ban gửi ticket
   operationId: getDepartmentList
-  description: API trả về danh sách các phòng ban có quyền gửi ticket trong hệ thống. Dữ liệu được sử dụng để hiển thị 
-    lựa chọn phòng ban khi người dùng tạo hoặc lọc ticket.
+  description: API trả về danh sách các phòng ban có quyền gửi ticket trong hệ thống. Chỉ các phòng ban đang hoạt động 
+    và được cấu hình mới xuất hiện trong kết quả trả về.
   tags:
   - Department
   security:
@@ -14,7 +14,7 @@ get:
     required: false
     schema:
       type: string
-    description: 'Các giá trị hợp lệ:'
+    description: "Các giá trị hợp lệ:\n● PA\n● BANG\n● SSN\n● SUPERDATA"
   responses:
     '200':
       description: Thành công

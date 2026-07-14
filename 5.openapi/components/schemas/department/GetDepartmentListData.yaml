@@ -13,3 +13,4 @@ properties:
   comment:
     type: string
     description: Mô tả/ ghi chú của phòng ban
+description: Schema `GetDepartmentListData`.

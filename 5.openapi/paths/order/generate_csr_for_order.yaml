@@ -1,8 +1,33 @@
 post:
-  summary: Tạo CSR cho đơn hàng
+  summary: Tạo CSR cho đơn hàng theo ID
   operationId: generateCsrForOrder
-  description: Tạo yêu cầu ký chứng chỉ (CSR) cho đơn hàng được chỉ định bởi ID. Chỉ áp dụng cho các đơn hàng hợp lệ 
-    đang ở trạng thái chờ xử lý và cần có thông tin xác thực đầy đủ trước khi thực hiện.
+  x-side-effects:
+    schema_version: '1.1'
+    meta:
+      detected_by: rule_based
+      confidence: 0.75
+      review_status: pending
+      last_updated: '2026-07-14'
+    effects:
+    - type: async_job
+      trigger: on_success
+      target:
+        entity: null
+      description: Generation job được trigger
+      confirmed: false
+      effect_id: order_generate_async_job_001
+      source: rule_based
+      evidence:
+        source: module
+        matched_keyword: generate
+        rule_id: async_keywords.generate
+        resource_source: module
+        template_index: 0
+    review:
+      required: true
+      reason: Side effects được suy luận từ action endpoint, chưa được xác nhận từ source document.
+      note: null
+  description: Tạo Certificate Signing Request (CSR) cho đơn hàng được chỉ định bởi ID. Yêu cầu đơn hàng phải tồn tại và ở trạng thái hợp lệ trước khi thực hiện tạo CSR.
   tags:
   - Order
   security:
@@ -22,35 +47,35 @@ post:
         application/json:
           schema:
             allOf:
-            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - $ref: ../../components/schemas/common/StandardSuccess.yaml
             - type: object
               properties:
                 data:
-                  $ref: "../../components/schemas/order/GenerateCsrForOrderData.yaml"
+                  $ref: ../../components/schemas/order/GenerateCsrForOrderData.yaml
     '401':
-      $ref: "../../components/responses/Unauthorized.yaml"
+      $ref: ../../components/responses/Unauthorized.yaml
     '403':
-      $ref: "../../components/responses/Forbidden.yaml"
+      $ref: ../../components/responses/Forbidden.yaml
     '404':
-      $ref: "../../components/responses/NotFound.yaml"
+      $ref: ../../components/responses/NotFound.yaml
     '500':
-      $ref: "../../components/responses/InternalError.yaml"
+      $ref: ../../components/responses/InternalError.yaml
     '400':
-      $ref: "../../components/responses/BadRequest.yaml"
+      $ref: ../../components/responses/BadRequest.yaml
     '422':
-      $ref: "../../components/responses/StandardError422.yaml"
+      $ref: ../../components/responses/StandardError422.yaml
     '409':
-      $ref: "../../components/responses/Conflict.yaml"
+      $ref: ../../components/responses/Conflict.yaml
     '429':
-      $ref: "../../components/responses/TooManyRequests.yaml"
+      $ref: ../../components/responses/TooManyRequests.yaml
     '502':
-      $ref: "../../components/responses/BadGateway.yaml"
+      $ref: ../../components/responses/BadGateway.yaml
   requestBody:
     required: false
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/order/GenerateCsrForOrderRequest.yaml"
+          $ref: ../../components/schemas/order/GenerateCsrForOrderRequest.yaml
   x-error-responses:
     '409':
     - code: '4090'

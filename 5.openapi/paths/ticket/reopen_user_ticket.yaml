@@ -1,8 +1,50 @@
 post:
   summary: Mở lại ticket đã đóng của khách hàng
   operationId: reopenUserTicket
-  description: API cho phép mở lại ticket đã đóng hoặc đã giải quyết của khách hàng. Chỉ áp dụng cho các ticket ở trạng 
-    thái closed hoặc resolved, ticket phải thuộc về đúng user_id được chỉ định.
+  x-side-effects:
+    schema_version: '1.1'
+    meta:
+      detected_by: rule_based
+      confidence: 0.85
+      review_status: pending
+      last_updated: '2026-07-14'
+    effects:
+    - type: state_change
+      trigger: on_success
+      target:
+        entity: ticket
+        field: status
+        from: null
+        to: open
+      description: ticket chuyển sang trạng thái open
+      confirmed: false
+      effect_id: ticket_reopen_state_change_001
+      source: rule_based
+      evidence:
+        source: path
+        matched_keyword: reopen
+        rule_id: action_verbs.reopen
+        resource_source: path
+        template_index: 0
+    - type: write
+      trigger: on_success
+      target:
+        entity: ticket_history
+      description: Ghi lịch sử thao tác ticket
+      confirmed: false
+      effect_id: ticket_reopen_write_002
+      source: rule_based
+      evidence:
+        source: path
+        matched_keyword: reopen
+        rule_id: action_verbs.reopen
+        resource_source: path
+        template_index: 1
+    review:
+      required: true
+      reason: Side effects được suy luận từ action endpoint, chưa được xác nhận từ source document.
+      note: null
+  description: API cho phép mở lại ticket đã đóng hoặc đã giải quyết của khách hàng. Ticket phải ở trạng thái đóng trước khi thực hiện thao tác mở lại, và chỉ người dùng sở hữu ticket mới có quyền thực hiện hành động này.
   tags:
   - Ticket
   security:
@@ -27,35 +69,35 @@ post:
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            $ref: ../../components/schemas/common/StandardSuccess.yaml
           example:
             success: true
-            data:
-            error:
+            data: null
+            error: null
     '401':
-      $ref: "../../components/responses/Unauthorized.yaml"
+      $ref: ../../components/responses/Unauthorized.yaml
     '403':
-      $ref: "../../components/responses/Forbidden.yaml"
+      $ref: ../../components/responses/Forbidden.yaml
     '404':
-      $ref: "../../components/responses/NotFound.yaml"
+      $ref: ../../components/responses/NotFound.yaml
     '500':
-      $ref: "../../components/responses/InternalError.yaml"
+      $ref: ../../components/responses/InternalError.yaml
     '400':
-      $ref: "../../components/responses/BadRequest.yaml"
+      $ref: ../../components/responses/BadRequest.yaml
     '422':
-      $ref: "../../components/responses/StandardError422.yaml"
+      $ref: ../../components/responses/StandardError422.yaml
     '409':
-      $ref: "../../components/responses/Conflict.yaml"
+      $ref: ../../components/responses/Conflict.yaml
     '429':
-      $ref: "../../components/responses/TooManyRequests.yaml"
+      $ref: ../../components/responses/TooManyRequests.yaml
     '502':
-      $ref: "../../components/responses/BadGateway.yaml"
+      $ref: ../../components/responses/BadGateway.yaml
   requestBody:
     required: false
     content:
       multipart/form-data:
         schema:
-          $ref: "../../components/schemas/ticket/ReopenUserTicketRequest.yaml"
+          $ref: ../../components/schemas/ticket/ReopenUserTicketRequest.yaml
   x-error-responses:
     '401':
     - code: '4102'

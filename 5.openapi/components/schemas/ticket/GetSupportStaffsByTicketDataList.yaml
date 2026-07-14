@@ -8,7 +8,9 @@ properties:
     type: string
     description: Tên đầy đủ của nhân viên
   department:
-    type: object
+    type:
+      - object
+      - 'null'
     properties:
       id:
         type: integer
@@ -19,7 +21,9 @@ properties:
         description: Tên phòng ban
     description: Thông tin phòng ban của nhân viên
   rating:
-    type: object
+    type:
+      - object
+      - 'null'
     properties:
       id:
         type: integer
@@ -32,3 +36,4 @@ properties:
         type: string
         description: Nội dung đánh giá
     description: Thông tin đánh giá của nhân viên
+description: Schema `GetSupportStaffsByTicketDataList`.

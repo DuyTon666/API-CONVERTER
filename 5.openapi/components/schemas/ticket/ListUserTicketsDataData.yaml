@@ -48,3 +48,4 @@ properties:
         type: string
         description: Loại dịch vụ
     description: Thông tin về dịch vụ yêu cầu (xem thêm bên dưới)
+description: Schema `ListUserTicketsDataData`.

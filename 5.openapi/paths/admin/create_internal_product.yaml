@@ -1,8 +1,8 @@
 post:
   summary: Tạo sản phẩm nội bộ mới trong hệ thống
   operationId: createInternalProduct
-  description: Tạo một sản phẩm nội bộ mới dành cho quản trị viên, sản phẩm này chỉ hiển thị và sử dụng trong phạm vi 
-    nội bộ của hệ thống. Yêu cầu quyền admin và các thông tin bắt buộc như tên, mã sản phẩm phải được cung cấp đầy đủ.
+  description: Tạo mới một sản phẩm nội bộ trong hệ thống quản trị, chỉ dành cho quản trị viên có quyền truy cập. Sản 
+    phẩm nội bộ không hiển thị công khai và được sử dụng cho mục đích quản lý và vận hành nội bộ.
   tags:
   - Admin
   security:
@@ -40,7 +40,7 @@ post:
     '502':
       $ref: "../../components/responses/BadGateway.yaml"
   requestBody:
-    required: false
+    required: true
     content:
       application/json:
         schema:

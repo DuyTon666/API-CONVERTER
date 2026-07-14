@@ -4,10 +4,14 @@ properties:
     type: integer
     description: Số thứ tự trang hiện tại
   next_page_url:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Link đến trang tiếp theo
   prev_page_url:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Link đến trang trước
   first_page_url:
     type: string
@@ -23,6 +27,6 @@ properties:
     description: Số thứ tự kết thúc
   data:
     type: array
-    items:
-      type: object
+    items: {}
     description: Danh sách các dịch vụ
+description: Schema `GetUserServicesData`.

@@ -1,0 +1,64 @@
+type: object
+properties:
+  contact_admin:
+    type: object
+    properties:
+      email:
+        type: string
+        description: Địa chỉ email.
+      first_name:
+        type: string
+        description: Trường `first_name`.
+      last_name:
+        type: string
+        description: Trường `last_name`.
+      phone:
+        type: string
+        description: Số điện thoại.
+      title:
+        type: string
+        description: Trường `title`.
+    description: Trường `contact_admin`.
+  contact_org:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Tên.
+      address:
+        type: string
+        description: Trường `address`.
+      province:
+        type: string
+        description: Trường `province`.
+      country:
+        type: string
+        description: Trường `country`.
+      postal_code:
+        type: string
+        description: Trường `postal_code`.
+      phone:
+        type: string
+        description: Số điện thoại.
+      business_number:
+        type:
+          - string
+          - 'null'
+        description: Trường `business_number`.
+      representative_name:
+        type:
+          - string
+          - 'null'
+        description: Trường `representative_name`.
+      duns:
+        type:
+          - string
+          - 'null'
+        description: Trường `duns`.
+    description: Trường `contact_org`.
+  contact_tech:
+    type:
+      - string
+      - 'null'
+    description: Trường `contact_tech`.
+description: Schema `CreateOrderDataContact`.

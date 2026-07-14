@@ -1,8 +1,8 @@
 get:
   summary: Lấy thông tin chi tiết đơn hàng theo ID
   operationId: getOrderDetail
-  description: Truy xuất thông tin chi tiết của một đơn hàng cụ thể dựa trên mã định danh duy nhất. API yêu cầu ID đơn 
-    hàng hợp lệ và chỉ trả về đơn hàng thuộc phạm vi quyền truy cập của người dùng hiện tại.
+  description: API trả về thông tin chi tiết của một đơn hàng dựa trên mã định danh duy nhất (ID). Yêu cầu ID đơn hàng 
+    hợp lệ và người dùng phải có quyền truy cập vào đơn hàng tương ứng.
   tags:
   - Order
   security:

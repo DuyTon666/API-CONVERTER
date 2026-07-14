@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-07T13:07:01.493116",
+  "generated_at": "2026-07-14T14:04:03.903025",
   "module": "ticket",
-  "batch_timestamp": "2026-07-07 13:06:35",
+  "batch_timestamp": "2026-07-14 14:03:38",
   "operations": {
     "changeTicketAssignee": {
       "method": "post",
@@ -49,11 +49,11 @@
         ]
       }
     },
-    "getTicketDetailForUser": {
+    "getUserTicketDetail": {
       "method": "get",
       "path": "/v1/users/{user_id}/tickets/{id}",
       "source_file": "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/get_ticket_detail_for_user.yaml",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/ticket/get_user_ticket_detail.yaml",
       "errors": {
         "401": [
           {

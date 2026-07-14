@@ -1,8 +1,8 @@
 get:
   summary: Lấy danh sách bản ghi DCV của đơn hàng
   operationId: getOrderDcvRecords
-  description: Truy xuất danh sách các bản ghi xác thực kiểm soát tên miền (DCV) liên quan đến một đơn hàng cụ thể. API 
-    yêu cầu ID đơn hàng hợp lệ và chỉ trả về dữ liệu nếu đơn hàng tồn tại trong hệ thống.
+  description: Truy xuất danh sách các bản ghi xác thực kiểm soát tên miền (DCV) liên quan đến đơn hàng theo ID. Chỉ áp 
+    dụng cho các đơn hàng chứng chỉ SSL/TLS và yêu cầu đơn hàng phải ở trạng thái đang xử lý hoặc chờ xác thực.
   tags:
   - Order
   security:

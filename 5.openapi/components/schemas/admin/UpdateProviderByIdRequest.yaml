@@ -17,39 +17,48 @@ example:
 properties:
   name:
     type: string
+    description: 'Tên hiển thị provider (VD: "Daousign Vietnam", "TheSSLStore Inc.").'
     example: Daousign Vietnam (Updated)
-    description: Tên hiển thị.
   production_base_url:
     type: string
+    description: Base URL gọi API môi trường production của provider (HTTPS).
     example: https://api-v2.daousign.com
-    description: Trường `production_base_url`.
   production_token:
     type: string
+    description: Token xác thực với provider ở môi trường production. Lưu trữ MÃ
+      HÓA AES-256-GCM. Trả về MASKED. Xem full qua API reveal-token.
     example: pr_live_NEW_TOKEN_xxxx
-    description: Trường `production_token`.
   registered_ip:
     type: string
+    description: IP đã đăng ký với đối tác để gọi API (VD Daousign yêu cầu 
+      whitelist IP). IPv4 hoặc IPv6.
     example: 203.162.10.99
-    description: Trường `registered_ip`.
   auth_extra:
     type: object
+    description: 'Thông tin xác thực mở rộng tùy provider (VD Daousign: {"api_id":
+      "..."}, TheSSLStore: {"partner_code": "..."}). Linh hoạt schema.'
     example: *id001
     properties:
       api_id:
         type: string
         example: PAVIETNAM-002
         description: Trường `api_id`.
-    description: Trường `auth_extra`.
   list_products_endpoint:
     type: string
+    description: Path tương đối từ base_url để gọi API list-products (VD 
+      "/products/all"). NULL = không hỗ trợ sync.
     example: /products/all
-    description: Trường `list_products_endpoint`.
   list_products_method:
     type: string
+    description: 'HTTP method gọi list-products: GET | POST. Default POST.'
+    enum:
+      - GET
+      - POST
     example: POST
-    description: Trường `list_products_method`.
   list_products_request_template:
     type: object
+    description: Body template với placeholder {{token}}, {{auth_extra.<key>}} —
+      resolve khi gọi provider API.
     example: *id002
     properties:
       PartnerCode:
@@ -60,17 +69,29 @@ properties:
         type: string
         example: '{{token}}'
         description: Trường `AuthToken`.
-    description: Trường `list_products_request_template`.
   list_products_response_path:
     type: string
+    description: JSONPath trỏ tới array products trong response (VD 
+      "$.Products", "$").
     example: $
-    description: Trường `list_products_response_path`.
   list_products_timeout_seconds:
     type: integer
+    description: Timeout gọi provider API (giây). Default 30, range [5, 120].
     example: 30
-    description: Trường `list_products_timeout_seconds`.
   display_order:
     type: integer
+    description: Thứ tự hiển thị UI (ascending). Mặc định 0.
     example: 5
-    description: Trường `display_order`.
+  sandbox_base_url:
+    type: string
+    description: Base URL gọi API môi trường sandbox của provider (HTTPS).
+  sandbox_token:
+    type: string
+    description: Token xác thực với provider ở môi trường sandbox. Lưu trữ MÃ 
+      HÓA AES-256-GCM. Trả về MASKED ("***********4f2a"). Xem full qua API 
+      reveal-token.
+  is_enabled:
+    type: boolean
+    description: Bật/tắt provider. false = không tham gia routing, không tạo đơn
+      hàng mới.
 description: Schema `UpdateProviderByIdRequest`.

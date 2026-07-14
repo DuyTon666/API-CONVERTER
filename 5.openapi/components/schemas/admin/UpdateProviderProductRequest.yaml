@@ -11,25 +11,69 @@ example:
 properties:
   product_name:
     type: string
+    description: Tên sản phẩm đầy đủ.
     example: PositiveSSL DV Single Domain (Updated)
-    description: Trường `product_name`.
   wholesale_price_usd:
     type: number
+    description: Giá sỉ Daousign (USD/năm).
     example: 9.0
-    description: Trường `wholesale_price_usd`.
   years_supported:
     type: array
+    description: 'Số năm hỗ trợ. VD: [1, 2]. Không rỗng.'
     example: *id001
+    minimum: 1
     items:
       type: integer
       example: 1
-    description: Trường `years_supported`.
   max_san:
     type: integer
+    description: 'Áp dụng MULTI_DOMAIN và FLEX. VD: 100.'
     example: 150
-    description: Trường `max_san`.
   admin_note:
     type: string
+    description: Ghi chú nội bộ admin.
     example: Tăng giá theo policy 2026-Q2
-    description: Trường `admin_note`.
+  product_name_en:
+    type: string
+    description: Tên tiếng Anh (nếu có).
+  brand:
+    type: string
+    description: Thương hiệu CA (Sectigo, Comodo, PositiveSSL...).
+  product_type:
+    type: string
+    description: 'Mức xác thực: DV | OV | EV.'
+  cert_type:
+    type: string
+    description: 'Kiểu cert: SINGLE | WILDCARD | MULTI_DOMAIN | FLEX.'
+  min_san:
+    type: integer
+    description: Áp dụng MULTI_DOMAIN và FLEX. Mặc định 3.
+  supported_dcv_methods:
+    type: array
+    description: 'DCV methods: [EMAIL, HTTP, CNAME]. Không rỗng.'
+    items:
+      type: string
+  supported_server_types:
+    type: array
+    description: Loại server (Apache, IIS, Nginx...).
+    items:
+      type: string
+  retail_price_vnd:
+    type: number
+    description: Giá bán lẻ đề xuất (VND/năm).
+  warranty_amount_usd:
+    type: number
+    description: Mức bảo hiểm CA (USD).
+  is_reissue_supported:
+    type: boolean
+    description: Có hỗ trợ reissue không.
+  description:
+    type: string
+    description: Mô tả ngắn sản phẩm.
+  is_enabled:
+    type: boolean
+    description: Bật/tắt theo chiến lược kinh doanh. true=bán, false=tạm dừng.
+  display_order:
+    type: integer
+    description: Thứ tự hiển thị UI (ascending). Mặc định 0.
 description: Schema `UpdateProviderProductRequest`.

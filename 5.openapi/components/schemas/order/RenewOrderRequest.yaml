@@ -28,105 +28,114 @@ example:
 properties:
   years:
     type: integer
+    description: Số năm gia hạn. Integer 1–3. Mặc định kế thừa từ order gốc.
     example: 1
-    description: Trường `years`.
   dcv_method:
     type: string
+    description: EMAIL | HTTP | HTTPS | CNAME. Mặc định kế thừa từ order gốc.
     example: HTTP
-    description: Trường `dcv_method`.
   contact_admin:
     type: object
+    description: Ghi đè contact_admin. Null = kế thừa từ order gốc. Mọi 
+      sub-field tùy chọn.
     example: *id001
     properties:
       email:
         type: string
+        description: Email admin (RFC 5322).
         example: admin@example.com
-        description: Địa chỉ email.
       first_name:
         type: string
+        description: Tên (≤ 100 ký tự).
         example: Nguyen
-        description: Trường `first_name`.
       last_name:
         type: string
+        description: Họ (≤ 100 ký tự).
         example: Van A
-        description: Trường `last_name`.
       phone:
         type: string
+        description: 'Điện thoại E.164 (VD: +84901234567).'
         example: '+84901234567'
-        description: Số điện thoại.
       title:
         type: string
+        description: Chức danh (≤ 50 ký tự).
         example: Manager
-        description: Trường `title`.
-    description: Trường `contact_admin`.
   contact_org:
     type: object
+    description: 'Ghi đè contact_org. Null = kế thừa từ order gốc. Nếu cung cấp: name,
+      address, country bắt buộc.'
     example: *id002
     properties:
       name:
         type: string
+        description: Tên tổ chức (≤ 200 ký tự). *Bắt buộc khi cung cấp 
+          contact_org.
         example: Example Co. Ltd
-        description: Tên hiển thị.
       address:
         type: string
+        description: Địa chỉ (≤ 500 ký tự). *Bắt buộc khi cung cấp contact_org.
         example: 123 Le Loi, Ha Noi
-        description: Trường `address`.
       province:
         type: string
+        description: Tỉnh/thành phố (≤ 100 ký tự).
         example: Ha Noi
-        description: Trường `province`.
       country:
         type: string
+        description: 'Mã quốc gia ISO 3166-1 alpha-2 (VD: VN). *Bắt buộc khi cung
+          cấp contact_org.'
         example: VN
-        description: Trường `country`.
       postal_code:
         type: string
+        description: Mã bưu chính (≤ 20 ký tự).
         example: '100000'
-        description: Trường `postal_code`.
       phone:
         type: string
+        description: Điện thoại E.164.
         example: '+84243456789'
-        description: Số điện thoại.
       business_number:
         type: string
+        description: Mã số thuế / số đăng ký kinh doanh (≤ 50 ký tự).
         example: '0123456789'
-        description: Trường `business_number`.
       representative_name:
         type: string
+        description: Tên người đại diện (≤ 150 ký tự).
         example: Nguyen Van A
-        description: Trường `representative_name`.
       duns:
         type: string
+        description: Mã DUNS (≤ 50 ký tự).
         example: '123456789'
-        description: Trường `duns`.
-    description: Trường `contact_org`.
+    required:
+      - name
+      - address
+      - country
   contact_tech:
     type: object
+    description: Ghi đè contact_tech. Null = kế thừa từ order gốc. Mọi sub-field
+      tùy chọn.
     example: *id003
     properties:
       email:
         type: string
+        description: Email kỹ thuật (RFC 5322).
         example: tech@example.com
-        description: Địa chỉ email.
       first_name:
         type: string
+        description: Tên (≤ 100 ký tự).
         example: Tran
-        description: Trường `first_name`.
       last_name:
         type: string
+        description: Họ (≤ 100 ký tự).
         example: Thi B
-        description: Trường `last_name`.
       phone:
         type: string
+        description: Điện thoại E.164.
         example: '+84901234568'
-        description: Số điện thoại.
       title:
         type: string
+        description: Chức danh (≤ 50 ký tự).
         example: Developer
-        description: Trường `title`.
-    description: Trường `contact_tech`.
   note:
     type: string
+    description: Ghi chú nội bộ (≤ 1000 ký tự).
     example: Gia hạn theo yêu cầu khách hàng
-    description: Trường `note`.
 description: Schema `RenewOrderRequest`.

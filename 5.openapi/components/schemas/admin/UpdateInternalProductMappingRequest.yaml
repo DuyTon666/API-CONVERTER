@@ -6,14 +6,18 @@ example:
 properties:
   routing_weight:
     type: integer
+    description: 'Trọng số Weighted Round-Robin (WRR) cho routing đơn hàng. Default
+      1, range [1, 100]. VD: mapping Daousign weight=2, mapping TheSSLStore weight=1
+      cho cùng 1 internal product → 2/3 đơn về Daousign. Set 0 = tạm tắt routing nhưng
+      giữ mapping (tương đương is_active=false).'
     example: 3
-    description: Trường `routing_weight`.
   is_active:
     type: boolean
+    description: Default true. False = tạm tắt mapping nhưng giữ lịch sử audit.
     example: true
-    description: Trường `is_active`.
   notes:
     type: string
+    description: Ghi chú admin (≤ 500 ký tự).
     example: Tăng weight Daousign vì price tốt hơn
-    description: Trường `notes`.
+    maximum: 500
 description: Schema `UpdateInternalProductMappingRequest`.

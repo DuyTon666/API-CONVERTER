@@ -1,8 +1,8 @@
 patch:
   summary: Bật/tắt trạng thái sản phẩm nội bộ
   operationId: toggleInternalProductStatus
-  description: Thay đổi trạng thái kích hoạt hoặc vô hiệu hóa của sản phẩm nội bộ theo ID. Chỉ quản trị viên có quyền 
-    thực hiện thao tác này và sản phẩm phải tồn tại trong hệ thống.
+  description: Cập nhật trạng thái kích hoạt hoặc vô hiệu hóa sản phẩm nội bộ theo ID. Chỉ quản trị viên có quyền thực 
+    hiện thao tác này và sản phẩm phải tồn tại trong hệ thống.
   tags:
   - Admin
   security:

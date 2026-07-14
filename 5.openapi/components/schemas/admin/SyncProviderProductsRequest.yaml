@@ -1,4 +1,10 @@
 type: object
-example: {}
-properties: {}
+example:
+  note: manual sync from admin UI
+properties:
+  note:
+    type: string
+    example: manual sync from admin UI
+    maxLength: 500
+    description: Trường `note`.
 description: Schema `SyncProviderProductsRequest`.

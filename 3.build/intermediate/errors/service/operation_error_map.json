@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-07T13:46:53.452221",
+  "generated_at": "2026-07-14T13:38:28.233303",
   "module": "service",
-  "batch_timestamp": "2026-07-07 13:46:44",
+  "batch_timestamp": "2026-07-14 13:36:42",
   "operations": {
     "getServiceTypes": {
       "method": "get",
@@ -159,11 +159,11 @@
         ]
       }
     },
-    "createServiceUpgradePlanRequest": {
+    "createUpgradePlanRequest": {
       "method": "post",
       "path": "/v1/users/{user_id}/services/{id}/request-upgrade-plans",
       "source_file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/service/create_service_upgrade_plan_request.yaml",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/service/create_upgrade_plan_request.yaml",
       "errors": {
         "401": [
           {
