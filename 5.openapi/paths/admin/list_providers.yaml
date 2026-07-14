@@ -1,8 +1,8 @@
 get:
   summary: Lấy danh sách nhà cung cấp trong hệ thống
   operationId: listProviders
-  description: Truy xuất toàn bộ danh sách nhà cung cấp hiện có trong hệ thống dành cho quản trị viên. Chỉ tài khoản có 
-    quyền admin mới được phép gọi API này để quản lý và theo dõi các nhà cung cấp.
+  description: Truy xuất danh sách tất cả nhà cung cấp hiện có trong hệ thống dành cho quản trị viên. Chỉ người dùng có 
+    quyền admin mới được phép truy cập endpoint này.
   tags:
   - Admin
   security:

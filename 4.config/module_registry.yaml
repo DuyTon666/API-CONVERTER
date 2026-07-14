@@ -31,7 +31,7 @@ modules:
     deprecated_by: null
     file_count: 6
     source_files_count: 6
-    selected_files_count: 0
+    selected_files_count: 6
     skipped_duplicate_count: 0
     endpoint_count: 6
     last_import_at: '2026-07-08T09:36:06'
@@ -88,7 +88,7 @@ modules:
     deprecated_by: null
     file_count: 15
     source_files_count: 15
-    selected_files_count: 0
+    selected_files_count: 15
     skipped_duplicate_count: 0
     endpoint_count: 15
     last_import_at: '2026-07-08T09:36:05'
@@ -107,7 +107,7 @@ modules:
     deprecated_by: null
     file_count: 1
     source_files_count: 1
-    selected_files_count: 0
+    selected_files_count: 1
     skipped_duplicate_count: 0
     endpoint_count: 1
     last_import_at: '2026-07-08T09:36:03'
@@ -126,7 +126,7 @@ modules:
     deprecated_by: null
     file_count: 24
     source_files_count: 24
-    selected_files_count: 0
+    selected_files_count: 24
     skipped_duplicate_count: 0
     endpoint_count: 24
     last_import_at: '2026-07-08T09:36:02'

@@ -6,6 +6,8 @@ import os
 import re
 import yaml
 import pdfplumber
+import unicodedata
+
 from docx import Document
 
 def load_profiles(yaml_path: str) -> list[dict]:
@@ -15,23 +17,66 @@ def load_profiles(yaml_path: str) -> list[dict]:
     return data.get("profiles", [])
 
 
+def _strip_accents(value: str) -> str:
+    text = str(value or "").replace("Đ", "D").replace("đ", "d")
+    text = unicodedata.normalize("NFD", text)
+    return "".join(ch for ch in text if unicodedata.category(ch) != "Mn")
+
+
+def _normalize_key(value: str) -> str:
+    text = _strip_accents(value).lower()
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
+
+
 def match_profile(header_cells: list[str], profiles: list[dict]) -> dict | None:
     """
-    So header thật với header_match_keywords của từng profile.
-    Trả về profile đầu tiên match, hoặc None nếu không có.
-    Match khi TẤT CẢ keyword của profile đều xuất hiện trong header (lowercase).
+    So header thật với profile.
+
+    Hỗ trợ:
+    - header_match_keywords: tất cả keyword phải có
+    - header_match_any: nếu khai báo thì chỉ cần một keyword xuất hiện
+    - header_exclude_keywords: nếu có keyword này thì loại profile
     """
-    header_lower = " ".join(c.lower() for c in header_cells)
+    header_text = _normalize_key(" ".join(header_cells))
+
     for profile in profiles:
-        keywords = [kw.lower() for kw in profile.get("header_match_keywords", [])]
-        if all(kw in header_lower for kw in  keywords):
-            return profile
+        required_keywords = [
+            _normalize_key(kw)
+            for kw in profile.get("header_match_keywords", [])
+            if str(kw).strip()
+        ]
+
+        if not all(kw in header_text for kw in required_keywords):
+            continue
+
+        any_keywords = [
+            _normalize_key(kw)
+            for kw in profile.get("header_match_any", [])
+            if str(kw).strip()
+        ]
+
+        if any_keywords and not any(kw in header_text for kw in any_keywords):
+            continue
+
+        excluded_keywords = [
+            _normalize_key(kw)
+            for kw in profile.get("header_exclude_keywords", [])
+            if str(kw).strip()
+        ]
+
+        if excluded_keywords and any(kw in header_text for kw in excluded_keywords):
+            continue
+
+        return profile
 
     return None
 
 
 def _clean_text(value) -> str:
-    return str(value or "").strip()
+    text = str(value or "").replace("\u200b", " ")
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
 
 
 def _is_valid_http_status(value) -> bool:
@@ -83,22 +128,31 @@ def _normalize_row(cells: list[str], header_cells: list[str], profile: dict, sou
     Không map theo vị trí cứng — tránh lệch cột khi bảng có thêm/thiếu cột.
     Trả về None nếu row rỗng hoặc code không hợp lệ.
     """
-    aliases = profile.get("column_aliases", {})
-    header_lower = [h.strip().lower() for h in header_cells]\
+    aliases = profile.get("column_aliases", {}) or {}
+    defaults = profile.get("defaults", {})
+    header_lower = [_normalize_key(h) for h in header_cells]
 
     def find_value(field: str) -> str | None:
-        """Tìm alias nào khớp với header, lấy giá trị ở vị trí đó."""
-        for alias in aliases.get(field, []):
+        "Tìm alias nào khớp với header, lấy giá trị đó"
+        for alias in alias.get(field, []):
+            alias_key = _normalize_key(alias)
             for i, h in enumerate(header_lower):
-                if alias in h or h in alias:
+                if alias_key and (alias_key == h or alias_key in h or h in alias_key):
                     if i < len(cells):
-                        return cells[i].strip()
+                        return _clean_text(cells[i])
         return None
 
     code = _clean_text(find_value("code"))
     http_status = _clean_text(find_value("http_status"))
     category = _clean_text(find_value("category"))
     message = _clean_text(find_value("message"))
+    field_name = _clean_text(find_value("field"))
+    suggested_action = _clean_text(find_value("suggested_action"))
+    source_type = _clean_text(defaults.get("source_type"))
+    source_profile = _clean_text(profile.get("name"))
+
+    if not category:
+        category = _clean_text(defaults.get("category"))
 
     # Repair generic case:
     # Header ghi Error Code | HTTP, nhưng row thực tế lại là HTTP | Error Code.
@@ -120,14 +174,26 @@ def _normalize_row(cells: list[str], header_cells: list[str], profile: dict, sou
         message = category
         category = ""
 
-    return {
+    normalized = {
         "code": code,
         "http_status": http_status,
         "category": category,
         "message": message,
         "source_file": os.path.basename(source_file),
         "table_index": table_index,
+        "source_profile": source_profile,
     }
+
+    if field_name:
+        normalized["field"] = field_name
+
+    if suggested_action:
+        normalized["suggested_action"] = suggested_action
+
+    if source_type:
+        normalized["source_type"] = source_type
+
+    return normalized
 
 
 def _extract_from_docx(file_path: str, profiles: list[dict]) -> list[dict]:

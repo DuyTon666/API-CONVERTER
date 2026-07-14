@@ -4,6 +4,43 @@
 # Thứ tự profile quan trọng: profile cụ thể hơn (nhiều keyword hơn) phải đứng trước.
 
 profiles:
+  - name: "error_validation_with_field"
+    description: "Bảng validation: Error Code | HTTP | Field | Mô tả"
+    header_match_keywords: ["error code", "http", "field", "mô tả"]
+    defaults:
+      source_type: "validation"
+      category: "Validation"
+    column_aliases:
+      code:        ["error code", "mã lỗi", "code", "error"]
+      http_status: ["http", "http status", "status", "http_status"]
+      field:       ["field", "trường", "thuộc tính"]
+      message:     ["mô tả", "description", "message", "nội dung"]
+
+  - name: "error_business_with_suggested_action"
+    description: "Bảng business: Error Code | HTTP | Mô tả | Xử lý đề xuất"
+    header_match_keywords: ["error code", "http", "mô tả"]
+    header_match_any: ["xử lý", "đề xuất", "suggested action", "action"]
+    defaults:
+      source_type: "business"
+      category: "Business"
+    column_aliases:
+      code:             ["error code", "mã lỗi", "code", "error"]
+      http_status:      ["http", "http status", "status", "http_status"]
+      message:          ["mô tả", "description", "message", "nội dung"]
+      suggested_action: ["xử lý đề xuất", "đề xuất", "suggested action", "action", "resolution"]
+
+  - name: "error_common_with_category"
+    description: "Bảng common: Error Code | HTTP | Loại/Ngữ cảnh | Mô tả"
+    header_match_keywords: ["error code", "http", "mô tả"]
+    header_match_any: ["loại", "ngữ cảnh", "category", "context", "nhóm"]
+    defaults:
+      source_type: "common"
+    column_aliases:
+      code:        ["error code", "mã lỗi", "code", "error"]
+      http_status: ["http", "http status", "status", "http_status"]
+      category:    ["loại", "ngữ cảnh", "context", "category", "nhóm"]
+      message:     ["mô tả", "description", "message", "nội dung"]
+
   - name: "4_have_http"
     description: "Bảng 4 cột: Error Code | HTTP | Ngữ cảnh | Mô tả"
     header_match_keywords: ["error code", "http", "ngữ cảnh", "mô tả"]

@@ -5,3 +5,4 @@ properties:
     description: Id gói nâng cấp
 required:
   - plan_id
+description: Schema `CreateUpgradePlanRequest`.

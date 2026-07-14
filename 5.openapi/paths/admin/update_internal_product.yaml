@@ -1,8 +1,8 @@
 patch:
-  summary: Cập nhật thông tin sản phẩm nội bộ
+  summary: Cập nhật thông tin sản phẩm nội bộ theo ID
   operationId: updateInternalProduct
-  description: Cập nhật thông tin của sản phẩm nội bộ theo ID được chỉ định. Chỉ admin mới có quyền thực hiện thao tác 
-    này, và sản phẩm phải tồn tại trong hệ thống.
+  description: Cập nhật thông tin sản phẩm nội bộ dựa trên ID được chỉ định, chỉ dành cho quản trị viên hệ thống. Yêu 
+    cầu ID hợp lệ và dữ liệu đầu vào phải tuân thủ các ràng buộc nghiệp vụ của sản phẩm nội bộ.
   tags:
   - Admin
   security:

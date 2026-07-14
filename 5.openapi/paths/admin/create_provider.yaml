@@ -1,8 +1,8 @@
 post:
-  summary: Tạo mới nhà cung cấp trong hệ thống
+  summary: Tạo nhà cung cấp mới trong hệ thống
   operationId: createProvider
-  description: Tạo mới một nhà cung cấp (provider) trong hệ thống quản trị. Chỉ quản trị viên có quyền thực hiện thao 
-    tác này, thông tin nhà cung cấp phải đầy đủ và hợp lệ trước khi được lưu vào hệ thống.
+  description: Tạo mới một nhà cung cấp (provider) trong hệ thống quản trị. Chỉ tài khoản admin mới có quyền thực hiện 
+    thao tác này và thông tin nhà cung cấp phải đầy đủ và hợp lệ.
   tags:
   - Admin
   security:
@@ -40,7 +40,7 @@ post:
     '502':
       $ref: "../../components/responses/BadGateway.yaml"
   requestBody:
-    required: false
+    required: true
     content:
       application/json:
         schema:

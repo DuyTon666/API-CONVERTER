@@ -12,13 +12,16 @@ properties:
     type: boolean
     description: True nếu tất cả dcv_records đều VALIDATED.
   dcv_records:
-    type: string
+    type: array
+    items:
+      type: object
+      properties:
+        status:
+          type: string
+          description: PENDING | VALIDATED | FAILED — cập nhật sau khi kiểm tra 
+            provider.
+        validated_at:
+          type: string
+          description: Thời điểm xác thực thành công. Null nếu chưa validated.
     description: Danh sách kết quả validation từng domain.
-  dcv_records[].status:
-    type: string
-    description: PENDING | VALIDATED | FAILED — cập nhật sau khi kiểm tra 
-      provider.
-  dcv_records[].validated_at:
-    type: string
-    description: Thời điểm xác thực thành công. Null nếu chưa validated.
 description: Schema `ValidateOrderDcvData`.

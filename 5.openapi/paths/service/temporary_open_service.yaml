@@ -1,9 +1,36 @@
 post:
   summary: Mở tạm thời dịch vụ theo ID
   operationId: temporaryOpenService
-  description: API cho phép mở tạm thời một dịch vụ đang tạm dừng hoặc bị khóa dựa trên service_id. Chức năng này được 
-    sử dụng trong trường hợp cần kích hoạt dịch vụ trong thời gian giới hạn, yêu cầu người dùng có quyền hạn phù hợp để 
-    thực hiện thao tác.
+  x-side-effects:
+    schema_version: '1.1'
+    meta:
+      detected_by: rule_based
+      confidence: 0.8
+      review_status: pending
+      last_updated: '2026-07-14'
+    effects:
+    - type: state_change
+      trigger: on_success
+      target:
+        entity: service
+        field: status
+        from: null
+        to: open
+      description: service được mở
+      confirmed: false
+      effect_id: service_open_state_change_001
+      source: rule_based
+      evidence:
+        source: path
+        matched_keyword: open
+        rule_id: action_verbs.open
+        resource_source: path
+        template_index: 0
+    review:
+      required: true
+      reason: Side effects được suy luận từ action endpoint, chưa được xác nhận từ source document.
+      note: null
+  description: API cho phép mở tạm thời một dịch vụ đang bị tạm ngừng dựa trên service_id được cung cấp. Chức năng này áp dụng trong trường hợp dịch vụ cần được kích hoạt tạm thời trong khoảng thời gian giới hạn theo yêu cầu nghiệp vụ.
   tags:
   - Service
   security:
@@ -23,35 +50,35 @@ post:
         application/json:
           schema:
             allOf:
-            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            - $ref: ../../components/schemas/common/StandardSuccess.yaml
             - type: object
               properties:
                 data:
-                  $ref: "../../components/schemas/service/TemporaryOpenServiceData.yaml"
+                  $ref: ../../components/schemas/service/TemporaryOpenServiceData.yaml
     '401':
-      $ref: "../../components/responses/Unauthorized.yaml"
+      $ref: ../../components/responses/Unauthorized.yaml
     '403':
-      $ref: "../../components/responses/Forbidden.yaml"
+      $ref: ../../components/responses/Forbidden.yaml
     '404':
-      $ref: "../../components/responses/NotFound.yaml"
+      $ref: ../../components/responses/NotFound.yaml
     '500':
-      $ref: "../../components/responses/InternalError.yaml"
+      $ref: ../../components/responses/InternalError.yaml
     '400':
-      $ref: "../../components/responses/BadRequest.yaml"
+      $ref: ../../components/responses/BadRequest.yaml
     '422':
-      $ref: "../../components/responses/StandardError422.yaml"
+      $ref: ../../components/responses/StandardError422.yaml
     '409':
-      $ref: "../../components/responses/Conflict.yaml"
+      $ref: ../../components/responses/Conflict.yaml
     '429':
-      $ref: "../../components/responses/TooManyRequests.yaml"
+      $ref: ../../components/responses/TooManyRequests.yaml
     '502':
-      $ref: "../../components/responses/BadGateway.yaml"
+      $ref: ../../components/responses/BadGateway.yaml
   requestBody:
     required: false
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/service/TemporaryOpenServiceRequest.yaml"
+          $ref: ../../components/schemas/service/TemporaryOpenServiceRequest.yaml
   x-error-responses:
     '401':
     - code: '4102'

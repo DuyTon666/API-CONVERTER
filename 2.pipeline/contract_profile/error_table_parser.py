@@ -48,7 +48,7 @@ def classify_row(row: dict, global_map: dict, module_catalog: dict) -> dict:
     code = row["code"]
     incoming_http = row.get("http_status")
     incoming_msg = row.get("message", "")
-    missing_http = incoming_http is None
+    missing_http = not str(incoming_http or "").strip()
 
     for namespace, registry in [("module", module_catalog), ("_global", global_map)]:
         if code not in registry:

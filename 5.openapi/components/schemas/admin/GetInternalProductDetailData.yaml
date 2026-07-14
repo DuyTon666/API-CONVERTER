@@ -11,9 +11,6 @@ properties:
   name:
     type: string
     description: Tên hiển thị tiếng Việt (≤ 200 ký tự).
-  name_en:
-    type: string
-    description: Tên tiếng Anh (optional, ≤ 200 ký tự).
   product_type:
     type: string
     description: 'Mức xác thực: DV | OV | EV. IMMUTABLE sau create (định danh bản
@@ -49,6 +46,29 @@ properties:
     type: string
     description: Admin ID người cập nhật gần nhất.
   deleted_at:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Soft delete timestamp. Null = chưa xóa.
+  mappings_summary:
+    type: array
+    items:
+      type: object
+      properties:
+        provider_code:
+          type: string
+          description: Trường `provider_code`.
+        provider_product_code:
+          type: string
+          description: Trường `provider_product_code`.
+        is_active:
+          type: boolean
+          description: Trường `is_active`.
+        priority:
+          type: integer
+          description: Trường `priority`.
+    description: Trường `mappings_summary`.
+  name_en:
+    type: string
+    description: Tên tiếng Anh (optional, ≤ 200 ký tự).
 description: Schema `GetInternalProductDetailData`.

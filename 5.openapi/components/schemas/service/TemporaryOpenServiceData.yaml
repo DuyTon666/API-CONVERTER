@@ -6,3 +6,4 @@ properties:
   temp_expired_date:
     type: string
     description: Ngày hết hạn tạm
+description: Schema `TemporaryOpenServiceData`.

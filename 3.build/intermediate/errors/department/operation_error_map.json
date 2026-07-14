@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-07T13:07:01.459607",
+  "generated_at": "2026-07-14T13:39:02.862372",
   "module": "department",
-  "batch_timestamp": "2026-07-07 13:03:37",
+  "batch_timestamp": "2026-07-14 13:34:49",
   "operations": {
     "getDepartmentList": {
       "method": "get",

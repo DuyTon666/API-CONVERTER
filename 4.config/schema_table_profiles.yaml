@@ -1,0 +1,167 @@
+version: 1
+
+column_aliases:
+  field_name:
+    - "Tên"
+    - "Tên trường"
+    - "Trường"
+    - "Nhóm / Trường"
+    - "Field"
+    - "Field Name"
+    - "Name"
+    - "Property"
+    - "Attribute"
+    - "Thuộc tính"
+
+  required:
+    - "Bắt buộc"
+    - "Required"
+    - "Mandatory"
+
+  type:
+    - "Kiểu"
+    - "Kiểu dữ liệu"
+    - "Type"
+    - "Data Type"
+    - "Datatype"
+
+  default:
+    - "Mặc định"
+    - "Default"
+    - "Default Value"
+
+  description:
+    - "Mô tả"
+    - "Description"
+    - "Ghi chú"
+    - "Note"
+
+required_markers:
+  required:
+    - "✔"
+    - "✓"
+    - "Có"
+    - "Yes"
+    - "True"
+    - "Required"
+    - "Bắt buộc"
+
+  optional:
+    - "✖"
+    - "Không"
+    - "No"
+    - "False"
+    - "Optional"
+    - "Tùy chọn"
+
+type_aliases:
+  string:
+    - "String"
+    - "Text"
+    - "VARCHAR"
+    - "CHAR"
+    - "Date"
+    - "DateTime"
+    - "Timestamp"
+    - "UUID"
+
+  integer:
+    - "Integer"
+    - "Int"
+    - "BIGINT"
+    - "SmallInt"
+
+  number:
+    - "Number"
+    - "Float"
+    - "Double"
+    - "Decimal"
+
+  boolean:
+    - "Boolean"
+    - "Bool"
+
+  object:
+    - "Object"
+    - "JSON Object"
+    - "JSON"
+
+  array:
+    - "Array"
+    - "List"
+    - "Mảng"
+    - "Danh sách"
+
+  "array<object>":
+    - "Array<Object>"
+    - "Array of Object"
+    - "List<Object>"
+    - "List of Object"
+    - "Object[]"
+
+  enum:
+    - "Enum"
+
+  file:
+    - "File"
+
+  "array<file>":
+    - "Array<File>"
+    - "List<File>"
+    - "File[]"
+
+nullable_markers:
+  separator: "|"
+  values:
+    - "null"
+    - "none"
+
+# Regex kiểm tra example có thực sự khớp OpenAPI format đã khai hay
+# không. Docx nguồn đôi khi viết placeholder mô tả (vd "uuid-v4") thay
+# vì giá trị mẫu thật hợp lệ — validate tổng quát cho mọi field có
+# format tương ứng, không hard-code riêng field nào trong code.
+format_example_validators:
+  uuid: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+  email: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+  date: '^\d{4}-\d{2}-\d{2}$'
+  date-time: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+  hostname: '^(?=.{1,253}$)([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$'
+  uri: '^[a-zA-Z][a-zA-Z0-9+.\-]*:'
+
+field_path_policy:
+  separator: "."
+  array_suffix: "[]"
+  combined_name_separator: "/"
+
+  identifier_pattern: "^[A-Za-z_][A-Za-z0-9_]*$"
+
+  placeholder_wrappers:
+    - ["(", ")"]
+    - ["<", ">"]
+
+parser_policy:
+  minimum_header_matches: 2
+
+  required_columns:
+    - field_name
+    - type
+
+  unknown_type:
+    action: review
+    severity: blocking
+
+  unknown_required_marker:
+    action: review
+    severity: blocking
+
+  invalid_field_name:
+    action: review
+    severity: blocking
+
+  placeholder_row:
+    action: skip
+    severity: warning
+
+  ambiguous_field_path:
+    action: review
+    severity: blocking

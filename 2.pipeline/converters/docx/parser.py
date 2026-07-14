@@ -9,7 +9,17 @@ from dataclasses import dataclass, field
 from typing import Optional
 from converters.models import ParsedOperation
 from converters.request_body.schema_extractor import build_request_schema_result
-from converters.response_schema.extractor import parse_success_response_json_sample
+from converters.response_schema.extractor import (
+    parse_success_response_json_sample,
+    detect_data_root_is_array,
+    find_table_block_after_json_sample,
+)
+from converters.request_body.table_adapter import (
+    parse_table as parse_schema_table,
+)
+from converters.request_body.schema_merger import (
+    merge as merge_schema_tables,
+)
 
 
 def parse_text(text: str) -> ParsedOperation:
@@ -27,7 +37,6 @@ def parse_text(text: str) -> ParsedOperation:
     op.request_body_children = _parse_request_body_children(text, op.request_body_fields)
     op.response_schemas = _parse_response_schemas(text)
     op.success_status = _parse_success_status(text)
-    op.review_flags = _get_review_flags(op, text)
     op.change_history = _parse_change_history(text)
     if op.change_history:
         op.version = op.change_history[-1]["version"]
@@ -36,11 +45,22 @@ def parse_text(text: str) -> ParsedOperation:
     op.query_parameters = _parse_query_parameters(text)
     op.request_schema_result = build_request_schema_result(text)
 
-    if op.request_schema_result and getattr(op.request_schema_result, "root", None):
+    if _request_schema_has_content(
+        op.request_schema_result
+    ):
         op.has_request_body = True
 
-        if getattr(op.request_schema_result.root, "required", []):
+        if getattr(
+            op.request_schema_result.root,
+            "required",
+            [],
+        ):
             op.request_body_required = True
+
+    op.review_flags = _get_review_flags(
+        op,
+        text,
+    )
 
     return op
 
@@ -231,6 +251,11 @@ def _parse_query_parameters(text: str) -> list:
             break
 
         if "\t" not in line:
+            if headers is not None and params:
+                params[-1]["description"] = (
+                    (params[-1]["description"] + "\n" + stripped).strip()
+                )
+                continue
             if headers is not None:
                 break
             continue
@@ -356,11 +381,14 @@ def _parse_request_body(text: str) -> tuple:
         re.DOTALL | re.IGNORECASE,
     )
     if not section:
-        return False, True
+        return False, False
 
     body_text = section.group(1).strip()
-    if "Không có" in body_text or len(body_text) <= 5:
-        return False, True
+    if (
+        re.search(r"\bkhông\s+có\b", body_text, re.IGNORECASE)
+        or len(body_text) <= 5
+    ):
+        return False, False
 
     required = (
         '\u2714' in body_text
@@ -369,12 +397,49 @@ def _parse_request_body(text: str) -> tuple:
     )
     return True, required
 
+SCHEMA_TABLE_PROFILE_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "4.config"
+    / "schema_table_profiles.yaml"
+)
 
 REQUEST_SCHEMA_PROFILE_PATH = (
     Path(__file__).resolve().parents[3]
     / "4.config"
     / "request_schema_profiles.yaml"
 )
+
+
+def _request_schema_has_content(result) -> bool:
+    """
+    Chỉ coi canonical schema là bằng chứng có request body
+    khi root chứa cấu trúc hoặc example có dữ liệu thật.
+    """
+    root = getattr(result, "root", None)
+
+    if root is None:
+        return False
+
+    example = getattr(root, "example", None)
+
+    if isinstance(
+        example,
+        (str, bytes, dict, list, tuple, set),
+    ):
+        has_meaningful_example = bool(example)
+    else:
+        # False và 0 vẫn là example hợp lệ.
+        has_meaningful_example = example is not None
+
+    return bool(
+        getattr(root, "properties", None)
+        or getattr(root, "items", None) is not None
+        or getattr(root, "required", None)
+        or (
+            getattr(root, "has_example", False)
+            and has_meaningful_example
+        )
+    )
 
 
 def _normalize_header_alias(value: str) -> str:
@@ -388,8 +453,14 @@ def _load_request_schema_profile() -> dict:
         return yaml.safe_load(f) or {}
 
 
+@lru_cache(maxsize=1)
+def _load_schema_table_profile() -> dict:
+    with open(SCHEMA_TABLE_PROFILE_PATH, encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
 def _get_column_aliases(canonical_name: str) -> set[str]:
-    profile = _load_request_schema_profile()
+    profile = _load_schema_table_profile()
     aliases = (
         profile
         .get("column_aliases", {})
@@ -500,119 +571,435 @@ def _parse_success_status(text: str) -> str:
     return ""
 
 
+def _response_node_to_legacy_schemas(
+    root,
+    schema_path: str,
+) -> dict:
+    """
+    Chuyển canonical SchemaNode về format response_schemas
+    mà emitter hiện tại đang sử dụng.
+
+    Object:
+      data.pagination.total_items
+
+    Array object:
+      data.certificates[].cert_pem
+
+    sẽ thành:
+      data
+      data.pagination
+      data.certificates
+    """
+    schemas = {}
+
+    def visit(node, current_path: str) -> None:
+        if getattr(node, "type", None) != "object":
+            return
+
+        properties = getattr(node, "properties", {}) or {}
+        fields = []
+        child_nodes = []
+
+        for field_name, child in properties.items():
+            child_type = (
+                getattr(child, "type", None)
+                or "string"
+            )
+
+            fields.append({
+                "name": field_name,
+                "type": child_type,
+                "nullable": bool(
+                    getattr(child, "nullable", False)
+                ),
+                "description": (
+                    getattr(child, "description", None)
+                    or ""
+                ),
+                "original_type": child_type,
+            })
+
+            child_path = (
+                f"{current_path}.{field_name}"
+            )
+
+            if child_type == "object":
+                child_nodes.append((
+                    child_path,
+                    child,
+                ))
+
+            elif child_type == "array":
+                items = getattr(
+                    child,
+                    "items",
+                    None,
+                )
+
+                if (
+                    items is not None
+                    and getattr(items, "type", None)
+                    == "object"
+                ):
+                    child_nodes.append((
+                        child_path,
+                        items,
+                    ))
+
+        if fields:
+            schemas[current_path] = fields
+
+        for child_path, child_node in child_nodes:
+            visit(
+                child_node,
+                child_path,
+            )
+
+    visit(root, schema_path)
+
+    return schemas
+
+
+def _apply_implicit_array_item_scope(
+    table_output: dict,
+) -> None:
+    """
+    Xử lý bảng response khai báo array theo dạng ngầm:
+
+      items       Array
+      id          UUID
+      name        String
+      pagination.total_items Integer
+
+    Các field phẳng sau array được xem là field của array items,
+    cho đến khi gặp:
+
+    - một path tường minh như pagination.total_items;
+    - một object/array root mới.
+
+    Không phụ thuộc tên field, module hoặc endpoint.
+    """
+    fields = table_output.get("fields")
+
+    if not isinstance(fields, list):
+        return
+
+    active_array_name: str | None = None
+
+    for field in fields:
+        if not isinstance(field, dict):
+            active_array_name = None
+            continue
+
+        field_path = field.get("field_path")
+
+        if not isinstance(field_path, list) or not field_path:
+            active_array_name = None
+            continue
+
+        normalized_type = str(
+            field.get("normalized_type") or ""
+        ).strip()
+
+        # Path tường minh như pagination.total_items hoặc
+        # certificates[].cert_pem tự mô tả được cấu trúc.
+        if len(field_path) > 1:
+            active_array_name = None
+            continue
+
+        is_array_declaration = (
+            normalized_type == "array"
+            or normalized_type.startswith("array<")
+        )
+
+        if is_array_declaration:
+            active_array_name = str(
+                field.get("name") or ""
+            ).strip() or None
+            continue
+
+        # Object root mới kết thúc scope của array trước đó.
+        if normalized_type == "object":
+            active_array_name = None
+            continue
+
+        if active_array_name is None:
+            continue
+
+        leaf = field_path[0]
+
+        if (
+            not isinstance(leaf, dict)
+            or leaf.get("container") != "leaf"
+        ):
+            active_array_name = None
+            continue
+
+        leaf_name = str(
+            leaf.get("name") or ""
+        ).strip()
+
+        if not leaf_name:
+            active_array_name = None
+            continue
+
+        field["field_path"] = [
+            {
+                "name": active_array_name,
+                "container": "array",
+            },
+            {
+                "name": leaf_name,
+                "container": "leaf",
+            },
+        ]
+
+
+def _parse_response_table_block(
+    block: str,
+    schema_path: str,
+) -> dict:
+    """
+    Parse một bảng response bằng shared table adapter
+    và canonical schema merger.
+    """
+    table_rows = []
+
+    for line in block.splitlines():
+        columns = [
+            column.strip()
+            for column in line.split("\t")
+        ]
+
+        if len(columns) >= 2:
+            table_rows.append(columns)
+
+    if len(table_rows) < 2:
+        return {}
+
+    headers = table_rows[0]
+    rows = table_rows[1:]
+
+    table_output = parse_schema_table(
+        headers=headers,
+        rows=rows,
+        section_path=[schema_path],
+        source_file="",
+    )
+
+    _apply_implicit_array_item_scope(
+        table_output,
+    )
+
+    result = merge_schema_tables(
+        table_output=table_output,
+    )
+
+    if not result or not result.root:
+        return {}
+
+    return _response_node_to_legacy_schemas(
+        result.root,
+        schema_path,
+    )
+
+
+def _merge_response_schema_maps(
+    base_schemas: dict,
+    overlay_schemas: dict,
+) -> dict:
+    """
+    Merge hai response schema map theo schema path và field name.
+
+    base:
+      thường lấy từ JSON response example, cung cấp cấu trúc đầy đủ.
+
+    overlay:
+      thường lấy từ response table, được ưu tiên cho type,
+      description và metadata vì đây là khai báo tường minh.
+
+    Không phụ thuộc module, endpoint hay tên field cụ thể.
+    """
+    merged: dict[str, list[dict]] = {}
+
+    for schema_path, fields in (base_schemas or {}).items():
+        if not isinstance(fields, list):
+            continue
+
+        merged[schema_path] = [
+            dict(field)
+            for field in fields
+            if isinstance(field, dict)
+        ]
+
+    for schema_path, overlay_fields in (overlay_schemas or {}).items():
+        if not isinstance(overlay_fields, list):
+            continue
+
+        current_fields = merged.setdefault(
+            schema_path,
+            [],
+        )
+
+        field_indexes = {
+            str(field.get("name") or "").strip(): index
+            for index, field in enumerate(current_fields)
+            if str(field.get("name") or "").strip()
+        }
+
+        for overlay_field in overlay_fields:
+            if not isinstance(overlay_field, dict):
+                continue
+
+            field_name = str(
+                overlay_field.get("name") or ""
+            ).strip()
+
+            if not field_name:
+                continue
+
+            if field_name not in field_indexes:
+                field_indexes[field_name] = len(current_fields)
+                current_fields.append(
+                    dict(overlay_field)
+                )
+                continue
+
+            index = field_indexes[field_name]
+            combined = dict(current_fields[index])
+
+            base_type = str(
+                combined.get("type") or ""
+            ).strip().lower()
+
+            overlay_type = str(
+                overlay_field.get("type") or ""
+            ).strip().lower()
+
+            nullable = (
+                bool(combined.get("nullable"))
+                or bool(overlay_field.get("nullable"))
+                or (
+                    base_type == "null"
+                    and bool(overlay_type)
+                    and overlay_type != "null"
+                )
+                or (
+                    overlay_type == "null"
+                    and bool(base_type)
+                    and base_type != "null"
+                )
+            )
+
+            for key, value in overlay_field.items():
+                if value is None:
+                    continue
+
+                if isinstance(value, str) and not value.strip():
+                    continue
+
+                # Concrete type có giá trị hơn null-only sample.
+                # Khi overlay chỉ là null nhưng base đã có concrete
+                # type thì giữ base type và đánh dấu nullable.
+                if (
+                    key == "type"
+                    and overlay_type == "null"
+                    and base_type
+                    and base_type != "null"
+                ):
+                    continue
+
+                combined[key] = value
+
+            if nullable:
+                combined["nullable"] = True
+
+            current_fields[index] = combined
+
+    return merged
+
+
 def _parse_response_schemas(text: str) -> dict:
     schemas = {}
+
     section_pattern = re.finditer(
-        r'5\.1\.\d+ Mô tả chi tiết Response (data[^\n]*)\n(.+?)(?=5\.1\.\d+|5\.2|\Z)',
+        (
+            r"5\.1\.\d+\s+"
+            r"Mô tả chi tiết Response "
+            r"(data[^\n]*)\n"
+            r"(.+?)"
+            r"(?=5\.1\.\d+|5\.2|\Z)"
+        ),
         text,
-        re.DOTALL
+        re.DOTALL,
     )
 
     for match in section_pattern:
         schema_path = match.group(1).strip()
         block = match.group(2)
-        fields = []
 
-        for line in block.split('\n'):
-            cols = [c.strip() for c in line.split('\t')]
-            if len(cols) < 2:
-                continue
+        parsed = _parse_response_table_block(
+            block,
+            schema_path,
+        )
 
-            name = cols[0].strip()
-            dtype = cols[1].strip()
-            desc = cols[2].strip() if len(cols) > 2 else ''
-
-            name_key = name.lower()
-            dtype_key = dtype.lower()
-
-            is_header_row = (
-                _is_field_header_name(name)
-                and _is_type_header_name(dtype)
-            )
-            if not name or is_header_row:
-                continue
-
-            dtype_lower = dtype.lower()
-            if 'array<object>' in dtype_lower:
-                openapi_type = 'array'
-            elif 'object' in dtype_lower:
-                openapi_type = 'object'
-            elif 'integer' in dtype_lower:
-                openapi_type = 'integer'
-            elif 'boolean' in dtype_lower:
-                openapi_type = 'boolean'
-            elif 'number' in dtype_lower or 'float' in dtype_lower or 'decimal' in dtype_lower:
-                openapi_type = 'number'
-            else:
-                openapi_type = 'string'
-
-            fields.append({
-                "name": name,
-                "type": openapi_type,
-                "description": desc,
-                "original_type": dtype
-            })
-
-        if fields:
-            schemas[schema_path] = fields
+        schemas.update(parsed)
 
     if not schemas:
         fallback_section = re.search(
-            r'(?:^|\n)\s*\d+\.\s*Mô tả Response Fields\s*\n(.+?)(?=\n\s*(?:\d+\.\s+|[IVX]+\.\s+|5\.2|Response lỗi|Error Codes|Danh sách mã lỗi)|\Z)',
+            (
+                r"(?:^|\n)\s*\d+\.\s*"
+                r"Mô tả Response Fields\s*\n"
+                r"(.+?)"
+                r"(?=\n\s*(?:"
+                r"\d+\.\s+|"
+                r"[IVX]+\.\s+|"
+                r"5\.2|"
+                r"Response lỗi|"
+                r"Error Codes|"
+                r"Danh sách mã lỗi"
+                r")|\Z)"
+            ),
             text,
             re.DOTALL | re.IGNORECASE,
         )
 
         if fallback_section:
-            fields = []
+            parsed = _parse_response_table_block(
+                fallback_section.group(1),
+                "data",
+            )
 
-            for line in fallback_section.group(1).split('\n'):
-                cols = [c.strip() for c in line.split('\t')]
-                if len(cols) < 2:
-                    continue
+            schemas.update(parsed)
 
-                name = cols[0].strip()
-                dtype = cols[1].strip()
-                desc = cols[2] .strip() if len(cols) > 2 else ''
-
-                name_key = name.lower()
-                dtype_key = dtype.lower()
-
-                is_header_row = (
-                    _is_field_header_name(name)
-                    and _is_type_header_name(dtype)
+        if not schemas:
+            table_block = find_table_block_after_json_sample(text)
+            if table_block:
+                parsed = _parse_response_table_block(
+                    table_block,
+                    "data",
                 )
-                if not name or is_header_row:
-                    continue
+                schemas.update(parsed)
 
-                dtype_lower = dtype.lower().replace("?", "")
-                if 'array<object>' in dtype_lower:
-                    openapi_type = 'array'
-                elif 'object' in dtype_lower:
-                    openapi_type = 'object'
-                elif 'integer' in dtype_lower or dtype_lower == 'int':
-                    openapi_type = 'integer'
-                elif 'boolean' in dtype_lower or dtype_lower == 'bool':
-                    openapi_type = 'boolean'
-                elif 'number' in dtype_lower or 'float' in dtype_lower or 'decimal' in dtype_lower:
-                    openapi_type = 'number'
-                else:
-                    openapi_type = 'string'
+    sample_schemas = parse_success_response_json_sample(
+        text
+    )
+    merged = _merge_response_schema_maps(
+        sample_schemas,
+        schemas,
+    )
 
-                fields.append({
-                    "name": name,
-                    "type": openapi_type,
-                    "description": desc,
-                    "orginal_type": dtype
-                })
+    if (
+        "data" in merged
+        and "data[]" not in merged
+        and detect_data_root_is_array(text)
+    ):
+        merged["data[]"] = merged.pop("data")
+        for child_path in list(merged.keys()):
+            if child_path.startswith("data."):
+                merged[f"data[].{child_path[len('data.'):]}"] = merged.pop(child_path)
 
-            if fields:
-                schemas["data"] = fields
-
-    if not schemas:
-        schemas = parse_success_response_json_sample(text)
-
-    return schemas
+    return merged
 
 
 def _get_review_flags(op: ParsedOperation, text: str) -> list:

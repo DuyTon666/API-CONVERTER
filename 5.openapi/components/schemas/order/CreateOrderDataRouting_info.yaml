@@ -1,0 +1,40 @@
+type: object
+properties:
+  candidates_count:
+    type: integer
+    description: Trường `candidates_count`.
+  selection_method:
+    type: string
+    description: SINGLE_CANDIDATE (1 mapping) | WRR (≥ 2 mappings).
+  served_count_after:
+    type: integer
+    description: Trường `served_count_after`.
+  total_weight:
+    type: integer
+    description: Trường `total_weight`.
+  candidates:
+    type: array
+    items:
+      type: object
+      properties:
+        mapping_id:
+          type: string
+          description: Trường `mapping_id`.
+          readOnly: true
+        provider_code:
+          type: string
+          description: Trường `provider_code`.
+        weight:
+          type: integer
+          description: Trường `weight`.
+        served_count:
+          type: integer
+          description: Trường `served_count`.
+        score:
+          type: number
+          description: Trường `score`.
+        selected:
+          type: boolean
+          description: Trường `selected`.
+    description: Snapshot tất cả candidates + score để audit quyết định routing.
+description: Schema `CreateOrderDataRouting_info`.

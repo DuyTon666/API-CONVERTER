@@ -1,8 +1,8 @@
 post:
   summary: Tái cấp phát đơn hàng theo ID
   operationId: reissueOrderById
-  description: Tái cấp phát đơn hàng đã tồn tại dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng đủ điều kiện tái
-    cấp phát và yêu cầu quyền hạn phù hợp để thực hiện thao tác này.
+  description: Thực hiện tái cấp phát đơn hàng đã tồn tại dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng đủ 
+    điều kiện tái cấp phát và không ở trạng thái đã hủy hoặc đang xử lý.
   tags:
   - Order
   security:

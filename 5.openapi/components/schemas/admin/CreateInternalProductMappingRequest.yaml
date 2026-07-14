@@ -1,37 +1,36 @@
 type: object
 properties:
-  id:
-    type: string
-    description: Primary key UUID v4.
-  internal_product_id:
-    type: string
-    description: FK tới internal_products.id.
   provider_product_id:
     type: string
     description: FK tới provider_products.id.
-  provider_id:
-    type: string
-    description: DENORMALIZED — copy từ provider_products.provider_id để enforce
-      UNIQUE(internal_product_id, provider_id) ở DB layer.
+    format: uuid
   routing_weight:
     type: integer
     description: 'Trọng số Weighted Round-Robin (WRR) cho routing đơn hàng. Default
       1, range [1, 100]. VD: mapping Daousign weight=2, mapping TheSSLStore weight=1
       cho cùng 1 internal product → 2/3 đơn về Daousign. Set 0 = tạm tắt routing nhưng
       giữ mapping (tương đương is_active=false).'
+    example: 1
   is_active:
     type: boolean
     description: Default true. False = tạm tắt mapping nhưng giữ lịch sử audit.
+    example: true
   notes:
     type: string
     description: Ghi chú admin (≤ 500 ký tự).
-  created_by:
+    example: Primary provider cho SKU này
+    maximum: 500
+  id:
     type: string
-    description: Admin ID người tạo.
-  updated_by:
+    description: Primary key UUID v4.
+    format: uuid
+  internal_product_id:
     type: string
-    description: Admin ID người cập nhật gần nhất.
-  deleted_at:
+    description: FK tới internal_products.id.
+  provider_id:
     type: string
-    description: Soft delete timestamp. Null = chưa xóa.
+    description: DENORMALIZED — copy từ provider_products.provider_id để enforce
+      UNIQUE(internal_product_id, provider_id) ở DB layer.
+required:
+  - provider_product_id
 description: Schema `CreateInternalProductMappingRequest`.

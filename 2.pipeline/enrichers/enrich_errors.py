@@ -40,11 +40,19 @@ def _build_code_lookup(parsed_tables: dict) -> dict[str, dict]:
         code = str(entry.get("code", ""))
         incoming = entry.get("incoming", {})
         if code and incoming:
-            lookup[code] = {
+            info = {
                 "category": incoming.get("category"),
                 "message": incoming.get("message", ""),
                 "http_status": incoming.get("http_status", ""),
             }
+
+            for optional_key in ("field", "suggested_action", "source_type", "source_profile"):
+                optional_value = incoming.get(optional_key)
+                if optional_value:
+                    info[optional_key] = optional_value
+
+            lookup[code] = info
+
     return lookup
 
 
@@ -74,11 +82,18 @@ def _build_x_error_responses(errors: dict, code_lookup: dict) -> dict:
             if not code:
                 continue
 
-            entries.append({
+            error_entry = {
                 "code": code,
-                "category": info.get("category"),
+                "category": info.get("category") or "",
                 "message": info.get("message", ""),
-            })
+            }
+
+            for optional_key in ("field", "suggested_action", "source_type"):
+                optional_value = info.get(optional_key)
+                if optional_value:
+                    error_entry[optional_key] = optional_value
+
+            entries.append(error_entry)
 
         if entries:
             x_error[str(http_status)] = entries

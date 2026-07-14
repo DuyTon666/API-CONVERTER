@@ -1,0 +1,102 @@
+post:
+  summary: Tạo yêu cầu ký chứng chỉ CSR mới
+  operationId: generateCsr
+  x-side-effects:
+    schema_version: '1.1'
+    meta:
+      detected_by: rule_based
+      confidence: 0.75
+      review_status: pending
+      last_updated: '2026-07-14'
+    effects:
+    - type: async_job
+      trigger: on_success
+      target:
+        entity: null
+      description: Generation job được trigger
+      confirmed: false
+      effect_id: csr_generate_async_job_001
+      source: rule_based
+      evidence:
+        source: module
+        matched_keyword: generate
+        rule_id: async_keywords.generate
+        resource_source: module
+        template_index: 0
+    review:
+      required: true
+      reason: Side effects được suy luận từ action endpoint, chưa được xác nhận từ source document.
+      note: null
+  description: Tạo một yêu cầu ký chứng chỉ (CSR) mới dựa trên thông tin khóa công khai và các thuộc tính định danh được cung cấp. Yêu cầu bắt buộc phải có đầy đủ thông tin tổ chức và tên miền hợp lệ trước khi gửi đến cơ quan cấp chứng chỉ (CA).
+  tags:
+  - Csr
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters: []
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: ../../components/schemas/common/StandardSuccess.yaml
+            - type: object
+              properties:
+                data:
+                  $ref: ../../components/schemas/csr/GenerateCsrData.yaml
+    '401':
+      $ref: ../../components/responses/Unauthorized.yaml
+    '403':
+      $ref: ../../components/responses/Forbidden.yaml
+    '404':
+      $ref: ../../components/responses/NotFound.yaml
+    '500':
+      $ref: ../../components/responses/InternalError.yaml
+    '400':
+      $ref: ../../components/responses/BadRequest.yaml
+    '422':
+      $ref: ../../components/responses/StandardError422.yaml
+    '409':
+      $ref: ../../components/responses/Conflict.yaml
+    '429':
+      $ref: ../../components/responses/TooManyRequests.yaml
+    '502':
+      $ref: ../../components/responses/BadGateway.yaml
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/schemas/csr/GenerateCsrRequest.yaml
+  x-error-responses:
+    '409':
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    '500':
+    - code: '4701'
+      category: Internal
+      message: Không sinh được CSR — cả TheSSLStore API và openssl nội bộ đều thất bại

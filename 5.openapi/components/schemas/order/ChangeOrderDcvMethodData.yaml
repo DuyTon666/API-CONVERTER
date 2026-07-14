@@ -2,16 +2,16 @@ type: object
 properties:
   domain:
     type: string
-    description: Trường `domain`.
+    description: Domain vừa được đổi phương thức DCV.
   method:
     type: string
-    description: Trường `method`.
+    description: 'Phương thức DCV mới: EMAIL | HTTP | CNAME.'
   approver_email:
     type:
       - string
       - 'null'
-    description: Trường `approver_email`.
+    description: Email approver nếu method=EMAIL. null nếu HTTP/CNAME.
   status:
     type: string
-    description: Trạng thái xử lý.
+    description: Luôn là PENDING — domain cần xác minh lại từ đầu.
 description: Schema `ChangeOrderDcvMethodData`.

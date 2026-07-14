@@ -1,6 +1,7 @@
 # Response cho API nhận lại khi thành công
 # Data thay đổi tuỳ vào từng endpoint khác nhau
 type: object
+description: Response wrapper chuẩn cho API thành công.
 required:
   - success
   - error
@@ -8,14 +9,11 @@ required:
 properties:
   success:
     type: boolean
+    description: Cho biết request đã được xử lý thành công.
     example: true
-    description: Trạng thái xử lý của request — true nếu thành công
   error:
-    type: ['null']
-    example:
-    description: Thông tin lỗi — null khi request thành công
+    type: ["null"]
+    description: Thông tin lỗi, luôn bằng null khi request thành công.
+    example: null
   data:
-    description: Dữ liệu trả về tuỳ vào từng endpoint khác nhau
-x-manual-edit-fields:
-  - properties.error.description
-  - properties.success.description
+    description: "Dữ liệu trả về tuỳ vào từng endpoint khác nhau"

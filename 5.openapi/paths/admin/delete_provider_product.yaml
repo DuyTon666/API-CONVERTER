@@ -1,25 +1,26 @@
 delete:
   summary: Xóa sản phẩm của nhà cung cấp
   operationId: deleteProviderProduct
-  description: Xóa một sản phẩm cụ thể thuộc nhà cung cấp dựa trên mã nhà cung 
-    cấp và ID sản phẩm. Thao tác này chỉ dành cho quản trị viên và không thể 
-    hoàn tác sau khi thực hiện.
+  description: Xóa một sản phẩm cụ thể của nhà cung cấp dựa trên mã nhà cung cấp và ID sản phẩm. Chỉ quản trị viên có 
+    quyền thực hiện thao tác này và sản phẩm sẽ bị xóa vĩnh viễn khỏi hệ thống.
   tags:
-    - Admin
+  - Admin
   security:
-    - bearerAuth: []
+  - bearerAuth: []
   x-permission: ''
   parameters:
-    - name: provider_code
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
+  - name: provider_code
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'provider_code'.
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'id'.
   responses:
     '200':
       description: Thành công
@@ -37,64 +38,62 @@ delete:
                     type: string
                     readOnly: true
     '401':
-      $ref: ../../components/responses/Unauthorized.yaml
+      $ref: "../../components/responses/Unauthorized.yaml"
     '403':
-      $ref: ../../components/responses/Forbidden.yaml
+      $ref: "../../components/responses/Forbidden.yaml"
     '404':
-      $ref: ../../components/responses/NotFound.yaml
+      $ref: "../../components/responses/NotFound.yaml"
     '500':
-      $ref: ../../components/responses/InternalError.yaml
+      $ref: "../../components/responses/InternalError.yaml"
     '400':
-      $ref: ../../components/responses/BadRequest.yaml
+      $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
     '409':
-      $ref: ../../components/responses/Conflict.yaml
+      $ref: "../../components/responses/Conflict.yaml"
     '429':
-      $ref: ../../components/responses/TooManyRequests.yaml
+      $ref: "../../components/responses/TooManyRequests.yaml"
     '502':
-      $ref: ../../components/responses/BadGateway.yaml
+      $ref: "../../components/responses/BadGateway.yaml"
   requestBody:
     required: false
     content:
       application/json:
         schema:
-          $ref: ../../components/schemas/admin/DeleteProviderProductRequest.yaml
+          $ref: "../../components/schemas/admin/DeleteProviderProductRequest.yaml"
   x-error-responses:
     '409':
-      - code: '4090'
-        category: Idempotency
-        message: Idempotency-Key đang xử lý (concurrent)
-      - code: '4091'
-        category: Idempotency
-        message: Double submit — payload trùng trong dedup window
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
     '401':
-      - code: '4101'
-        category: Auth
-        message: Thiếu Authorization header
-      - code: '4102'
-        category: Auth
-        message: Bearer Token không hợp lệ / hết hạn
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
     '403':
-      - code: '4103'
-        category: Auth
-        message: Client không có scope=admin
-      - code: '4108'
-        category: Auth
-        message: IP không được phép
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
     '422':
-      - code: '4200'
-        category: Input
-        message: Dữ liệu request không hợp lệ (validate chung)
-      - code: '4409'
-        category: Business
-        message: Provider không tồn tại hoặc đã bị tắt
-      - code: '4407'
-        category: Business
-        message: Không thể xóa — vẫn còn Order active sử dụng sản phẩm
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    - code: '4409'
+      category: Business
+      message: Provider không tồn tại hoặc đã bị tắt
+    - code: '4407'
+      category: Business
+      message: Không thể xóa — vẫn còn Order active sử dụng sản phẩm
     '404':
-      - code: '4004'
-        category: Not Found
-        message: Không tìm thấy sản phẩm (hoặc đã soft-deleted trước đó)
-  x-manual-edit-fields:
-    - responses[200].content.application/json.schema.allOf
+    - code: '4004'
+      category: Not Found
+      message: Không tìm thấy sản phẩm (hoặc đã soft-deleted trước đó)

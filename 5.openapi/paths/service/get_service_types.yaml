@@ -1,59 +1,54 @@
 get:
-  summary: Lấy danh sách loại dịch vụ hỗ trợ
+  summary: Lấy danh sách loại dịch vụ hệ thống support
   operationId: getServiceTypes
-  description: API trả về danh sách tất cả các loại dịch vụ hiện có trong hệ 
-    thống support, giúp người dùng hoặc hệ thống client xác định đúng loại dịch 
-    vụ cần sử dụng. Chỉ các loại dịch vụ đang hoạt động và được kích hoạt mới 
-    được trả về trong kết quả.
+  description: API trả về danh sách tất cả các loại dịch vụ hiện có trong hệ thống hỗ trợ khách hàng. Dữ liệu được sử 
+    dụng để phân loại và định tuyến các yêu cầu hỗ trợ đến đúng bộ phận xử lý.
   tags:
-    - Service
+  - Service
   security:
-    - bearerAuth: []
+  - bearerAuth: []
   x-permission: ''
   parameters:
-    - name: user_id
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 0
-      description: Không truyền sẽ trả về tất cả loại dịch vụ
+  - name: user_id
+    in: query
+    required: false
+    schema:
+      type: integer
+    description: "Không truyền sẽ trả về tất cả loại dịch vụ\nTruyền sẽ trả về danh sách loại dịch vụ khách đã\nđăng ký"
   responses:
     '200':
       description: Thành công
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/StandardSuccess.yaml
+            $ref: "../../components/schemas/common/StandardSuccess.yaml"
           example:
             success: true
             data:
             error:
     '401':
-      $ref: ../../components/responses/Unauthorized.yaml
+      $ref: "../../components/responses/Unauthorized.yaml"
     '403':
-      $ref: ../../components/responses/Forbidden.yaml
+      $ref: "../../components/responses/Forbidden.yaml"
     '404':
-      $ref: ../../components/responses/NotFound.yaml
+      $ref: "../../components/responses/NotFound.yaml"
     '500':
-      $ref: ../../components/responses/InternalError.yaml
+      $ref: "../../components/responses/InternalError.yaml"
     '400':
-      $ref: ../../components/responses/BadRequest.yaml
+      $ref: "../../components/responses/BadRequest.yaml"
     '422':
-      $ref: ../../components/responses/StandardError422.yaml
+      $ref: "../../components/responses/StandardError422.yaml"
     '409':
-      $ref: ../../components/responses/Conflict.yaml
+      $ref: "../../components/responses/Conflict.yaml"
     '429':
-      $ref: ../../components/responses/TooManyRequests.yaml
+      $ref: "../../components/responses/TooManyRequests.yaml"
     '502':
-      $ref: ../../components/responses/BadGateway.yaml
+      $ref: "../../components/responses/BadGateway.yaml"
   x-error-responses:
     '401':
-      - code: '4102'
-        category: Auth
-        message: Token không hợp lệ / hết hạn
-      - code: '4108'
-        category: Auth
-        message: IP không được phép truy cập
-  x-manual-edit-fields:
-    - parameters[name=user_id].schema.default
+    - code: '4102'
+      category: Auth
+      message: Token không hợp lệ / hết hạn
+    - code: '4108'
+      category: Auth
+      message: IP không được phép truy cập

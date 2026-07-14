@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-07-07T15:16:43.418359",
+  "generated_at": "2026-07-14T13:38:16.004790",
   "module": "csr",
-  "batch_timestamp": "2026-07-07 15:16:41",
+  "batch_timestamp": "2026-07-14 13:34:39",
   "operations": {
-    "generateCsrRequest": {
+    "generateCsr": {
       "method": "post",
       "path": "/v1/csr/generate",
       "source_file": "API_csr_generate.docx",
-      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/csr/generate_csr_request.yaml",
+      "output_yaml": "/home/nvpa/Downloads/THUCTAP/API-CONVERTER/5.openapi/paths/csr/generate_csr.yaml",
       "errors": {
         "409": [
           {

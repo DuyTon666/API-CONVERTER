@@ -1,0 +1,77 @@
+version: 1
+
+column_aliases:
+  field_name:
+    - "Field"
+    - "Field Name"
+    - "Tên"
+    - "Tên trường"
+    - "Trường"
+    - "Nhóm / Trường"
+    - "Property"
+    - "Attribute"
+
+  type:
+    - "Kiểu"
+    - "Kiểu dữ liệu"
+    - "Type"
+    - "Data Type"
+    - "Datatype"
+
+  description:
+    - "Mô tả"
+    - "Description"
+    - "Ghi chú"
+    - "Note"
+
+type_aliases:
+  string:
+    - "String"
+    - "Text"
+    - "VARCHAR"
+    - "CHAR"
+    - "Date"
+    - "DateTime"
+    - "Timestamp"
+
+  integer:
+    - "Integer"
+    - "Int"
+    - "BIGINT"
+    - "SmallInt"
+
+  number:
+    - "Number"
+    - "Float"
+    - "Double"
+    - "Decimal"
+
+  boolean:
+    - "Boolean"
+    - "Bool"
+
+  object:
+    - "Object"
+    - "JSON Object"
+
+  array:
+    - "Array"
+    - "List"
+    - "Mảng"
+    - "Danh sách"
+
+  array_object:
+    - "Array<Object>"
+    - "Array of Object"
+    - "List<Object>"
+    - "List of Object"
+    - "Object[]"
+
+  null:
+    - "Null"
+
+array_description_prefixes:
+  - "Mảng"
+  - "Danh sách"
+  - "Array"
+  - "List"

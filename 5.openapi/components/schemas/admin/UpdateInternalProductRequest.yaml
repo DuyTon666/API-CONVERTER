@@ -11,34 +11,42 @@ example:
 properties:
   name:
     type: string
+    description: Tên hiển thị tiếng Việt (≤ 200 ký tự).
     example: SSL DV Single Domain (cập nhật)
-    description: Tên hiển thị.
+    maximum: 200
   name_en:
     type: string
+    description: Tên tiếng Anh (optional, ≤ 200 ký tự).
     example: '...'
-    description: Trường `name_en`.
   description:
     type: string
+    description: Mô tả hiển thị UI.
     example: '...'
-    description: Mô tả chi tiết.
   retail_price_vnd:
-    type: integer
+    type: number
+    description: Giá bán lẻ đề xuất (VND/năm) cho customer UI.
     example: 280000
-    description: Trường `retail_price_vnd`.
+    minimum: 0
   is_enabled:
     type: boolean
+    description: Bật/tắt hiển thị/bán. true = được chọn cho order mới.
     example: true
-    description: Trường `is_enabled`.
   display_order:
     type: integer
+    description: Thứ tự hiển thị UI (ascending). Mặc định 0.
     example: 15
-    description: Trường `display_order`.
   default_san:
-    type: integer
+    type:
+      - integer
+      - 'null'
+    description: '>= 0; null = xóa giá trị'
     example: 0
-    description: Trường `default_san`.
+    minimum: 0
   max_san:
-    type: integer
+    type:
+      - integer
+      - 'null'
+    description: '>= 1; null = xóa giá trị'
     example: 10
-    description: Trường `max_san`.
+    minimum: 1
 description: Schema `UpdateInternalProductRequest`.

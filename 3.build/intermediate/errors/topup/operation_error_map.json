@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-07T13:07:01.507700",
+  "generated_at": "2026-07-14T13:38:21.825319",
   "module": "topup",
-  "batch_timestamp": "2026-07-07 13:06:40",
+  "batch_timestamp": "2026-07-14 13:37:51",
   "operations": {
     "orderPlanTopup": {
       "method": "post",
@@ -12,143 +12,202 @@
         "422": [
           {
             "code": "4221",
-            "category": "",
+            "category": "Validation",
             "message": "external_account_id là bắt buộc.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "field": "external_account_id",
+            "source_type": "validation",
+            "source_profile": "error_validation_with_field"
           },
           {
             "code": "4222",
-            "category": "",
+            "category": "Validation",
             "message": "external_account_id phải là số nguyên ≥ 1.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "field": "external_account_id",
+            "source_type": "validation",
+            "source_profile": "error_validation_with_field"
           },
           {
             "code": "4223",
-            "category": "",
+            "category": "Validation",
             "message": "customer_id là bắt buộc.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "field": "customer_id",
+            "source_type": "validation",
+            "source_profile": "error_validation_with_field"
           },
           {
             "code": "4224",
-            "category": "",
+            "category": "Validation",
             "message": "customer_id không được vượt quá 255 ký tự.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "field": "customer_id",
+            "source_type": "validation",
+            "source_profile": "error_validation_with_field"
           },
           {
             "code": "6010",
-            "category": "",
+            "category": "Validation",
             "message": "core_plan_id là bắt buộc.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "field": "core_plan_id",
+            "source_type": "validation",
+            "source_profile": "error_validation_with_field"
           },
           {
             "code": "6011",
-            "category": "",
+            "category": "Validation",
             "message": "core_plan_id không được vượt quá 100 ký tự.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "field": "core_plan_id",
+            "source_type": "validation",
+            "source_profile": "error_validation_with_field"
           },
           {
             "code": "6012",
-            "category": "",
+            "category": "Validation",
             "message": "plan_quantity là bắt buộc.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "field": "plan_quantity",
+            "source_type": "validation",
+            "source_profile": "error_validation_with_field"
           },
           {
             "code": "6013",
-            "category": "",
+            "category": "Validation",
             "message": "plan_quantity phải là số nguyên ≥ 1.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "field": "plan_quantity",
+            "source_type": "validation",
+            "source_profile": "error_validation_with_field"
           },
           {
             "code": "6014",
-            "category": "",
+            "category": "Validation",
             "message": "plan_quantity không được vượt quá 100.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "field": "plan_quantity",
+            "source_type": "validation",
+            "source_profile": "error_validation_with_field"
           },
           {
             "code": "6002",
-            "category": "",
+            "category": "Business",
             "message": "Đơn hàng tìm được không phải loại Multi-Domain/FLEX.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "suggested_action": "Không nên xảy ra nếu query đúng. Báo lỗi hệ thống.",
+            "source_type": "business",
+            "source_profile": "error_business_with_suggested_action"
           },
           {
             "code": "6003",
-            "category": "",
+            "category": "Business",
             "message": "Đơn hàng ở trạng thái không cho phép top-up (EXPIRED, FAILED, CANCELED...).",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "suggested_action": "Đơn hàng đã ở trạng thái terminal — không thể thêm SAN.",
+            "source_type": "business",
+            "source_profile": "error_business_with_suggested_action"
+          },
+          {
+            "code": "6004",
+            "category": "Business",
+            "message": "Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn hàng.",
+            "http_status_source": "document",
+            "suggested_action": "Admin cần tạo InternalProduct loại SAN_TOPUP và cấu hình mapping với provider tương ứng.",
+            "source_type": "business",
+            "source_profile": "error_business_with_suggested_action"
           },
           {
             "code": "6005",
-            "category": "",
+            "category": "Business",
             "message": "Tổng SAN sau top-up vượt quá giới hạn tối đa (max_san).",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "suggested_action": "Giảm plan_quantity hoặc liên hệ provider để nâng giới hạn.",
+            "source_type": "business",
+            "source_profile": "error_business_with_suggested_action"
           },
           {
             "code": "6006",
-            "category": "",
+            "category": "Business",
             "message": "Đơn hàng chưa được gán provider (chưa qua routing).",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "suggested_action": "Top-up chỉ khả dụng sau khi đơn hàng đã được tạo và qua bước routing.",
+            "source_type": "business",
+            "source_profile": "error_business_with_suggested_action"
           },
           {
             "code": "4200",
-            "category": "",
+            "category": "Input",
             "message": "Dữ liệu request không hợp lệ (validate chung)",
-            "http_status_source": "global_map"
+            "http_status_source": "document",
+            "source_type": "common",
+            "source_profile": "error_common_with_category"
           }
         ],
         "404": [
           {
             "code": "6001",
-            "category": "",
+            "category": "Business",
             "message": "Không tìm thấy đơn hàng MULTI_DOMAIN/FLEX đang active cho account này.",
-            "http_status_source": "override"
-          },
-          {
-            "code": "6004",
-            "category": "",
-            "message": "Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn hàng.",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "suggested_action": "Kiểm tra external_account_id có đúng không. Account cần có đơn hàng SSL Multi-Domain đang active trước khi top-up.",
+            "source_type": "business",
+            "source_profile": "error_business_with_suggested_action"
           }
         ],
         "409": [
           {
             "code": "4090",
-            "category": "",
+            "category": "Idempotency",
             "message": "Idempotency-Key đang xử lý (concurrent)",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "source_type": "common",
+            "source_profile": "error_common_with_category"
           },
           {
             "code": "4091",
-            "category": "",
+            "category": "Idempotency",
             "message": "Double submit — payload trùng trong dedup window",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "source_type": "common",
+            "source_profile": "error_common_with_category"
           }
         ],
         "401": [
           {
             "code": "4101",
-            "category": "",
+            "category": "Auth",
             "message": "Thiếu Authorization header",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "source_type": "common",
+            "source_profile": "error_common_with_category"
           },
           {
             "code": "4102",
-            "category": "",
+            "category": "Auth",
             "message": "Bearer Token không hợp lệ / hết hạn",
-            "http_status_source": "global_map"
-          },
-          {
-            "code": "4108",
-            "category": "",
-            "message": "IP không được phép",
-            "http_status_source": "global_map"
+            "http_status_source": "document",
+            "source_type": "common",
+            "source_profile": "error_common_with_category"
           }
         ],
         "403": [
           {
             "code": "4103",
-            "category": "",
+            "category": "Auth",
             "message": "Client không có scope=admin",
-            "http_status_source": "override"
+            "http_status_source": "document",
+            "source_type": "common",
+            "source_profile": "error_common_with_category"
+          },
+          {
+            "code": "4108",
+            "category": "Auth",
+            "message": "IP không được phép",
+            "http_status_source": "document",
+            "source_type": "common",
+            "source_profile": "error_common_with_category"
           }
         ]
       }

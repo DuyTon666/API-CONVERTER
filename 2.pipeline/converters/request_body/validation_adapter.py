@@ -77,11 +77,32 @@ _MAXIMUM_RE = re.compile(
     re.UNICODE,
 )
 
-# regex ^...$
+# regex ^...$ — ưu tiên bắt đúng token có anchor ^...$ ở bất kỳ đâu trong
+# câu, vì text mô tả thường chèn thêm chữ giữa "regex" và pattern thật
+# (vd tiếng Việt "regex cơ bản: ^...$" — nếu bắt "\S+" ngay sau "regex "
+# sẽ ăn nhầm chữ "cơ"). Backtrack của \S*\$ tự dừng đúng ở dấu $ cuối,
+# không cuốn theo dấu câu/ngoặc phía sau khi pattern dính liền câu
+# (vd "...regex ^[A-Z0-9_-]{2,64}$. Sai" không có khoảng trắng trước ".").
+_PATTERN_ANCHORED_RE = re.compile(r'(\^\S*\$)')
+
+# Fallback khi pattern không có anchor ^...$ (vd "Regex: [A-Z0-9_]{2,32}.")
 _PATTERN_RE = re.compile(
-    r'regex\s+(\S+)',
+    r'regex[:\s]+(\S+)',
     re.IGNORECASE,
 )
+
+
+def _strip_trailing_punctuation(pattern: str) -> str:
+    """
+    Bỏ dấu câu cuối câu (., )) vô tình bị \\S+ cuốn theo do pattern
+    nằm cuối câu / trong ngoặc mà không có khoảng trắng phân tách.
+    Không bỏ ')' nếu nó cân bằng với '(' còn lại trong pattern.
+    """
+    while pattern and pattern[-1] in ".)":
+        if pattern[-1] == ")" and pattern.count("(") >= pattern.count(")"):
+            break
+        pattern = pattern[:-1]
+    return pattern
 
 # enum dạng ∈ {A, B, C} hoặc ∈ {2048, 4096}
 _ENUM_SET_RE = re.compile(
@@ -215,14 +236,20 @@ def _extract_constraints_from_segment(
             source_text=segment.strip(),
         ))
 
-    # pattern (regex ^...$)
-    m = _PATTERN_RE.search(segment)
-    if m:
+    # pattern (regex ^...$) — thử anchored trước, fallback sau
+    m = _PATTERN_ANCHORED_RE.search(segment)
+    pattern_value = m.group(1) if m else None
+    if pattern_value is None:
+        m = _PATTERN_RE.search(segment)
+        if m:
+            pattern_value = _strip_trailing_punctuation(m.group(1))
+
+    if pattern_value:
         results.append(ConstraintEvidence(
             target_path=field_path,
             constraint_type="pattern",
-            value_raw=m.group(1),
-            value_parsed=m.group(1),
+            value_raw=pattern_value,
+            value_parsed=pattern_value,
             parse_confidence=1.0,
             source_text=segment.strip(),
         ))
@@ -248,9 +275,11 @@ def _extract_constraints_from_segment(
             source_text=segment.strip(),
         ))
 
-    # format hints
+    # format hints — dùng word-boundary, không phải substring thô, vì
+    # keyword ngắn như "date" khớp nhầm vào giữa từ khác (vd "vali-DATE",
+    # "up-DATE", "man-DATE").
     for keyword, fmt in format_hints.items():
-        if keyword in seg_lower:
+        if re.search(r'\b' + re.escape(keyword) + r'\b', seg_lower):
             confidence = 1.0
             non_standard = {"phone", "iso3166-alpha2"}
             if fmt in non_standard:
@@ -282,8 +311,12 @@ _FIELD_LINE_RE = re.compile(
 
 # Nhận diện dạng "field_name constraint. other_field constraint."
 # Tách theo pattern: <word_or_path> <text>.
+# (?:\\.|[^.])+ thay vì [^.]+ — không coi dấu "." bị escape (\.) là dấu
+# kết câu, vì constraint text hay chèn regex pattern thật có chứa "\."
+# (vd JSONPath "^\$(\.[A-Za-z_]...)*$") — nếu không, câu bị cắt cụt ngay
+# tại dấu chấm đầu tiên bên trong chính regex đó.
 _MULTI_FIELD_RE = re.compile(
-    r'([\w.]+)\s+([^.]+\.)',
+    r'([\w.]+)\s+((?:\\.|[^.])+\.)',
     re.UNICODE,
 )
 

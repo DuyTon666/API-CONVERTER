@@ -1,8 +1,8 @@
 post:
   summary: Tạo đánh giá cho ticket của khách hàng
   operationId: createTicketRating
-  description: API cho phép khách hàng gửi đánh giá (rating) cho một ticket hỗ trợ cụ thể sau khi ticket đã được xử lý. 
-    Mỗi ticket chỉ được đánh giá một lần và phải thuộc về đúng user_id tương ứng.
+  description: API cho phép khách hàng tạo đánh giá (rating) cho một ticket hỗ trợ đã xử lý. Mỗi ticket chỉ được đánh 
+    giá một lần và phải thuộc về đúng người dùng tương ứng.
   tags:
   - Ticket
   security:

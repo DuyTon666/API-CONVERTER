@@ -11,7 +11,9 @@ properties:
     type: string
     description: Tên dịch vụ tiếng anh
   domain:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Tên domain
   service_status:
     type: string
@@ -32,13 +34,19 @@ properties:
     type: integer
     description: Trạng thái tự động gia hạn nếu có auto_renew trong
   register_date:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Ngày đăng ký (Y-m-d H:i:s) sẽ trả giá trị nếu có register_date
   dnssec_status:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Trạng thái dnssec sẽ trả giá trị nếu có dnssec_status trong
   owner:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Tên chủ thể sẽ trả giá trị nếu có owner trong
   name_package:
     type: string
@@ -61,3 +69,4 @@ properties:
   type_code:
     type: string
     description: Mã code loại dịch vụ
+description: Schema `GetUserServicesDataDataList`.

@@ -1,8 +1,8 @@
 get:
   summary: Lấy chi tiết sản phẩm nội bộ theo ID
   operationId: getInternalProductDetail
-  description: Truy xuất thông tin chi tiết của một sản phẩm nội bộ dựa trên ID được cung cấp. Chỉ quản trị viên có 
-    quyền truy cập mới được phép xem thông tin sản phẩm nội bộ này.
+  description: API truy xuất thông tin chi tiết của một sản phẩm nội bộ dựa trên ID được cung cấp. Chỉ dành cho quản trị
+    viên có quyền truy cập hệ thống nội bộ, không áp dụng cho người dùng thông thường.
   tags:
   - Admin
   security:

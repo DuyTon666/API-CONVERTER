@@ -12,3 +12,4 @@ properties:
   expiried_services:
     type: integer
     description: Số dịch vụ đã hết hạn
+description: Schema `GetUserStatisticsData`.

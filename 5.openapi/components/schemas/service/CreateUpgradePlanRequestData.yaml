@@ -1,11 +1,18 @@
 type: object
 properties:
   pin:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Mã đơn hàng.
   send_email_list:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Danh sách email đã gửi thông tin đơn hàng (mỗi email
   upgrade_link:
-    type: string
+    type:
+      - string
+      - 'null'
     description: Đường dẫn đến trang nâng cấp.
+description: Schema `CreateUpgradePlanRequestData`.

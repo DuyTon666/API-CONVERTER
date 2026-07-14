@@ -1,8 +1,8 @@
 post:
   summary: Tạo đơn hàng mới trong hệ thống
   operationId: createOrder
-  description: Tạo một đơn hàng mới trong hệ thống với thông tin sản phẩm, số lượng và thông tin khách hàng. Đơn hàng 
-    chỉ được tạo thành công khi tồn kho đủ và thông tin thanh toán hợp lệ.
+  description: Tạo một đơn hàng mới trong hệ thống, yêu cầu thông tin sản phẩm và khách hàng hợp lệ. Đơn hàng chỉ được 
+    tạo khi số lượng tồn kho đủ và khách hàng đã được xác thực.
   tags:
   - Order
   security:
@@ -39,6 +39,12 @@ post:
       $ref: "../../components/responses/TooManyRequests.yaml"
     '502':
       $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/order/CreateOrderRequest.yaml"
   x-error-responses:
     '409':
     - code: '4090'

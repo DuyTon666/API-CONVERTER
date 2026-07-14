@@ -1,8 +1,8 @@
 post:
-  summary: Đặt kế hoạch nạp tiền vào tài khoản
+  summary: Đặt kế hoạch nạp tiền cho tài khoản
   operationId: orderPlanTopup
-  description: API cho phép người dùng đặt kế hoạch nạp tiền vào tài khoản theo gói dịch vụ đã chọn. Yêu cầu thông tin 
-    gói nạp và phương thức thanh toán hợp lệ trước khi thực hiện giao dịch.
+  description: API cho phép người dùng đặt lệnh nạp tiền theo gói kế hoạch đã chọn. Yêu cầu thông tin gói nạp hợp lệ và 
+    tài khoản phải đang ở trạng thái hoạt động.
   tags:
   - Topup
   security:
@@ -48,72 +48,110 @@ post:
   x-error-responses:
     '422':
     - code: '4221'
-      category: ''
+      category: Validation
       message: external_account_id là bắt buộc.
+      field: external_account_id
+      source_type: validation
     - code: '4222'
-      category: ''
+      category: Validation
       message: external_account_id phải là số nguyên ≥ 1.
+      field: external_account_id
+      source_type: validation
     - code: '4223'
-      category: ''
+      category: Validation
       message: customer_id là bắt buộc.
+      field: customer_id
+      source_type: validation
     - code: '4224'
-      category: ''
+      category: Validation
       message: customer_id không được vượt quá 255 ký tự.
+      field: customer_id
+      source_type: validation
     - code: '6010'
-      category: ''
+      category: Validation
       message: core_plan_id là bắt buộc.
+      field: core_plan_id
+      source_type: validation
     - code: '6011'
-      category: ''
+      category: Validation
       message: core_plan_id không được vượt quá 100 ký tự.
+      field: core_plan_id
+      source_type: validation
     - code: '6012'
-      category: ''
+      category: Validation
       message: plan_quantity là bắt buộc.
+      field: plan_quantity
+      source_type: validation
     - code: '6013'
-      category: ''
+      category: Validation
       message: plan_quantity phải là số nguyên ≥ 1.
+      field: plan_quantity
+      source_type: validation
     - code: '6014'
-      category: ''
+      category: Validation
       message: plan_quantity không được vượt quá 100.
+      field: plan_quantity
+      source_type: validation
     - code: '6002'
-      category: ''
+      category: Business
       message: Đơn hàng tìm được không phải loại Multi-Domain/FLEX.
+      suggested_action: Không nên xảy ra nếu query đúng. Báo lỗi hệ thống.
+      source_type: business
     - code: '6003'
-      category: ''
+      category: Business
       message: Đơn hàng ở trạng thái không cho phép top-up (EXPIRED, FAILED, CANCELED...).
+      suggested_action: Đơn hàng đã ở trạng thái terminal — không thể thêm SAN.
+      source_type: business
+    - code: '6004'
+      category: Business
+      message: Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn hàng.
+      suggested_action: Admin cần tạo InternalProduct loại SAN_TOPUP và cấu hình mapping với provider tương ứng.
+      source_type: business
     - code: '6005'
-      category: ''
+      category: Business
       message: Tổng SAN sau top-up vượt quá giới hạn tối đa (max_san).
+      suggested_action: Giảm plan_quantity hoặc liên hệ provider để nâng giới hạn.
+      source_type: business
     - code: '6006'
-      category: ''
+      category: Business
       message: Đơn hàng chưa được gán provider (chưa qua routing).
+      suggested_action: Top-up chỉ khả dụng sau khi đơn hàng đã được tạo và qua bước routing.
+      source_type: business
     - code: '4200'
-      category: ''
+      category: Input
       message: Dữ liệu request không hợp lệ (validate chung)
+      source_type: common
     '404':
     - code: '6001'
-      category: ''
+      category: Business
       message: Không tìm thấy đơn hàng MULTI_DOMAIN/FLEX đang active cho account này.
-    - code: '6004'
-      category: ''
-      message: Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn hàng.
+      suggested_action: Kiểm tra external_account_id có đúng không. Account cần có đơn hàng SSL Multi-Domain đang active
+        trước khi top-up.
+      source_type: business
     '409':
     - code: '4090'
-      category: ''
+      category: Idempotency
       message: Idempotency-Key đang xử lý (concurrent)
+      source_type: common
     - code: '4091'
-      category: ''
+      category: Idempotency
       message: Double submit — payload trùng trong dedup window
+      source_type: common
     '401':
     - code: '4101'
-      category: ''
+      category: Auth
       message: Thiếu Authorization header
+      source_type: common
     - code: '4102'
-      category: ''
+      category: Auth
       message: Bearer Token không hợp lệ / hết hạn
-    - code: '4108'
-      category: ''
-      message: IP không được phép
+      source_type: common
     '403':
     - code: '4103'
-      category: ''
+      category: Auth
       message: Client không có scope=admin
+      source_type: common
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+      source_type: common

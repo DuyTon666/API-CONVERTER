@@ -4,124 +4,203 @@ properties:
     type: string
     description: 'CSR PEM. Bắt buộc. Format: "-----BEGIN CERTIFICATE REQUEST-----...".
       CN hoặc SAN phải chứa primary_domain.'
-  key_type:
-    type: string
-    description: Không còn sử dụng (ignored). Giữ lại để tương thích ngược.
+    example: "-----BEGIN CERTIFICATE REQUEST-----\nMIIC...\n-----END CERTIFICATE REQUEST-----"
   web_server_type:
     type: string
     description: 'apache | nginx | iis | tomcat | cpanel | plesk | other. Mặc định:
       other.'
+    enum:
+      - apache
+      - nginx
+      - iis
+      - tomcat
+      - cpanel
+      - plesk
+      - other
+    example: nginx
   signature_hash_algorithm:
     type: string
     description: SHA2-256 | SHA2-384 | SHA2-512. Mặc định SHA2-256.
+    enum:
+      - SHA2-256
+      - SHA2-384
+      - SHA2-512
+    example: SHA2-256
   auto_www:
     type: boolean
     description: Tự động thêm www.{primary_domain} vào SAN. Mặc định true.
+    example: true
   cert_transparency:
     type: boolean
     description: Ghi vào Certificate Transparency log. Mặc định true.
-  dcv_method:
-    type: string
-    description: EMAIL | HTTP | CNAME. Bắt buộc. MULTI_DOMAIN/FLEX không cho 
-      phép EMAIL.
+    example: true
   approver_email:
     type: string
     description: Email phê duyệt DCV. Bắt buộc khi dcv_method = EMAIL.
+    format: email
+    example: admin@example.com
   san_list:
     type: array
     description: Danh sách SAN. Chỉ áp dụng với MULTI_DOMAIN/FLEX — bị bỏ qua 
       với cert_type khác. Không truyền hoặc [] → xóa san_list cũ.
-    items: {}
+    example:
+      - www.example.com
+      - mail.example.com
+    items:
+      type: string
+      example: www.example.com
   contact_admin:
     type: object
     description: Admin Contact. Bắt buộc mỗi lần gọi.
-    properties: {}
-  contact_admin.email:
-    type: string
-    description: RFC 5322.
-  contact_admin.first_name:
-    type: string
-    description: Tên.
-  contact_admin.last_name:
-    type: string
-    description: Họ.
-  contact_admin.phone:
-    type: string
-    description: E.164.
-  contact_admin.title:
-    type: string
-    description: Mr | Mrs | Ms | Dr | ...
+    example:
+      email: admin@example.com
+      first_name: Nguyen
+      last_name: Van A
+      phone: '+84901234567'
+      title: Mr
+    properties:
+      email:
+        type: string
+        description: RFC 5322.
+        example: admin@example.com
+      first_name:
+        type: string
+        description: Tên.
+        example: Nguyen
+      last_name:
+        type: string
+        description: Họ.
+        example: Van A
+      phone:
+        type: string
+        description: E.164.
+        example: '+84901234567'
+      title:
+        type: string
+        description: Mr | Mrs | Ms | Dr | ...
+        example: Mr
+    required:
+      - email
+      - first_name
+      - last_name
+      - phone
   contact_org:
     type: object
     description: Organization Contact. Bắt buộc mỗi lần gọi với mọi cert type.
-    properties: {}
-  contact_org.name:
-    type: string
-    description: Tên tổ chức.
-  contact_org.address:
-    type: string
-    description: Địa chỉ.
-  contact_org.province:
-    type: string
-    description: Tỉnh / Thành phố.
-  contact_org.country:
-    type: string
-    description: 'ISO 3166-1 alpha-2 (VD: VN, US).'
-  contact_org.postal_code:
-    type: string
-    description: Mã bưu chính.
-  contact_org.phone:
-    type: string
-    description: Số điện thoại tổ chức. E.164.
-  contact_org.business_number:
-    type: string
-    description: Số GPKD / mã số thuế. Bắt buộc với OV/EV.
-  contact_org.representative_name:
-    type: string
-    description: Tên người đại diện. Bắt buộc với OV/EV.
-  contact_org.duns:
-    type: string
-    description: D-U-N-S Number.
+    example:
+      name: Example Co., Ltd.
+      address: 123 Nguyen Trai
+      province: Ha Noi
+      country: VN
+      postal_code: '100000'
+      phone: '+84281234567'
+      business_number: '0300685209'
+      representative_name: Nguyen Van B
+      duns: null
+    properties:
+      name:
+        type: string
+        description: Tên tổ chức.
+        example: Example Co., Ltd.
+      address:
+        type: string
+        description: Địa chỉ.
+        example: 123 Nguyen Trai
+      province:
+        type: string
+        description: Tỉnh / Thành phố.
+        example: Ha Noi
+      country:
+        type: string
+        description: 'ISO 3166-1 alpha-2 (VD: VN, US).'
+        example: VN
+      postal_code:
+        type: string
+        description: Mã bưu chính.
+        example: '100000'
+      phone:
+        type: string
+        description: Số điện thoại tổ chức. E.164.
+        example: '+84281234567'
+      business_number:
+        type: string
+        description: Số GPKD / mã số thuế. Bắt buộc với OV/EV.
+        example: '0300685209'
+      representative_name:
+        type: string
+        description: Tên người đại diện. Bắt buộc với OV/EV.
+        example: Nguyen Van B
+      duns:
+        type:
+          - string
+          - 'null'
+        description: D-U-N-S Number.
+    required:
+      - name
+      - address
+      - province
+      - country
+      - postal_code
+      - phone
+      - business_number
+      - representative_name
   contact_tech:
     type: object
     description: Technical Contact. Bắt buộc mỗi lần gọi.
-    properties: {}
-  contact_tech.email:
+    example:
+      email: tech@example.com
+      first_name: Tran
+      last_name: Thi B
+      phone: '+84902345678'
+      title: Ms
+    properties:
+      email:
+        type: string
+        description: RFC 5322.
+        example: tech@example.com
+      first_name:
+        type: string
+        description: Tên.
+        example: Tran
+      last_name:
+        type: string
+        description: Họ.
+        example: Thi B
+      phone:
+        type: string
+        description: E.164.
+        example: '+84902345678'
+      title:
+        type: string
+        description: Mr | Mrs | Ms | Dr | ...
+        example: Ms
+    required:
+      - email
+      - first_name
+      - last_name
+      - phone
+  key_type:
     type: string
-    description: RFC 5322.
-  contact_tech.first_name:
+    description: Không còn sử dụng (ignored). Giữ lại để tương thích ngược.
+    enum:
+      - RSA_2048
+      - RSA_4096
+      - ECDSA_P256
+      - ECDSA_P384
+  dcv_method:
     type: string
-    description: Tên.
-  contact_tech.last_name:
-    type: string
-    description: Họ.
-  contact_tech.phone:
-    type: string
-    description: E.164.
-  contact_tech.title:
-    type: string
-    description: Mr | Mrs | Ms | Dr | ...
+    description: EMAIL | HTTP | CNAME. Bắt buộc. MULTI_DOMAIN/FLEX không cho 
+      phép EMAIL.
+    enum:
+      - EMAIL
+      - HTTP
+      - HTTPS
+      - CNAME
 required:
   - csr
   - dcv_method
   - approver_email
   - contact_admin
-  - contact_admin.email
-  - contact_admin.first_name
-  - contact_admin.last_name
-  - contact_admin.phone
   - contact_org
-  - contact_org.name
-  - contact_org.address
-  - contact_org.province
-  - contact_org.country
-  - contact_org.postal_code
-  - contact_org.phone
-  - contact_org.business_number
-  - contact_org.representative_name
   - contact_tech
-  - contact_tech.email
-  - contact_tech.first_name
-  - contact_tech.last_name
-  - contact_tech.phone
 description: Schema `SubmitCsrForOrderRequest`.

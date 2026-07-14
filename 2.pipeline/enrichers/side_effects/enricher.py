@@ -89,6 +89,38 @@ def enrich_side_effects(module: str | None = None, dry_run: bool = False) -> dic
         method = detail.get("method")
         output_path = entry.get("output")
 
+        if not output_path:
+            results.append(build_result(
+                entry,
+                "skipped",
+                reason="Thiếu output path trong side_effect_endpoint entry",
+            ))
+            continue
+
+        if not Path(output_path).exists():
+            results.append(build_result(
+                entry,
+                "skipped",
+                reason=f"Output YAML không tồn tại hoặc stale: {output_path}",
+            ))
+            continue
+
+        if not method:
+            results.append(build_result(
+                entry,
+                "skipped",
+                reason="Thiếu HTTP method trong side_effect_endpoint entry",
+            ))
+            continue
+
+        if not matched_rule or not matched_keyword:
+            results.append(build_result(
+                entry,
+                "skipped",
+                reason="Thiếu matched_rule/matched_keyword; cần review hoặc bổ sung rule trước khi inject",
+            ))
+            continue
+
         # Bước b: lookup template
         template = get_effect_template(matched_rule, matched_keyword)
         if template is None:

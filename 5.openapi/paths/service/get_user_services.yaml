@@ -1,8 +1,8 @@
 get:
   summary: Lấy danh sách dịch vụ của khách hàng
   operationId: getUserServices
-  description: API trả về danh sách tất cả dịch vụ đang được đăng ký bởi một khách hàng cụ thể dựa trên user_id. Chỉ trả
-    về các dịch vụ thuộc sở hữu của khách hàng đó, đảm bảo tính bảo mật và phân quyền dữ liệu.
+  description: API truy xuất toàn bộ danh sách dịch vụ đang được đăng ký bởi một khách hàng cụ thể dựa trên user_id. Chỉ
+    trả về các dịch vụ thuộc quyền sở hữu của khách hàng đó, đảm bảo tính bảo mật và phân quyền dữ liệu.
   tags:
   - Service
   security:
@@ -34,7 +34,32 @@ get:
     required: false
     schema:
       type: string
-    description: Nội dung cần tìm kiếm
+    description: "Nội dung cần tìm kiếm\n- Tối thiểu 4 ký tự\n- Tìm kiếm theo tên dịch vụ (tên gói), domain"
+  - name: type_id
+    in: query
+    required: false
+    schema:
+      type: integer
+    description: Id loại dịch vụ
+  - name: expired_before
+    in: query
+    required: false
+    schema:
+      type: integer
+    description: "Số ngày sắp hết hạn\n- VD: 30 -> 30 ngày trước khi hết hạn"
+  - name: auto_renew
+    in: query
+    required: false
+    schema:
+      type: integer
+    description: 'Trạng thái tự động gia hạn (0: không, 1: có)'
+  - name: status
+    in: query
+    required: false
+    schema:
+      type: string
+    description: "Trạng thái của dịch vụ\n- PENDING_TRANSFER_IN\n- PENDING_TRANSFER_OUT\n- PENDING_CREATE\n- ACTIVE\n- EXPIRED\n\
+      - REDEMPTION"
   responses:
     '200':
       description: Thành công

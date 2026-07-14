@@ -243,12 +243,19 @@ def build_for_module(module: str, batch_log_path: str, intermediate_dir: str, fo
                 e["code"] for e in file_to_errors[current_source_file][status_key]
             ]
             if effective_code not in existing_codes:
-                file_to_errors[current_source_file][status_key].append({
+                error_item = {
                     "code": effective_code,
                     "category": incoming.get("category", ""),
                     "message": incoming.get("message", ""),
                     "http_status_source": resolve_source,
-                })
+                }
+
+                for optional_key in ("field", "suggested_action", "source_type", "source_profile"):
+                    optional_value = incoming.get(optional_key)
+                    if optional_value:
+                        error_item[optional_key] = optional_value
+
+                file_to_errors[current_source_file][status_key].append(error_item)
 
     # Ghi pending_review.yaml nếu có mã chưa resolve được
     pending_path = os.path.join(module_intermediate, "pending_review.yaml")

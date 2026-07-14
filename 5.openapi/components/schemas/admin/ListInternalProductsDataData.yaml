@@ -1,0 +1,35 @@
+type: object
+properties:
+  id:
+    type: string
+    description: Mã id.
+    readOnly: true
+  code:
+    type: string
+    description: Mã số.
+  name:
+    type: string
+    description: Tên.
+  product_type:
+    type: string
+    description: Trường `product_type`.
+  cert_type:
+    type: string
+    description: Trường `cert_type`.
+  retail_price_vnd:
+    type: integer
+    description: Trường `retail_price_vnd`.
+  is_enabled:
+    type: boolean
+    description: Trường `is_enabled`.
+  display_order:
+    type: integer
+    description: Trường `display_order`.
+  mapping_count:
+    type: integer
+    description: Trường `mapping_count`.
+  updated_at:
+    type: string
+    description: Ngày cập nhật.
+    readOnly: true
+description: Schema `ListInternalProductsDataData`.

@@ -47,6 +47,32 @@ def get_effect_template(matched_rule: str, matched_keyword: str) -> dict | None:
         return None
     return group.get(matched_keyword)
 
+
+def find_effect_template_any_group(keyword: str) -> tuple[str, str] | None:
+    """
+    Tìm template cho `keyword` trên TẤT CẢ group trong effect_templates,
+    không giới hạn ở action_verbs/notification_keywords/async_keywords.
+
+    Dùng cho endpoint được path_classifier (LLM) gắn cờ 'action' — segment
+    LLM trả về không nằm trong rule keyword list nào (đó là lý do rule
+    match không bắt được), nhưng nếu ai đó đã khai báo sẵn template cho
+    đúng keyword đó dưới 1 group thì vẫn nên dùng được, thay vì luôn skip.
+
+    Trả (matched_rule, matched_keyword) nếu tìm thấy, None nếu không.
+    """
+    rules = load_rules()
+    templates = rules.get("effect_templates", {})
+    keyword_norm = keyword.lower()
+
+    for group, group_templates in templates.items():
+        if not isinstance(group_templates, dict):
+            continue
+        if keyword_norm in group_templates:
+            return group, keyword_norm
+
+    return None
+
+
 def get_confidence_thresholds() -> dict:
     """
     Trả về confidence_thresholds từ config.

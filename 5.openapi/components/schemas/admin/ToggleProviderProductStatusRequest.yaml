@@ -5,10 +5,13 @@ example:
 properties:
   is_enabled:
     type: boolean
+    description: Trạng thái mới. true = bật sản phẩm, false = tắt sản phẩm.
     example: true
-    description: Trường `is_enabled`.
   reason:
     type: string
+    description: Lý do toggle (ghi vào audit log để truy vết sau này). Tối đa 
+      500 ký tự.
     example: Tạm ngưng bán theo quyết định CEO
-    description: Lý do thực hiện thao tác.
+required:
+  - is_enabled
 description: Schema `ToggleProviderProductStatusRequest`.

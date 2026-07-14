@@ -1,8 +1,8 @@
 patch:
-  summary: Cập nhật sản phẩm của nhà cung cấp
+  summary: Cập nhật thông tin sản phẩm của nhà cung cấp
   operationId: updateProviderProduct
-  description: Cập nhật thông tin sản phẩm thuộc nhà cung cấp được chỉ định. Chỉ quản trị viên mới có quyền thực hiện 
-    thao tác này và cần cung cấp đúng mã nhà cung cấp cùng ID sản phẩm hợp lệ.
+  description: Cập nhật thông tin chi tiết của một sản phẩm thuộc nhà cung cấp xác định bởi provider_code và id sản 
+    phẩm. Chỉ các trường được gửi lên sẽ được cập nhật, đảm bảo tính toàn vẹn dữ liệu trong hệ thống quản trị.
   tags:
   - Admin
   security:

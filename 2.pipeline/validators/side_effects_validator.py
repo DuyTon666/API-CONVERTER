@@ -15,6 +15,7 @@ from validators.validation_model import (
 from validators.rule_engine import RuleEngine
 from validators.review_engine import ReviewEngine
 from enrichers.path_classifier import classify_path
+from enrichers.side_effects.config_loader import find_effect_template_any_group
 
 _CONFIDENCE_EMIT_DEFAULT = 0.75
 _CONFIDENCE_RULE_DEFAULT = 0.85
@@ -168,6 +169,16 @@ def validate_side_effects(module: str | None = None) -> None:
                 print(f"    -> classifier: action nhưng confidence={conf:.2f} <  {_CONFIDENCE_EMIT}, bỏ qua")
                 continue
 
+            # Segment mà classifier trả về (vd "reissue", "reveal-token")
+            # không nằm trong rule keyword list nào (đó là lý do rule_match
+            # ở trên không bắt được) — nhưng vẫn có thể đã có sẵn template
+            # khai báo cho đúng từ đó dưới 1 group. Nếu có thì gắn
+            # matched_rule/matched_keyword để enricher tự inject được,
+            # thay vì luôn rơi vào "thiếu matched_rule" một cách mơ hồ.
+            segment = classification.get("segment", "")
+            template_match = find_effect_template_any_group(segment) if segment else None
+            matched_rule, matched_keyword = template_match if template_match else (None, None)
+
             result = _build_result(
                 module          = mod_name,
                 filename        = filename,
@@ -177,6 +188,8 @@ def validate_side_effects(module: str | None = None) -> None:
                 source          = SOURCE_CLAUDE,
                 confidence      = conf,
                 severity        = SEVERITY_MEDIUM,
+                matched_rule    = matched_rule,
+                matched_keyword = matched_keyword,
                 classifier_reason = classification.get("reason"),
             )
             if reviewer.add(result):

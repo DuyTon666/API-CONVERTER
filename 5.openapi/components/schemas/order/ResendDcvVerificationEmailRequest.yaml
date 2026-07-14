@@ -4,6 +4,9 @@ example:
 properties:
   domain:
     type: string
+    description: Domain cần resend DCV email. Phải tồn tại trong dcv_records với
+      method=EMAIL.
     example: example.com
-    description: Trường `domain`.
+required:
+  - domain
 description: Schema `ResendDcvVerificationEmailRequest`.

@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-07T13:07:01.486440",
+  "generated_at": "2026-07-14T13:38:54.413323",
   "module": "statistic",
-  "batch_timestamp": "2026-07-07 13:05:41",
+  "batch_timestamp": "2026-07-14 13:36:51",
   "operations": {
     "getUserStatistics": {
       "method": "get",

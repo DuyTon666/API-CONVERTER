@@ -1,8 +1,8 @@
 post:
   summary: Tạo yêu cầu nâng cấp gói dịch vụ người dùng
-  operationId: createServiceUpgradePlanRequest
-  description: API cho phép người dùng tạo yêu cầu nâng cấp gói dịch vụ hiện tại lên gói cao hơn. Yêu cầu được gửi dựa 
-    trên ID người dùng và ID dịch vụ cụ thể, cần đảm bảo dịch vụ đang hoạt động trước khi thực hiện nâng cấp.
+  operationId: createUpgradePlanRequest
+  description: API cho phép người dùng gửi yêu cầu nâng cấp gói dịch vụ hiện tại lên gói cao hơn. Yêu cầu chỉ được tạo 
+    khi dịch vụ đang hoạt động và người dùng có quyền thực hiện nâng cấp.
   tags:
   - Service
   security:
@@ -32,7 +32,7 @@ post:
             - type: object
               properties:
                 data:
-                  $ref: "../../components/schemas/service/CreateServiceUpgradePlanRequestData.yaml"
+                  $ref: "../../components/schemas/service/CreateUpgradePlanRequestData.yaml"
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':
@@ -56,7 +56,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/service/CreateServiceUpgradePlanRequest.yaml"
+          $ref: "../../components/schemas/service/CreateUpgradePlanRequest.yaml"
   x-error-responses:
     '401':
     - code: '4102'

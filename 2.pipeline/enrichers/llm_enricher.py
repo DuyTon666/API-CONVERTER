@@ -7,9 +7,19 @@ _client = anthropic.Anthropic()
 
 def enrich(op: ParsedOperation, title: str = "") -> ParsedOperation:
     metadata = _call_llm(title=title, method=op.method, path=op.path)
+
     op.summary = metadata.get("summary", "") or title
-    op.operation_id = metadata.get("operationId", "") or _fallback_operation_id(op.method, op.path)
     op.description = metadata.get("description", "")
+
+    operation_id = str(metadata.get("operationId") or "").strip()
+    if not operation_id:
+        op.review_flags.append("llm_operation_id_missing")
+        raise RuntimeError(
+            f"LLM không trả operationId; từ chối fallback để tránh drift spec: "
+            f"{op.method} {op.path}"
+        )
+
+    op.operation_id = operation_id
     return op
 
 def _fallback_operation_id(method: str, path: str) -> str:
@@ -47,7 +57,7 @@ def _call_llm(title: str, method: str, path: str) -> dict:
 
     try:
         response = _client.messages.create(
-            model="cc/claude-sonnet-4-6",
+            model="claude-sonnet-4-6",
             max_tokens=200,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -55,7 +65,9 @@ def _call_llm(title: str, method: str, path: str) -> dict:
         return _parse_json(raw, fallback_title=title)
     except Exception as e:
         print(f"  [WARN] LLM call failed: {e}")
-        return {"summary": title, "operationId": "", "description": ""}
+        raise RuntimeError(
+            f"LLM metadata generation failed for {method} {path}"
+        ) from e
 
 def _parse_json(raw: str, fallback_title: str) -> dict:
     try:
