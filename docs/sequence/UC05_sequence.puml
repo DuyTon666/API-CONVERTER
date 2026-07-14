@@ -1,50 +1,54 @@
-@startuml UC05_KiemDuyetXuatYAML
+@startuml UC05_ChinhSuaDuyetNoiDung
 skinparam SequenceArrowColor #64748B
 skinparam SequenceBoxBorderColor #CBD5E1
 skinparam ParticipantBackgroundColor #F8FAFC
 skinparam ParticipantBorderColor #94A3B8
 
-title UC05 — Kiểm duyệt & xuất YAML
+title UC05 — Chỉnh sửa & duyệt nội dung
 
 actor "Người dùng" as User
-participant "Frontend" as FE
+participant "Frontend\n(BundleEditorModal)" as FE
 participant "Backend" as BE
-participant "File System" as FS
+participant "Tầng 2\n(5.openapi/paths,schemas)" as T2
+participant "Tầng 3\n(dist/openapi-bundled.yaml)" as T3
 
-User -> FE: Truy cập trang review job
-FE -> BE: GET /jobs/{job_id}
-BE --> FE: { files: [{ file_id, filename, status, flags }] }
-FE --> User: Hiển thị danh sách file\n(flagged / done / error)
+== Tab "Chỉnh sửa nội dung" (Form Editor) ==
+User -> FE: Mở operation muốn sửa
+FE -> BE: GET /docs/operations\nGET /docs/schema-fields
+BE -> T3: Đọc bundle hiện tại
+BE --> FE: summary/description/parameter/\nschema field description
 
-User -> FE: Chọn file flagged muốn review
-FE -> BE: GET /jobs/{job_id}/file/{file_id}
-BE -> FS: Đọc nội dung YAML
-FS --> BE: YAML content
-BE --> FE: YAML content
-FE --> User: Mở Monaco Editor\nhiển thị YAML
+User -> FE: Sửa nội dung, bấm Lưu
+FE -> BE: PATCH /docs/operations\nPATCH /docs/schema-fields
+BE -> T2: Ghi field + marker\nx-manual-edit-fields (ruamel.yaml, giữ format)
+BE -> T3: Ghi field tương ứng (đồng bộ 2 tầng)
+BE --> FE: 200 { updated: n }
 
-User -> User: Chỉnh sửa YAML (nếu cần)
+== Tab "YAML thô" (field bất kỳ, không giới hạn Form Editor) ==
+User -> FE: Chuyển tab YAML thô
+FE -> BE: GET /docs/bundle-content
+BE -> T3: Đọc toàn bộ nội dung
+BE --> FE: YAML content (Monaco Editor)
 
-alt Người dùng Approve
-  User -> FE: Bấm "Approve"
-  FE -> BE: POST /jobs/{job_id}/approve\n{ file_id }
-  BE -> BE: Đánh dấu file là "done"
+User -> FE: Sửa trực tiếp, bấm Lưu
+FE -> BE: PUT /docs/bundle-content
+alt YAML sai cú pháp
+  BE --> FE: 400 BUNDLE_INVALID_YAML
+else Hợp lệ
+  BE -> T2: Diff & ghi field thay đổi + marker field-path
+  BE -> T3: Ghi verbatim (giữ format gốc)
   BE --> FE: 200 OK
-  FE --> User: Cập nhật trạng thái ✓ Xong
-else Người dùng Reject
-  User -> FE: Bấm "Reject"
-  FE -> BE: POST /jobs/{job_id}/reject\n{ file_id }
-  BE -> BE: Đánh dấu file là "rejected"
-  BE --> FE: 200 OK
-  FE --> User: Cập nhật trạng thái ✕ Rejected
 end
 
-User -> FE: Bấm "Export"
-FE -> BE: POST /jobs/{job_id}/export
-BE -> FS: Ghi toàn bộ file "done"\nvào 5.openapi/
-FS --> BE: OK
-BE -> BE: Kích hoạt bundle → lint\n(UC09, UC10, UC11)
-BE --> FE: 200 OK\n{ spectral: [...], redocly: [...] }
-FE --> User: Hiển thị kết quả lint
+== Xung đột khi import lại đè lên sửa tay ==
+note over BE: Nếu import lại phát hiện tầng 1 đã đổi\nVÀ giá trị mới khác giá trị đã sửa tay\n→ ghi vào manual_edit_conflicts.json
+User -> FE: Mở "Xung đột sửa tay khi import lại"
+FE -> BE: GET /modules/manual-edit-conflicts
+BE --> FE: { operationId, field, old_value, new_value }
+User -> FE: Chọn "Giữ bản cũ" hoặc "Lấy bản mới"
+FE -> BE: POST /modules/manual-edit-conflicts/resolve
+BE -> T2: Ghi lại theo lựa chọn (nếu giữ bản cũ)
+BE -> T3: Ghi lại theo lựa chọn
+BE --> FE: 200 OK
 
 @enduml

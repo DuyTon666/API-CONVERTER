@@ -7,20 +7,17 @@ skinparam ParticipantBorderColor #94A3B8
 title UC07 — Xem tài liệu API
 
 actor "Người dùng" as User
-participant "Frontend\n(Swagger UI + Fuse.js)" as FE
-participant "Backend" as BE
+participant "Frontend\n(/swagger — Server Component)" as FE
 participant "File System" as FS
 
 User -> FE: Truy cập trang /swagger
-FE -> BE: GET /bundle-content
+FE -> FS: Đọc dist/openapi-bundled.yaml\n(trực tiếp, không qua Backend)
 
 alt Bundle chưa tồn tại
-  BE --> FE: 404 Not Found
-  FE --> User: Hiển thị "Chưa có tài liệu\nHãy build trước"
+  FS --> FE: File not found
+  FE --> User: Hiển thị "Chưa có bundle OpenAPI\nChạy build tài liệu từ Dashboard trước"
 else Bundle tồn tại
-  BE -> FS: Đọc dist/openapi-bundled.yaml
-  FS --> BE: YAML content
-  BE --> FE: YAML content
+  FS --> FE: YAML content
   FE -> FE: Khởi tạo Swagger UI\nvới Fuse.js plugin
   FE --> User: Render danh sách endpoint\n(method, path, summary, description)
 end

@@ -318,12 +318,26 @@ def resolve_conflict(payload: dict) -> dict:
             from services.bundle_sync import Change, sync_schema_fields, _index_schema_files
 
             change = Change(kind="schema", key=entity_id, path=field_key, new_value=match["old_value"])
-            sync_schema_fields(bundle, [change], _index_schema_files())
+            missing = sync_schema_fields(bundle, [change], _index_schema_files())
         else:
-            from services.bundle_sync import Change, sync_operation_fields 
+            from services.bundle_sync import Change, sync_operation_fields
 
             change = Change(kind="operation", key=entity_id, path=field_key, new_value=match["old_value"])
-            sync_operation_fields(bundle, [change])
+            missing = sync_operation_fields(bundle, [change])
+
+        # entity_id không còn tồn tại trong bundle hiện tại (vd đổi tên qua import lại) —
+        # sync_*_fields() vừa chạy xong mà không ghi được gì. Raise lỗi rõ ràng thay vì để
+        # request tiếp tục chạy xuống dưới (ghi bundle không đổi + xóa entry khỏi hàng đợi)
+        # rồi báo 200 OK, khiến người dùng tưởng đã khôi phục xong nhưng dữ liệu đã mất hẳn
+        # và không còn bằng chứng để thử lại (bug đã ghi trong Mục 5.1 báo cáo).
+        if entity_id in missing:
+            raise http_error(
+                409,
+                ErrorCode.CONFLICT_ENTITY_GONE,
+                f"Không thể khôi phục — '{entity_id}' không còn tồn tại trong bundle hiện tại "
+                "(có thể đã đổi tên hoặc bị xóa khi import lại)",
+            )
+
         bundle_path.write_text(dump_yaml_fast(bundle),encoding="utf-8")
 
     remaining = [

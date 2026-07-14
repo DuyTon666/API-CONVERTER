@@ -10,7 +10,7 @@ title UC09 — Bundle toàn bộ YAML thành 1 file
 
 |Backend|
 start
-:Gọi lệnh\nredocly bundle openapi/openapi.yaml;
+:Gọi lệnh\nredocly bundle 5.openapi/openapi.yaml;
 
 |Redocly|
 :Đọc file entry point;

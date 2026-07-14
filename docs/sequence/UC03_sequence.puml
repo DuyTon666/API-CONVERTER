@@ -19,7 +19,7 @@ BE --> FE: 200 OK\n{ modules: [{ name, status,\n  file_count, endpoint_count,\n 
 FE --> User: Hiển thị bảng module
 
 User -> FE: Bấm "Activate"\ntrên module draft
-FE -> BE: POST /modules/activate\n{ module: "<name>" }
+FE -> BE: POST /modules/{module}/activate
 
 BE -> Registry: Cập nhật status\ndraft → active
 Registry --> BE: OK

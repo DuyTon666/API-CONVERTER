@@ -12,7 +12,7 @@ title UC01 — Quản lý tài liệu đầu vào
 
 |Người dùng|
 start
-:Kéo thả hoặc chọn file\n(PDF / DOCX / TXT);
+:Kéo thả hoặc chọn file\n(PDF / DOCX);
 
 |Hệ thống|
 if (Định dạng hợp lệ?) then (Không)

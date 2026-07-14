@@ -195,17 +195,22 @@ def _apply_changes_and_mark(node: dict, changes: list[Change]) -> None:
         node["x-manual-edit-fields"] = _merge_marker(node.get("x-manual-edit-fields"), touched_paths)
 
 
-def sync_operation_fields(bundle: dict, changes: list[Change]) -> None:
+def sync_operation_fields(bundle: dict, changes: list[Change]) -> set[str]:
     """Áp field đổi (kind='operation') vào tầng 3 (node trong bundle) + tầng 2 (file tương ứng),
-    gắn marker x-manual-edit-fields ở cả 2 nơi. Lỗi đọc/ghi 1 file thì bỏ qua, không fail cả request."""
+    gắn marker x-manual-edit-fields ở cả 2 nơi. Lỗi đọc/ghi 1 file thì bỏ qua, không fail cả request.
+    Trả về tập operationId KHÔNG tìm thấy trong bundle hiện tại (vd đã đổi tên/bị xóa qua lần import
+    khác) — caller (vd resolve_conflict) cần tự kiểm tra tập này để biết ghi có thật sự xảy ra không,
+    tránh coi no-op im lặng là thành công."""
     from ruamel.yaml import YAML
+
+    missing: set[str] = set()
 
     by_op: dict[str, list[Change]] = {}
     for c in changes:
         if c.kind == "operation":
             by_op.setdefault(c.key, []).append(c)
     if not by_op:
-        return
+        return missing
 
     bundle_ops = _index_operations_by_id(bundle)
     op_index = _index_operation_files()
@@ -218,6 +223,8 @@ def sync_operation_fields(bundle: dict, changes: list[Change]) -> None:
         operation = bundle_ops.get(op_id)
         if operation is not None:
             _apply_changes_and_mark(operation, op_changes)
+        else:
+            missing.add(op_id)
 
         file_path = op_index.get(op_id)
         if file_path is None:
@@ -240,18 +247,23 @@ def sync_operation_fields(bundle: dict, changes: list[Change]) -> None:
         except Exception:
             pass
 
+    return missing
 
-def sync_schema_fields(bundle: dict, changes: list[Change], schema_index: dict[str, Path]) -> None:
+
+def sync_schema_fields(bundle: dict, changes: list[Change], schema_index: dict[str, Path]) -> set[str]:
     """Áp field đổi (kind='schema') vào tầng 3 + tầng 2 (file schema, không có wrapper key),
-    gắn marker x-manual-edit-fields ở cả 2 nơi. Lỗi đọc/ghi 1 file thì bỏ qua, không fail cả request."""
+    gắn marker x-manual-edit-fields ở cả 2 nơi. Lỗi đọc/ghi 1 file thì bỏ qua, không fail cả request.
+    Trả về tập tên schema KHÔNG tìm thấy trong bundle hiện tại — xem ghi chú ở sync_operation_fields()."""
     from ruamel.yaml import YAML
+
+    missing: set[str] = set()
 
     by_schema: dict[str, list[Change]] = {}
     for c in changes:
         if c.kind == "schema":
             by_schema.setdefault(c.key, []).append(c)
     if not by_schema:
-        return
+        return missing
 
     bundle_schemas = (bundle.get("components") or {}).get("schemas") or {}
     fragment_yaml = YAML()
@@ -262,6 +274,8 @@ def sync_schema_fields(bundle: dict, changes: list[Change], schema_index: dict[s
         schema_node = bundle_schemas.get(name)
         if schema_node is not None:
             _apply_changes_and_mark(schema_node, schema_changes)
+        else:
+            missing.add(name)
 
         file_path = schema_index.get(name)
         if file_path is None:
@@ -272,9 +286,11 @@ def sync_schema_fields(bundle: dict, changes: list[Change], schema_index: dict[s
                 replace(c, new_value=_rewrite_bundle_refs_for_file(c.new_value, file_path, schema_index))
                 for c in schema_changes
             ]
-            if isinstance(fragment, dict):                
+            if isinstance(fragment, dict):
                 _apply_changes_and_mark(fragment, file_changes)
             with file_path.open("w", encoding="utf-8") as f:
                 fragment_yaml.dump(fragment, f)
         except Exception:
             pass
+
+    return missing

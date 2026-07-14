@@ -16,7 +16,7 @@ participant "File System" as FS
 User -> FE: Bấm "Build tài liệu Swagger UI"
 FE -> BE: POST /docs/build
 
-BE -> Redocly: redocly bundle\nopenapi/openapi.yaml
+BE -> Redocly: redocly bundle\n5.openapi/openapi.yaml
 Redocly -> FS: Đọc toàn bộ YAML\ntrong 5.openapi/
 FS --> Redocly: YAML files
 
@@ -43,18 +43,18 @@ FE --> User: Hiển thị kết quả lint
 
 opt Người dùng muốn sửa bundle
   User -> FE: Bấm "Xem / Sửa lỗi bundle"
-  FE -> BE: GET /bundle-content
+  FE -> BE: GET /docs/bundle-content
   BE -> FS: Đọc dist/openapi-bundled.yaml
   FS --> BE: YAML content
   BE --> FE: YAML content
   FE --> User: Mở editor bundle
   User -> FE: Chỉnh sửa & lưu
-  FE -> BE: PUT /bundle-content\n(YAML đã sửa)
+  FE -> BE: PUT /docs/bundle-content\n(YAML đã sửa)
   BE -> FS: Ghi đè dist/openapi-bundled.yaml
 end
 
 User -> FE: Bấm "Tải HTML"
-FE -> BE: GET /download-html
+FE -> BE: GET /docs/download-html
 BE -> FS: Đọc public/api-docs.html
 FS --> BE: HTML content
 BE --> FE: File api-docs.html
