@@ -1,8 +1,8 @@
 post:
   summary: Xác thực DCV cho đơn hàng
   operationId: validateOrderDcv
-  description: Xác thực kiểm soát xác minh tên miền (DCV) cho đơn hàng chứng chỉ SSL theo ID. Yêu cầu đơn hàng phải ở 
-    trạng thái chờ xác thực và thông tin DCV phải hợp lệ trước khi cấp phát chứng chỉ.
+  description: Thực hiện xác thực kiểm soát xác thực tên miền (DCV) cho đơn hàng chứng chỉ SSL theo ID chỉ định. Yêu cầu
+    đơn hàng phải ở trạng thái chờ xác thực và thông tin DCV phải hợp lệ trước khi tiến hành cấp phát chứng chỉ.
   tags:
   - Order
   security:

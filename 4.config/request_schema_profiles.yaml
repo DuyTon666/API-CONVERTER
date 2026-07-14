@@ -1,119 +1,21 @@
-version: 1
-
 section_aliases:
   request_body:
     - "Request Body"
     - "Request body"
     - "Body"
     - "Dữ liệu đầu vào"
-
+    - "Request Body - Schema"
+    - "Request Body Schema"
   field_description:
     - "Mô tả các trường"
     - "Mô tả trường"
     - "Field Description"
     - "Fields"
-
-column_aliases:
-  field_name:
-    - "Tên"
-    - "Trường"
-    - "Thuộc tính"
-    - "Field"
-    - "Name"
-    - "Property"
-    - "Attribute"
-
-  required:
-    - "Bắt buộc"
-    - "Required"
-    - "Mandatory"
-
-  type:
-    - "Kiểu"
-    - "Kiểu dữ liệu"
-    - "Type"
-    - "Data Type"
-    - "Datatype"
-
-  default:
-    - "Mặc định"
-    - "Default"
-    - "Default Value"
-
-  description:
-    - "Mô tả"
-    - "Description"
-    - "Ghi chú"
-    - "Note"
-
-required_markers:
-  required:
-    - "✔"
-    - "✓"
-    - "Có"
-    - "Yes"
-    - "True"
-    - "Required"
-    - "Bắt buộc"
-
-  optional:
-    - "✖"
-    - "Không"
-    - "No"
-    - "False"
-    - "Optional"
-    - "Tùy chọn"
-
-type_aliases:
-  string:
-    - "String"
-    - "Text"
-    - "VARCHAR"
-    - "CHAR"
-
-  integer:
-    - "Integer"
-    - "Int"
-    - "BIGINT"
-    - "SmallInt"
-
-  number:
-    - "Number"
-    - "Float"
-    - "Double"
-    - "Decimal"
-
-  boolean:
-    - "Boolean"
-    - "Bool"
-
-  object:
-    - "Object"
-    - "JSON Object"
-
-  array:
-    - "Array"
-    - "List"
-
-  array_object:
-    - "Array<Object>"
-    - "Array of Object"
-    - "List<Object>"
-
-  enum:
-    - "Enum"
-
-  file:
-    - "File"
-    - "Binary"
-
-nullable_markers:
-  - "nullable"
-  - "null"
-  - "có thể null"
-
-parser_policy:
-  minimum_header_matches: 2
-  preserve_unknown_columns: true
-  unknown_required_value: "review"
-  unknown_type: "string"
+    - "Mô tả chi tiết Request Body"
+    - "Mô tả chi tiết các trường Request"
+    - "Danh sách trường request"
+  validation_rules:
+    - "Quy tắc validate input"
+    - "Quy tắc validate"
+    - "Validation Rules"
+    - "Validate Rules"

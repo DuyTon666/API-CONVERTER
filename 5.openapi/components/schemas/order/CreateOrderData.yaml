@@ -13,21 +13,85 @@ properties:
     type: integer
     description: Echo lại ID account từ hệ thống bán (BIGINT) — để xác nhận đã 
       lưu.
+  customer_id:
+    type: integer
+    description: Trường `customer_id`.
+    readOnly: true
+  internal_product_code:
+    type: string
+    description: Trường `internal_product_code`.
+  internal_product_id:
+    type: integer
+    description: Trường `internal_product_id`.
+    readOnly: true
+  product_type:
+    type: string
+    description: Trường `product_type`.
+  cert_type:
+    type: string
+    description: Trường `cert_type`.
+  years:
+    type: integer
+    description: Trường `years`.
+  subscription_start_date:
+    type: string
+    description: Trường `subscription_start_date`.
+  subscription_end_date:
+    type: string
+    description: Trường `subscription_end_date`.
+  primary_domain:
+    type: string
+    description: Trường `primary_domain`.
   status:
     type: string
     description: Luôn là INIT ở bước tạo. Chưa có CSR/DCV.
+  note:
+    type:
+      - string
+      - 'null'
+    description: Trường `note`.
   contact:
-    type: object
+    $ref: "./CreateOrderDataContact.yaml"
     description: Echo lại thông tin contact đã lưu (contact_admin, contact_org, 
       contact_tech).
   selected_provider:
     type: object
+    properties:
+      provider_id:
+        type: integer
+        description: Trường `provider_id`.
+        readOnly: true
+      code:
+        type: string
+        description: Mã số.
+      name:
+        type: string
+        description: Tên.
+      provider_product_id:
+        type: integer
+        description: Trường `provider_product_id`.
+        readOnly: true
+      provider_product_code:
+        type: string
+        description: Trường `provider_product_code`.
+      mapping_id:
+        type: integer
+        description: Trường `mapping_id`.
+        readOnly: true
+      weight:
+        type: integer
+        description: Trường `weight`.
     description: Provider + provider_product được WRR chọn. Bao gồm mapping_id 
       để trace.
-  routing_info.selection_method:
+  routing_info:
+    $ref: "./CreateOrderDataRouting_info.yaml"
+    description: Trường `routing_info`.
+  created_at:
     type: string
-    description: SINGLE_CANDIDATE (1 mapping) | WRR (≥ 2 mappings).
-  routing_info.candidates:
+    description: Ngày tạo.
+    readOnly: true
+  updated_at:
     type: string
-    description: Snapshot tất cả candidates + score để audit quyết định routing.
+    description: Ngày cập nhật.
+    readOnly: true
 description: Schema `CreateOrderData`.

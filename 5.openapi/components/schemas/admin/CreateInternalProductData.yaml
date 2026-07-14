@@ -2,14 +2,14 @@ type: object
 properties:
   id:
     type: string
-    description: Định danh của bản ghi.
+    description: Mã id.
     readOnly: true
   code:
     type: string
-    description: Mã định danh.
+    description: Mã số.
   name:
     type: string
-    description: Tên hiển thị.
+    description: Tên.
   name_en:
     type: string
     description: Trường `name_en`.
@@ -33,26 +33,25 @@ properties:
     description: Trường `display_order`.
   created_at:
     type: string
-    description: Thời điểm tạo bản ghi.
+    description: Ngày tạo.
     readOnly: true
   updated_at:
     type: string
-    description: Thời điểm cập nhật bản ghi.
+    description: Ngày cập nhật.
     readOnly: true
   created_by:
     type: string
-    description: Người tạo bản ghi.
+    description: Được tạo bởi.
   updated_by:
     type: string
-    description: Người cập nhật bản ghi.
+    description: Được cập nhật bởi.
   deleted_at:
     type:
       - string
       - 'null'
-    description: Thời điểm xóa bản ghi.
+    description: Ngày xóa.
   mappings_summary:
     type: array
-    items:
-      type: object
+    items: {}
     description: Trường `mappings_summary`.
 description: Schema `CreateInternalProductData`.

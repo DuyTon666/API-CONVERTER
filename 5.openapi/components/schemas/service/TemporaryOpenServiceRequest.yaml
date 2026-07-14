@@ -3,3 +3,4 @@ properties:
   reason:
     type: string
     description: Lý do cần mở tạm
+description: Schema `TemporaryOpenServiceRequest`.

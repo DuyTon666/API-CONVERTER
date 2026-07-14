@@ -8,14 +8,14 @@ properties:
     properties:
       id:
         type: integer
-        description: Định danh của bản ghi.
+        description: Mã id.
         readOnly: true
       order_number:
         type: string
         description: Trường `order_number`.
       status:
         type: string
-        description: Trạng thái xử lý.
+        description: Trạng thái.
       expires_at:
         type: string
         description: Trường `expires_at`.

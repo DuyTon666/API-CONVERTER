@@ -2,7 +2,7 @@ type: object
 properties:
   id:
     type: string
-    description: Định danh của bản ghi.
+    description: Mã id.
     readOnly: true
   provider_id:
     type: string
@@ -80,21 +80,21 @@ properties:
     description: Trường `display_order`.
   created_at:
     type: string
-    description: Thời điểm tạo bản ghi.
+    description: Ngày tạo.
     readOnly: true
   updated_at:
     type: string
-    description: Thời điểm cập nhật bản ghi.
+    description: Ngày cập nhật.
     readOnly: true
   created_by:
     type: string
-    description: Người tạo bản ghi.
+    description: Được tạo bởi.
   updated_by:
     type: string
-    description: Người cập nhật bản ghi.
+    description: Được cập nhật bởi.
   deleted_at:
     type:
       - string
       - 'null'
-    description: Thời điểm xóa bản ghi.
+    description: Ngày xóa.
 description: Schema `CreateProviderProductData`.

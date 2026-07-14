@@ -183,7 +183,7 @@ def ai_suggest_operation(payload: dict) -> dict:
         client = anthropic.Anthropic()
         response = client.messages.create(
             model="cc/claude-sonnet-4-6",
-            max_tokens=4000,
+            max_tokens=400,
             messages=[{"role": "user", "content": "\n".join(prompt_lines)}],
         )
         raw = response.content[0].text.strip()

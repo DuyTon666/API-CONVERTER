@@ -255,15 +255,7 @@ def _build_node(
     return node
 
 
-def _extract_first_json_like_block(raw: str) -> str:
-    starts = [
-        idx for idx in [raw.find("{"), raw.find("[")]
-        if idx >= 0
-    ]
-    if not starts:
-        return ""
-
-    start = min(starts)
+def _extract_balanced_block(raw: str, start: int) -> str:
     stack = []
     in_string = False
     escaped = False
@@ -302,6 +294,38 @@ def _extract_first_json_like_block(raw: str) -> str:
     return raw[start:]
 
 
+def _extract_first_json_like_block(raw: str) -> str:
+    """
+    Tìm block {...} hoặc [...] đầu tiên trông giống JSON thật.
+
+    Bỏ qua match rỗng "{}"/"[]" và tìm tiếp — text mô tả field/heading
+    (vd "4.3.1 Request body.ratings[]") có thể chứa "[]" hoàn toàn không
+    liên quan tới JSON mẫu, dễ bị bắt nhầm thành "tìm thấy JSON []" nếu
+    chỉ dừng ở match đầu tiên.
+    """
+    search_from = 0
+
+    while True:
+        starts = [
+            idx for idx in [raw.find("{", search_from), raw.find("[", search_from)]
+            if idx >= 0
+        ]
+        if not starts:
+            return ""
+
+        start = min(starts)
+        block = _extract_balanced_block(raw, start)
+
+        if not block:
+            return ""
+
+        if block.strip() in ("{}", "[]"):
+            search_from = start + len(block)
+            continue
+
+        return block
+
+
 def _strip_inline_comments(line: str) -> str:
     """
     Xóa // comment trong JSON-like text.
@@ -336,16 +360,18 @@ def _strip_inline_comments(line: str) -> str:
 
         if ch == "/" and i + 1 < len(line) and line[i + 1] == "/":
             if i == 0 or line[i - 1] != ":":
+                # _strip_comments() gọi hàm này sau khi đã splitlines(),
+                # nên `line` luôn là 1 dòng vật lý thật — comment kết
+                # thúc ở cuối dòng đó. Chỉ còn dò tiếp "key" mới (case
+                # hiếm: docx reader vẫn dồn nhiều field vào 1 dòng) —
+                # KHÔNG dừng ở '}'/']' bất kỳ nữa, vì comment mô tả kiểu
+                # dữ liệu thường chứa regex/enum có ngoặc
+                # (vd "[A-Z0-9_-]{2,64}"), dừng sớm sẽ để sót rác vào
+                # JSON và làm hỏng parse.
                 j = i + 2
 
                 while j < len(line):
-                    if line[j] == "\n":
-                        break
-
                     if line[j] == '"' and re.match(r'"[^"]+"\s*:', line[j:]):
-                        break
-
-                    if line[j] in "}]":
                         break
 
                     j += 1

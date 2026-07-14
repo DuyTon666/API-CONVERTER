@@ -1,0 +1,12 @@
+type: object
+example:
+  domain: example.com
+properties:
+  domain:
+    type: string
+    description: Domain cần resend DCV email. Phải tồn tại trong dcv_records với
+      method=EMAIL.
+    example: example.com
+required:
+  - domain
+description: Schema `ResendDcvEmailByOrderIdRequest`.

@@ -1,8 +1,8 @@
 get:
   summary: Lấy danh sách gói nâng cấp của dịch vụ
   operationId: getServiceUpgradePlans
-  description: API trả về danh sách các gói nâng cấp khả dụng cho một dịch vụ cụ thể của người dùng. Chỉ các gói nâng 
-    cấp cao hơn gói hiện tại của dịch vụ mới được trả về trong kết quả.
+  description: API trả về danh sách các gói nâng cấp khả dụng cho một dịch vụ cụ thể của người dùng. Chỉ các dịch vụ 
+    đang hoạt động và thuộc sở hữu của user_id hợp lệ mới được phép truy vấn danh sách gói nâng cấp.
   tags:
   - Service
   security:

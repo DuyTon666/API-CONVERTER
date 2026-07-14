@@ -1,8 +1,8 @@
 get:
   summary: Lấy danh sách nhân viên hỗ trợ ticket
   operationId: getSupportStaffsByTicket
-  description: API trả về danh sách nhân viên hỗ trợ cho một ticket cụ thể của người dùng. Chỉ ticket thuộc về user_id 
-    hợp lệ mới được phép truy xuất thông tin nhân viên hỗ trợ.
+  description: API trả về danh sách nhân viên hỗ trợ cho một ticket cụ thể thuộc về người dùng. Chỉ ticket hợp lệ và 
+    thuộc quyền sở hữu của user_id mới được phép truy xuất thông tin nhân viên hỗ trợ.
   tags:
   - Ticket
   security:

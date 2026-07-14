@@ -2,7 +2,8 @@ patch:
   summary: Cập nhật ánh xạ sản phẩm nội bộ theo ID
   operationId: updateInternalProductMapping
   description: Cập nhật thông tin ánh xạ của một sản phẩm nội bộ dựa trên ID sản phẩm và ID ánh xạ tương ứng. Chỉ quản 
-    trị viên có quyền thực hiện thao tác này nhằm đảm bảo tính nhất quán trong hệ thống quản lý sản phẩm.
+    trị viên có quyền thực hiện thao tác này nhằm đảm bảo tính nhất quán trong việc liên kết sản phẩm nội bộ với các hệ 
+    thống bên ngoài.
   tags:
   - Admin
   security:

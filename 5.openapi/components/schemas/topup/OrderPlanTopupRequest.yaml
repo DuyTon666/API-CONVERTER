@@ -19,3 +19,4 @@ required:
   - customer_id
   - core_plan_id
   - plan_quantity
+description: Schema `OrderPlanTopupRequest`.

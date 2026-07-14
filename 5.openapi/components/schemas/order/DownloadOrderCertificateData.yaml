@@ -1,0 +1,17 @@
+type: object
+properties:
+  certificate_pem:
+    type: string
+    description: Leaf certificate PEM.
+  intermediate_pem:
+    type: string
+    description: Intermediate CA PEM. null nếu không có.
+  root_pem:
+    type:
+      - string
+      - 'null'
+    description: Root CA PEM. null nếu không có.
+  has_private_key:
+    type: boolean
+    description: true nếu ssl-core đang giữ private key của cert này.
+description: Schema `DownloadOrderCertificateData`.

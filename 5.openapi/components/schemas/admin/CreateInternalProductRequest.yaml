@@ -1,39 +1,74 @@
 type: object
+example:
+  code: PA-SSL-DV-SINGLE-1Y
+  name: SSL DV Single Domain 1 năm
+  name_en: SSL DV Single Domain 1 Year
+  product_type: DV
+  cert_type: SINGLE
+  description: Gói SSL cơ bản cho 1 domain
+  retail_price_vnd: 250000
+  is_enabled: true
+  display_order: 10
 properties:
-  id:
-    type: string
-    description: Định danh của bản ghi.
   code:
     type: string
-    description: Mã định danh.
+    description: Mã nội bộ — admin define lúc tạo. UNIQUE, IMMUTABLE. Regex 
+      ^[A-Z0-9_-]{2,64}$ (VD "PA-SSL-DV-SINGLE-1Y").
+    example: PA-SSL-DV-SINGLE-1Y
+    pattern: ^[A-Z0-9_-]{2,64}$
+  name:
+    type: string
+    description: Tên hiển thị tiếng Việt (≤ 200 ký tự).
+    example: SSL DV Single Domain 1 năm
+    maximum: 200
   name_en:
     type: string
-    description: Trường `name_en`.
+    description: Tên tiếng Anh (optional, ≤ 200 ký tự).
+    example: SSL DV Single Domain 1 Year
+    maximum: 200
   product_type:
     type: string
-    description: Trường `product_type`.
+    description: 'Mức xác thực: DV | OV | EV. IMMUTABLE sau create (định danh bản
+      chất sản phẩm).'
+    enum:
+      - DV
+      - OV
+      - EV
+    example: DV
   cert_type:
     type: string
-    description: Trường `cert_type`.
+    description: 'Kiểu cert: SINGLE | WILDCARD | MULTI_DOMAIN | FLEX. IMMUTABLE sau
+      create.'
+    enum:
+      - SINGLE
+      - WILDCARD
+      - MULTI_DOMAIN
+      - FLEX
+    example: SINGLE
   description:
     type: string
-    description: Mô tả chi tiết.
+    description: Mô tả hiển thị UI.
+    example: Gói SSL cơ bản cho 1 domain
+    maximum: 1000
   retail_price_vnd:
-    type: string
-    description: Trường `retail_price_vnd`.
+    type: number
+    description: Giá bán lẻ đề xuất (VND/năm) cho customer UI.
+    example: 250000
+    minimum: 0
   is_enabled:
-    type: string
-    description: Trường `is_enabled`.
+    type: boolean
+    description: Bật/tắt hiển thị/bán. true = được chọn cho order mới.
+    example: true
   display_order:
+    type: integer
+    description: Thứ tự hiển thị UI (ascending). Mặc định 0.
+    example: 10
+  id:
     type: string
-    description: Trường `display_order`.
-  created_by:
-    type: string
-    description: Người tạo bản ghi.
-  updated_by:
-    type: string
-    description: Người cập nhật bản ghi.
-  deleted_at:
-    type: string
-    description: Thời điểm xóa bản ghi.
+    description: Primary key UUID v4 — auto generate.
+required:
+  - code
+  - name
+  - product_type
+  - cert_type
 description: Schema `CreateInternalProductRequest`.

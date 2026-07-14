@@ -3,6 +3,7 @@ properties:
   order_id:
     type: integer
     description: orders.id — BIGINT auto-increment.
+    readOnly: true
   order_number:
     type: string
     description: Mã đơn hàng hiển thị (ví dụ SSL-2026-000042).
@@ -11,7 +12,9 @@ properties:
     description: certificates.id của cert REISSUE_QUEUED vừa tạo. Worker sẽ gọi 
       provider với cert này.
   replaces_cert_id:
-    type: integer
+    type:
+      - integer
+      - 'null'
     description: certificates.id của cert hiện tại sẽ bị thay thế 
       (replaces_cert_id FK). null nếu không có cert trước đó.
   cert_seq:

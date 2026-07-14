@@ -1,8 +1,8 @@
 post:
   summary: Thu hồi đơn hàng theo ID
   operationId: revokeOrderById
-  description: API cho phép thu hồi một đơn hàng dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng ở trạng thái 
-    hợp lệ và chưa hoàn tất xử lý.
+  description: API cho phép thu hồi một đơn hàng đã được tạo trước đó dựa trên ID. Chỉ áp dụng cho các đơn hàng ở trạng 
+    thái hợp lệ và chưa được xử lý hoàn tất.
   tags:
   - Order
   security:

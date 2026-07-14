@@ -2,7 +2,7 @@ get:
   summary: Lấy thông tin chi tiết nhà cung cấp theo ID
   operationId: getProviderDetail
   description: Truy xuất thông tin chi tiết của một nhà cung cấp dựa trên ID duy nhất. Chỉ quản trị viên có quyền truy 
-    cập mới có thể thực hiện thao tác này.
+    cập, ID phải hợp lệ và tồn tại trong hệ thống.
   tags:
   - Admin
   security:

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-02T14:50:19.203926",
+  "generated_at": "2026-07-09T11:04:10.909317",
   "source_files": [
     "API_order_plan_topup.docx"
   ],
@@ -25,9 +25,13 @@
       ],
       "table_index": 11,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "external_account_id là bắt buộc."
+        "http_status": "422",
+        "category": "Validation",
+        "message": "external_account_id là bắt buộc.",
+        "field": "external_account_id",
+        "suggested_action": null,
+        "source_type": "validation",
+        "source_profile": "error_validation_with_field"
       },
       "existing_in_map": {
         "http_status": "",
@@ -47,9 +51,13 @@
       ],
       "table_index": 11,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "external_account_id phải là số nguyên ≥ 1."
+        "http_status": "422",
+        "category": "Validation",
+        "message": "external_account_id phải là số nguyên ≥ 1.",
+        "field": "external_account_id",
+        "suggested_action": null,
+        "source_type": "validation",
+        "source_profile": "error_validation_with_field"
       },
       "existing_in_map": {
         "http_status": "",
@@ -69,9 +77,13 @@
       ],
       "table_index": 11,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "customer_id là bắt buộc."
+        "http_status": "422",
+        "category": "Validation",
+        "message": "customer_id là bắt buộc.",
+        "field": "customer_id",
+        "suggested_action": null,
+        "source_type": "validation",
+        "source_profile": "error_validation_with_field"
       },
       "existing_in_map": {
         "http_status": "",
@@ -91,9 +103,13 @@
       ],
       "table_index": 11,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "customer_id không được vượt quá 255 ký tự."
+        "http_status": "422",
+        "category": "Validation",
+        "message": "customer_id không được vượt quá 255 ký tự.",
+        "field": "customer_id",
+        "suggested_action": null,
+        "source_type": "validation",
+        "source_profile": "error_validation_with_field"
       },
       "existing_in_map": {
         "http_status": "",
@@ -113,9 +129,13 @@
       ],
       "table_index": 11,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "core_plan_id là bắt buộc."
+        "http_status": "422",
+        "category": "Validation",
+        "message": "core_plan_id là bắt buộc.",
+        "field": "core_plan_id",
+        "suggested_action": null,
+        "source_type": "validation",
+        "source_profile": "error_validation_with_field"
       },
       "existing_in_map": {
         "http_status": "",
@@ -135,9 +155,13 @@
       ],
       "table_index": 11,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "core_plan_id không được vượt quá 100 ký tự."
+        "http_status": "422",
+        "category": "Validation",
+        "message": "core_plan_id không được vượt quá 100 ký tự.",
+        "field": "core_plan_id",
+        "suggested_action": null,
+        "source_type": "validation",
+        "source_profile": "error_validation_with_field"
       },
       "existing_in_map": {
         "http_status": "",
@@ -157,9 +181,13 @@
       ],
       "table_index": 11,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "plan_quantity là bắt buộc."
+        "http_status": "422",
+        "category": "Validation",
+        "message": "plan_quantity là bắt buộc.",
+        "field": "plan_quantity",
+        "suggested_action": null,
+        "source_type": "validation",
+        "source_profile": "error_validation_with_field"
       },
       "existing_in_map": {
         "http_status": "",
@@ -179,9 +207,13 @@
       ],
       "table_index": 11,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "plan_quantity phải là số nguyên ≥ 1."
+        "http_status": "422",
+        "category": "Validation",
+        "message": "plan_quantity phải là số nguyên ≥ 1.",
+        "field": "plan_quantity",
+        "suggested_action": null,
+        "source_type": "validation",
+        "source_profile": "error_validation_with_field"
       },
       "existing_in_map": {
         "http_status": "",
@@ -201,9 +233,13 @@
       ],
       "table_index": 11,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "plan_quantity không được vượt quá 100."
+        "http_status": "422",
+        "category": "Validation",
+        "message": "plan_quantity không được vượt quá 100.",
+        "field": "plan_quantity",
+        "suggested_action": null,
+        "source_type": "validation",
+        "source_profile": "error_validation_with_field"
       },
       "existing_in_map": {
         "http_status": "",
@@ -223,9 +259,13 @@
       ],
       "table_index": 12,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Không tìm thấy đơn hàng MULTI_DOMAIN/FLEX đang active cho account này."
+        "http_status": "404",
+        "category": "Business",
+        "message": "Không tìm thấy đơn hàng MULTI_DOMAIN/FLEX đang active cho account này.",
+        "field": null,
+        "suggested_action": "Kiểm tra external_account_id có đúng không. Account cần có đơn hàng SSL Multi-Domain đang active trước khi top-up.",
+        "source_type": "business",
+        "source_profile": "error_business_with_suggested_action"
       },
       "existing_in_map": {
         "http_status": "",
@@ -245,9 +285,13 @@
       ],
       "table_index": 12,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Đơn hàng tìm được không phải loại Multi-Domain/FLEX."
+        "http_status": "422",
+        "category": "Business",
+        "message": "Đơn hàng tìm được không phải loại Multi-Domain/FLEX.",
+        "field": null,
+        "suggested_action": "Không nên xảy ra nếu query đúng. Báo lỗi hệ thống.",
+        "source_type": "business",
+        "source_profile": "error_business_with_suggested_action"
       },
       "existing_in_map": {
         "http_status": "",
@@ -267,9 +311,13 @@
       ],
       "table_index": 12,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Đơn hàng ở trạng thái không cho phép top-up (EXPIRED, FAILED, CANCELED...)."
+        "http_status": "422",
+        "category": "Business",
+        "message": "Đơn hàng ở trạng thái không cho phép top-up (EXPIRED, FAILED, CANCELED...).",
+        "field": null,
+        "suggested_action": "Đơn hàng đã ở trạng thái terminal — không thể thêm SAN.",
+        "source_type": "business",
+        "source_profile": "error_business_with_suggested_action"
       },
       "existing_in_map": {
         "http_status": "",
@@ -289,9 +337,13 @@
       ],
       "table_index": 12,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn hàng."
+        "http_status": "422",
+        "category": "Business",
+        "message": "Không tìm thấy cấu hình SAN_TOPUP product/mapping cho provider của đơn hàng.",
+        "field": null,
+        "suggested_action": "Admin cần tạo InternalProduct loại SAN_TOPUP và cấu hình mapping với provider tương ứng.",
+        "source_type": "business",
+        "source_profile": "error_business_with_suggested_action"
       },
       "existing_in_map": {
         "http_status": "",
@@ -311,9 +363,13 @@
       ],
       "table_index": 12,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Tổng SAN sau top-up vượt quá giới hạn tối đa (max_san)."
+        "http_status": "422",
+        "category": "Business",
+        "message": "Tổng SAN sau top-up vượt quá giới hạn tối đa (max_san).",
+        "field": null,
+        "suggested_action": "Giảm plan_quantity hoặc liên hệ provider để nâng giới hạn.",
+        "source_type": "business",
+        "source_profile": "error_business_with_suggested_action"
       },
       "existing_in_map": {
         "http_status": "",
@@ -333,9 +389,13 @@
       ],
       "table_index": 12,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Đơn hàng chưa được gán provider (chưa qua routing)."
+        "http_status": "422",
+        "category": "Business",
+        "message": "Đơn hàng chưa được gán provider (chưa qua routing).",
+        "field": null,
+        "suggested_action": "Top-up chỉ khả dụng sau khi đơn hàng đã được tạo và qua bước routing.",
+        "source_type": "business",
+        "source_profile": "error_business_with_suggested_action"
       },
       "existing_in_map": {
         "http_status": "",
@@ -355,9 +415,13 @@
       ],
       "table_index": 13,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Idempotency-Key đang xử lý (concurrent)"
+        "http_status": "409",
+        "category": "Idempotency",
+        "message": "Idempotency-Key đang xử lý (concurrent)",
+        "field": null,
+        "suggested_action": null,
+        "source_type": "common",
+        "source_profile": "error_common_with_category"
       },
       "existing_in_map": {
         "http_status": "",
@@ -377,9 +441,13 @@
       ],
       "table_index": 13,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Double submit — payload trùng trong dedup window"
+        "http_status": "409",
+        "category": "Idempotency",
+        "message": "Double submit — payload trùng trong dedup window",
+        "field": null,
+        "suggested_action": null,
+        "source_type": "common",
+        "source_profile": "error_common_with_category"
       },
       "existing_in_map": {
         "http_status": "",
@@ -399,9 +467,13 @@
       ],
       "table_index": 13,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Thiếu Authorization header"
+        "http_status": "401",
+        "category": "Auth",
+        "message": "Thiếu Authorization header",
+        "field": null,
+        "suggested_action": null,
+        "source_type": "common",
+        "source_profile": "error_common_with_category"
       },
       "existing_in_map": {
         "http_status": "",
@@ -421,9 +493,13 @@
       ],
       "table_index": 13,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Bearer Token không hợp lệ / hết hạn"
+        "http_status": "401",
+        "category": "Auth",
+        "message": "Bearer Token không hợp lệ / hết hạn",
+        "field": null,
+        "suggested_action": null,
+        "source_type": "common",
+        "source_profile": "error_common_with_category"
       },
       "existing_in_map": {
         "http_status": "401",
@@ -448,9 +524,13 @@
       ],
       "table_index": 13,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Client không có scope=admin"
+        "http_status": "403",
+        "category": "Auth",
+        "message": "Client không có scope=admin",
+        "field": null,
+        "suggested_action": null,
+        "source_type": "common",
+        "source_profile": "error_common_with_category"
       },
       "existing_in_map": {
         "http_status": "",
@@ -470,9 +550,13 @@
       ],
       "table_index": 13,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "IP không được phép"
+        "http_status": "403",
+        "category": "Auth",
+        "message": "IP không được phép",
+        "field": null,
+        "suggested_action": null,
+        "source_type": "common",
+        "source_profile": "error_common_with_category"
       },
       "existing_in_map": {
         "http_status": "401",
@@ -497,9 +581,13 @@
       ],
       "table_index": 13,
       "incoming": {
-        "http_status": "",
-        "category": "",
-        "message": "Dữ liệu request không hợp lệ (validate chung)"
+        "http_status": "422",
+        "category": "Input",
+        "message": "Dữ liệu request không hợp lệ (validate chung)",
+        "field": null,
+        "suggested_action": null,
+        "source_type": "common",
+        "source_profile": "error_common_with_category"
       },
       "existing_in_map": {
         "http_status": "422",

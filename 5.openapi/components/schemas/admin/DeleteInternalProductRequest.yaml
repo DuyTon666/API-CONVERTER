@@ -5,5 +5,6 @@ properties:
   reason:
     type: string
     example: Sản phẩm ngừng bán — thay bằng SKU mới
-    description: Lý do thực hiện thao tác.
+    maximum: 500
+    description: Lý do.
 description: Schema `DeleteInternalProductRequest`.

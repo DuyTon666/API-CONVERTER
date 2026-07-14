@@ -20,4 +20,4 @@ properties:
     type: string
     description: '"sslstore" — sinh bởi TheSSLStore API. "internal" — sinh bởi openssl
       nội bộ.'
-description: Schema `GenerateCsrRequestData`.
+description: Schema `GenerateCsrData`.

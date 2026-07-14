@@ -1,8 +1,8 @@
 post:
-  summary: Tạo ánh xạ cho sản phẩm nội bộ
+  summary: Tạo mapping cho sản phẩm nội bộ
   operationId: createInternalProductMapping
-  description: Tạo mới một ánh xạ liên kết cho sản phẩm nội bộ theo ID được chỉ định. Chỉ quản trị viên có quyền thực 
-    hiện thao tác này và sản phẩm phải tồn tại trong hệ thống.
+  description: Tạo liên kết mapping giữa sản phẩm nội bộ và các thực thể liên quan dựa trên ID sản phẩm. Chỉ quản trị 
+    viên có quyền thực hiện thao tác này nhằm đảm bảo tính toàn vẹn dữ liệu hệ thống.
   tags:
   - Admin
   security:
@@ -46,7 +46,7 @@ post:
     '502':
       $ref: "../../components/responses/BadGateway.yaml"
   requestBody:
-    required: false
+    required: true
     content:
       application/json:
         schema:

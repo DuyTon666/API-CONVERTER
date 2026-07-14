@@ -13,3 +13,4 @@ required:
   - id
   - review_service
   - review_employee
+description: Schema `UpdateTicketFeedbackRequest`.

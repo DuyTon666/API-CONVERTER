@@ -1,8 +1,8 @@
 get:
   summary: Lấy thống kê tổng quan cho khách hàng
   operationId: getUserStatistics
-  description: API trả về dữ liệu thống kê tổng quan cho trang dashboard của khách hàng, bao gồm các chỉ số kinh doanh 
-    quan trọng. Chỉ người dùng có quyền hợp lệ mới được phép truy cập thống kê của chính họ theo user_id tương ứng.
+  description: API trả về dữ liệu thống kê tổng quan dành cho trang dashboard của khách hàng, bao gồm các chỉ số hoạt 
+    động và hiệu suất. Chỉ cho phép truy cập thống kê của chính người dùng tương ứng với user_id được cung cấp.
   tags:
   - Statistic
   security:

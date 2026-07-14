@@ -31,7 +31,7 @@ properties:
     description: IP đã đăng ký với đối tác để gọi API (VD Daousign yêu cầu 
       whitelist IP). IPv4 hoặc IPv6.
   auth_extra:
-    type: string
+    type: object
     description: 'Thông tin xác thực mở rộng tùy provider (VD Daousign: {"api_id":
       "..."}, TheSSLStore: {"partner_code": "..."}). Linh hoạt schema.'
   list_products_endpoint:
@@ -42,7 +42,7 @@ properties:
     type: string
     description: 'HTTP method gọi list-products: GET | POST. Default POST.'
   list_products_request_template:
-    type: string
+    type: object
     description: Body template với placeholder {{token}}, {{auth_extra.<key>}} —
       resolve khi gọi provider API.
   list_products_response_path:

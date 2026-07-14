@@ -5,10 +5,12 @@ example:
 properties:
   is_enabled:
     type: boolean
+    description: Trạng thái mới. true = bật provider, false = tắt provider.
     example: true
-    description: Trường `is_enabled`.
   reason:
     type: string
+    description: Lý do toggle (ghi vào audit log để truy vết). Tối đa 500 ký tự.
     example: Tạm ngưng do sự cố API Daousign
-    description: Lý do thực hiện thao tác.
+required:
+  - is_enabled
 description: Schema `ToggleProviderStatusRequest`.

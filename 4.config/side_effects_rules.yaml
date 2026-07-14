@@ -23,6 +23,10 @@ action_verbs:
   - lock
   - unlock
   - open
+  - toggle
+  - reissue
+  - renew
+  - revoke
 
 notification_keywords:
   - notify

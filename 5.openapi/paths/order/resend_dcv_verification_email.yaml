@@ -1,8 +1,34 @@
 post:
-  summary: Gửi lại email xác minh DCV cho đơn hàng
+  summary: Gửi lại email xác thực DCV cho đơn hàng
   operationId: resendDcvVerificationEmail
-  description: Gửi lại email xác minh kiểm soát tên miền (DCV) cho đơn hàng chứng chỉ SSL theo ID. Chức năng này chỉ áp 
-    dụng khi phương thức xác minh là email và đơn hàng đang ở trạng thái chờ xác minh.
+  x-side-effects:
+    schema_version: '1.1'
+    meta:
+      detected_by: rule_based
+      confidence: 0.75
+      review_status: pending
+      last_updated: '2026-07-14'
+    effects:
+    - type: notification
+      trigger: on_success
+      target:
+        entity: null
+      channel: null
+      description: Gửi lại thông báo liên quan đến order
+      confirmed: false
+      effect_id: order_resend_notification_001
+      source: rule_based
+      evidence:
+        source: module
+        matched_keyword: resend
+        rule_id: action_verbs.resend
+        resource_source: module
+        template_index: 0
+    review:
+      required: true
+      reason: Side effects được suy luận từ action endpoint, chưa được xác nhận từ source document.
+      note: null
+  description: Gửi lại email xác thực kiểm soát tên miền (DCV) cho đơn hàng chứng chỉ SSL theo ID đơn hàng cụ thể. Chức năng này chỉ áp dụng khi phương thức xác thực DCV là email và đơn hàng đang trong trạng thái chờ xác thực.
   tags:
   - Order
   security:
@@ -21,35 +47,35 @@ post:
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+            $ref: ../../components/schemas/common/StandardSuccess.yaml
           example:
             success: true
-            data:
-            error:
+            data: null
+            error: null
     '401':
-      $ref: "../../components/responses/Unauthorized.yaml"
+      $ref: ../../components/responses/Unauthorized.yaml
     '403':
-      $ref: "../../components/responses/Forbidden.yaml"
+      $ref: ../../components/responses/Forbidden.yaml
     '404':
-      $ref: "../../components/responses/NotFound.yaml"
+      $ref: ../../components/responses/NotFound.yaml
     '500':
-      $ref: "../../components/responses/InternalError.yaml"
+      $ref: ../../components/responses/InternalError.yaml
     '400':
-      $ref: "../../components/responses/BadRequest.yaml"
+      $ref: ../../components/responses/BadRequest.yaml
     '422':
-      $ref: "../../components/responses/StandardError422.yaml"
+      $ref: ../../components/responses/StandardError422.yaml
     '409':
-      $ref: "../../components/responses/Conflict.yaml"
+      $ref: ../../components/responses/Conflict.yaml
     '429':
-      $ref: "../../components/responses/TooManyRequests.yaml"
+      $ref: ../../components/responses/TooManyRequests.yaml
     '502':
-      $ref: "../../components/responses/BadGateway.yaml"
+      $ref: ../../components/responses/BadGateway.yaml
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/order/ResendDcvVerificationEmailRequest.yaml"
+          $ref: ../../components/schemas/order/ResendDcvVerificationEmailRequest.yaml
   x-error-responses:
     '401':
     - code: '4101'

@@ -1,8 +1,8 @@
 patch:
   summary: Bật hoặc tắt trạng thái nhà cung cấp
   operationId: toggleProviderStatus
-  description: Thay đổi trạng thái hoạt động của nhà cung cấp (kích hoạt hoặc vô hiệu hóa) trong hệ thống quản trị. Chỉ 
-    quản trị viên có quyền thực hiện thao tác này và nhà cung cấp phải tồn tại trong hệ thống.
+  description: API cho phép quản trị viên bật hoặc tắt trạng thái hoạt động của nhà cung cấp dịch vụ theo ID. Chỉ tài 
+    khoản có quyền admin mới được phép thực hiện thao tác này, nhằm kiểm soát khả năng cung cấp dịch vụ trên hệ thống.
   tags:
   - Admin
   security:

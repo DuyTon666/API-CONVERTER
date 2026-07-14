@@ -28,10 +28,11 @@ properties:
     type: integer
     description: Tổng SAN sau khi top-up.
   san_limit_max:
-    type: integer
+    type: string
     description: Giới hạn SAN tối đa của ProviderProduct. null nếu không giới 
       hạn.
   san_remaining_capacity:
-    type: integer
+    type: string
     description: Số SAN còn có thể top-up thêm. null nếu san_limit_max không xác
       định.
+description: Schema `OrderPlanTopupData`.

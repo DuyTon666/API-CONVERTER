@@ -5,5 +5,6 @@ properties:
   reason:
     type: string
     example: Provider ngừng hợp tác — chuyển sang đối tác khác
-    description: Lý do thực hiện thao tác.
+    maxLength: 500
+    description: Lý do.
 description: Schema `DeleteProviderByIdRequest`.

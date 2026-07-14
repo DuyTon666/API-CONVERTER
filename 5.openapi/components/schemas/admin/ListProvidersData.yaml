@@ -2,7 +2,6 @@ type: object
 properties:
   items:
     type: array
-    items:
-      type: object
+    items: {}
     description: Danh sách provider (schema xem
 description: Schema `ListProvidersData`.

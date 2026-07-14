@@ -1,8 +1,8 @@
 delete:
   summary: Xóa nhà cung cấp theo ID
   operationId: deleteProviderById
-  description: Xóa vĩnh viễn một nhà cung cấp khỏi hệ thống dựa trên ID được chỉ định. Chỉ quản trị viên mới có quyền 
-    thực hiện thao tác này và nhà cung cấp không thể khôi phục sau khi xóa.
+  description: Xóa thông tin nhà cung cấp khỏi hệ thống dựa trên ID được chỉ định. Thao tác này chỉ được thực hiện bởi 
+    quản trị viên và không thể hoàn tác sau khi xóa thành công.
   tags:
   - Admin
   security:

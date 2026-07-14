@@ -5,10 +5,14 @@ example:
 properties:
   admin_password:
     type: string
+    description: Mật khẩu admin hiện tại (plaintext qua HTTPS). Verify bằng 
+      password_verify(). Sai → 401 (5407).
     example: <mật khẩu admin hiện tại>
-    description: Trường `admin_password`.
   env:
     type: string
+    description: 'Môi trường token cần reveal: SANDBOX hoặc PRODUCTION.'
     example: PRODUCTION
-    description: Trường `env`.
+required:
+  - admin_password
+  - env
 description: Schema `RevealProviderTokenRequest`.
