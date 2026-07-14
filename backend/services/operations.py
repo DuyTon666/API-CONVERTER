@@ -1,6 +1,7 @@
 from services import ai_fix, schema_fields
 from core.config import DIST_DIR
 from core.errors import ErrorCode, http_error
+from api_utils.yaml_io import load_yaml_cached, dump_yaml_fast
 from services import ai_fix
 from services.bundle_sync import (
     _HTTP_METHODS,
@@ -8,15 +9,12 @@ from services.bundle_sync import (
     _apply_operation_update,
     diff_bundle,
     sync_operation_fields,
-    _index_operation_files,
 )
 
 
 # Logic rút từ route GET /docs/operations — trả về danh sách operations từ
 # bundle để hiển thị trong form editor.
 def list_operations() -> list[dict]:
-    import yaml as _yaml
-
     bundle_path = DIST_DIR / "openapi-bundled.yaml"
     if not bundle_path.exists():
         raise http_error(
@@ -24,7 +22,7 @@ def list_operations() -> list[dict]:
             ErrorCode.BUNDLE_NOT_FOUND,
             "Bundle chưa được tạo, hãy build tài liệu trước",
         )
-    bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
+    bundle = load_yaml_cached(bundle_path)
     ops = []
     for path, path_item in bundle.get("paths", {}).items():
         if not isinstance(path_item, dict):
@@ -69,13 +67,12 @@ def list_operations() -> list[dict]:
 # backend).
 def update_operations(updates: list) -> dict:
     import copy
-    import yaml as _yaml
 
     bundle_path = DIST_DIR / "openapi-bundled.yaml"
     if not bundle_path.exists():
         raise http_error(404, ErrorCode.BUNDLE_NOT_FOUND, "Bundle chưa được tạo, hãy build tài liệu trước")
 
-    old_bundle = _yaml.safe_load(bundle_path.read_text(encoding="utf-8")) or {}
+    old_bundle = load_yaml_cached(bundle_path) 
     update_map = {u["operationId"]: u for u in updates if u.get("operationId")}
 
     new_bundle = copy.deepcopy(old_bundle)
@@ -93,12 +90,9 @@ def update_operations(updates: list) -> dict:
             updated += 1
 
     changes = diff_bundle(old_bundle, new_bundle)
-    sync_operation_fields(new_bundle, changes, _index_operation_files())
+    sync_operation_fields(new_bundle, changes)
 
-    bundle_path.write_text(
-        _yaml.dump(new_bundle, allow_unicode=True, sort_keys=False, default_flow_style=False),
-        encoding="utf-8",
-    )
+    bundle_path.write_text(dump_yaml_fast(new_bundle), encoding="utf-8")
     return {"ok": True, "updated": updated}
 
 

@@ -13,7 +13,7 @@ participant "module_resolution\n.yaml" as Config
 participant "File System" as FS
 
 User -> FE: Bấm "Gợi ý module"
-FE -> BE: POST /suggest-root
+FE -> BE: POST /modules/suggest
 
 BE -> FS: Đọc từng file\ntrích xuất endpoint & service field
 FS --> BE: Danh sách endpoint
@@ -26,7 +26,7 @@ BE --> FE: 200 OK\n{ items: [{ file, module, score, conflict }],\n  summary: { p
 FE --> User: Hiển thị danh sách gợi ý
 
 User -> FE: Xem xét, nhập override (nếu cần)\nChọn file & bấm "Duyệt (n) file"
-FE -> BE: POST /approve-suggestions\n{ files: [{ file, override_module }] }
+FE -> BE: POST /modules/suggestions/approve\n{ files: [{ file, override_module }] }
 
 BE -> FS: Cập nhật trạng thái\nvào import_suggestions.json
 FS --> BE: OK
@@ -34,7 +34,7 @@ BE --> FE: 200 OK\n{ approved: n }
 FE --> User: Cập nhật trạng thái "Đã duyệt"
 
 User -> FE: Bấm "Apply suggestions"
-FE -> BE: POST /apply-suggestions
+FE -> BE: POST /modules/apply
 
 BE -> FS: Sao chép file vào\n1.docs/source/api_contract/<module>/
 FS --> BE: OK

@@ -72,7 +72,9 @@ export default function ModuleRegistryCard({
       {loading && <p className="text-sm text-gray-400">Đang tải...</p>}
       {error && <ErrorAlert message={error} />}
       {activateError && <ErrorAlert message={activateError} className="mb-3" />}
-      {deactivateError && <ErrorAlert message={deactivateError} className="mb-3" />}
+      {deactivateError && (
+        <ErrorAlert message={deactivateError} className="mb-3" />
+      )}
       {importError && <ErrorAlert message={importError} className="mb-3" />}
 
       {moduleList &&
@@ -81,10 +83,10 @@ export default function ModuleRegistryCard({
             Chưa có module nào trong registry.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto overflow-y-auto max-h-80">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs uppercase text-gray-400 border-b border-gray-200">
+                <tr className="text-left text-xs uppercase text-gray-400 border-b border-gray-200 bg-white sticky top-0">
                   <th className="py-2 pr-2 font-medium">Module</th>
                   <th className="py-2 pr-2 font-medium">Trạng thái</th>
                   <th className="py-2 pr-2 font-medium">File</th>
@@ -163,7 +165,9 @@ export default function ModuleRegistryCard({
                           </button>
                           <button
                             onClick={() => onDeactivate(m.name)}
-                            disabled={deactivatingModule !== null || importRunning}
+                            disabled={
+                              deactivatingModule !== null || importRunning
+                            }
                             className="px-3 py-1 bg-red-50 text-red-600 text-xs font-medium rounded-lg hover:bg-red-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
                             title="Chuyển module về deprecated"
                           >
@@ -182,7 +186,7 @@ export default function ModuleRegistryCard({
         ))}
 
       {importModules.length > 0 && (
-        <div className="mt-4 space-y-2">
+        <div className="mt-4 space-y-2 max-h-72 overflow-y-auto pr-1">
           {importModules.map((m) => {
             const processed = m.success + m.failed + m.skipped;
             const pct =
@@ -211,7 +215,9 @@ export default function ModuleRegistryCard({
                           ? `✕ Import "${m.name}" thất bại`
                           : `Chờ import "${m.name}"`}
                   </span>
-                  <span className={isError ? "text-red-500" : "text-indigo-500"}>
+                  <span
+                    className={isError ? "text-red-500" : "text-indigo-500"}
+                  >
                     {processed}/{m.total} file
                   </span>
                 </div>
@@ -242,12 +248,12 @@ export default function ModuleRegistryCard({
               </div>
             );
           })}
-          {importDone && (
-            <p className="text-xs text-emerald-600">
-              ✓ Toàn bộ import đã hoàn thành
-            </p>
-          )}
         </div>
+      )}
+      {importDone && (
+        <p className="text-xs text-emerald-600">
+          ✓ Toàn bộ import đã hoàn thành
+        </p>
       )}
     </section>
   );

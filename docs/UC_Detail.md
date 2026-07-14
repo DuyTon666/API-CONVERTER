@@ -8,13 +8,14 @@
 | UC02 | Phân loại file vào module         | Người dùng         |
 | UC03 | Quản lý module registry           | Người dùng         |
 | UC04 | Import module                     | Người dùng         |
-| UC05 | Kiểm duyệt & xuất YAML            | Người dùng         |
+| UC05 | Chỉnh sửa & duyệt nội dung        | Người dùng         |
 | UC06 | Build & xuất bản tài liệu         | Người dùng         |
 | UC07 | Xem tài liệu API                  | Người dùng         |
 | UC08 | Enrich metadata API               | Claude AI          |
 | UC09 | Bundle toàn bộ YAML thành 1 file  | Redocly / Spectral |
 | UC10 | Lint bundle theo chuẩn OpenAPI    | Redocly / Spectral |
 | UC11 | Lint bundle theo governance rules | Redocly / Spectral |
+| UC12 | Deploy tài liệu                   | Người dùng          |
 
 ---
 
@@ -33,7 +34,7 @@
 
 | Bước | Người dùng                                                | Hệ thống                                                         |
 | ---- | --------------------------------------------------------- | ---------------------------------------------------------------- |
-| 1    | Kéo thả hoặc chọn file (PDF / DOCX / TXT) vào vùng upload |                                                                  |
+| 1    | Kéo thả hoặc chọn file (PDF / DOCX) vào vùng upload |                                                                  |
 | 2    |                                                           | Kiểm tra định dạng file hợp lệ                                   |
 | 3    |                                                           | Lưu file vào `1.docs/source/api_contract/`                       |
 | 4    |                                                           | Trả về danh sách file đã upload kèm tên và dung lượng            |
@@ -53,7 +54,10 @@
 ### Luồng ngoại lệ
 
 **E1 — Sai định dạng file:**
-- Tại bước 2, file không phải PDF / DOCX / TXT → hệ thống báo lỗi, không lưu file → người dùng chọn lại file khác.
+- Tại bước 2, file không phải PDF / DOCX → hệ thống báo lỗi, không lưu file → người dùng chọn lại file khác.
+
+**E2 — Upload TXT/MD thành công nhưng import luôn thất bại:**
+- Bước kiểm tra định dạng (bước 2) thực chất chấp nhận cả `.txt`/`.md` (khai báo trong `4.config/import_flow.yaml`), nên file vẫn lưu được — nhưng đến bước import (UC04), `parse_text()` chỉ nhận diện được method/path khi text có đúng label chuẩn hóa mà `read_docx()`/`read_pdf()` tự sinh ra (vd `"Method: GET"`) — file `.txt`/`.md` thô hầu như không có label này nên luôn báo lỗi `"Không tìm thấy method hoặc path trong tài liệu."` (đã ghi nhận thực tế trong `3.build/reports/version_run_history.jsonl`, run `20260618_142727_ticket_api`). Coi như PDF/DOCX là 2 định dạng thực sự dùng được; TXT/MD chỉ nối dây ở tầng upload, chưa hoạt động.
 
 **E2 — Backend không phản hồi:**
 - Tại bước 3 hoặc 6 → hệ thống hiển thị thông báo lỗi kết nối → người dùng thử lại.
@@ -221,57 +225,52 @@
 
 ---
 
-## UC05 — Kiểm duyệt & xuất YAML
+## UC05 — Chỉnh sửa & duyệt nội dung
 
-| Trường                   | Nội dung                                                                                                                                                                |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Mã UC**                | UC05                                                                                                                                                                    |
-| **Tên UC**               | Kiểm duyệt & xuất YAML                                                                                                                                                  |
-| **Tác nhân chính**       | Người dùng                                                                                                                                                              |
-| **Mô tả**                | Người dùng xem xét các file YAML được pipeline tạo ra, chỉnh sửa thủ công nếu cần, approve hoặc reject từng file, sau đó export toàn bộ file đã duyệt ra thư mục output |
-| **Điều kiện tiên quyết** | UC04 đã hoàn thành. Có ít nhất một file ở trạng thái `flagged` hoặc `done` trong job                                                                                    |
-| **Điều kiện hậu**        | File YAML đã duyệt được ghi ra `5.openapi/`. Pipeline bundle và lint được kích hoạt tự động                                                                             |
+| Trường                   | Nội dung                                                                                                                                                                                                                                     |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mã UC**                | UC05                                                                                                                                                                                                                                          |
+| **Tên UC**               | Chỉnh sửa & duyệt nội dung                                                                                                                                                                                                                    |
+| **Tác nhân chính**       | Người dùng                                                                                                                                                                                                                                    |
+| **Mô tả**                | Người dùng chỉnh sửa `summary`/`description`/parameter/response description qua Form Editor, hoặc chỉnh sửa trực tiếp YAML thô của bundle; hệ thống đồng bộ ghi thay đổi vào cả tầng 2 (`5.openapi/`) và tầng 3 (`dist/openapi-bundled.yaml`), đồng thời phát hiện và cho xử lý xung đột khi import lại (UC04) đè lên nội dung đã sửa tay |
+| **Điều kiện tiên quyết** | Đã có bundle (`dist/openapi-bundled.yaml`) — tức UC04 rồi UC06 (hoặc lần build gần nhất) đã chạy ít nhất 1 lần                                                                                                                                |
+| **Điều kiện hậu**        | Nội dung đã sửa được ghi vào cả tầng 2 và tầng 3, có gắn marker `x-manual-edit-fields`. Xung đột phát sinh từ import lại (nếu có) được ghi vào `manual_edit_conflicts.json` chờ xử lý                                                        |
 
-### Luồng chính
+### Luồng chính (tab "Chỉnh sửa nội dung" — Form Editor)
 
-| Bước | Người dùng                              | Hệ thống                                                                        |
-| ---- | --------------------------------------- | ------------------------------------------------------------------------------- |
-| 1    | Truy cập trang review job               |                                                                                 |
-| 2    |                                         | Hiển thị danh sách file flagged cần review kèm lý do (thiếu trường, lỗi LLM...) |
-| 3    | Chọn file muốn xem xét                  |                                                                                 |
-| 4    |                                         | Mở Monaco Editor hiển thị nội dung YAML của file                                |
-| 5    | Đọc và chỉnh sửa YAML trực tiếp nếu cần |                                                                                 |
-| 6    |                                         | Lưu thay đổi vào bộ nhớ tạm (in-memory job state)                               |
-| 7    | Bấm "Approve"                           |                                                                                 |
-| 8    |                                         | Đánh dấu file là `done`                                                         |
-| 9    | Lặp lại bước 3–8 cho các file còn lại   |                                                                                 |
-| 10   | Bấm "Export"                            |                                                                                 |
-| 11   |                                         | Ghi toàn bộ file đã approve ra `5.openapi/`                                     |
-| 12   |                                         | Tự động kích hoạt bundle → lint `<<include UC09, UC10, UC11>>`                  |
+| Bước | Người dùng                            | Hệ thống                                                                          |
+| ---- | -------------------------------------- | ------------------------------------------------------------------------------- |
+| 1    | Mở Bundle Editor cho 1 module          |                                                                                 |
+| 2    |                                        | Gọi `GET /docs/operations`, `GET /docs/schema-fields`, đọc bundle hiện tại      |
+| 3    |                                        | Trả về summary/description/parameter/schema field description                   |
+| 4    | Chọn operation muốn sửa, sửa nội dung |                                                                                 |
+| 5    | Bấm "Lưu"                              |                                                                                 |
+| 6    |                                        | Gọi `PATCH /docs/operations`, `PATCH /docs/schema-fields`                       |
+| 7    |                                        | Ghi field + marker `x-manual-edit-fields` vào tầng 2 (ruamel.yaml, giữ format gốc) |
+| 8    |                                        | Ghi field tương ứng vào tầng 3 (đồng bộ 2 tầng)                                  |
+| 9    |                                        | Trả `200 { updated: n }`                                                         |
 
 ### Luồng thay thế
 
-**A1 — Reject file:**
-- Tại bước 7, người dùng bấm "Reject" thay vì "Approve" → file bị đánh dấu là `rejected`, không được export.
+**A1 — Sửa qua tab "YAML thô":**
+- Người dùng chuyển sang tab "YAML thô" thay vì Form Editor → hệ thống gọi `GET /docs/bundle-content`, hiển thị toàn bộ nội dung bundle qua Monaco Editor → người dùng sửa trực tiếp, bấm Lưu → hệ thống gọi `PUT /docs/bundle-content`, diff với bản cũ rồi ghi field thay đổi + marker field-path vào tầng 2, ghi verbatim (giữ nguyên format gốc) vào tầng 3.
 
-**A2 — Không có file flagged:**
-- Tại bước 2, tất cả file đã ở trạng thái `done` → hệ thống hiển thị thông báo không còn file cần review → người dùng bấm thẳng Export.
+**A2 — Xử lý xung đột sửa tay khi import lại:**
+- Nếu UC04 (import lại) phát hiện tài liệu nguồn đã đổi VÀ giá trị mới sinh ra khác giá trị đã sửa tay trước đó → hệ thống ghi vào `manual_edit_conflicts.json`. Người dùng mở card "Xung đột sửa tay khi import lại", xem `operationId`/field/giá trị cũ/giá trị mới, chọn "Giữ bản cũ" (ghi lại `old_value` vào cả tầng 2 + tầng 3) hoặc "Lấy bản mới" (không đổi gì, chỉ xóa entry khỏi hàng đợi).
 
 ### Luồng ngoại lệ
 
-**E1 — YAML không hợp lệ sau khi chỉnh sửa:**
-- Tại bước 5, người dùng nhập sai cú pháp YAML → Monaco Editor hiển thị lỗi inline → hệ thống không cho approve cho đến khi YAML hợp lệ.
+**E1 — YAML sai cú pháp ở tab "YAML thô":**
+- Tại A1, người dùng lưu bundle với YAML sai cú pháp → hệ thống trả `400 BUNDLE_INVALID_YAML`, không ghi gì ở cả 2 tầng.
 
-**E2 — Job hết hạn (restart backend):**
-- Backend không có database → khi restart, toàn bộ job state bị mất → người dùng phải chạy lại UC04.
+**E2 — Lỗi đọc/ghi 1 file lúc đồng bộ marker:**
+- Khi ghi marker `x-manual-edit-fields` vào tầng 2, nếu đọc/ghi 1 file gặp lỗi → hệ thống bỏ qua file đó, không làm fail cả request.
 
 ### Quan hệ
 
-| Loại          | UC liên quan                             |
-| ------------- | ---------------------------------------- |
-| `<<include>>` | UC09 — Bundle toàn bộ YAML thành 1 file  |
-| `<<include>>` | UC10 — Lint bundle theo chuẩn OpenAPI    |
-| `<<include>>` | UC11 — Lint bundle theo governance rules |
+| Loại     | UC liên quan |
+| -------- | ------------ |
+| Không có | —            |
 
 ---
 
@@ -296,7 +295,7 @@
 | 4    |                                      | Build Swagger UI HTML → `public/api-docs.html`                          |
 | 5    |                                      | Hiển thị kết quả lint (số lỗi error / warning theo Spectral và Redocly) |
 | 6    | Xem kết quả lint trên giao diện      |                                                                         |
-| 7    | Bấm "Developer Portal" xem giao diện |                                                                         |
+| 7    | Bấm nút "Developer Portal" trên thanh điều hướng để xem giao diện | Mở `/swagger` (Swagger UI) ở tab mới — tên nút không khớp với trang portal riêng trong code, xem ghi chú ở UC07 |
 
 ### Luồng thay thế
 
@@ -334,7 +333,7 @@
 | **Mã UC**                | UC07                                                                                                                                           |
 | **Tên UC**               | Xem tài liệu API                                                                                                                               |
 | **Tác nhân chính**       | Người dùng                                                                                                                                     |
-| **Mô tả**                | Người dùng xem tài liệu API đã được build dưới dạng Swagger UI tương tác hoặc Developer Portal dạng danh sách, có thể tìm kiếm và lọc endpoint |
+| **Mô tả**                | Người dùng xem tài liệu API đã được build dưới dạng Swagger UI tương tác, có thể tìm kiếm và lọc endpoint |
 | **Điều kiện tiên quyết** | UC06 đã hoàn thành. Tệp `dist/openapi-bundled.yaml` tồn tại                                                                                    |
 | **Điều kiện hậu**        | Không thay đổi dữ liệu. Người dùng đọc được thông tin API cần tìm                                                                              |
 
@@ -342,7 +341,7 @@
 
 | Bước | Người dùng                                      | Hệ thống                                                                    |
 | ---- | ----------------------------------------------- | --------------------------------------------------------------------------- |
-| 1    | Truy cập trang Swagger UI hoặc Developer Portal |                                                                             |
+| 1    | Truy cập trang Swagger UI (qua nút "Developer Portal" trên thanh điều hướng, hoặc URL `/swagger` trực tiếp) |                                                                             |
 | 2    |                                                 | Tải `openapi-bundled.yaml` từ server                                        |
 | 3    |                                                 | Render danh sách endpoint với method, path, summary, description            |
 | 4    | Nhập từ khóa vào ô tìm kiếm                     |                                                                             |
@@ -353,16 +352,16 @@
 
 ### Luồng thay thế
 
-**A1 — Xem qua Developer Portal:**
-- Tại bước 1, người dùng chọn Developer Portal thay vì Swagger UI → giao diện hiển thị dạng card theo nhóm module thay vì danh sách Swagger chuẩn.
-
-**A2 — Không nhập tìm kiếm:**
+**A1 — Không nhập tìm kiếm:**
 - Người dùng bỏ qua bước 4–6, duyệt toàn bộ danh sách endpoint theo thứ tự mặc định.
 
 ### Luồng ngoại lệ
 
 **E1 — Bundle chưa tồn tại:**
 - Tại bước 2, file `openapi-bundled.yaml` không tìm thấy → hệ thống hiển thị thông báo chưa có tài liệu → người dùng cần thực hiện UC06 trước.
+
+**E2 — Trang Developer Portal thật (`/portal`) không có đường dẫn trỏ tới:**
+- Hệ thống có sẵn 1 trang portal dạng card (bộ tìm kiếm Fuse.js riêng) tại route `/portal`, trùng chức năng với Swagger UI — nhưng không có link nào trong giao diện trỏ tới, kể cả nút ghi chữ "Developer Portal" (nút đó thực chất mở `/swagger`, xem UC06 bước 7). Trang `/portal` chỉ truy cập được nếu người dùng gõ thẳng URL, không phải luồng sử dụng bình thường — hiện coi là mồ côi (orphaned), chưa quyết định giữ hay xóa.
 
 ### Quan hệ
 
@@ -442,7 +441,6 @@
 
 | Loại         | UC liên quan                                     |
 | ------------ | ------------------------------------------------ |
-| Được gọi bởi | UC05 — Kiểm duyệt & xuất YAML (`<<include>>`)    |
 | Được gọi bởi | UC06 — Build & xuất bản tài liệu (`<<include>>`) |
 
 ---
@@ -477,7 +475,6 @@
 
 | Loại         | UC liên quan                                     |
 | ------------ | ------------------------------------------------ |
-| Được gọi bởi | UC05 — Kiểm duyệt & xuất YAML (`<<include>>`)    |
 | Được gọi bởi | UC06 — Build & xuất bản tài liệu (`<<include>>`) |
 
 ---
@@ -513,5 +510,54 @@
 
 | Loại         | UC liên quan                                     |
 | ------------ | ------------------------------------------------ |
-| Được gọi bởi | UC05 — Kiểm duyệt & xuất YAML (`<<include>>`)    |
 | Được gọi bởi | UC06 — Build & xuất bản tài liệu (`<<include>>`) |
+
+---
+
+## UC12 — Deploy tài liệu
+
+| Trường                   | Nội dung                                                                                                                                                                                                                                          |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mã UC**                | UC12                                                                                                                                                                                                                                              |
+| **Tên UC**               | Deploy tài liệu                                                                                                                                                                                                                                    |
+| **Tác nhân chính**       | Người dùng                                                                                                                                                                                                                                         |
+| **Tác nhân phụ**         | GitHub Actions                                                                                                                                                                                                                                     |
+| **Mô tả**                | Người dùng bấm nút Deploy trên dashboard; route server Next.js so sánh `5.openapi/**` cục bộ với nhánh đích trên GitHub qua GitHub REST API (Git Data API — không dùng git cục bộ), tạo nhánh + commit mới nếu có thay đổi, rồi dispatch workflow mở Pull Request tự động merge và deploy Swagger UI lên GitHub Pages |
+| **Điều kiện tiên quyết** | Đã có bundle (UC06 đã chạy). Đã "Kiểm tra lỗi" (lint) ít nhất 1 lần và lint không còn lỗi mức error. Biến môi trường `GH_DISPATCH_TOKEN`, `GH_OWNER`, `GH_REPO` đã cấu hình trên Next.js server                                                    |
+| **Điều kiện hậu**        | Nếu có thay đổi: nhánh `auto/update-openapi-<timestamp>` được tạo trên GitHub, Pull Request được mở và tự động merge nếu CI pass, GitHub Pages được cập nhật                                                                                       |
+
+### Luồng chính
+
+| Bước | Người dùng                     | Hệ thống / GitHub Actions                                                                                     |
+| ---- | ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| 1    | Bấm "Deploy tài liệu"           |                                                                                                             |
+| 2    |                                 | Gọi `POST /api/deploy-docs { baseBranch }`, kiểm tra branch đích tồn tại qua `GET /git/ref/heads/{baseBranch}` |
+| 3    |                                 | Tính git-blob-SHA1 từng file trong `5.openapi/**` cục bộ, so sánh với SHA trên GitHub để xác định file thay đổi |
+| 4    |                                 | Tạo blob cho từng file thay đổi qua GitHub REST API                                                          |
+| 5    |                                 | Tạo tree mới từ blob + baseSha, tạo commit, tạo ref nhánh `auto/update-openapi-<timestamp>`                  |
+| 6    |                                 | Dispatch workflow `create-doc-pr.yaml` (input: `base_branch`, `branch_name`)                                 |
+| 7    |                                 | GitHub Actions mở Pull Request, tự động merge nếu CI (validate) pass                                         |
+| 8    |                                 | `deploy.yaml` build Swagger UI → deploy GitHub Pages                                                         |
+| 9    | Nhận thông báo kết quả (toast) | Trả `200 OK` về Frontend                                                                                      |
+
+### Luồng thay thế
+
+**A1 — Không có gì thay đổi:**
+- Tại bước 3, hash blob local trùng với GitHub cho mọi file trong `5.openapi/**` → hệ thống không tạo commit/PR, báo cho người dùng là không có gì để deploy.
+
+### Luồng ngoại lệ
+
+**E1 — Branch đích không tồn tại:**
+- Tại bước 2, GitHub trả `404` cho branch đích → hệ thống trả lỗi rõ ràng ("Branch chưa tồn tại trên remote"), không tạo gì thêm.
+
+**E2 — Nút Deploy bị khóa trước khi bấm được:**
+- Nút chỉ bật khi đã có bundle, đã "Kiểm tra lỗi" ít nhất 1 lần, và lint 0 lỗi mức error, và không có thao tác khác đang chạy — nếu chưa đủ điều kiện, nút disable kèm lý do cụ thể.
+
+**E3 — CI (validate) không pass sau khi mở PR:**
+- Tại bước 7, PR không được tự động merge, chờ xử lý thủ công trên GitHub.
+
+### Quan hệ
+
+| Loại         | UC liên quan                                                                       |
+| ------------ | ----------------------------------------------------------------------------------- |
+| `<<extend>>` | UC06 — Build & xuất bản tài liệu (cần bundle + lint đã chạy trước khi deploy được) |

@@ -1,0 +1,24 @@
+type: object
+properties:
+  order_status:
+    type: string
+    description: 'Trạng thái mới của order: ACTIVE (tất cả xác thực, cert issued)
+      | PENDING (chưa xong) | DCV_PENDING | FAILED.'
+  certificate_status:
+    type: string
+    description: 'Trạng thái raw từ provider. VD Daousign: "Awaiting Validation (Full)"
+      | "Valid" | "Reject" | "Revoked".'
+  all_validated:
+    type: boolean
+    description: True nếu tất cả dcv_records đều VALIDATED.
+  dcv_records:
+    type: string
+    description: Danh sách kết quả validation từng domain.
+  dcv_records[].status:
+    type: string
+    description: PENDING | VALIDATED | FAILED — cập nhật sau khi kiểm tra 
+      provider.
+  dcv_records[].validated_at:
+    type: string
+    description: Thời điểm xác thực thành công. Null nếu chưa validated.
+description: Schema `ValidateOrderDcvData`.

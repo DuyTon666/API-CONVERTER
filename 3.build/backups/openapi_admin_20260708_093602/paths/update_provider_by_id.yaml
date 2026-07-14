@@ -1,0 +1,105 @@
+patch:
+  summary: Cập nhật thông tin nhà cung cấp theo ID
+  operationId: updateProviderById
+  description: Cập nhật thông tin của nhà cung cấp dựa trên ID được chỉ định. Chỉ quản trị viên có quyền thực hiện thao 
+    tác này và các trường không được gửi sẽ giữ nguyên giá trị cũ.
+  tags:
+  - Admin
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'id'.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+          example:
+            success: true
+            data:
+            error:
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: false
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/admin/UpdateProviderByIdRequest.yaml"
+  x-error-responses:
+    '409':
+    - code: '4090'
+      category: Idempotency
+      message: Idempotency-Key đang xử lý (concurrent)
+    - code: '4091'
+      category: Idempotency
+      message: Double submit — payload trùng trong dedup window
+    '401':
+    - code: '4101'
+      category: Auth
+      message: Thiếu Authorization header
+    - code: '4102'
+      category: Auth
+      message: Bearer Token không hợp lệ / hết hạn
+    '403':
+    - code: '4103'
+      category: Auth
+      message: Client không có scope=admin
+    - code: '4108'
+      category: Auth
+      message: IP không được phép
+    '422':
+    - code: '4200'
+      category: Input
+      message: Dữ liệu request không hợp lệ (validate chung)
+    - code: '5403'
+      category: Format
+      message: registered_ip không phải IPv4/IPv6 hợp lệ
+    - code: '5404'
+      category: Format
+      message: sandbox_base_url / production_base_url không phải URL HTTPS hợp lệ
+    - code: '5408'
+      category: Format
+      message: auth_extra không phải JSON object hợp lệ
+    - code: '5414'
+      category: Config
+      message: Cấu hình list-products không đầy đủ — phải set đồng thời endpoint, method, request_template, 
+        response_path (all-or-none)
+    - code: '5415'
+      category: Format
+      message: list_products_response_path không phải JSONPath hợp lệ hoặc list_products_timeout_seconds ngoài range [5,
+        120]
+    - code: '5405'
+      category: Business
+      message: Provider đã soft-deleted, không thể thao tác
+    - code: '5402'
+      category: Immutable
+      message: Không cho phép update field immutable (code, id, created_at, created_by)
+    '404':
+    - code: '5004'
+      category: Not Found
+      message: Không tìm thấy provider với id được cho (hoặc đã soft-deleted)

@@ -11,8 +11,8 @@ participant "Frontend" as FE
 participant "Backend" as BE
 participant "File System" as FS
 
-User -> FE: Kéo thả hoặc chọn file\n(PDF / DOCX / TXT)
-FE -> BE: POST /upload\n(multipart/form-data)
+User -> FE: Kéo thả hoặc chọn file\n(PDF / DOCX)
+FE -> BE: POST /source/upload\n(multipart/form-data)
 
 alt Định dạng không hợp lệ
   BE --> FE: 400 Bad Request\n{ detail: "Định dạng không hỗ trợ" }
@@ -25,7 +25,7 @@ else Định dạng hợp lệ
 end
 
 User -> FE: Bấm "Quét nguồn dữ liệu"
-FE -> BE: POST /scan
+FE -> BE: GET /modules/scan
 
 BE -> FS: Quét thư mục\n1.docs/source/api_contract/
 FS --> BE: Danh sách file & folder

@@ -1,0 +1,57 @@
+type: object
+properties:
+  id:
+    type: string
+    description: Định danh của bản ghi.
+  code:
+    type: string
+    description: Mã định danh.
+  sandbox_base_url:
+    type: string
+    description: Trường `sandbox_base_url`.
+  production_base_url:
+    type: string
+    description: Trường `production_base_url`.
+  sandbox_token:
+    type: string
+    description: Trường `sandbox_token`.
+  production_token:
+    type: string
+    description: Trường `production_token`.
+  registered_ip:
+    type: string
+    description: Trường `registered_ip`.
+  auth_extra:
+    type: string
+    description: Trường `auth_extra`.
+  list_products_endpoint:
+    type: string
+    description: Trường `list_products_endpoint`.
+  list_products_method:
+    type: string
+    description: Trường `list_products_method`.
+  list_products_request_template:
+    type: string
+    description: Trường `list_products_request_template`.
+  list_products_response_path:
+    type: string
+    description: Trường `list_products_response_path`.
+  list_products_timeout_seconds:
+    type: string
+    description: Trường `list_products_timeout_seconds`.
+  is_enabled:
+    type: string
+    description: Trường `is_enabled`.
+  display_order:
+    type: string
+    description: Trường `display_order`.
+  created_by:
+    type: string
+    description: Người tạo bản ghi.
+  updated_by:
+    type: string
+    description: Người cập nhật bản ghi.
+  deleted_at:
+    type: string
+    description: Thời điểm xóa bản ghi.
+description: Schema `CreateProviderRequest`.

@@ -1,0 +1,23 @@
+type: object
+properties:
+  provider_id:
+    type: string
+    description: ID provider
+    readOnly: true
+  code:
+    type: string
+    description: Mã provider (reference)
+  env:
+    type: string
+    description: Môi trường đã reveal (SANDBOX | PRODUCTION)
+  token:
+    type: string
+    description: Token plaintext đầy đủ — CHỈ có trong response này, không lưu ở
+      đâu khác
+  revealed_at:
+    type: string
+    description: Thời điểm reveal (UTC)
+  revealed_by:
+    type: string
+    description: Admin ID thực hiện reveal
+description: Schema `RevealProviderTokenData`.

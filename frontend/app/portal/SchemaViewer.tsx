@@ -69,33 +69,33 @@ function SchemaRow({
   return (
     <div>
       <div
-        className="flex items-start gap-2 py-2 border-b border-gray-100 last:border-0"
-        style={{ paddingLeft: `${depth * 16 + 12}px`, paddingRight: "12px" }}
+        className="flex items-start gap-3 py-3 border-b border-gray-100 last:border-0"
+        style={{ paddingLeft: `${depth * 20 + 16}px`, paddingRight: "16px" }}
       >
-        <span className="font-mono text-gray-800 text-xs min-w-[120px] shrink-0 pt-0.5">{name}</span>
-        <div className="flex flex-col gap-0.5 min-w-0">
+        <span className="font-mono text-gray-800 text-sm min-w-[140px] shrink-0 pt-0.5">{name}</span>
+        <div className="flex flex-col gap-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className={`text-xs font-semibold ${TYPE_COLOR[type] ?? "text-gray-500"}`}>
+            <span className={`text-sm font-semibold ${TYPE_COLOR[type] ?? "text-gray-500"}`}>
               {type}
               {resolved.format ? `<${resolved.format}>` : ""}
               {type === "array" && resolved.items ? `[${getType(resolved.items)}]` : ""}
             </span>
             {required && (
-              <span className="text-xs text-red-400">required</span>
+              <span className="text-sm text-red-400">required</span>
             )}
             {resolved.enum && (
-              <span className="text-xs text-gray-400">
+              <span className="text-sm text-gray-400">
                 enum: {resolved.enum.map((v) => JSON.stringify(v)).join(", ")}
               </span>
             )}
             {resolved.example !== undefined && (
-              <span className="text-xs text-gray-400 font-mono">
+              <span className="text-sm text-gray-400 font-mono">
                 example: {JSON.stringify(resolved.example)}
               </span>
             )}
           </div>
           {resolved.description && (
-            <span className="text-xs text-gray-400 whitespace-pre-wrap leading-relaxed">
+            <span className="text-sm text-gray-400 whitespace-pre-wrap leading-relaxed">
               {resolved.description}
             </span>
           )}
@@ -151,7 +151,7 @@ export default function SchemaViewer({ schema }: { schema: SchemaObject }) {
   if (!resolved.properties) {
     const type = getType(resolved);
     return (
-      <span className={`text-xs font-semibold ${TYPE_COLOR[type] ?? "text-gray-500"}`}>
+      <span className={`text-sm font-semibold ${TYPE_COLOR[type] ?? "text-gray-500"}`}>
         {type}
       </span>
     );

@@ -1,0 +1,1291 @@
+[
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/department/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "department"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/department/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "department"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/department/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "department"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/list_types.yaml",
+    "source_format": "pdf",
+    "module": "service"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/list_types.yaml",
+    "source_format": "pdf",
+    "module": "service"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/list_types.yaml",
+    "source_format": "pdf",
+    "module": "service"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/tmp/tmpw5yqpf_q/output/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "ticket"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/tmp/tmp3t06bdzb/output/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "ticket"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/tmp/tmpt27jqukj/output/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "ticket"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/tmp/tmpfjy2gn6u/output/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "ticket"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/tmp/tmpu7di6k2q/output/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "ticket"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/tmp/tmph5s06eu0/output/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "ticket"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/tmp/tmp17_krx9_/output/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "ticket"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_create.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_internal_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_delete.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_internal_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_detail.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_internal_product_detail.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_list.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_internal_products.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_mapping_create.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_internal_product_mapping.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_mapping_delete.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_internal_product_mapping.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_mapping_list.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_internal_product_mappings.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_mapping_update.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_internal_product_mapping.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_toggle.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_internal_product_status.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_update.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_internal_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_create.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_provider.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_delete.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_provider_by_id.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_detail.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_detail.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_list.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_providers.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_create.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_provider_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_delete.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_provider_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_detail.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_product_detail.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_list.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_product_list.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_sync.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/sync_provider_products.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_toggle.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_provider_product_status.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_update.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_provider_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_reveal_token.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/reveal_provider_token.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_toggle.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_provider_status.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_update.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_provider_by_id.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_csr_generate.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/csr/generate_csr_request.yaml",
+    "source_format": "docx",
+    "module": "csr"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_cert_download.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/download_order_certificate.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_certificate.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/download_order_certificate.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_create.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/create_order.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_dcv_change.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/change_order_dcv_method.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_dcv_records.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_dcv_records.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_dcv_resend_email.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/resend_dcv_email_for_order.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_dcv_validate.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/validate_order_dcv.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_detail.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_detail.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_generate_csr.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/generate_csr_for_order.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_list.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_list.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_reissue.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/reissue_order_by_id.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_renew.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/renew_order.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_revoke.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/revoke_order_by_id.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_submit_csr.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/submit_csr_for_order.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_sync_status.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/sync_order_status.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_plan_topup.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/topup/order_plan_topup.yaml",
+    "source_format": "docx",
+    "module": "topup"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_create.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_internal_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_delete.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_internal_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_detail.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_internal_product_detail.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_list.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_internal_products.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_mapping_create.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_internal_product_mapping.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_mapping_delete.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_internal_product_mapping.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_mapping_list.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_internal_product_mappings.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_mapping_update.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_internal_product_mapping.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_toggle.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_internal_product_status.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_internal_product_update.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_internal_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_create.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_provider.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_delete.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_provider_by_id.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_detail.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_detail.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_list.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_providers.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_create.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_provider_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_delete.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_provider_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_detail.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_product_detail.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_list.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_product_list.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_sync.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/sync_provider_products.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_toggle.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_provider_product_status.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_product_update.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_provider_product.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_reveal_token.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/reveal_provider_token.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_toggle.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_provider_status.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_provider_update.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_provider_by_id.yaml",
+    "source_format": "docx",
+    "module": "admin"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_csr_generate.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/csr/generate_csr_request.yaml",
+    "source_format": "docx",
+    "module": "csr"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/department/get_department_list.yaml",
+    "source_format": "pdf",
+    "module": "department"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_cert_download.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/download_order_certificate.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_certificate.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/download_order_certificate.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_create.docx",
+    "flags": [
+      "permission_missing",
+      "request_body_fields_empty"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission",
+      "Kiểm tra section 4.3 trong docx — có request body nhưng không parse được fields"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/create_order.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_dcv_change.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/change_order_dcv_method.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_dcv_records.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_dcv_records.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_dcv_resend_email.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/resend_dcv_email.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_dcv_validate.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/validate_order_dcv.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_detail.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_detail.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_generate_csr.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/generate_csr_for_order.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_list.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_list.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_reissue.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/reissue_order_by_id.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_renew.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/renew_order.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_revoke.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/revoke_order_by_id.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_submit_csr.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/submit_csr_for_order.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_sync_status.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/sync_order_status.yaml",
+    "source_format": "docx",
+    "module": "order"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/get_service_types.yaml",
+    "source_format": "pdf",
+    "module": "service"
+  },
+  {
+    "type": "convert_review",
+    "file": "API_order_plan_topup.docx",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/topup/order_plan_topup.yaml",
+    "source_format": "docx",
+    "module": "topup"
+  }
+]

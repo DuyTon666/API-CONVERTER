@@ -1,0 +1,52 @@
+post:
+  summary: Đồng bộ trạng thái đơn hàng theo ID
+  operationId: syncOrderStatus
+  description: Đồng bộ trạng thái của đơn hàng với hệ thống bên ngoài dựa trên ID đơn hàng. Chỉ áp dụng cho các đơn hàng
+    đang trong quá trình xử lý và yêu cầu đơn hàng phải tồn tại trong hệ thống.
+  tags:
+  - Order
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'id'.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+          example:
+            success: true
+            data:
+            error:
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/order/SyncOrderStatusRequest.yaml"

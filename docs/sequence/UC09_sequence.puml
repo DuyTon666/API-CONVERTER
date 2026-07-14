@@ -10,7 +10,7 @@ participant "Backend" as BE
 participant "Redocly CLI" as Redocly
 participant "File System" as FS
 
-BE -> Redocly: subprocess.run(\n"redocly bundle openapi/openapi.yaml"\n)
+BE -> Redocly: subprocess.run(\n"redocly bundle 5.openapi/openapi.yaml"\n)
 
 Redocly -> FS: Đọc file entry point
 FS --> Redocly: openapi.yaml

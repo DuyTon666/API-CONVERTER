@@ -1,0 +1,2212 @@
+{
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_create.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_internal_product_create.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_create.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_internal_product.yaml",
+    "method": "post",
+    "http_path": "/v1/admin/internal-products",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:28:47",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_delete.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_internal_product_delete.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_delete.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_internal_product.yaml",
+    "method": "delete",
+    "http_path": "/v1/admin/internal-products/{}",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:28:50",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_detail.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_internal_product_detail.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_detail.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_internal_product_detail.yaml",
+    "method": "get",
+    "http_path": "/v1/admin/internal-products/{}",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:28:53",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_list.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_internal_product_list.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_list.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_internal_products.yaml",
+    "method": "get",
+    "http_path": "/v1/admin/internal-products",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:00",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_mapping_create.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_internal_product_mapping_create.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_mapping_create.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_internal_product_mapping.yaml",
+    "method": "post",
+    "http_path": "/v1/admin/internal-products/{}/mappings",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:08",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_mapping_delete.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_internal_product_mapping_delete.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_mapping_delete.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_internal_product_mapping.yaml",
+    "method": "delete",
+    "http_path": "/v1/admin/internal-products/{}/mappings/{}",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:11",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_mapping_list.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_internal_product_mapping_list.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_mapping_list.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_internal_product_mappings.yaml",
+    "method": "get",
+    "http_path": "/v1/admin/internal-products/{}/mappings",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:14",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_mapping_update.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_internal_product_mapping_update.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_mapping_update.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_internal_product_mapping.yaml",
+    "method": "patch",
+    "http_path": "/v1/admin/internal-products/{}/mappings/{}",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:17",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_toggle.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_internal_product_toggle.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_toggle.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_internal_product_status.yaml",
+    "method": "patch",
+    "http_path": "/v1/admin/internal-products/{}/status",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:21",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_update.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_internal_product_update.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_internal_product_update.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_internal_product.yaml",
+    "method": "patch",
+    "http_path": "/v1/admin/internal-products/{}",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:25",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_create.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_create.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_create.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_provider.yaml",
+    "method": "post",
+    "http_path": "/v1/admin/providers",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:28",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_delete.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_delete.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_delete.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_provider_by_id.yaml",
+    "method": "delete",
+    "http_path": "/v1/admin/providers/{}",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:32",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_detail.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_detail.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_detail.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_detail.yaml",
+    "method": "get",
+    "http_path": "/v1/admin/providers/{}",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:35",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_list.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_list.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_list.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/list_providers.yaml",
+    "method": "get",
+    "http_path": "/v1/admin/providers",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:40",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_create.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_product_create.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_create.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/create_provider_product.yaml",
+    "method": "post",
+    "http_path": "/v1/admin/providers/{}/products",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:43",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_delete.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_product_delete.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_delete.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/delete_provider_product.yaml",
+    "method": "delete",
+    "http_path": "/v1/admin/providers/{}/products/{}",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:46",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_detail.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_product_detail.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_detail.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_product_detail.yaml",
+    "method": "get",
+    "http_path": "/v1/admin/providers/{}/products/{}",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:50",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_list.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_product_list.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_list.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/get_provider_product_list.yaml",
+    "method": "get",
+    "http_path": "/v1/admin/providers/{}/products",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:54",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_sync.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_product_sync.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_sync.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/sync_provider_products.yaml",
+    "method": "post",
+    "http_path": "/v1/admin/providers/{}/products/sync",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:29:57",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_toggle.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_product_toggle.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_toggle.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_provider_product_status.yaml",
+    "method": "patch",
+    "http_path": "/v1/admin/providers/{}/products/{}/status",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:01",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_update.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_product_update.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_product_update.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_provider_product.yaml",
+    "method": "patch",
+    "http_path": "/v1/admin/providers/{}/products/{}",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:09",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_reveal_token.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_reveal_token.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_reveal_token.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/reveal_provider_token.yaml",
+    "method": "post",
+    "http_path": "/v1/admin/providers/{}/reveal-token",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:13",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_toggle.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_toggle.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_toggle.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/toggle_provider_status.yaml",
+    "method": "patch",
+    "http_path": "/v1/admin/providers/{}/status",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:17",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:admin:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_update.docx": {
+    "module": "admin",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_provider_update.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/admin/API_provider_update.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/admin/update_provider_by_id.yaml",
+    "method": "patch",
+    "http_path": "/v1/admin/providers/{}",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:20",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "admin",
+      "final_module": "admin",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:csr:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/csr/API_csr_generate.docx": {
+    "module": "csr",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_csr_generate.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/csr/API_csr_generate.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/csr/generate_csr_request.yaml",
+    "method": "post",
+    "http_path": "/v1/csr/generate",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "20/04/2026",
+        "actor": "",
+        "change": "Tạo mới — API độc lập không liên quan đơn hàng. Nhận: common_name, org_name, locality, country, email, key_size, signature_algorithm."
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:24",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "csr",
+      "final_module": "csr",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:department:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/department/API Contract - API lấy list phòng ban gửi ticket.pdf": {
+    "module": "department",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/department/API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/department/get_department_list.yaml",
+    "method": "get",
+    "http_path": "/v1/departments",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "16/01/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:30",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "department",
+      "final_module": "department",
+      "service_in_doc": "department",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_cert_download.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_cert_download.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_cert_download.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/download_order_certificate.yaml",
+    "method": "get",
+    "http_path": "/v1/orders/{}/certificates/{}/download",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "22/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu. GET /api/v1/orders/{id}/certificates/{certId}/download — ZIP bundle (certificate.crt, ca_bundle.crt, fullchain.crt, private.key, README.txt). Chỉ cho phép cert status=ISSUED. format=json để lấy PEM strings."
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:33",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_certificate.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_certificate.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_certificate.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/download_order_certificate.yaml",
+    "method": "get",
+    "http_path": "/v1/orders/{}/certificates/{}/download",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "2.0",
+        "date": "04/06/2026",
+        "actor": "",
+        "change": "Cập nhật toàn bộ theo code thực tế:· Đổi endpoint: /orders/{id}/certificate → /orders/{id}/certificates/{certId}/download.· Thêm path param certId (BIGINT).· Đổi format: pem → zip (mặc định, trả file ZIP bundle) | json.· Bỏ include_chain query param (không implement trong code).· Chuẩn hóa error codes: 4301 (cert không ở ISSUED), 4302 (cert PEM chưa có).· Bỏ 4201, 4202 (route đã dùng whereNumber, không cần validate riêng).· Bỏ scope=client restriction (mọi token đều có thể download).· Bổ sung audit log CERT_DOWNLOADED.· Mô tả nội dung ZIP bundle đầy đủ."
+      },
+      {
+        "version": "1.1",
+        "date": "27/05/2026",
+        "actor": "",
+        "change": "Sửa path param {id}: UUID → Integer (BIGINT)."
+      },
+      {
+        "version": "1.0",
+        "date": "16/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu."
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:37",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_create.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_create.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_create.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/create_order.yaml",
+    "method": "post",
+    "http_path": "/v1/orders",
+    "version": "4.4",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "14/04/2026",
+        "actor": "",
+        "change": "Logic chọn reseller tự động; dùng product_code; subscription_start_date và order_number"
+      },
+      {
+        "version": "1.2",
+        "date": "14/04/2026",
+        "actor": "",
+        "change": "Xác nhận chính sách routing counter không reset theo thời gian"
+      },
+      {
+        "version": "1.3",
+        "date": "14/04/2026",
+        "actor": "",
+        "change": "subscription_end_date = start + years × 366 ngày; reseller disabled bị loại khỏi pool"
+      },
+      {
+        "version": "2.0",
+        "date": "15/04/2026",
+        "actor": "",
+        "change": "REFACTOR routing: WRR ở cấp mapping; thêm mapping_routing_counters; response bổ sung routing_info"
+      },
+      {
+        "version": "3.0",
+        "date": "16/04/2026",
+        "actor": "",
+        "change": "REFACTOR contact: tách owner_contact / tech_contact / billing_contact; thêm external_account_id"
+      },
+      {
+        "version": "4.0",
+        "date": "17/04/2026",
+        "actor": "",
+        "change": "SYNC contact structure với external system: contact_admin / contact_org / contact_tech. OV/EV: business_number + representative_name bắt buộc trong contact_org. duns luôn tùy chọn. Cập nhật DB columns tương ứng."
+      },
+      {
+        "version": "4.1",
+        "date": "05/05/2026",
+        "actor": "",
+        "change": "contact (contact_admin, contact_org, contact_tech) không bắt buộc tại bước tạo đơn. business_number + representative_name tùy chọn với mọi loại chứng chỉ."
+      },
+      {
+        "version": "4.2",
+        "date": "27/05/2026",
+        "actor": "",
+        "change": "external_account_id: sửa kiểu từ String → Integer (BIGINT, ≥ 1). DB column là unsignedBigInteger, validation là integer min:1. Cập nhật request body example, field table, validate rules, response table, DB schema table."
+      },
+      {
+        "version": "4.3",
+        "date": "27/05/2026",
+        "actor": "",
+        "change": "Sửa tất cả UUID → Integer (BIGINT) cho id, internal_product_id, mapping_id, provider_id, provider_product_id trong response examples, response table và DB schema table."
+      },
+      {
+        "version": "4.4",
+        "date": "28/05/2026",
+        "actor": "",
+        "change": "Cập nhật bảng mã lỗi: thay thế 4201/4203 (sai module) bằng mã validation riêng theo field 4221–4262. Mỗi field/rule có mã lỗi độc lập thay vì dùng chung 4200."
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:41",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_dcv_change.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_dcv_change.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_dcv_change.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/change_order_dcv_method.yaml",
+    "method": "post",
+    "http_path": "/v1/orders/{}/dcv/change",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "2.1",
+        "date": "04/06/2026",
+        "actor": "",
+        "change": "Bổ sung validate rules cert_type × method:· 4766: WILDCARD/FLEX chỉ cho CNAME/EMAIL (không được HTTP).· 4767: IP domain chỉ cho HTTP (không được CNAME/EMAIL).· 4768: WILDCARD/FLEX + IP domain — cấu hình sản phẩm không hợp lệ.Bổ sung bảng cert_type × method compatibility.Bỏ HTTPS khỏi enum method (không hỗ trợ)."
+      },
+      {
+        "version": "2.0",
+        "date": "04/06/2026",
+        "actor": "",
+        "change": "Chuẩn hóa error codes — mỗi lỗi có mã riêng:· 4761: domain là bắt buộc.· 4762: method là bắt buộc.· 4763: method không hợp lệ (không phải EMAIL/HTTP/CNAME).· 4764: approver_email không đúng định dạng email.· 4765: approver_email bắt buộc khi method=EMAIL.· Fix: 4755 = domain đã VALIDATED (đúng với change endpoint).· Loại HTTPS khỏi enum method (chỉ EMAIL/HTTP/CNAME).Bổ sung X-Actor-Username / X-Actor-Fullname headers.Controller dùng registry->getClientMessage() — không hardcode message."
+      },
+      {
+        "version": "1.0",
+        "date": "28/05/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu."
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:46",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_dcv_records.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_dcv_records.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_dcv_records.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_dcv_records.yaml",
+    "method": "get",
+    "http_path": "/v1/orders/{}/dcv/records",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "17/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "27/05/2026",
+        "actor": "",
+        "change": "Sửa path param {{id}}: kiểu UUID v4 → Integer (BIGINT auto-increment). Tất cả PK trong DB là auto-increment BIGINT, không phải UUID. Cập nhật path param table, validate rules, error codes, response examples."
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:51",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_dcv_resend_email.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_dcv_resend_email.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_dcv_resend_email.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/resend_dcv_email.yaml",
+    "method": "post",
+    "http_path": "/v1/orders/{}/dcv/resend-email",
+    "version": "3.1",
+    "change_history": [
+      {
+        "version": "3.1",
+        "date": "04/06/2026",
+        "actor": "",
+        "change": "Bổ sung actor logging:· Headers X-Actor-Username và X-Actor-Fullname (tùy chọn) để ghi nhận người thực hiện.· Thêm 2 cột actor_username, actor_fullname vào bảng audit_logs.· ActorContext helper tái sử dụng cho các API khác."
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:55",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_dcv_validate.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_dcv_validate.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_dcv_validate.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/validate_order_dcv.yaml",
+    "method": "post",
+    "http_path": "/v1/orders/{}/dcv/validate",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "17/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "27/05/2026",
+        "actor": "",
+        "change": "Sửa path param {{id}}: kiểu UUID v4 → Integer (BIGINT auto-increment). Tất cả PK trong DB là auto-increment BIGINT, không phải UUID. Cập nhật path param table, validate rules, error codes, response examples."
+      }
+    ],
+    "updated_at": "2026-07-06 15:30:59",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_detail.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_detail.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_detail.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_detail.yaml",
+    "method": "get",
+    "http_path": "/v1/orders/{}",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "16/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "27/05/2026",
+        "actor": "",
+        "change": "Sửa path param {{id}}: kiểu UUID v4 → Integer (BIGINT auto-increment). Tất cả PK trong DB là auto-increment BIGINT, không phải UUID. Cập nhật path param table, validate rules, error codes, response examples."
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:03",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_generate_csr.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_generate_csr.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_generate_csr.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/generate_csr_for_order.yaml",
+    "method": "post",
+    "http_path": "/v1/orders/{}/generate-csr",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "20/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:06",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_list.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_list.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_list.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/get_order_list.yaml",
+    "method": "get",
+    "http_path": "/v1/orders",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "16/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:10",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_reissue.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_reissue.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_reissue.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/reissue_order_by_id.yaml",
+    "method": "post",
+    "http_path": "/v1/orders/{}/reissue",
+    "version": "1.7",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "16/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "22/04/2026",
+        "actor": "",
+        "change": "Cập nhật hành vi thực tế Daousign reissue: KGS mode=RC tạo reissuance order nội bộ 0 VND, trả về 10-digit order number mới. Làm rõ provider_reissue_id format. Thêm bảng Provider Behavior Mapping. Cập nhật note cho CertStatusPollerService."
+      },
+      {
+        "version": "1.2",
+        "date": "22/04/2026",
+        "actor": "",
+        "change": "Sửa lỗi thiết kế: orders.id và certificates.id là BIGINT auto-increment (không phải UUID v4). Cập nhật path param type, validate rule 4201, toàn bộ response examples và SQL INSERT."
+      },
+      {
+        "version": "1.3",
+        "date": "22/04/2026",
+        "actor": "",
+        "change": "Đồng bộ hoàn toàn với code thực tế:(1) HTTP response đổi 200 → 202 Accepted (async).(2) Request body: bỏ key_type/san_list/override_contact; thêm private_key/contact_admin/contact_tech; thêm RENEWAL_EARLY/CA_REVOCATION/AUTO_RENEWAL vào reissue_reason enum.(3) Response data: đổi tên trường sang new_cert_id/replaces_cert_id/cert_seq/message; status = REISSUE_QUEUED (không phải REISSUE_PENDING — cert chuyển REISSUE_PENDING sau khi worker gửi).(4) Error codes: đồng bộ với ReissueService R1-R8 (4201-4207/4801); xóa 4601/4602/4603/4091/4701-4703.(5) Luồng xử lý: cập nhật phản ánh R1-R8 trong ReissueService, CSR mode matrix, provider behavior TheSSLStore DigiCert.(6) Thêm mục hàng đợi tự động reissue: auto-reissue queue, cert_seq tracking, SUPERSEDED flow."
+      },
+      {
+        "version": "1.4",
+        "date": "02/06/2026",
+        "actor": "Dev",
+        "change": "Mục Mã lỗi",
+        "note": "Bổ sung 4101/4103 (auth errors); controller dùng ErrorCodeRegistry cho tất cả message"
+      },
+      {
+        "version": "1.5",
+        "date": "02/06/2026",
+        "actor": "Dev",
+        "change": "Mục Request Body",
+        "note": "reissue_reason đổi thành optional; contact_admin/contact_tech đổi thành required; bổ sung contact_org (required), cập nhật mô tả san_list và dcv_config"
+      },
+      {
+        "version": "1.6",
+        "date": "02/06/2026",
+        "actor": "Dev",
+        "change": "TABLE 7, TABLE 11, TABLE 14",
+        "note": "Bổ sung bảng chi tiết nested fields contact_admin/org/tech; thêm error codes 4622–4623, 4631–4655 vào danh sách mã lỗi; xóa mã 4102 sai; bổ sung contact_org vào DB operations"
+      },
+      {
+        "version": "1.7",
+        "date": "02/06/2026",
+        "actor": "Dev",
+        "change": "TABLE 7, TABLE 11",
+        "note": "san_list và dcv_config đổi thành bắt buộc; san_list replace hoàn toàn ([] = xóa hết SAN); dcv_config phải cover đủ primary_domain + SANs; cập nhật mô tả 4622"
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:14",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_renew.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_renew.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_renew.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/renew_order.yaml",
+    "method": "post",
+    "http_path": "/v1/orders/{}/renew",
+    "version": "2.2",
+    "change_history": [
+      {
+        "version": "2.0",
+        "date": "23/04/2026",
+        "actor": "",
+        "change": "Cập nhật toàn diện theo business rules xác nhận:· Rule gia hạn: chỉ cho phép khi còn ≤30 ngày hoặc đã EXPIRED (thay vì 90 ngày).· Thêm Validity Calculation: submit_years = max(1, min(order.years, ceil(remaining/12))).  Áp dụng cho cả luồng đăng ký và gia hạn tại submit-csr.· Thêm Provider Routing: Daousign mode=RW (chưa hết hạn) / NW (đã hết hạn);  TheSSLStore isRenewalOrder=true (cả hai trường hợp).· Thêm Expiry Sync: sau khi provider cấp cert, nếu cert.expires_at > order.subscription_end_date  → cập nhật order + log + Telegram.· Thêm tracking submitted_validity_months trên certificates để đối soát.· Thêm system setting renewal_early_days (default 30)."
+      },
+      {
+        "version": "1.0",
+        "date": "16/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu (draft — chưa đầy đủ business rules)."
+      },
+      {
+        "version": "2.1",
+        "date": "27/05/2026",
+        "actor": "",
+        "change": "Bổ sung ràng buộc trên của years: max 3 năm (đồng bộ với RenewOrderRequest validation). Cập nhật mô tả field years trong request body table và R5 validate rule."
+      },
+      {
+        "version": "2.2",
+        "date": "02/06/2026",
+        "actor": "",
+        "change": "Chuẩn hóa error codes renewal sang dải 410x (4107–4114).Bỏ override_contact, thay bằng contact_admin / contact_org / contact_tech flat fields (tất cả tùy chọn, field không truyền = kế thừa từ order gốc).Cập nhật request body, bảng fields, validate rules, bảng error codes."
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:17",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_revoke.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_revoke.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_revoke.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/revoke_order_by_id.yaml",
+    "method": "post",
+    "http_path": "/v1/orders/{}/revoke",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.2",
+        "date": "25/04/2026",
+        "actor": "",
+        "change": "Thêm giới hạn revoke hàng ngày (R0 — Daily Rate Limit):· R0: Toàn hệ thống chỉ cho phép tối đa revoke_daily_limit lần/ngày (mặc định 10).· Đếm bằng certificates.revoke_requested_at theo ngày dương lịch.· Vượt ngưỡng → RevokeException 4900 / HTTP 429.· Admin config qua Filament: Cài đặt → Cấu hình Thu hồi.· Modal xác nhận hiển thị hạn mức đã dùng/còn lại trong ngày."
+      },
+      {
+        "version": "1.1",
+        "date": "22/04/2026",
+        "actor": "",
+        "change": "Audit & cập nhật ma trận Provider×CertState:· R5 mở rộng: kiểm tra provider_order_id cho MỌI cert state (không chỉ ISSUED).· Cert chưa issue có ordnum (PENDING): TheSSLStore và Daousign đều revoke được qua API.· Cert chưa có provider_order_id (chưa submit provider): ẩn nút UI, service trả 4904.· UI visible(): mở rộng order status sang SUBMITTED/PENDING_DCV/PENDING_ORG/PENDING_EV.· R6 (30-day limit) chỉ áp dụng cert ISSUED, cert PENDING không bị giới hạn này."
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:25",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_submit_csr.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_submit_csr.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_submit_csr.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/submit_csr_for_order.yaml",
+    "method": "post",
+    "http_path": "/v1/orders/{}/submit-csr",
+    "version": "1.3",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "16/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "16/04/2026",
+        "actor": "",
+        "change": "Bổ sung đầy đủ trường request body và Provider Adapter Mapping cho TheSSLStore / Daousign"
+      },
+      {
+        "version": "1.2",
+        "date": "16/04/2026",
+        "actor": "",
+        "change": "Đổi tên admin_contact → owner_contact, technical_contact → tech_contact; bổ sung logic UPDATE orders khi override contact"
+      },
+      {
+        "version": "1.3",
+        "date": "16/04/2026",
+        "actor": "",
+        "change": "Bổ sung rule chặn double submit: 422/4605 khi provider_order_id IS NOT NULL — tránh provider tạo 2 đơn hàng trùng nhau"
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:28",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:order:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_sync_status.docx": {
+    "module": "order",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_sync_status.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/order/API_order_sync_status.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/order/sync_order_status.yaml",
+    "method": "post",
+    "http_path": "/v1/orders/{}/sync-status",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "22/04/2026",
+        "actor": "",
+        "change": "Tạo mới — API trigger đồng bộ trạng thái thủ công từ provider"
+      },
+      {
+        "version": "1.1",
+        "date": "23/04/2026",
+        "actor": "",
+        "change": "Bổ sung provider_order_expiry vào response + bảng adapter; tách rõ expires_at (cert) vs provider_order_expiry (subscription) cho Daousign (subscriptionEndDate) và TheSSLStore (CertificateEndDate); cập nhật BR-SS-04, thêm BR-SS-09."
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:32",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "order",
+      "final_module": "order",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:service:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf": {
+    "module": "service",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/get_service_types.yaml",
+    "method": "get",
+    "http_path": "/v1/services/types",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "08/01/2025",
+        "actor": "Phúc Đinh",
+        "change": "Tạo mẫu tài liệu 4.2 Request Parameters a. Path Parameters Không có b. Query Parameters"
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:38",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "service",
+      "final_module": "service",
+      "service_in_doc": "",
+      "conflict": false,
+      "review_type": "none",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:service:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf": {
+    "module": "service",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Contract - API lấy danh sách dịch vụ của một khách hàng.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/get_user_services.yaml",
+    "method": "get",
+    "http_path": "/v1/users/{}/services",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "28/01/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "09/03/2026",
+        "actor": "",
+        "change": "Mr. Phúc Đinh"
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:49",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "service",
+      "final_module": "service",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:service:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Contract - API mở tạm dịch vụ.docx.pdf": {
+    "module": "service",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API mở tạm dịch vụ.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Contract - API mở tạm dịch vụ.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/temporary_open_service.yaml",
+    "method": "post",
+    "http_path": "/v1/services/{}/temporary-open",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "10/03/2026",
+        "actor": "Mr. Phúc Đinh",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:31:56",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "service",
+      "final_module": "service",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:service:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Service - API lấy danh sách các gói nâng cấp của một dịch vụ.docx.pdf": {
+    "module": "service",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Service - API lấy danh sách các gói nâng cấp của một dịch vụ.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Service - API lấy danh sách các gói nâng cấp của một dịch vụ.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/get_service_upgrade_plans.yaml",
+    "method": "get",
+    "http_path": "/v1/users/{}/services/{}/upgrade-plans",
+    "version": "1.1",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "06/03/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "07/04/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Xoá url_add_to_cart khỏi response - Tổng quan 1. Thông tin chung API"
+      }
+    ],
+    "updated_at": "2026-07-06 15:32:04",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "service",
+      "final_module": "service",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:service:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf": {
+    "module": "service",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Service - API tạo yêu cầu nâng cấp dịch vụ.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/create_service_upgrade_plan_request.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/services/{}/request-upgrade-plans",
+    "version": "1.2",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "03/04/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "07/04/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Thay đổi HTTP method từ GET thành POST"
+      },
+      {
+        "version": "1.2",
+        "date": "10/04/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Trả thêm field upgrade_link - Tổng quan 1. Thông tin chung API"
+      }
+    ],
+    "updated_at": "2026-07-06 15:32:12",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "service",
+      "final_module": "service",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:service:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Service - API đổi mật khẩu của một dịch vụ.docx.pdf": {
+    "module": "service",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Service - API đổi mật khẩu của một dịch vụ.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/service/API Service - API đổi mật khẩu của một dịch vụ.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/change_service_password.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/services/{}/change-password",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "06/03/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu - Tổng quan 1. Thông tin chung API"
+      }
+    ],
+    "updated_at": "2026-07-06 15:32:20",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "service",
+      "final_module": "service",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:statistic:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/statistic/API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf": {
+    "module": "statistic",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/statistic/API statistic - API hiển thị thống kê cho trang tổng quan khách hàng.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/statistic/get_user_statistics.yaml",
+    "method": "get",
+    "http_path": "/v1/users/{}/statistics",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "04/02/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:32:28",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "statistic",
+      "final_module": "statistic",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/change_ticket_assignee.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/change-assignee",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:32:36",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API hiển thị chi tiết ticket cho khách hàng.docx.pdf": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API hiển thị chi tiết ticket cho khách hàng.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API hiển thị chi tiết ticket cho khách hàng.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/get_ticket_detail.yaml",
+    "method": "get",
+    "http_path": "/v1/users/{}/tickets/{}",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "12/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu - Tổng quan 1. Thông tin chung API"
+      }
+    ],
+    "updated_at": "2026-07-06 15:32:44",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API mở lại ticket của khách hàng.docx.pdf": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API mở lại ticket của khách hàng.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API mở lại ticket của khách hàng.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/reopen_user_ticket.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/reopen",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:32:51",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API phản hồi ticket.pdf": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API phản hồi ticket.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API phản hồi ticket.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/reply_ticket_conversation.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/conversations",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:32:58",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx.pdf": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/submit_ticket_feedback.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/feedback",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:33:06",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API tạo ticket cho khách hàng.docx.pdf": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API tạo ticket cho khách hàng.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API tạo ticket cho khách hàng.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_user_ticket.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "12/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:33:13",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API đóng ticket của khách hàng.docx.pdf": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - API đóng ticket của khách hàng.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - API đóng ticket của khách hàng.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/close_user_ticket.yaml",
+    "method": "put",
+    "http_path": "/v1/users/{}/tickets/{}/close",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:33:20",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:pdf:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - Tạo rating ticket cho khách hàng.docx.pdf": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "pdf",
+    "file": "API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Contract - Tạo rating ticket cho khách hàng.docx.pdf",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_ticket_rating.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/ratings",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "23/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:33:28",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/change_ticket_assignee.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/change-assignee",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:33:32",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API chỉnh sửa feedback ticket cho khách hàng.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/update_ticket_feedback.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/feedback/{}",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:33:40",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API lấy danh sách nhân viên hỗ trợ một ticket.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/get_support_staffs_by_ticket.yaml",
+    "method": "get",
+    "http_path": "/v1/users/{}/tickets/{}/support-staffs",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "23/01/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:33:45",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API mở lại ticket của khách hàng.docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - API mở lại ticket của khách hàng.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API mở lại ticket của khách hàng.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/reopen_user_ticket.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/reopen",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:33:49",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API tiếp nhận phản ánh góp ý khách hàng (feedback).docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/submit_ticket_feedback.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/feedback",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:33:52",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API tạo phản hồi ticket cho khách hàng.docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API tạo phản hồi ticket cho khách hàng.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_ticket_conversation.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/conversations",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:33:56",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API tạo ratting ticket cho khách hàng.docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - API tạo ratting ticket cho khách hàng.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API tạo ratting ticket cho khách hàng.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_ticket_rating.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets/{}/ratings",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "23/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:34:00",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API đóng ticket của khách hàng.docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - API đóng ticket của khách hàng.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - API đóng ticket của khách hàng.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/close_user_ticket.yaml",
+    "method": "put",
+    "http_path": "/v1/users/{}/tickets/{}/close",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "14/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:34:04",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - Hiển thị chi tiết ticket cho khách hàng.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/get_ticket_detail.yaml",
+    "method": "get",
+    "http_path": "/v1/users/{}/tickets/{}",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "12/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:34:07",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - Hiển thị danh sách ticket cho khách hàng.docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - Hiển thị danh sách ticket cho khách hàng.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/list_user_tickets.yaml",
+    "method": "get",
+    "http_path": "/v1/users/{}/tickets",
+    "version": "1.2",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "09/01/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      },
+      {
+        "version": "1.1",
+        "date": "05/02/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Thêm query params sort_type"
+      },
+      {
+        "version": "1.2",
+        "date": "23/03/2026",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Thêm query params post_by"
+      }
+    ],
+    "updated_at": "2026-07-06 15:34:10",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:ticket:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - Tạo ticket cho khách hàng.docx": {
+    "module": "ticket",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API Ticket - Tạo ticket cho khách hàng.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/ticket/API Ticket - Tạo ticket cho khách hàng.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/ticket/create_user_ticket.yaml",
+    "method": "post",
+    "http_path": "/v1/users/{}/tickets",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.0",
+        "date": "12/01/2025",
+        "actor": "Mr. Quốc Nguyễn",
+        "change": "Tạo mẫu tài liệu"
+      }
+    ],
+    "updated_at": "2026-07-06 15:34:13",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "ticket",
+      "final_module": "ticket",
+      "service_in_doc": "account",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  },
+  "api_contract:docx:topup:/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/topup/API_order_plan_topup.docx": {
+    "module": "topup",
+    "source_type": "api_contract",
+    "source_format": "docx",
+    "file": "API_order_plan_topup.docx",
+    "path": "/home/nvpa/Project/API CONVERTER/1.docs/source/api_contract/topup/API_order_plan_topup.docx",
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/topup/order_plan_topup.yaml",
+    "method": "post",
+    "http_path": "/v1/topup",
+    "version": "1.0",
+    "change_history": [
+      {
+        "version": "1.1",
+        "date": "02/06/2026",
+        "actor": "",
+        "change": "Chuẩn hóa mã lỗi validation request:· external_account_id / customer_id tái dùng dải 4221–4224 (đồng bộ với order create).· Thêm mã lỗi riêng cho core_plan_id (6010–6011) và plan_quantity (6012–6014).Bổ sung bảng Validate Rules (R1–R4) trong mục Request Body.Cập nhật bảng Error Codes mục V."
+      },
+      {
+        "version": "1.0",
+        "date": "23/04/2026",
+        "actor": "",
+        "change": "Tạo mới tài liệu."
+      }
+    ],
+    "updated_at": "2026-07-06 15:34:17",
+    "status": "success",
+    "module_resolution": {
+      "suggested_module": "topup",
+      "final_module": "topup",
+      "service_in_doc": "ssl_core",
+      "conflict": true,
+      "review_type": "logged_conflict",
+      "source": "user_selected"
+    }
+  }
+}

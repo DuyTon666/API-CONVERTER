@@ -1,0 +1,54 @@
+[
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/department/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "department"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/list_types.yaml",
+    "source_format": "pdf",
+    "module": "service"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy list phòng ban gửi ticket.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/department/list_departments.yaml",
+    "source_format": "pdf",
+    "module": "department"
+  },
+  {
+    "type": "convert_review",
+    "file": "API Contract - API lấy danh sách các loại dịch vụ của hệ thống support.pdf",
+    "flags": [
+      "permission_missing"
+    ],
+    "actions": [
+      "Tìm CHECK_* trong docx và điền vào x-permission"
+    ],
+    "output": "/home/nvpa/Project/API CONVERTER/5.openapi/paths/service/list_types.yaml",
+    "source_format": "pdf",
+    "module": "service"
+  }
+]

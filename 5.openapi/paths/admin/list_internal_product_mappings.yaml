@@ -34,13 +34,21 @@ get:
         application/json:
           schema:
             allOf:
-            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
-            - type: object
-              properties:
-                data:
-                  type: array
-                  items:
-                    $ref: "../../components/schemas/admin/ListInternalProductMappingsDataList.yaml"
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
+              - type: object
+                properties:
+                  data:
+                    $ref: 
+                      ../../components/schemas/admin/ListInternalProductMappingsData.yaml
+                  internal_product_id:
+                    type: string
+                    readOnly: true
+                  provider_product_id:
+                    type: string
+                    readOnly: true
+                  provider_id:
+                    type: string
+                    readOnly: true
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':

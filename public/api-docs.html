@@ -86,9 +86,11 @@ info:
   version: 1.0.0
   license:
     name: API
+    url: https://pavietnam.vn/license
   description: API cho hệ thống ticket hỗ trợ khách hàng
   contact:
     name: PA Vietnam
+    url: https://pavietnam.vn
     email: dev@pavietnam.vn
 servers:
   - url: https://apigateway.pavietnam.vn
@@ -96,16 +98,28 @@ servers:
 security:
   - bearerAuth: []
 tags:
+  - name: Admin
+    description: Các API quản trị nội bộ (provider, internal product, mapping)
+  - name: Csr
+    description: Các API liên quan đến CSR (Certificate Signing Request)
+  - name: Department
+    description: Các API liên quan đến phòng ban
+  - name: Order
+    description: Các API liên quan đến đơn hàng
+  - name: Service
+    description: Các API liên quan đến dịch vụ
+  - name: Statistic
+    description: Các API liên quan đến thống kê
   - name: Ticket
     description: Các API liên quan đến ticket hỗ trợ khách hàng
-  - name: Account
-    description: Các API liên quan đến tài khoản
+  - name: Topup
+    description: Các API liên quan đến nạp tiền/gia hạn dịch vụ
 paths:
   /v1/admin/internal-products:
     post:
       summary: Tạo sản phẩm nội bộ mới trong hệ thống
       operationId: createInternalProduct
-      description: Tạo mới một sản phẩm nội bộ dành cho quản trị viên, cho phép định nghĩa thông tin sản phẩm chỉ sử dụng trong phạm vi nội bộ của hệ thống. Chỉ các tài khoản có quyền admin mới được phép thực hiện thao tác này.
+      description: Tạo một sản phẩm nội bộ mới dành cho quản trị viên, sản phẩm này chỉ hiển thị và sử dụng trong phạm vi nội bộ của hệ thống. Yêu cầu quyền admin và các thông tin bắt buộc như tên, mã sản phẩm phải được cung cấp đầy đủ.
       tags:
         - Admin
       security:
@@ -124,8 +138,6 @@ paths:
                     properties:
                       data:
                         \$ref: '#/components/schemas/CreateInternalProductData'
-        '400':
-          \$ref: '#/components/responses/BadRequest'
         '401':
           \$ref: '#/components/responses/Unauthorized'
         '403':
@@ -185,8 +197,8 @@ paths:
             message: 'Kết hợp product_type + cert_type không hợp lệ (VD: EV + WILDCARD)'
     get:
       summary: Lấy danh sách sản phẩm nội bộ
-      operationId: listInternalProducts
-      description: Truy xuất danh sách tất cả sản phẩm nội bộ dành cho quản trị viên hệ thống. Chỉ người dùng có quyền admin mới được phép truy cập endpoint này.
+      operationId: list_internal_products
+      description: Truy xuất danh sách toàn bộ sản phẩm nội bộ dành cho quản trị viên hệ thống. Chỉ tài khoản có quyền admin mới được phép truy cập endpoint này.
       tags:
         - Admin
       security:
@@ -291,7 +303,7 @@ paths:
     delete:
       summary: Xóa sản phẩm nội bộ theo ID
       operationId: deleteInternalProduct
-      description: Xóa vĩnh viễn một sản phẩm nội bộ khỏi hệ thống dựa trên ID được cung cấp. Chỉ quản trị viên có quyền thực hiện thao tác này và sản phẩm không thể khôi phục sau khi xóa.
+      description: Xóa vĩnh viễn một sản phẩm nội bộ khỏi hệ thống dựa trên ID được cung cấp. Chỉ quản trị viên có quyền thực hiện thao tác này và sản phẩm sẽ không thể khôi phục sau khi xóa.
       tags:
         - Admin
       security:
@@ -303,6 +315,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -378,7 +391,6 @@ paths:
     get:
       summary: Lấy chi tiết sản phẩm nội bộ theo ID
       operationId: getInternalProductDetail
-      description: Truy xuất thông tin chi tiết của một sản phẩm nội bộ dựa trên ID được cung cấp. Chỉ quản trị viên có quyền truy cập mới có thể xem thông tin sản phẩm nội bộ này.
       tags:
         - Admin
       security:
@@ -390,6 +402,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -446,7 +459,7 @@ paths:
     patch:
       summary: Cập nhật thông tin sản phẩm nội bộ
       operationId: updateInternalProduct
-      description: Cập nhật thông tin của sản phẩm nội bộ theo ID được chỉ định. Chỉ admin mới có quyền thực hiện thao tác này và sản phẩm phải tồn tại trong hệ thống.
+      description: Cập nhật thông tin của sản phẩm nội bộ theo ID được chỉ định. Chỉ admin mới có quyền thực hiện thao tác này, và sản phẩm phải tồn tại trong hệ thống.
       tags:
         - Admin
       security:
@@ -458,6 +471,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -540,9 +554,9 @@ paths:
             message: max_san không phải integer hoặc < 1
   /v1/admin/internal-products/{id}/mappings:
     post:
-      summary: Tạo mapping cho sản phẩm nội bộ
+      summary: Tạo ánh xạ cho sản phẩm nội bộ
       operationId: createInternalProductMapping
-      description: Tạo liên kết mapping mới cho sản phẩm nội bộ theo ID được chỉ định. Chỉ quản trị viên có quyền thực hiện thao tác này và mỗi sản phẩm phải đảm bảo tính duy nhất trong cấu hình mapping.
+      description: Tạo mới một ánh xạ liên kết cho sản phẩm nội bộ theo ID được chỉ định. Chỉ quản trị viên có quyền thực hiện thao tác này và sản phẩm phải tồn tại trong hệ thống.
       tags:
         - Admin
       security:
@@ -554,6 +568,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '201':
           description: Thành công
@@ -724,9 +739,11 @@ paths:
           - code: '4200'
             category: Input
             message: Dữ liệu request không hợp lệ (validate chung)
+      x-manual-edit-fields:
+        - responses[200].content.application/json.schema.allOf
   /v1/admin/internal-products/{id}/mappings/{mapping_id}:
     delete:
-      summary: Xóa mapping của sản phẩm nội bộ
+      summary: Xóa ánh xạ sản phẩm nội bộ theo ID
       operationId: deleteInternalProductMapping
       description: Xóa liên kết mapping của một sản phẩm nội bộ theo ID mapping cụ thể. Chỉ quản trị viên có quyền thực hiện thao tác này và mapping phải thuộc sản phẩm nội bộ tương ứng.
       tags:
@@ -826,10 +843,12 @@ paths:
           - code: '6404'
             category: Business
             message: Không thể xóa — còn order active sử dụng internal product này
+      x-manual-edit-fields:
+        - responses[200].content.application/json.schema.allOf
     patch:
       summary: Cập nhật ánh xạ sản phẩm nội bộ theo ID
       operationId: updateInternalProductMapping
-      description: Cập nhật thông tin ánh xạ của sản phẩm nội bộ dựa trên ID sản phẩm và ID ánh xạ tương ứng. Chỉ quản trị viên có quyền thực hiện thao tác này và dữ liệu ánh xạ phải hợp lệ trước khi cập nhật.
+      description: Cập nhật thông tin ánh xạ của một sản phẩm nội bộ dựa trên ID sản phẩm và ID ánh xạ tương ứng. Chỉ quản trị viên có quyền thực hiện thao tác này nhằm đảm bảo tính nhất quán trong hệ thống quản lý sản phẩm.
       tags:
         - Admin
       security:
@@ -841,11 +860,13 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
         - name: mapping_id
           in: path
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'mapping_id'.
       responses:
         '200':
           description: Thành công
@@ -922,9 +943,9 @@ paths:
             message: Không cho update field immutable (id, code, product_type, cert_type, created_at, created_by)
   /v1/admin/internal-products/{id}/status:
     patch:
-      summary: Bật hoặc tắt trạng thái sản phẩm nội bộ
+      summary: Bật/tắt trạng thái sản phẩm nội bộ
       operationId: toggleInternalProductStatus
-      description: Cập nhật trạng thái kích hoạt hoặc vô hiệu hóa của sản phẩm nội bộ theo ID. Chỉ quản trị viên có quyền thực hiện thao tác này và trạng thái sẽ ảnh hưởng đến khả năng hiển thị sản phẩm trong hệ thống.
+      description: Thay đổi trạng thái kích hoạt hoặc vô hiệu hóa của sản phẩm nội bộ theo ID. Chỉ quản trị viên có quyền thực hiện thao tác này và sản phẩm phải tồn tại trong hệ thống.
       tags:
         - Admin
       security:
@@ -936,6 +957,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -1009,7 +1031,7 @@ paths:
     post:
       summary: Tạo mới nhà cung cấp trong hệ thống
       operationId: createProvider
-      description: Tạo mới một nhà cung cấp (provider) trong hệ thống quản trị. Chỉ tài khoản admin mới có quyền thực hiện thao tác này, thông tin nhà cung cấp phải đầy đủ và hợp lệ trước khi được lưu vào hệ thống.
+      description: Tạo mới một nhà cung cấp (provider) trong hệ thống quản trị. Chỉ quản trị viên có quyền thực hiện thao tác này, thông tin nhà cung cấp phải đầy đủ và hợp lệ trước khi được lưu vào hệ thống.
       tags:
         - Admin
       security:
@@ -1102,7 +1124,7 @@ paths:
     get:
       summary: Lấy danh sách nhà cung cấp trong hệ thống
       operationId: listProviders
-      description: Truy xuất toàn bộ danh sách nhà cung cấp hiện có trong hệ thống dành cho quản trị viên. Chỉ tài khoản có quyền admin mới được phép gọi API này.
+      description: Truy xuất toàn bộ danh sách nhà cung cấp hiện có trong hệ thống dành cho quản trị viên. Chỉ tài khoản có quyền admin mới được phép gọi API này để quản lý và theo dõi các nhà cung cấp.
       tags:
         - Admin
       security:
@@ -1195,7 +1217,7 @@ paths:
     delete:
       summary: Xóa nhà cung cấp theo ID
       operationId: deleteProviderById
-      description: Xóa thông tin một nhà cung cấp khỏi hệ thống dựa trên ID được chỉ định. Chỉ quản trị viên có quyền thực hiện thao tác này và nhà cung cấp không thể khôi phục sau khi đã xóa.
+      description: Xóa vĩnh viễn một nhà cung cấp khỏi hệ thống dựa trên ID được chỉ định. Chỉ quản trị viên mới có quyền thực hiện thao tác này và nhà cung cấp không thể khôi phục sau khi xóa.
       tags:
         - Admin
       security:
@@ -1207,6 +1229,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -1279,7 +1302,7 @@ paths:
     get:
       summary: Lấy thông tin chi tiết nhà cung cấp theo ID
       operationId: getProviderDetail
-      description: Truy xuất thông tin chi tiết của một nhà cung cấp dựa trên ID duy nhất. Chỉ quản trị viên có quyền truy cập endpoint này và ID phải hợp lệ trong hệ thống.
+      description: Truy xuất thông tin chi tiết của một nhà cung cấp dựa trên ID duy nhất. Chỉ quản trị viên có quyền truy cập mới có thể thực hiện thao tác này.
       tags:
         - Admin
       security:
@@ -1291,6 +1314,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -1347,7 +1371,7 @@ paths:
     patch:
       summary: Cập nhật thông tin nhà cung cấp theo ID
       operationId: updateProviderById
-      description: Cập nhật một phần thông tin của nhà cung cấp dựa trên ID được chỉ định. Chỉ quản trị viên mới có quyền thực hiện thao tác này và các trường không được gửi lên sẽ giữ nguyên giá trị cũ.
+      description: Cập nhật thông tin của nhà cung cấp dựa trên ID được chỉ định. Chỉ quản trị viên có quyền thực hiện thao tác này và các trường không được gửi sẽ giữ nguyên giá trị cũ.
       tags:
         - Admin
       security:
@@ -1359,6 +1383,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -1449,7 +1474,7 @@ paths:
     post:
       summary: Tạo sản phẩm mới cho nhà cung cấp
       operationId: createProviderProduct
-      description: Tạo một sản phẩm mới thuộc nhà cung cấp được chỉ định bởi provider_code. Chỉ quản trị viên có quyền thực hiện thao tác này và provider_code phải tồn tại trong hệ thống.
+      description: Tạo một sản phẩm mới thuộc nhà cung cấp được chỉ định qua provider_code. Yêu cầu thông tin sản phẩm hợp lệ và nhà cung cấp phải tồn tại trong hệ thống trước khi thực hiện.
       tags:
         - Admin
       security:
@@ -1461,6 +1486,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'provider_code'.
       responses:
         '201':
           description: Thành công
@@ -1541,7 +1567,7 @@ paths:
     get:
       summary: Lấy danh sách sản phẩm của nhà cung cấp
       operationId: getProviderProductList
-      description: Truy xuất danh sách tất cả sản phẩm thuộc một nhà cung cấp cụ thể dựa trên mã nhà cung cấp (provider_code). API chỉ dành cho quản trị viên và yêu cầu mã nhà cung cấp hợp lệ trong hệ thống.
+      description: Truy xuất danh sách tất cả sản phẩm thuộc một nhà cung cấp cụ thể dựa trên mã nhà cung cấp. Chỉ tài khoản quản trị viên mới có quyền truy cập thông tin này.
       tags:
         - Admin
       security:
@@ -1553,6 +1579,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'provider_code'.
         - name: page
           in: query
           required: false
@@ -1622,6 +1649,7 @@ paths:
           required: false
           schema:
             type: integer
+            default: 0
           description: 1 = bao gồm soft-deleted. Mặc định 0.
       responses:
         '200':
@@ -1771,6 +1799,8 @@ paths:
           - code: '4407'
             category: Business
             message: Không thể xóa — vẫn còn Order active sử dụng sản phẩm
+      x-manual-edit-fields:
+        - responses[200].content.application/json.schema.allOf
     get:
       summary: Lấy chi tiết sản phẩm của nhà cung cấp
       operationId: getProviderProductDetail
@@ -1850,10 +1880,12 @@ paths:
           - code: '4409'
             category: Business
             message: Provider không tồn tại hoặc đã bị tắt
+      x-manual-edit-fields:
+        - responses[200].content.application/json.schema.allOf
     patch:
       summary: Cập nhật sản phẩm của nhà cung cấp
       operationId: updateProviderProduct
-      description: Cập nhật thông tin sản phẩm thuộc nhà cung cấp cụ thể theo mã nhà cung cấp và ID sản phẩm. Chỉ quản trị viên mới có quyền thực hiện thao tác này, đảm bảo dữ liệu sản phẩm luôn chính xác và đồng bộ trong hệ thống.
+      description: Cập nhật thông tin sản phẩm thuộc nhà cung cấp được chỉ định. Chỉ quản trị viên mới có quyền thực hiện thao tác này và cần cung cấp đúng mã nhà cung cấp cùng ID sản phẩm hợp lệ.
       tags:
         - Admin
       security:
@@ -1865,11 +1897,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'provider_code'.
         - name: id
           in: path
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -2063,6 +2097,8 @@ paths:
           - code: '5412'
             category: Upstream
             message: Provider API trả lỗi hoặc timeout khi đồng bộ
+      x-manual-edit-fields:
+        - responses[200].content.application/json.schema.allOf
   /v1/admin/providers/{provider_code}/products/{id}/status:
     patch:
       summary: Bật/tắt trạng thái sản phẩm của nhà cung cấp
@@ -2159,6 +2195,8 @@ paths:
           - code: '4408'
             category: Business
             message: Sản phẩm đã soft-deleted, không thể toggle
+      x-manual-edit-fields:
+        - responses[200].content.application/json.schema.allOf
   /v1/admin/providers/{id}/reveal-token:
     post:
       summary: Tiết lộ token xác thực của nhà cung cấp
@@ -2250,11 +2288,13 @@ paths:
           - code: '5405'
             category: Business
             message: Provider đã soft-deleted, không thể thao tác
+      x-manual-edit-fields:
+        - responses[200].content.application/json.schema.allOf
   /v1/admin/providers/{id}/status:
     patch:
       summary: Bật hoặc tắt trạng thái nhà cung cấp
       operationId: toggleProviderStatus
-      description: API cho phép quản trị viên bật hoặc tắt trạng thái hoạt động của một nhà cung cấp dựa trên ID. Chỉ tài khoản có quyền admin mới được phép thực hiện thao tác này, nhằm kiểm soát khả năng hiển thị và sử dụng của nhà cung cấp trong hệ thống.
+      description: Thay đổi trạng thái hoạt động của nhà cung cấp (kích hoạt hoặc vô hiệu hóa) trong hệ thống quản trị. Chỉ quản trị viên có quyền thực hiện thao tác này và nhà cung cấp phải tồn tại trong hệ thống.
       tags:
         - Admin
       security:
@@ -2266,6 +2306,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -2337,9 +2378,9 @@ paths:
             message: Provider đã soft-deleted, không thể thao tác
   /v1/csr/generate:
     post:
-      summary: Tạo yêu cầu ký chứng chỉ CSR
+      summary: Tạo yêu cầu ký chứng chỉ CSR mới
       operationId: generateCsrRequest
-      description: Tạo một yêu cầu ký chứng chỉ (Certificate Signing Request) mới dựa trên thông tin được cung cấp. Yêu cầu phải bao gồm đầy đủ thông tin định danh hợp lệ và tuân thủ các tiêu chuẩn mã hóa được quy định.
+      description: Tạo một yêu cầu ký chứng chỉ (Certificate Signing Request) mới dựa trên thông tin được cung cấp. Yêu cầu phải bao gồm đầy đủ thông tin định danh hợp lệ và chỉ được thực hiện bởi người dùng có quyền quản lý chứng chỉ.
       tags:
         - Csr
       security:
@@ -2374,17 +2415,49 @@ paths:
           \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               \$ref: '#/components/schemas/GenerateCsrRequest'
+      x-error-responses:
+        '401':
+          - code: '4101'
+            category: Auth
+            message: Thiếu Authorization header
+          - code: '4102'
+            category: Auth
+            message: Bearer Token không hợp lệ / hết hạn
+        '403':
+          - code: '4103'
+            category: Auth
+            message: Client không có scope=admin
+          - code: '4108'
+            category: Auth
+            message: IP không được phép
+        '409':
+          - code: '4090'
+            category: Idempotency
+            message: Idempotency-Key đang xử lý (concurrent)
+          - code: '4091'
+            category: Idempotency
+            message: Double submit — payload trùng trong dedup window
+        '422':
+          - code: '4200'
+            category: Input
+            message: Dữ liệu request không hợp lệ (validate chung)
+        '500':
+          - code: '4701'
+            category: Internal
+            message: Không sinh được CSR — cả TheSSLStore API và openssl nội bộ đều thất bại
   /v1/departments:
     get:
       summary: Lấy danh sách phòng ban gửi ticket
       operationId: getDepartmentList
-      description: API trả về danh sách các phòng ban có quyền gửi ticket trong hệ thống. Chỉ các phòng ban đang hoạt động và được cấu hình mới được hiển thị trong kết quả trả về.
+      description: API trả về danh sách các phòng ban có quyền gửi ticket trong hệ thống. Dữ liệu được sử dụng để hiển thị lựa chọn phòng ban khi người dùng tạo hoặc lọc ticket.
       tags:
         - Department
       security:
@@ -2425,6 +2498,8 @@ paths:
           \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
   /v1/orders/{id}/certificates/{certId}/download:
     get:
       summary: Tải xuống chứng chỉ của đơn hàng
@@ -2511,11 +2586,13 @@ paths:
           - code: '4302'
             category: State
             message: Certificate PEM chưa có — cert được cấp chưa hoàn chỉnh
+      x-manual-edit-fields:
+        - parameters[name=format].schema.description
   /v1/orders:
     post:
       summary: Tạo đơn hàng mới trong hệ thống
       operationId: createOrder
-      description: Tạo một đơn hàng mới trong hệ thống với thông tin khách hàng và sản phẩm được cung cấp. Đơn hàng chỉ được tạo thành công khi tồn kho đủ số lượng và thông tin thanh toán hợp lệ.
+      description: Tạo một đơn hàng mới trong hệ thống với thông tin sản phẩm, số lượng và thông tin khách hàng. Đơn hàng chỉ được tạo thành công khi tồn kho đủ và thông tin thanh toán hợp lệ.
       tags:
         - Order
       security:
@@ -2552,12 +2629,6 @@ paths:
           \$ref: '#/components/responses/InternalError'
         '502':
           \$ref: '#/components/responses/BadGateway'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              \$ref: '#/components/schemas/CreateOrderRequest'
       x-error-responses:
         '401':
           - code: '4101'
@@ -2760,11 +2831,13 @@ paths:
           \$ref: '#/components/responses/InternalError'
         '502':
           \$ref: '#/components/responses/BadGateway'
+      x-manual-edit-fields:
+        - responses[200].content.application/json.schema.allOf
   /v1/orders/{id}/dcv/change:
     post:
       summary: Thay đổi phương thức xác thực DCV của đơn hàng
       operationId: changeOrderDcvMethod
-      description: API cho phép thay đổi phương thức xác minh quyền kiểm soát tên miền (DCV) cho một đơn hàng cụ thể. Chỉ áp dụng cho các đơn hàng đang trong trạng thái chờ xác thực và yêu cầu ID đơn hàng hợp lệ.
+      description: Thay đổi phương thức xác thực tên miền (DCV) cho đơn hàng chứng chỉ SSL đang xử lý. Chỉ áp dụng khi đơn hàng chưa hoàn tất xác thực và phương thức mới phải được tổ chức CA hỗ trợ.
       tags:
         - Order
       security:
@@ -2776,6 +2849,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -2876,7 +2950,7 @@ paths:
     get:
       summary: Lấy danh sách bản ghi DCV của đơn hàng
       operationId: getOrderDcvRecords
-      description: Truy xuất danh sách các bản ghi xác thực kiểm soát tên miền (DCV) liên quan đến đơn hàng cụ thể theo ID. Chỉ các đơn hàng hợp lệ và đang trong quá trình xử lý mới có thể truy cập thông tin DCV này.
+      description: Truy xuất danh sách các bản ghi xác thực kiểm soát tên miền (DCV) liên quan đến một đơn hàng cụ thể. API yêu cầu ID đơn hàng hợp lệ và chỉ trả về dữ liệu nếu đơn hàng tồn tại trong hệ thống.
       tags:
         - Order
       security:
@@ -2888,6 +2962,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
         - name: domain
           in: query
           required: false
@@ -3021,7 +3096,7 @@ paths:
     post:
       summary: Xác thực DCV cho đơn hàng
       operationId: validateOrderDcv
-      description: Thực hiện xác thực kiểm soát xác minh tên miền (DCV) cho đơn hàng chứng chỉ SSL theo ID chỉ định. Yêu cầu đơn hàng phải ở trạng thái chờ xác thực và thông tin DCV phải hợp lệ trước khi cấp chứng chỉ.
+      description: Xác thực kiểm soát xác minh tên miền (DCV) cho đơn hàng chứng chỉ SSL theo ID. Yêu cầu đơn hàng phải ở trạng thái chờ xác thực và thông tin DCV phải hợp lệ trước khi cấp phát chứng chỉ.
       tags:
         - Order
       security:
@@ -3033,6 +3108,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -3108,7 +3184,7 @@ paths:
     get:
       summary: Lấy thông tin chi tiết đơn hàng theo ID
       operationId: getOrderDetail
-      description: API truy xuất thông tin chi tiết của một đơn hàng dựa trên mã định danh duy nhất (ID). Yêu cầu ID đơn hàng hợp lệ và người dùng phải có quyền truy cập vào đơn hàng tương ứng.
+      description: Truy xuất thông tin chi tiết của một đơn hàng cụ thể dựa trên mã định danh duy nhất. API yêu cầu ID đơn hàng hợp lệ và chỉ trả về đơn hàng thuộc phạm vi quyền truy cập của người dùng hiện tại.
       tags:
         - Order
       security:
@@ -3120,6 +3196,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -3186,9 +3263,9 @@ paths:
             message: Dữ liệu request không hợp lệ (validate chung)
   /v1/orders/{id}/generate-csr:
     post:
-      summary: Tạo CSR cho đơn hàng chứng chỉ số
+      summary: Tạo CSR cho đơn hàng
       operationId: generateCsrForOrder
-      description: Tạo Certificate Signing Request (CSR) cho đơn hàng được chỉ định bằng ID. Yêu cầu đơn hàng phải tồn tại và ở trạng thái hợp lệ để có thể thực hiện việc tạo CSR.
+      description: Tạo yêu cầu ký chứng chỉ (CSR) cho đơn hàng được chỉ định bởi ID. Chỉ áp dụng cho các đơn hàng hợp lệ đang ở trạng thái chờ xử lý và cần có thông tin xác thực đầy đủ trước khi thực hiện.
       tags:
         - Order
       security:
@@ -3200,6 +3277,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -3280,7 +3358,7 @@ paths:
     post:
       summary: Tái cấp phát đơn hàng theo ID
       operationId: reissueOrderById
-      description: Tái cấp phát đơn hàng đã tồn tại dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng đủ điều kiện tái cấp phát và không ở trạng thái đã hủy hoặc đang xử lý.
+      description: Tái cấp phát đơn hàng đã tồn tại dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng đủ điều kiện tái cấp phát và yêu cầu quyền hạn phù hợp để thực hiện thao tác này.
       tags:
         - Order
       security:
@@ -3292,6 +3370,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '202':
           description: Thành công
@@ -3440,9 +3519,9 @@ paths:
             message: Provider API trả về lỗi khi submit reissue. Chi tiết trong error.data.provider_message
   /v1/orders/{id}/renew:
     post:
-      summary: Gia hạn đơn hàng theo ID được chỉ định
+      summary: Gia hạn đơn hàng theo ID
       operationId: renewOrder
-      description: Gia hạn đơn hàng hiện có dựa trên ID được cung cấp, cho phép kéo dài thời hạn sử dụng hoặc dịch vụ liên quan đến đơn hàng đó. Đơn hàng phải ở trạng thái hợp lệ và chưa hết hạn quá thời gian cho phép gia hạn.
+      description: API cho phép gia hạn một đơn hàng hiện có dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng đang hoạt động và chưa hết hạn, đơn hàng đã hủy hoặc hoàn thành sẽ không được gia hạn.
       tags:
         - Order
       security:
@@ -3454,6 +3533,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: Tham số đường dẫn 'id'.
       responses:
         '201':
           description: Thành công
@@ -3575,7 +3655,7 @@ paths:
     post:
       summary: Thu hồi đơn hàng theo ID
       operationId: revokeOrderById
-      description: API cho phép thu hồi một đơn hàng dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng đang ở trạng thái hợp lệ và chưa được xử lý hoàn tất.
+      description: API cho phép thu hồi một đơn hàng dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng ở trạng thái hợp lệ và chưa hoàn tất xử lý.
       tags:
         - Order
       security:
@@ -3587,6 +3667,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -3639,7 +3720,7 @@ paths:
             message: Đã đạt giới hạn revoke_daily_limit lần/ngày — thử lại vào ngày mai
   /v1/orders/{id}/submit-csr:
     post:
-      summary: Gửi CSR cho đơn hàng theo ID
+      summary: Nộp CSR cho đơn hàng
       operationId: submitCsrForOrder
       description: API cho phép gửi yêu cầu ký chứng chỉ (CSR) cho một đơn hàng cụ thể dựa trên ID. Đơn hàng phải tồn tại và ở trạng thái hợp lệ trước khi thực hiện thao tác này.
       tags:
@@ -3653,6 +3734,7 @@ paths:
           required: true
           schema:
             type: integer
+          description: ID định danh duy nhất của đơn hàng cần nộp CSR.
       responses:
         '200':
           description: Thành công
@@ -3834,11 +3916,14 @@ paths:
           - code: '4709'
             category: Validation
             message: dcv_method là bắt buộc
+      x-manual-edit-fields:
+        - parameters[name=id].description
+        - responses[200].content.application/json.schema.allOf
   /v1/orders/{id}/sync-status:
     post:
       summary: Đồng bộ trạng thái đơn hàng theo ID
       operationId: syncOrderStatus
-      description: Đồng bộ hóa trạng thái của đơn hàng với hệ thống bên ngoài dựa trên ID đơn hàng được cung cấp. Yêu cầu đơn hàng phải tồn tại và đang ở trạng thái hợp lệ để thực hiện đồng bộ.
+      description: Đồng bộ trạng thái của đơn hàng với hệ thống bên ngoài dựa trên ID đơn hàng. Chỉ áp dụng cho các đơn hàng đang trong quá trình xử lý và yêu cầu đơn hàng phải tồn tại trong hệ thống.
       tags:
         - Order
       security:
@@ -3850,6 +3935,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -3879,9 +3965,15 @@ paths:
           \$ref: '#/components/responses/InternalError'
         '502':
           \$ref: '#/components/responses/BadGateway'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              \$ref: '#/components/schemas/SyncOrderStatusRequest'
   /v1/services/types:
     get:
-      summary: Lấy danh sách các loại dịch vụ hỗ trợ
+      summary: Lấy danh sách loại dịch vụ hỗ trợ
       operationId: getServiceTypes
       description: API trả về danh sách tất cả các loại dịch vụ hiện có trong hệ thống support, giúp người dùng hoặc hệ thống client xác định đúng loại dịch vụ cần sử dụng. Chỉ các loại dịch vụ đang hoạt động và được kích hoạt mới được trả về trong kết quả.
       tags:
@@ -3934,11 +4026,13 @@ paths:
           - code: '4108'
             category: Auth
             message: IP không được phép truy cập
+      x-manual-edit-fields:
+        - parameters[name=user_id].schema.default
   /v1/users/{user_id}/services:
     get:
       summary: Lấy danh sách dịch vụ của khách hàng
       operationId: getUserServices
-      description: API trả về danh sách các dịch vụ đang được đăng ký bởi một khách hàng cụ thể dựa trên user_id. Chỉ các dịch vụ thuộc quyền sở hữu của khách hàng đó mới được trả về, đảm bảo tính bảo mật và phân quyền dữ liệu.
+      description: API trả về danh sách tất cả dịch vụ đang được đăng ký bởi một khách hàng cụ thể dựa trên user_id. Chỉ trả về các dịch vụ thuộc sở hữu của khách hàng đó, đảm bảo tính bảo mật và phân quyền dữ liệu.
       tags:
         - Service
       security:
@@ -3950,6 +4044,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: page
           in: query
           required: false
@@ -4020,7 +4115,7 @@ paths:
     post:
       summary: Mở tạm thời dịch vụ theo ID
       operationId: temporaryOpenService
-      description: API cho phép mở tạm thời một dịch vụ đang bị tạm ngừng dựa trên service_id được cung cấp. Chức năng này áp dụng trong trường hợp khách hàng cần khôi phục dịch vụ tạm thời trong khoảng thời gian cho phép theo quy định nghiệp vụ.
+      description: API cho phép mở tạm thời một dịch vụ đang tạm dừng hoặc bị khóa dựa trên service_id. Chức năng này được sử dụng trong trường hợp cần kích hoạt dịch vụ trong thời gian giới hạn, yêu cầu người dùng có quyền hạn phù hợp để thực hiện thao tác.
       tags:
         - Service
       security:
@@ -4032,6 +4127,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'service_id'.
       responses:
         '200':
           description: Thành công
@@ -4098,7 +4194,7 @@ paths:
     get:
       summary: Lấy danh sách gói nâng cấp của dịch vụ
       operationId: getServiceUpgradePlans
-      description: API trả về danh sách các gói nâng cấp khả dụng cho một dịch vụ cụ thể của người dùng. Chỉ những gói nâng cấp phù hợp với dịch vụ hiện tại mới được trả về, đảm bảo người dùng chỉ thấy các tùy chọn hợp lệ.
+      description: API trả về danh sách các gói nâng cấp khả dụng cho một dịch vụ cụ thể của người dùng. Chỉ các gói nâng cấp cao hơn gói hiện tại của dịch vụ mới được trả về trong kết quả.
       tags:
         - Service
       security:
@@ -4110,11 +4206,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -4160,7 +4258,7 @@ paths:
     post:
       summary: Tạo yêu cầu nâng cấp gói dịch vụ người dùng
       operationId: createServiceUpgradePlanRequest
-      description: API cho phép người dùng tạo yêu cầu nâng cấp gói dịch vụ hiện tại lên gói cao hơn. Yêu cầu chỉ được xử lý khi người dùng đang sử dụng dịch vụ hợp lệ và có quyền thực hiện nâng cấp.
+      description: API cho phép người dùng tạo yêu cầu nâng cấp gói dịch vụ hiện tại lên gói cao hơn. Yêu cầu được gửi dựa trên ID người dùng và ID dịch vụ cụ thể, cần đảm bảo dịch vụ đang hoạt động trước khi thực hiện nâng cấp.
       tags:
         - Service
       security:
@@ -4172,11 +4270,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -4267,7 +4367,7 @@ paths:
     post:
       summary: Đổi mật khẩu dịch vụ của người dùng
       operationId: changeServicePassword
-      description: API cho phép thay đổi mật khẩu của một dịch vụ cụ thể thuộc về người dùng. Người dùng phải cung cấp đúng thông tin xác thực và mật khẩu mới phải đáp ứng các yêu cầu bảo mật của hệ thống.
+      description: API cho phép đổi mật khẩu của một dịch vụ cụ thể thuộc về người dùng. Người dùng cần cung cấp đúng user_id và id dịch vụ để thực hiện thao tác đổi mật khẩu thành công.
       tags:
         - Service
       security:
@@ -4279,11 +4379,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -4349,7 +4451,7 @@ paths:
     get:
       summary: Lấy thống kê tổng quan cho khách hàng
       operationId: getUserStatistics
-      description: API trả về dữ liệu thống kê tổng hợp hiển thị trên trang tổng quan của khách hàng, bao gồm các chỉ số hoạt động quan trọng. Chỉ người dùng có quyền hợp lệ mới được phép truy cập thống kê của tài khoản tương ứng với user_id được cung cấp.
+      description: API trả về dữ liệu thống kê tổng quan cho trang dashboard của khách hàng, bao gồm các chỉ số kinh doanh quan trọng. Chỉ người dùng có quyền hợp lệ mới được phép truy cập thống kê của chính họ theo user_id tương ứng.
       tags:
         - Statistic
       security:
@@ -4361,6 +4463,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
       responses:
         '200':
           description: Thành công
@@ -4389,11 +4492,29 @@ paths:
           \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
+      x-error-responses:
+        '401':
+          - code: '4102'
+            category: Auth
+            message: Token không hợp lệ / hết hạn
+          - code: '4108'
+            category: Auth
+            message: IP không được phép truy cập
+        '404':
+          - code: '4004'
+            category: Not Found
+            message: Không tìm thấy dữ liệu
+        '422':
+          - code: '4200'
+            category: Input validation
+            message: Dữ liệu request không hợp lệ
   /v1/users/{user_id}/tickets/{id}/change-assignee:
     post:
       summary: Yêu cầu đổi nhân viên hỗ trợ ticket
       operationId: changeTicketAssignee
-      description: API cho phép người dùng gửi yêu cầu thay đổi nhân viên hỗ trợ (assignee) cho một ticket cụ thể. Yêu cầu chỉ được thực hiện khi ticket đang ở trạng thái mở và người dùng có quyền thực hiện thay đổi trên ticket đó.
+      description: API cho phép người dùng gửi yêu cầu thay đổi nhân viên hỗ trợ cho một ticket cụ thể. Yêu cầu chỉ được thực hiện khi ticket đang ở trạng thái mở và người dùng có quyền thao tác trên ticket đó.
       tags:
         - Ticket
       security:
@@ -4405,11 +4526,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -4429,12 +4552,16 @@ paths:
           \$ref: '#/components/responses/Forbidden'
         '404':
           \$ref: '#/components/responses/NotFound'
+        '409':
+          \$ref: '#/components/responses/Conflict'
         '422':
           \$ref: '#/components/responses/StandardError422'
         '429':
           \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       requestBody:
         required: true
         content:
@@ -4516,7 +4643,7 @@ paths:
     post:
       summary: Mở lại ticket đã đóng của khách hàng
       operationId: reopenUserTicket
-      description: API cho phép mở lại ticket đã đóng hoặc đã giải quyết của khách hàng. Ticket phải ở trạng thái đóng trước khi thực hiện thao tác mở lại, và người dùng phải có quyền truy cập vào ticket tương ứng.
+      description: API cho phép mở lại ticket đã đóng hoặc đã giải quyết của khách hàng. Chỉ áp dụng cho các ticket ở trạng thái closed hoặc resolved, ticket phải thuộc về đúng user_id được chỉ định.
       tags:
         - Ticket
       security:
@@ -4528,11 +4655,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -4556,8 +4685,12 @@ paths:
           \$ref: '#/components/responses/Conflict'
         '422':
           \$ref: '#/components/responses/StandardError422'
+        '429':
+          \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       requestBody:
         required: false
         content:
@@ -4589,9 +4722,9 @@ paths:
             message: Dữ liệu request không hợp lệ
   /v1/users/{user_id}/tickets/{id}/conversations:
     post:
-      summary: Tạo phản hồi ticket cho khách hàng
+      summary: Tạo phản hồi mới cho ticket của khách hàng
       operationId: createTicketConversation
-      description: API cho phép tạo phản hồi mới trong ticket hỗ trợ của khách hàng. Chỉ người dùng có quyền truy cập ticket mới có thể thêm phản hồi vào cuộc hội thoại.
+      description: API cho phép tạo phản hồi mới trong một ticket hỗ trợ của khách hàng. Yêu cầu xác định đúng user_id và id của ticket tồn tại trong hệ thống trước khi gửi phản hồi.
       tags:
         - Ticket
       security:
@@ -4603,11 +4736,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -4632,8 +4767,12 @@ paths:
           \$ref: '#/components/responses/Conflict'
         '422':
           \$ref: '#/components/responses/StandardError422'
+        '429':
+          \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       x-error-responses:
         '401':
           - code: '4102'
@@ -4661,7 +4800,7 @@ paths:
     post:
       summary: Tiếp nhận phản ánh góp ý của khách hàng
       operationId: submitTicketFeedback
-      description: API cho phép khách hàng gửi phản ánh hoặc góp ý liên quan đến một ticket cụ thể sau khi được xử lý. Chỉ áp dụng cho ticket thuộc về đúng người dùng tương ứng với user_id được cung cấp.
+      description: API tiếp nhận phản ánh và góp ý của khách hàng sau khi xử lý ticket, giúp đánh giá chất lượng dịch vụ. Khách hàng chỉ được gửi feedback cho ticket thuộc về tài khoản của mình và ticket phải ở trạng thái đã hoàn thành.
       tags:
         - Ticket
       security:
@@ -4673,11 +4812,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -4697,10 +4838,16 @@ paths:
           \$ref: '#/components/responses/Forbidden'
         '404':
           \$ref: '#/components/responses/NotFound'
+        '409':
+          \$ref: '#/components/responses/Conflict'
         '422':
           \$ref: '#/components/responses/StandardError422'
+        '429':
+          \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       requestBody:
         required: true
         content:
@@ -4727,7 +4874,7 @@ paths:
     post:
       summary: Tạo ticket hỗ trợ cho khách hàng
       operationId: createUserTicket
-      description: Tạo một ticket hỗ trợ mới cho khách hàng dựa trên user_id được cung cấp. Yêu cầu thông tin hợp lệ và khách hàng phải tồn tại trong hệ thống trước khi tạo ticket.
+      description: Tạo một ticket hỗ trợ mới cho khách hàng dựa trên user_id được cung cấp. Yêu cầu thông tin hợp lệ về vấn đề cần hỗ trợ và khách hàng phải tồn tại trong hệ thống.
       tags:
         - Ticket
       security:
@@ -4739,6 +4886,7 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
       responses:
         '200':
           description: Thành công
@@ -4758,10 +4906,16 @@ paths:
           \$ref: '#/components/responses/Forbidden'
         '404':
           \$ref: '#/components/responses/NotFound'
+        '409':
+          \$ref: '#/components/responses/Conflict'
         '422':
           \$ref: '#/components/responses/StandardError422'
+        '429':
+          \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       requestBody:
         required: true
         content:
@@ -4788,7 +4942,7 @@ paths:
             category: Insert data
             message: Tạo yêu cầu thất bại
     get:
-      summary: Lấy danh sách ticket của khách hàng
+      summary: Hiển thị danh sách ticket của khách hàng
       operationId: listUserTickets
       description: API cho phép lấy danh sách tất cả ticket thuộc về một khách hàng cụ thể dựa trên user_id. Chỉ khách hàng sở hữu hoặc nhân viên có quyền mới được phép xem danh sách ticket này.
       tags:
@@ -4826,7 +4980,6 @@ paths:
               - IN_PROGRESS
               - PENDING
               - CLOSED
-            description: 'Trạng thái ticket: CREATED — Mới tạo; IN_PROGRESS — Đang xử lý; PENDING — Chờ phản hồi; CLOSED — Đóng'
           description: 'Tìm kiếm theo trạng thái:CREATED: Mới tạoIN_PROGRESS: Đang xử lýPENDING: Chờ phản hồiCLOSED: Đóng'
         - name: keyword
           in: query
@@ -4888,10 +5041,16 @@ paths:
           \$ref: '#/components/responses/Forbidden'
         '404':
           \$ref: '#/components/responses/NotFound'
+        '409':
+          \$ref: '#/components/responses/Conflict'
         '422':
           \$ref: '#/components/responses/StandardError422'
+        '429':
+          \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       x-error-responses:
         '401':
           - code: '4102'
@@ -4908,11 +5067,15 @@ paths:
           - code: '4200'
             category: Input validation
             message: Dữ liệu request không hợp lệ
+      x-manual-edit-fields:
+        - parameters[name=post_by].schema.description
+        - parameters[name=sort_type].schema.description
+        - parameters[name=status].schema.description
   /v1/users/{user_id}/tickets/{id}/close:
     put:
       summary: Đóng ticket hỗ trợ của khách hàng
       operationId: closeUserTicket
-      description: API cho phép đóng ticket hỗ trợ của khách hàng dựa trên user_id và ticket id tương ứng. Chỉ ticket đang hoạt động mới có thể được đóng, ticket đã đóng hoặc không tồn tại sẽ trả về lỗi.
+      description: API cho phép đóng ticket hỗ trợ của khách hàng dựa trên user_id và ticket id. Chỉ ticket đang ở trạng thái mở hoặc đang xử lý mới có thể được đóng.
       tags:
         - Ticket
       security:
@@ -4924,11 +5087,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -4952,8 +5117,12 @@ paths:
           \$ref: '#/components/responses/Conflict'
         '422':
           \$ref: '#/components/responses/StandardError422'
+        '429':
+          \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       x-error-responses:
         '401':
           - code: '4102'
@@ -4981,7 +5150,7 @@ paths:
     post:
       summary: Tạo đánh giá cho ticket của khách hàng
       operationId: createTicketRating
-      description: API cho phép khách hàng tạo đánh giá (rating) cho một ticket hỗ trợ cụ thể sau khi ticket đã được xử lý. Mỗi ticket chỉ được phép đánh giá một lần và phải thuộc về đúng người dùng tương ứng với user_id được cung cấp.
+      description: API cho phép khách hàng gửi đánh giá (rating) cho một ticket hỗ trợ cụ thể sau khi ticket đã được xử lý. Mỗi ticket chỉ được đánh giá một lần và phải thuộc về đúng user_id tương ứng.
       tags:
         - Ticket
       security:
@@ -4993,11 +5162,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: ticket_id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'ticket_id'.
       responses:
         '200':
           description: Thành công
@@ -5021,8 +5192,12 @@ paths:
           \$ref: '#/components/responses/Conflict'
         '422':
           \$ref: '#/components/responses/StandardError422'
+        '429':
+          \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       requestBody:
         required: true
         content:
@@ -5054,9 +5229,9 @@ paths:
             message: Tạo yêu cầu thất bại
   /v1/users/{user_id}/tickets/{ticket_id}/feedback/{id}:
     post:
-      summary: Chỉnh sửa feedback ticket của khách hàng
+      summary: Chỉnh sửa feedback của ticket khách hàng
       operationId: updateTicketFeedback
-      description: API cho phép chỉnh sửa thông tin feedback của một ticket cụ thể thuộc về người dùng. Chỉ người dùng sở hữu ticket mới có quyền cập nhật feedback tương ứng theo ID được chỉ định.
+      description: API cho phép chỉnh sửa thông tin feedback của một ticket cụ thể thuộc về khách hàng. Chỉ người dùng sở hữu ticket mới có quyền cập nhật feedback tương ứng theo ticket_id và id feedback.
       tags:
         - Ticket
       security:
@@ -5068,16 +5243,19 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: ticket_id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'ticket_id'.
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -5097,10 +5275,16 @@ paths:
           \$ref: '#/components/responses/Forbidden'
         '404':
           \$ref: '#/components/responses/NotFound'
+        '409':
+          \$ref: '#/components/responses/Conflict'
         '422':
           \$ref: '#/components/responses/StandardError422'
+        '429':
+          \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       requestBody:
         required: true
         content:
@@ -5127,7 +5311,7 @@ paths:
     get:
       summary: Lấy danh sách nhân viên hỗ trợ ticket
       operationId: getSupportStaffsByTicket
-      description: API trả về danh sách nhân viên hỗ trợ cho một ticket cụ thể của người dùng. Chỉ người dùng sở hữu ticket mới có quyền xem danh sách nhân viên hỗ trợ tương ứng.
+      description: API trả về danh sách nhân viên hỗ trợ cho một ticket cụ thể của người dùng. Chỉ ticket thuộc về user_id hợp lệ mới được phép truy xuất thông tin nhân viên hỗ trợ.
       tags:
         - Ticket
       security:
@@ -5139,11 +5323,13 @@ paths:
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'user_id'.
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: Tham số đường dẫn 'id'.
       responses:
         '200':
           description: Thành công
@@ -5166,10 +5352,16 @@ paths:
           \$ref: '#/components/responses/Forbidden'
         '404':
           \$ref: '#/components/responses/NotFound'
+        '409':
+          \$ref: '#/components/responses/Conflict'
         '422':
           \$ref: '#/components/responses/StandardError422'
+        '429':
+          \$ref: '#/components/responses/TooManyRequests'
         '500':
           \$ref: '#/components/responses/InternalError'
+        '502':
+          \$ref: '#/components/responses/BadGateway'
       x-error-responses:
         '401':
           - code: '4102'
@@ -5190,7 +5382,7 @@ paths:
     post:
       summary: Đặt kế hoạch nạp tiền vào tài khoản
       operationId: orderPlanTopup
-      description: API cho phép người dùng đặt lệnh nạp tiền theo gói kế hoạch đã chọn vào tài khoản. Yêu cầu thông tin gói nạp hợp lệ và số dư tài khoản phải đáp ứng điều kiện tối thiểu trước khi thực hiện giao dịch.
+      description: API cho phép người dùng đặt kế hoạch nạp tiền vào tài khoản theo gói dịch vụ đã chọn. Yêu cầu thông tin gói nạp và phương thức thanh toán hợp lệ trước khi thực hiện giao dịch.
       tags:
         - Topup
       security:
@@ -5336,9 +5528,6 @@ components:
     ListInternalProductsData:
       type: object
       properties:
-        Thuộc tính:
-          type: string
-          description: Mô tả
         id:
           type: string
           description: Primary key UUID v4 — auto generate.
@@ -5351,7 +5540,6 @@ components:
           description: Tên hiển thị tiếng Việt (≤ 200 ký tự).
         name_en:
           type: string
-          description: Tên tiếng Anh (optional, ≤ 200 ký tự).
         product_type:
           type: string
           description: 'Mức xác thực: DV | OV | EV. IMMUTABLE sau create (định danh bản chất sản phẩm).'
@@ -5363,7 +5551,6 @@ components:
           description: Mô tả hiển thị UI.
         retail_price_vnd:
           type: number
-          description: Giá bán lẻ đề xuất (VND/năm) cho customer UI.
         is_enabled:
           type: boolean
           description: Bật/tắt hiển thị/bán. true = được chọn cho order mới.
@@ -5387,6 +5574,7 @@ components:
         deleted_at:
           type: string
           description: Soft delete timestamp. Null = chưa xóa.
+      description: Schema \`ListInternalProductsData\`.
     StandardError:
       type: object
       description: Standard error response wrapper.
@@ -5425,80 +5613,105 @@ components:
     CreateInternalProductRequest:
       type: object
       properties:
-        Thuộc tính:
-          type: string
         id:
           type: string
+          description: Định danh của bản ghi.
         code:
           type: string
+          description: Mã định danh.
         name_en:
           type: string
+          description: Trường \`name_en\`.
         product_type:
           type: string
+          description: Trường \`product_type\`.
         cert_type:
           type: string
+          description: Trường \`cert_type\`.
         description:
           type: string
+          description: Mô tả chi tiết.
         retail_price_vnd:
           type: string
+          description: Trường \`retail_price_vnd\`.
         is_enabled:
           type: string
+          description: Trường \`is_enabled\`.
         display_order:
           type: string
+          description: Trường \`display_order\`.
         created_by:
           type: string
+          description: Người tạo bản ghi.
         updated_by:
           type: string
+          description: Người cập nhật bản ghi.
         deleted_at:
           type: string
+          description: Thời điểm xóa bản ghi.
+      description: Schema \`CreateInternalProductRequest\`.
     CreateInternalProductData:
       type: object
       properties:
         id:
           type: string
+          description: Định danh của bản ghi.
           readOnly: true
         code:
           type: string
+          description: Mã định danh.
         name:
           type: string
+          description: Tên hiển thị.
         name_en:
           type: string
+          description: Trường \`name_en\`.
         product_type:
           type: string
+          description: Trường \`product_type\`.
         cert_type:
           type: string
+          description: Trường \`cert_type\`.
         description:
           type: string
+          description: Mô tả chi tiết.
         retail_price_vnd:
           type: integer
+          description: Trường \`retail_price_vnd\`.
         is_enabled:
           type: boolean
+          description: Trường \`is_enabled\`.
         display_order:
           type: integer
+          description: Trường \`display_order\`.
         created_at:
           type: string
+          description: Thời điểm tạo bản ghi.
           readOnly: true
         updated_at:
           type: string
+          description: Thời điểm cập nhật bản ghi.
           readOnly: true
         created_by:
           type: string
+          description: Người tạo bản ghi.
         updated_by:
           type: string
+          description: Người cập nhật bản ghi.
         deleted_at:
           type:
             - string
             - 'null'
+          description: Thời điểm xóa bản ghi.
         mappings_summary:
           type: array
           items:
             type: object
+          description: Trường \`mappings_summary\`.
+      description: Schema \`CreateInternalProductData\`.
     GetInternalProductDetailData:
       type: object
       properties:
-        Thuộc tính:
-          type: string
-          description: Mô tả
         id:
           type: string
           description: Primary key UUID v4 — auto generate.
@@ -5547,6 +5760,7 @@ components:
         deleted_at:
           type: string
           description: Soft delete timestamp. Null = chưa xóa.
+      description: Schema \`GetInternalProductDetailData\`.
     DeleteInternalProductRequest:
       type: object
       example:
@@ -5555,22 +5769,31 @@ components:
         reason:
           type: string
           example: Sản phẩm ngừng bán — thay bằng SKU mới
+          description: Lý do thực hiện thao tác.
+      description: Schema \`DeleteInternalProductRequest\`.
     DeleteInternalProductData:
       type: object
       properties:
         id:
           type: integer
+          description: Định danh của bản ghi.
           readOnly: true
         code:
           type: string
+          description: Mã định danh.
         is_enabled:
           type: boolean
+          description: Trường \`is_enabled\`.
         deleted_at:
           type: string
+          description: Thời điểm xóa bản ghi.
         deleted_by:
           type: string
+          description: Người xóa bản ghi.
         reason:
           type: string
+          description: Lý do thực hiện thao tác.
+      description: Schema \`DeleteInternalProductData\`.
     UpdateInternalProductRequest:
       type: object
       example:
@@ -5586,33 +5809,39 @@ components:
         name:
           type: string
           example: SSL DV Single Domain (cập nhật)
+          description: Tên hiển thị.
         name_en:
           type: string
           example: ...
+          description: Trường \`name_en\`.
         description:
           type: string
           example: ...
+          description: Mô tả chi tiết.
         retail_price_vnd:
           type: integer
           example: 280000
+          description: Trường \`retail_price_vnd\`.
         is_enabled:
           type: boolean
           example: true
+          description: Trường \`is_enabled\`.
         display_order:
           type: integer
           example: 15
+          description: Trường \`display_order\`.
         default_san:
           type: integer
           example: 0
+          description: Trường \`default_san\`.
         max_san:
           type: integer
           example: 10
+          description: Trường \`max_san\`.
+      description: Schema \`UpdateInternalProductRequest\`.
     ListInternalProductMappingsData:
       type: object
       properties:
-        Thuộc tính:
-          type: string
-          description: Mô tả
         id:
           type: string
           description: Primary key UUID v4.
@@ -5620,12 +5849,15 @@ components:
         internal_product_id:
           type: string
           description: FK tới internal_products.id.
+          readOnly: true
         provider_product_id:
           type: string
           description: FK tới provider_products.id.
+          readOnly: true
         provider_id:
           type: string
           description: DENORMALIZED — copy từ provider_products.provider_id để enforce UNIQUE(internal_product_id, provider_id) ở DB layer.
+          readOnly: true
         routing_weight:
           type: integer
           description: 'Trọng số Weighted Round-Robin (WRR) cho routing đơn hàng. Default 1, range [1, 100]. VD: mapping Daousign weight=2, mapping TheSSLStore weight=1 cho cùng 1 internal product → 2/3 đơn về Daousign. Set 0 = tạm tắt routing nhưng giữ mapping (tương đương is_active=false).'
@@ -5652,76 +5884,109 @@ components:
         deleted_at:
           type: string
           description: Soft delete timestamp. Null = chưa xóa.
+      description: Schema \`ListInternalProductMappingsData\`.
     CreateInternalProductMappingRequest:
       type: object
       properties:
-        Thuộc tính:
-          type: string
         id:
           type: string
+          description: Primary key UUID v4.
         internal_product_id:
           type: string
+          description: FK tới internal_products.id.
         provider_product_id:
           type: string
+          description: FK tới provider_products.id.
         provider_id:
           type: string
+          description: DENORMALIZED — copy từ provider_products.provider_id để enforce UNIQUE(internal_product_id, provider_id) ở DB layer.
         routing_weight:
-          type: string
+          type: integer
+          description: 'Trọng số Weighted Round-Robin (WRR) cho routing đơn hàng. Default 1, range [1, 100]. VD: mapping Daousign weight=2, mapping TheSSLStore weight=1 cho cùng 1 internal product → 2/3 đơn về Daousign. Set 0 = tạm tắt routing nhưng giữ mapping (tương đương is_active=false).'
         is_active:
-          type: string
+          type: boolean
+          description: Default true. False = tạm tắt mapping nhưng giữ lịch sử audit.
         notes:
           type: string
+          description: Ghi chú admin (≤ 500 ký tự).
         created_by:
           type: string
+          description: Admin ID người tạo.
         updated_by:
           type: string
+          description: Admin ID người cập nhật gần nhất.
         deleted_at:
           type: string
+          description: Soft delete timestamp. Null = chưa xóa.
+      description: Schema \`CreateInternalProductMappingRequest\`.
     CreateInternalProductMappingData:
       type: object
       properties:
         id:
           type: string
+          description: Định danh của bản ghi.
           readOnly: true
         internal_product_id:
           type: string
+          description: Trường \`internal_product_id\`.
+          readOnly: true
         provider_product_id:
           type: string
+          description: Trường \`provider_product_id\`.
+          readOnly: true
         provider_id:
           type: string
+          description: Trường \`provider_id\`.
+          readOnly: true
         routing_weight:
           type: integer
+          description: Trường \`routing_weight\`.
         is_active:
           type: boolean
+          description: Trường \`is_active\`.
         notes:
           type: string
+          description: Trường \`notes\`.
         created_at:
           type: string
+          description: Thời điểm tạo bản ghi.
           readOnly: true
         created_by:
           type: string
+          description: Người tạo bản ghi.
         provider:
           type: object
           properties:
             code:
               type: string
+              description: Mã định danh.
             name:
               type: string
+              description: Tên hiển thị.
             is_enabled:
               type: boolean
+              description: Trường \`is_enabled\`.
+          description: Trường \`provider\`.
         provider_product:
           type: object
           properties:
             provider_product_code:
               type: string
+              description: Trường \`provider_product_code\`.
             product_name:
               type: string
+              description: Trường \`product_name\`.
             product_type:
               type: string
+              description: Trường \`product_type\`.
             cert_type:
               type: string
+              description: Trường \`cert_type\`.
             is_enabled:
               type: boolean
+              description: Trường \`is_enabled\`.
+          description: Trường \`provider_product\`.
+      description: Schema \`CreateInternalProductMappingData\`.
     DeleteInternalProductMappingRequest:
       type: object
       example:
@@ -5730,24 +5995,37 @@ components:
         reason:
           type: string
           example: Hủy mapping vì provider không còn cung cấp product này
+          description: Lý do thực hiện thao tác.
+      description: Schema \`DeleteInternalProductMappingRequest\`.
     DeleteInternalProductMappingData:
       type: object
       properties:
         id:
           type: string
+          description: Định danh của bản ghi.
           readOnly: true
         internal_product_id:
           type: string
+          description: Trường \`internal_product_id\`.
+          readOnly: true
         provider_product_id:
           type: string
+          description: Trường \`provider_product_id\`.
+          readOnly: true
         provider_id:
           type: string
+          description: Trường \`provider_id\`.
+          readOnly: true
         deleted_at:
           type: string
+          description: Thời điểm xóa bản ghi.
         deleted_by:
           type: string
+          description: Người xóa bản ghi.
         reason:
           type: string
+          description: Lý do thực hiện thao tác.
+      description: Schema \`DeleteInternalProductMappingData\`.
     UpdateInternalProductMappingRequest:
       type: object
       example:
@@ -5758,12 +6036,16 @@ components:
         routing_weight:
           type: integer
           example: 3
+          description: Trường \`routing_weight\`.
         is_active:
           type: boolean
           example: true
+          description: Trường \`is_active\`.
         notes:
           type: string
           example: Tăng weight Daousign vì price tốt hơn
+          description: Trường \`notes\`.
+      description: Schema \`UpdateInternalProductMappingRequest\`.
     ToggleInternalProductStatusRequest:
       type: object
       example:
@@ -5773,9 +6055,12 @@ components:
         is_enabled:
           type: boolean
           example: false
+          description: Trường \`is_enabled\`.
         reason:
           type: string
           example: Tạm ngưng bán theo quyết định CEO
+          description: Lý do thực hiện thao tác.
+      description: Schema \`ToggleInternalProductStatusRequest\`.
     ToggleInternalProductStatusData:
       type: object
       properties:
@@ -5804,6 +6089,7 @@ components:
         reason:
           type: string
           description: Lý do (nếu có)
+      description: Schema \`ToggleInternalProductStatusData\`.
     ListProvidersData:
       type: object
       properties:
@@ -5812,53 +6098,68 @@ components:
           items:
             type: object
           description: Danh sách provider (schema xem
+      description: Schema \`ListProvidersData\`.
     CreateProviderRequest:
       type: object
       properties:
-        Thuộc tính:
-          type: string
         id:
           type: string
+          description: Định danh của bản ghi.
         code:
           type: string
+          description: Mã định danh.
         sandbox_base_url:
           type: string
+          description: Trường \`sandbox_base_url\`.
         production_base_url:
           type: string
+          description: Trường \`production_base_url\`.
         sandbox_token:
           type: string
+          description: Trường \`sandbox_token\`.
         production_token:
           type: string
+          description: Trường \`production_token\`.
         registered_ip:
           type: string
+          description: Trường \`registered_ip\`.
         auth_extra:
           type: string
+          description: Trường \`auth_extra\`.
         list_products_endpoint:
           type: string
+          description: Trường \`list_products_endpoint\`.
         list_products_method:
           type: string
+          description: Trường \`list_products_method\`.
         list_products_request_template:
           type: string
+          description: Trường \`list_products_request_template\`.
         list_products_response_path:
           type: string
+          description: Trường \`list_products_response_path\`.
         list_products_timeout_seconds:
           type: string
+          description: Trường \`list_products_timeout_seconds\`.
         is_enabled:
           type: string
+          description: Trường \`is_enabled\`.
         display_order:
           type: string
+          description: Trường \`display_order\`.
         created_by:
           type: string
+          description: Người tạo bản ghi.
         updated_by:
           type: string
+          description: Người cập nhật bản ghi.
         deleted_at:
           type: string
+          description: Thời điểm xóa bản ghi.
+      description: Schema \`CreateProviderRequest\`.
     CreateProviderData:
       type: object
       properties:
-        Thuộc tính:
-          type: string
-          description: Mô tả
         id:
           type: string
           description: Primary key nội bộ (UUID v4) — auto generate.
@@ -5925,12 +6226,10 @@ components:
         deleted_at:
           type: string
           description: Soft delete timestamp. Null = chưa xóa.
+      description: Schema \`CreateProviderData\`.
     GetProviderDetailData:
       type: object
       properties:
-        Thuộc tính:
-          type: string
-          description: Mô tả
         id:
           type: string
           description: Primary key nội bộ (UUID v4) — auto generate.
@@ -5997,6 +6296,7 @@ components:
         deleted_at:
           type: string
           description: Soft delete timestamp. Null = chưa xóa.
+      description: Schema \`GetProviderDetailData\`.
     DeleteProviderByIdRequest:
       type: object
       example:
@@ -6005,6 +6305,8 @@ components:
         reason:
           type: string
           example: Provider ngừng hợp tác — chuyển sang đối tác khác
+          description: Lý do thực hiện thao tác.
+      description: Schema \`DeleteProviderByIdRequest\`.
     DeleteProviderByIdData:
       type: object
       properties:
@@ -6030,6 +6332,7 @@ components:
         reason:
           type: string
           description: Lý do xóa (nếu có trong request)
+      description: Schema \`DeleteProviderByIdData\`.
     UpdateProviderByIdRequest:
       type: object
       example:
@@ -6051,15 +6354,19 @@ components:
         name:
           type: string
           example: Daousign Vietnam (Updated)
+          description: Tên hiển thị.
         production_base_url:
           type: string
           example: https://api-v2.daousign.com
+          description: Trường \`production_base_url\`.
         production_token:
           type: string
           example: pr_live_NEW_TOKEN_xxxx
+          description: Trường \`production_token\`.
         registered_ip:
           type: string
           example: 203.162.10.99
+          description: Trường \`registered_ip\`.
         auth_extra:
           type: object
           example:
@@ -6068,12 +6375,16 @@ components:
             api_id:
               type: string
               example: PAVIETNAM-002
+              description: Trường \`api_id\`.
+          description: Trường \`auth_extra\`.
         list_products_endpoint:
           type: string
           example: /products/all
+          description: Trường \`list_products_endpoint\`.
         list_products_method:
           type: string
           example: POST
+          description: Trường \`list_products_method\`.
         list_products_request_template:
           type: object
           example:
@@ -6083,18 +6394,25 @@ components:
             PartnerCode:
               type: string
               example: '{{auth_extra.partner_code}}'
+              description: Trường \`PartnerCode\`.
             AuthToken:
               type: string
               example: '{{token}}'
+              description: Trường \`AuthToken\`.
+          description: Trường \`list_products_request_template\`.
         list_products_response_path:
           type: string
           example: \$
+          description: Trường \`list_products_response_path\`.
         list_products_timeout_seconds:
           type: integer
           example: 30
+          description: Trường \`list_products_timeout_seconds\`.
         display_order:
           type: integer
           example: 5
+          description: Trường \`display_order\`.
+      description: Schema \`UpdateProviderByIdRequest\`.
     GetProviderProductListData:
       type: object
       properties:
@@ -6127,6 +6445,7 @@ components:
           items:
             type: object
           description: Danh sách sản phẩm (schema mục
+      description: Schema \`GetProviderProductListData\`.
     CreateProviderProductRequest:
       type: object
       example:
@@ -6161,21 +6480,27 @@ components:
         provider_product_code:
           type: string
           example: '101'
+          description: Trường \`provider_product_code\`.
         product_name:
           type: string
           example: PositiveSSL DV Single Domain
+          description: Trường \`product_name\`.
         product_name_en:
           type: string
           example: PositiveSSL DV Single Domain
+          description: Trường \`product_name_en\`.
         brand:
           type: string
           example: Sectigo
+          description: Trường \`brand\`.
         product_type:
           type: string
           example: DV
+          description: Trường \`product_type\`.
         cert_type:
           type: string
           example: SINGLE
+          description: Trường \`cert_type\`.
         years_supported:
           type: array
           example:
@@ -6184,14 +6509,17 @@ components:
           items:
             type: integer
             example: 1
+          description: Trường \`years_supported\`.
         min_san:
           type:
             - string
             - 'null'
+          description: Trường \`min_san\`.
         max_san:
           type:
             - string
             - 'null'
+          description: Trường \`max_san\`.
         supported_dcv_methods:
           type: array
           example:
@@ -6201,6 +6529,7 @@ components:
           items:
             type: string
             example: EMAIL
+          description: Trường \`supported_dcv_methods\`.
         supported_server_types:
           type: array
           example:
@@ -6210,108 +6539,144 @@ components:
           items:
             type: string
             example: Apache
+          description: Trường \`supported_server_types\`.
         wholesale_price_usd:
           type: number
           example: 8.5
+          description: Trường \`wholesale_price_usd\`.
         retail_price_vnd:
           type: integer
           example: 250000
+          description: Trường \`retail_price_vnd\`.
         warranty_amount_usd:
           type: integer
           example: 50000
+          description: Trường \`warranty_amount_usd\`.
         is_reissue_supported:
           type: boolean
           example: true
+          description: Trường \`is_reissue_supported\`.
         description:
           type: string
           example: SSL DV Single Domain
+          description: Mô tả chi tiết.
         admin_note:
           type: string
           example: Nhập khẩu Daousign tháng 04/2026
+          description: Trường \`admin_note\`.
         is_enabled:
           type: boolean
           example: true
+          description: Trường \`is_enabled\`.
         display_order:
           type: integer
           example: 10
+          description: Trường \`display_order\`.
+      description: Schema \`CreateProviderProductRequest\`.
     CreateProviderProductData:
       type: object
       properties:
         id:
           type: string
+          description: Định danh của bản ghi.
           readOnly: true
         provider_id:
           type: string
+          description: Trường \`provider_id\`.
+          readOnly: true
         provider_product_code:
           type: string
+          description: Trường \`provider_product_code\`.
         product_name:
           type: string
+          description: Trường \`product_name\`.
         product_name_en:
           type: string
+          description: Trường \`product_name_en\`.
         brand:
           type: string
+          description: Trường \`brand\`.
         product_type:
           type: string
+          description: Trường \`product_type\`.
         cert_type:
           type: string
+          description: Trường \`cert_type\`.
         years_supported:
           type: array
           items:
             type: integer
+          description: Trường \`years_supported\`.
         max_years:
           type: integer
+          description: Trường \`max_years\`.
         min_san:
           type:
             - string
             - 'null'
+          description: Trường \`min_san\`.
         max_san:
           type:
             - string
             - 'null'
+          description: Trường \`max_san\`.
         supported_dcv_methods:
           type: array
           items:
             type: string
+          description: Trường \`supported_dcv_methods\`.
         supported_server_types:
           type: array
           items:
             type: string
+          description: Trường \`supported_server_types\`.
         wholesale_price_usd:
           type: number
+          description: Trường \`wholesale_price_usd\`.
         retail_price_vnd:
           type: integer
+          description: Trường \`retail_price_vnd\`.
         warranty_amount_usd:
           type: integer
+          description: Trường \`warranty_amount_usd\`.
         is_reissue_supported:
           type: boolean
+          description: Trường \`is_reissue_supported\`.
         description:
           type: string
+          description: Mô tả chi tiết.
         admin_note:
           type: string
+          description: Trường \`admin_note\`.
         is_enabled:
           type: boolean
+          description: Trường \`is_enabled\`.
         display_order:
           type: integer
+          description: Trường \`display_order\`.
         created_at:
           type: string
+          description: Thời điểm tạo bản ghi.
           readOnly: true
         updated_at:
           type: string
+          description: Thời điểm cập nhật bản ghi.
           readOnly: true
         created_by:
           type: string
+          description: Người tạo bản ghi.
         updated_by:
           type: string
+          description: Người cập nhật bản ghi.
         deleted_at:
           type:
             - string
             - 'null'
+          description: Thời điểm xóa bản ghi.
+      description: Schema \`CreateProviderProductData\`.
     GetProviderProductDetailData:
       type: object
       properties:
-        Thuộc tính:
-          type: string
-          description: Mô tả
         id:
           type: string
           description: Primary key nội bộ (UUID v4).
@@ -6319,6 +6684,7 @@ components:
         provider_id:
           type: string
           description: FK tới providers.id — provider sở hữu sản phẩm này.
+          readOnly: true
         provider_product_code:
           type: string
           description: 'Mã sản phẩm tại provider (VD Daousign: "101", "212"). UNIQUE trong phạm vi 1 provider.'
@@ -6396,6 +6762,7 @@ components:
         deleted_at:
           type: string
           description: Soft delete timestamp. Null = chưa xóa.
+      description: Schema \`GetProviderProductDetailData\`.
     DeleteProviderProductRequest:
       type: object
       example:
@@ -6404,6 +6771,8 @@ components:
         reason:
           type: string
           example: Sản phẩm ngừng bán — provider đã discontinue
+          description: Lý do thực hiện thao tác.
+      description: Schema \`DeleteProviderProductRequest\`.
     DeleteProviderProductData:
       type: object
       properties:
@@ -6414,6 +6783,7 @@ components:
         provider_id:
           type: string
           description: FK providers.id
+          readOnly: true
         provider_code:
           type: string
           description: Mã provider (reference debug)
@@ -6432,6 +6802,7 @@ components:
         reason:
           type: string
           description: Lý do xóa (nếu có trong request)
+      description: Schema \`DeleteProviderProductData\`.
     UpdateProviderProductRequest:
       type: object
       example:
@@ -6447,9 +6818,11 @@ components:
         product_name:
           type: string
           example: PositiveSSL DV Single Domain (Updated)
+          description: Trường \`product_name\`.
         wholesale_price_usd:
           type: number
           example: 9
+          description: Trường \`wholesale_price_usd\`.
         years_supported:
           type: array
           example:
@@ -6459,16 +6832,21 @@ components:
           items:
             type: integer
             example: 1
+          description: Trường \`years_supported\`.
         max_san:
           type: integer
           example: 150
+          description: Trường \`max_san\`.
         admin_note:
           type: string
           example: Tăng giá theo policy 2026-Q2
+          description: Trường \`admin_note\`.
+      description: Schema \`UpdateProviderProductRequest\`.
     SyncProviderProductsRequest:
       type: object
       example: {}
       properties: {}
+      description: Schema \`SyncProviderProductsRequest\`.
     SyncProviderProductsData:
       type: object
       properties:
@@ -6478,6 +6856,7 @@ components:
         provider_id:
           type: string
           description: ID nội bộ của provider.
+          readOnly: true
         dry_run:
           type: boolean
           description: true nếu chạy preview; false nếu đã ghi DB.
@@ -6511,6 +6890,8 @@ components:
         sync_log_id:
           type: string
           description: ID record trong provider_sync_logs. Null nếu dry_run=true.
+          readOnly: true
+      description: Schema \`SyncProviderProductsData\`.
     ToggleProviderProductStatusRequest:
       type: object
       example:
@@ -6520,9 +6901,12 @@ components:
         is_enabled:
           type: boolean
           example: true
+          description: Trường \`is_enabled\`.
         reason:
           type: string
           example: Tạm ngưng bán theo quyết định CEO
+          description: Lý do thực hiện thao tác.
+      description: Schema \`ToggleProviderProductStatusRequest\`.
     ToggleProviderProductStatusData:
       type: object
       properties:
@@ -6533,6 +6917,7 @@ components:
         provider_id:
           type: string
           description: FK providers.id
+          readOnly: true
         provider_code:
           type: string
           description: Mã provider (reference)
@@ -6557,6 +6942,7 @@ components:
         reason:
           type: string
           description: Lý do (nếu có trong request)
+      description: Schema \`ToggleProviderProductStatusData\`.
     RevealProviderTokenRequest:
       type: object
       example:
@@ -6566,15 +6952,19 @@ components:
         admin_password:
           type: string
           example: <mật khẩu admin hiện tại>
+          description: Trường \`admin_password\`.
         env:
           type: string
           example: PRODUCTION
+          description: Trường \`env\`.
+      description: Schema \`RevealProviderTokenRequest\`.
     RevealProviderTokenData:
       type: object
       properties:
         provider_id:
           type: string
           description: ID provider
+          readOnly: true
         code:
           type: string
           description: Mã provider (reference)
@@ -6590,6 +6980,7 @@ components:
         revealed_by:
           type: string
           description: Admin ID thực hiện reveal
+      description: Schema \`RevealProviderTokenData\`.
     ToggleProviderStatusRequest:
       type: object
       example:
@@ -6599,9 +6990,12 @@ components:
         is_enabled:
           type: boolean
           example: true
+          description: Trường \`is_enabled\`.
         reason:
           type: string
           example: Tạm ngưng do sự cố API Daousign
+          description: Lý do thực hiện thao tác.
+      description: Schema \`ToggleProviderStatusRequest\`.
     ToggleProviderStatusData:
       type: object
       properties:
@@ -6633,37 +7027,47 @@ components:
         reason:
           type: string
           description: Lý do (nếu có trong request)
+      description: Schema \`ToggleProviderStatusData\`.
     GenerateCsrRequest:
       type: object
+      example:
+        common_name: example.com
+        org_name: Công ty Cổ phần Pavietnam
+        locality: TP. Hồ Chí Minh
+        country: VN
+        email: ssl@pavietnam.vn
+        key_size: 2048
+        signature_algorithm: SHA-2
       properties:
         common_name:
           type: string
-          description: Tên miền đã chuẩn hóa. Ghi vào CN=. Tối đa 255 ký tự.
+          example: example.com
+          description: Trường \`common_name\`.
         org_name:
           type: string
-          description: Tên tổ chức. Ghi vào O= và OU=. Tối đa 64 ký tự.
-          default: N/A
+          example: Công ty Cổ phần Pavietnam
+          description: Trường \`org_name\`.
         locality:
           type: string
-          description: Tỉnh/Thành phố. Ghi vào L= và ST=. Tối đa 128 ký tự.
-          default: N/A
+          example: TP. Hồ Chí Minh
+          description: Trường \`locality\`.
         country:
           type: string
-          description: Mã quốc gia ISO 3166-1 alpha-2 (2 ký tự hoa). Ghi vào C=.
-          default: US
+          example: VN
+          description: Trường \`country\`.
         email:
           type: string
-          description: Email liên hệ. RFC 5322 nếu cung cấp.
+          example: ssl@pavietnam.vn
+          description: Địa chỉ email.
         key_size:
           type: integer
-          description: 2048 (RSA) | 4096 (RSA) | 256 (ECDSA P-256) | 384 (ECDSA P-384).
-          default: 2048
+          example: 2048
+          description: Trường \`key_size\`.
         signature_algorithm:
           type: string
-          description: SHA-2 / SHA-256 / SHA-384 / SHA-512. SHA-2 tương đương SHA-256.
-          default: SHA-2
-      required:
-        - common_name
+          example: SHA-2
+          description: Trường \`signature_algorithm\`.
+      description: Schema \`GenerateCsrRequest\`.
     GenerateCsrRequestData:
       type: object
       properties:
@@ -6685,6 +7089,7 @@ components:
         source:
           type: string
           description: '"sslstore" — sinh bởi TheSSLStore API. "internal" — sinh bởi openssl nội bộ.'
+      description: Schema \`GenerateCsrRequestData\`.
     GetDepartmentListData:
       type: object
       properties:
@@ -6717,6 +7122,7 @@ components:
         customer_id:
           type: string
           description: ID khách hàng từ Internal Core System.
+          readOnly: true
         internal_product_code:
           type: string
           description: Mã sản phẩm nội bộ (master catalog).
@@ -6762,112 +7168,6 @@ components:
         pagination.total_pages:
           type: integer
           description: Tổng số trang = ceil(total_items / per_page).
-    CreateOrderRequest:
-      type: object
-      properties:
-        external_account_id:
-          type: integer
-          description: ID dịch vụ / đơn hàng bên hệ thống bán (BIGINT, ≥ 1) — dùng cho đối soát. Không unique constraint (1 account có thể có nhiều order SSL).
-        customer_id:
-          type: integer
-          description: ID khách hàng trong Internal Core System. Được verify qua Internal Core API.
-        internal_product_code:
-          type: string
-          description: Mã sản phẩm nội bộ (bảng internal_products). Hệ thống tự resolve sang internal_product_id.
-        years:
-          type: integer
-          description: Số năm đăng ký (≥ 1). Phải có ít nhất 1 mapping với provider_product.max_years ≥ years.
-        primary_domain:
-          type: string
-          description: FQDN chính. Dạng *.example.com nếu cert_type=WILDCARD.
-        contact:
-          type: object
-          description: Thông tin liên hệ. Tùy chọn tại bước tạo đơn — có thể bổ sung sau. Xem mục b, c, d bên dưới.
-          properties:
-            contact_admin:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: Email người quản lý. RFC 5322.
-                first_name:
-                  type: string
-                  description: Tên.
-                last_name:
-                  type: string
-                  description: Họ.
-                phone:
-                  type: string
-                  description: Số điện thoại. E.164.
-                title:
-                  type: string
-                  description: 'Chức danh: Mr | Mrs | Ms | Dr | ...'
-            contact_org:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: Tên tổ chức / công ty. Bắt buộc nếu contact_org được cung cấp.
-                address:
-                  type: string
-                  description: Địa chỉ đường phố. Bắt buộc nếu contact_org được cung cấp.
-                province:
-                  type: string
-                  description: Tỉnh / Thành phố.
-                country:
-                  type: string
-                  description: 'Mã quốc gia ISO 3166-1 alpha-2. VD: VN, US. Bắt buộc nếu contact_org được cung cấp.'
-                postal_code:
-                  type: string
-                  description: Mã bưu chính.
-                phone:
-                  type: string
-                  description: Số điện thoại tổ chức. E.164.
-                business_number:
-                  type: string
-                  description: Số giấy phép kinh doanh / mã số thuế. Tùy chọn với mọi loại chứng chỉ.
-                representative_name:
-                  type: string
-                  description: Tên người đại diện pháp lý. Tùy chọn với mọi loại chứng chỉ.
-                duns:
-                  type: string
-                  description: D-U-N-S Number.
-              required:
-                - name
-                - address
-                - country
-            contact_tech:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: Email kỹ thuật viên. Bắt buộc nếu contact_tech != null.
-                first_name:
-                  type: string
-                  description: Tên.
-                last_name:
-                  type: string
-                  description: Họ.
-                phone:
-                  type: string
-                  description: Số điện thoại. E.164.
-                title:
-                  type: string
-                  description: 'Chức danh: Mr | Mrs | Ms | Dr | ...'
-              required:
-                - email
-                - first_name
-                - last_name
-                - phone
-        note:
-          type: string
-          description: Ghi chú nội bộ (≤ 500 ký tự).
-      required:
-        - external_account_id
-        - customer_id
-        - internal_product_code
-        - years
-        - primary_domain
     CreateOrderData:
       type: object
       properties:
@@ -6896,32 +7196,45 @@ components:
         routing_info.candidates:
           type: string
           description: Snapshot tất cả candidates + score để audit quyết định routing.
+      description: Schema \`CreateOrderData\`.
     ChangeOrderDcvMethodRequest:
       type: object
+      example:
+        domain: example.com
+        method: HTTP
+        approver_email: admin@example.com
       properties:
         domain:
           type: string
-          description: Domain cần đổi DCV. Phải tồn tại trong dcv_records của cert hiện tại. Tối đa 255 ký tự.
+          example: example.com
+          description: Trường \`domain\`.
         method:
           type: string
-          description: 'Phương thức DCV mới: EMAIL | HTTP | CNAME.'
+          example: HTTP
+          description: Trường \`method\`.
         approver_email:
           type: string
-          description: Email approver nhận mã xác thực. Bắt buộc khi method=EMAIL. Bỏ qua khi HTTP/CNAME. RFC 5322. Tối đa 255 ký tự.
-      required:
-        - domain
-        - method
+          example: admin@example.com
+          description: Trường \`approver_email\`.
+      description: Schema \`ChangeOrderDcvMethodRequest\`.
     ChangeOrderDcvMethodData:
       type: object
       properties:
         domain:
           type: string
+          description: Trường \`domain\`.
         method:
           type: string
+          description: Trường \`method\`.
         approver_email:
-          type: string
+          type:
+            - string
+            - 'null'
+          description: Trường \`approver_email\`.
         status:
           type: string
+          description: Trạng thái xử lý.
+      description: Schema \`ChangeOrderDcvMethodData\`.
     ResendDcvEmailRequest:
       type: object
       example:
@@ -6940,7 +7253,7 @@ components:
           type: string
           description: 'Trạng thái raw từ provider. VD Daousign: "Awaiting Validation (Full)" | "Valid" | "Reject" | "Revoked".'
         all_validated:
-          type: string
+          type: boolean
           description: True nếu tất cả dcv_records đều VALIDATED.
         dcv_records:
           type: string
@@ -6951,6 +7264,7 @@ components:
         dcv_records[].validated_at:
           type: string
           description: Thời điểm xác thực thành công. Null nếu chưa validated.
+      description: Schema \`ValidateOrderDcvData\`.
     GetOrderDetailData:
       type: object
       properties:
@@ -6979,7 +7293,7 @@ components:
           type: string
           description: Intermediate chain PEM. Null nếu chưa có.
         certificates[].has_private_key:
-          type: string
+          type: boolean
           description: True nếu có private key được lưu (encrypted). Key không trả qua API này.
         dcv_records:
           type: string
@@ -6990,28 +7304,37 @@ components:
         dcv_records[].status:
           type: string
           description: PENDING | VERIFIED | FAILED | EXPIRED.
+      description: Schema \`GetOrderDetailData\`.
     GenerateCsrForOrderRequest:
       type: object
+      example:
+        key_type: RSA_2048
+        org_name: Công ty Cổ phần Ví dụ
+        country: VN
+        state: TP. Hồ Chí Minh
+        email: admin@example.com
       properties:
         key_type:
           type: string
-          description: RSA_2048 | RSA_4096 | ECDSA_P256 | ECDSA_P384. Xác định loại và độ dài khoá.
-          default: RSA_2048
+          example: RSA_2048
+          description: Trường \`key_type\`.
         org_name:
           type: string
-          description: Tên tổ chức. Ghi vào trường O= của CSR. Tối đa 64 ký tự.
-          default: N/A
+          example: Công ty Cổ phần Ví dụ
+          description: Trường \`org_name\`.
         country:
           type: string
-          description: Mã quốc gia ISO 3166-1 alpha-2 (2 ký tự). Ghi vào trường C= của CSR.
-          default: US
+          example: VN
+          description: Trường \`country\`.
         state:
           type: string
-          description: Tỉnh / thành phố. Ghi vào trường ST= của CSR. Tối đa 128 ký tự.
-          default: N/A
+          example: TP. Hồ Chí Minh
+          description: Trường \`state\`.
         email:
           type: string
-          description: Email liên hệ. Dùng cho form TheSSLStore. Phải đúng format RFC 5322 nếu cung cấp.
+          example: admin@example.com
+          description: Địa chỉ email.
+      description: Schema \`GenerateCsrForOrderRequest\`.
     GenerateCsrForOrderData:
       type: object
       properties:
@@ -7030,53 +7353,12 @@ components:
         source:
           type: string
           description: '"sslstore" — CSR được sinh bởi TheSSLStore API. "internal" — CSR được sinh bởi openssl nội bộ (fallback).'
+      description: Schema \`GenerateCsrForOrderData\`.
     ReissueOrderByIdRequest:
-      type: object
-      properties:
-        reissue_reason:
-          type: string
-          description: 'Lý do cấp lại (tùy chọn). Xem bảng reissue_reason bên dưới. Có thể bỏ trống khi reissue kỹ thuật (ví dụ: AUTO_RENEWAL do hệ thống tạo).'
-        csr:
-          type:
-            - string
-            - 'null'
-          description: CSR PEM mới. null/bỏ trống → reuse CSR của cert hiện tại. CSR giống cert hiện tại → cũng tự động reuse.
-        private_key:
-          type:
-            - string
-            - 'null'
-          description: Private key PEM (browser-generated). Chỉ dùng kèm csr mới. Server mã hoá và lưu. Không cung cấp → server không lưu key.
-        contact_admin:
-          type:
-            - object
-            - 'null'
-          description: 'Bắt buộc. Thông tin admin contact. Các trường con: email (required, RFC 5322), first_name (required), last_name (required), phone (required, E.164), title (optional). Replace hoàn toàn contact_admin của order.'
-          properties: {}
-        contact_org:
-          type: object
-          description: 'Bắt buộc. Thông tin tổ chức: name, address, province, country (ISO 3166-1 alpha-2), postal_code, phone (tất cả required). business_number, representative_name, duns (optional). Replace hoàn toàn contact_org của order.'
-          properties: {}
-        contact_tech:
-          type:
-            - object
-            - 'null'
-          description: 'Bắt buộc. Thông tin tech contact. Các trường con: email (required, RFC 5322), first_name (required), last_name (required), phone (required, E.164), title (optional). Replace hoàn toàn contact_tech của order.'
-          properties: {}
-        san_list:
-          type: string
-          description: Bắt buộc truyền. Danh sách SAN mới — replace hoàn toàn san_list của order. Truyền [] để xóa hết SAN. Mỗi item là string tối đa 255 ký tự.
-        dcv_config:
-          type:
-            - object
-            - 'null'
-          description: 'Bắt buộc. Key = domain, value = {method: EMAIL|HTTP|HTTPS|CNAME, approver_email}. Phải cover đầy đủ primary_domain + tất cả domain trong san_list. Thiếu domain → lỗi 4622 với data.missing_domains.'
-          properties: {}
-      required:
-        - contact_admin
-        - contact_org
-        - contact_tech
-        - san_list
-        - dcv_config
+      type: array
+      example: []
+      items: {}
+      description: Schema \`ReissueOrderByIdRequest\`.
     ReissueOrderByIdData:
       type: object
       properties:
@@ -7101,158 +7383,258 @@ components:
         message:
           type: string
           description: Thông báo xác nhận yêu cầu đã xếp hàng.
+      description: Schema \`ReissueOrderByIdData\`.
     RenewOrderRequest:
       type: object
+      example:
+        years: 1
+        dcv_method: HTTP
+        contact_admin:
+          email: admin@example.com
+          first_name: Nguyen
+          last_name: Van A
+          phone: '+84901234567'
+          title: Manager
+        contact_org:
+          name: Example Co. Ltd
+          address: 123 Le Loi, Ha Noi
+          province: Ha Noi
+          country: VN
+          postal_code: '100000'
+          phone: '+84243456789'
+          business_number: '0123456789'
+          representative_name: Nguyen Van A
+          duns: '123456789'
+        contact_tech:
+          email: tech@example.com
+          first_name: Tran
+          last_name: Thi B
+          phone: '+84901234568'
+          title: Developer
+        note: Gia hạn theo yêu cầu khách hàng
       properties:
         years:
           type: integer
-          description: Số năm gia hạn. Integer 1–3. Mặc định kế thừa từ order gốc.
+          example: 1
+          description: Trường \`years\`.
         dcv_method:
           type: string
-          description: EMAIL | HTTP | HTTPS | CNAME. Mặc định kế thừa từ order gốc.
+          example: HTTP
+          description: Trường \`dcv_method\`.
         contact_admin:
           type: object
-          description: Ghi đè contact_admin. Null = kế thừa từ order gốc. Mọi sub-field tùy chọn.
-          properties: {}
-        contact_admin.email:
-          type: string
-          description: Email admin (RFC 5322).
-        contact_admin.first_name:
-          type: string
-          description: Tên (≤ 100 ký tự).
-        contact_admin.last_name:
-          type: string
-          description: Họ (≤ 100 ký tự).
-        contact_admin.phone:
-          type: string
-          description: 'Điện thoại E.164 (VD: +84901234567).'
-        contact_admin.title:
-          type: string
-          description: Chức danh (≤ 50 ký tự).
+          example:
+            email: admin@example.com
+            first_name: Nguyen
+            last_name: Van A
+            phone: '+84901234567'
+            title: Manager
+          properties:
+            email:
+              type: string
+              example: admin@example.com
+              description: Địa chỉ email.
+            first_name:
+              type: string
+              example: Nguyen
+              description: Trường \`first_name\`.
+            last_name:
+              type: string
+              example: Van A
+              description: Trường \`last_name\`.
+            phone:
+              type: string
+              example: '+84901234567'
+              description: Số điện thoại.
+            title:
+              type: string
+              example: Manager
+              description: Trường \`title\`.
+          description: Trường \`contact_admin\`.
         contact_org:
           type: object
-          description: 'Ghi đè contact_org. Null = kế thừa từ order gốc. Nếu cung cấp: name, address, country bắt buộc.'
-          properties: {}
-        contact_org.name:
-          type: string
-          description: Tên tổ chức (≤ 200 ký tự). *Bắt buộc khi cung cấp contact_org.
-        contact_org.address:
-          type: string
-          description: Địa chỉ (≤ 500 ký tự). *Bắt buộc khi cung cấp contact_org.
-        contact_org.province:
-          type: string
-          description: Tỉnh/thành phố (≤ 100 ký tự).
-        contact_org.country:
-          type: string
-          description: 'Mã quốc gia ISO 3166-1 alpha-2 (VD: VN). *Bắt buộc khi cung cấp contact_org.'
-        contact_org.postal_code:
-          type: string
-          description: Mã bưu chính (≤ 20 ký tự).
-        contact_org.phone:
-          type: string
-          description: Điện thoại E.164.
-        contact_org.business_number:
-          type: string
-          description: Mã số thuế / số đăng ký kinh doanh (≤ 50 ký tự).
-        contact_org.representative_name:
-          type: string
-          description: Tên người đại diện (≤ 150 ký tự).
-        contact_org.duns:
-          type: string
-          description: Mã DUNS (≤ 50 ký tự).
+          example:
+            name: Example Co. Ltd
+            address: 123 Le Loi, Ha Noi
+            province: Ha Noi
+            country: VN
+            postal_code: '100000'
+            phone: '+84243456789'
+            business_number: '0123456789'
+            representative_name: Nguyen Van A
+            duns: '123456789'
+          properties:
+            name:
+              type: string
+              example: Example Co. Ltd
+              description: Tên hiển thị.
+            address:
+              type: string
+              example: 123 Le Loi, Ha Noi
+              description: Trường \`address\`.
+            province:
+              type: string
+              example: Ha Noi
+              description: Trường \`province\`.
+            country:
+              type: string
+              example: VN
+              description: Trường \`country\`.
+            postal_code:
+              type: string
+              example: '100000'
+              description: Trường \`postal_code\`.
+            phone:
+              type: string
+              example: '+84243456789'
+              description: Số điện thoại.
+            business_number:
+              type: string
+              example: '0123456789'
+              description: Trường \`business_number\`.
+            representative_name:
+              type: string
+              example: Nguyen Van A
+              description: Trường \`representative_name\`.
+            duns:
+              type: string
+              example: '123456789'
+              description: Trường \`duns\`.
+          description: Trường \`contact_org\`.
         contact_tech:
           type: object
-          description: Ghi đè contact_tech. Null = kế thừa từ order gốc. Mọi sub-field tùy chọn.
-          properties: {}
-        contact_tech.email:
-          type: string
-          description: Email kỹ thuật (RFC 5322).
-        contact_tech.first_name:
-          type: string
-          description: Tên (≤ 100 ký tự).
-        contact_tech.last_name:
-          type: string
-          description: Họ (≤ 100 ký tự).
-        contact_tech.phone:
-          type: string
-          description: Điện thoại E.164.
-        contact_tech.title:
-          type: string
-          description: Chức danh (≤ 50 ký tự).
+          example:
+            email: tech@example.com
+            first_name: Tran
+            last_name: Thi B
+            phone: '+84901234568'
+            title: Developer
+          properties:
+            email:
+              type: string
+              example: tech@example.com
+              description: Địa chỉ email.
+            first_name:
+              type: string
+              example: Tran
+              description: Trường \`first_name\`.
+            last_name:
+              type: string
+              example: Thi B
+              description: Trường \`last_name\`.
+            phone:
+              type: string
+              example: '+84901234568'
+              description: Số điện thoại.
+            title:
+              type: string
+              example: Developer
+              description: Trường \`title\`.
+          description: Trường \`contact_tech\`.
         note:
           type: string
-          description: Ghi chú nội bộ (≤ 1000 ký tự).
-      required:
-        - contact_org.name
-        - contact_org.address
-        - contact_org.country
+          example: Gia hạn theo yêu cầu khách hàng
+          description: Trường \`note\`.
+      description: Schema \`RenewOrderRequest\`.
     RenewOrderDataRenewal_order:
       type: object
       properties:
         id:
           type: integer
+          description: Định danh của bản ghi.
           readOnly: true
         order_number:
           type: string
+          description: Trường \`order_number\`.
         customer_id:
           type: string
+          description: Trường \`customer_id\`.
+          readOnly: true
         internal_product_code:
           type: string
+          description: Trường \`internal_product_code\`.
         product_type:
           type: string
+          description: Trường \`product_type\`.
         cert_type:
           type: string
+          description: Trường \`cert_type\`.
         years:
           type: integer
+          description: Trường \`years\`.
         subscription_start_date:
           type: string
+          description: Trường \`subscription_start_date\`.
         subscription_end_date:
           type: string
+          description: Trường \`subscription_end_date\`.
         primary_domain:
           type: string
+          description: Trường \`primary_domain\`.
         san_list:
           type: array
           items:
             type: object
+          description: Trường \`san_list\`.
         dcv_method:
           type: string
+          description: Trường \`dcv_method\`.
         status:
           type: string
+          description: Trạng thái xử lý.
         order_type:
           type: string
+          description: Trường \`order_type\`.
         parent_order_id:
           type: integer
+          description: Trường \`parent_order_id\`.
         selected_provider:
           type: object
           properties:
             provider_id:
               type: integer
+              description: Trường \`provider_id\`.
+              readOnly: true
             code:
               type: string
+              description: Mã định danh.
             provider_product_id:
               type: integer
+              description: Trường \`provider_product_id\`.
+              readOnly: true
             mapping_id:
               type: integer
+              description: Trường \`mapping_id\`.
+          description: Trường \`selected_provider\`.
         created_at:
           type: string
+          description: Thời điểm tạo bản ghi.
           readOnly: true
+      description: Schema \`RenewOrderDataRenewal_order\`.
     RenewOrderData:
       type: object
       properties:
         renewal_order:
           \$ref: '#/components/schemas/RenewOrderDataRenewal_order'
+          description: Trường \`renewal_order\`.
         parent_order:
           type: object
           properties:
             id:
               type: integer
+              description: Định danh của bản ghi.
               readOnly: true
             order_number:
               type: string
+              description: Trường \`order_number\`.
             status:
               type: string
+              description: Trạng thái xử lý.
             expires_at:
               type: string
+              description: Trường \`expires_at\`.
+          description: Trường \`parent_order\`.
+      description: Schema \`RenewOrderData\`.
     SubmitCsrForOrderRequest:
       type: object
       properties:
@@ -7376,6 +7758,7 @@ components:
         - contact_tech.first_name
         - contact_tech.last_name
         - contact_tech.phone
+      description: Schema \`SubmitCsrForOrderRequest\`.
     SubmitCsrForOrderData:
       type: object
       properties:
@@ -7386,17 +7769,23 @@ components:
           type: string
           description: Thời điểm lưu CSR. Null nếu chưa có.
         server_generated_key:
-          type: string
+          type: boolean
           description: True nếu hệ thống tự generate CSR + private key.
         has_private_key:
-          type: string
+          type: boolean
           description: True nếu có private key lưu (encrypted). Chỉ khi server_generated_key=true.
         certificate_id:
           type: integer
           description: ID (BIGINT) của certificate record vừa tạo/cập nhật trong bảng certificates.
+          readOnly: true
         next_step:
           type: string
           description: Hướng dẫn bước tiếp theo — Worker sẽ submit lên Provider tự động.
+      description: Schema \`SubmitCsrForOrderData\`.
+    SyncOrderStatusRequest:
+      type: object
+      example: {}
+      properties: {}
     GetUserServicesData:
       type: object
       properties:

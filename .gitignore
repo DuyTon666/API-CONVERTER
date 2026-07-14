@@ -5,8 +5,6 @@ backend/.env
 
 1.docs/source/api_contract/
 
-3.build/reports/
-
 __pycache__/
 
 .venv/

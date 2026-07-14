@@ -1,0 +1,52 @@
+get:
+  summary: Hiển thị chi tiết ticket của khách hàng
+  operationId: getTicketDetail
+  description: API cho phép khách hàng xem chi tiết thông tin của một ticket cụ 
+    thể dựa trên user_id và ticket id. Chỉ khách hàng sở hữu ticket mới có quyền
+    truy cập thông tin này.
+  tags:
+    - Ticket
+  security:
+    - bearerAuth: []
+  x-permission: CHECK_NEWUPDATE
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../../components/schemas/common/StandardSuccess.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/ticket/GetTicketDetailData.yaml"
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"

@@ -84,11 +84,14 @@ get:
         application/json:
           schema:
             allOf:
-            - $ref: "../../components/schemas/common/StandardSuccess.yaml"
-            - type: object
-              properties:
-                data:
-                  $ref: "../../components/schemas/order/GetOrderListData.yaml"
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
+              - type: object
+                properties:
+                  data:
+                    $ref: ../../components/schemas/order/GetOrderListData.yaml
+                  customer_id:
+                    type: string
+                    readOnly: true
     '401':
       $ref: "../../components/responses/Unauthorized.yaml"
     '403':

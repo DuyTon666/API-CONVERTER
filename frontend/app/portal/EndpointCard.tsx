@@ -1,12 +1,5 @@
 import type { Operation } from "./page";
-
-const METHOD_COLOR: Record<string, string> = {
-  GET: "bg-blue-100 text-blue-700",
-  POST: "bg-green-100 text-green-700",
-  PUT: "bg-yellow-100 text-yellow-700",
-  PATCH: "bg-orange-100 text-orange-700",
-  DELETE: "bg-red-100 text-red-700",
-};
+import { methodTone } from "./theme";
 
 export default function EndpointCard({
   op,
@@ -17,29 +10,43 @@ export default function EndpointCard({
   active?: boolean;
   onClick?: () => void;
 }) {
+  const tone = methodTone(op.method);
   return (
     <div
       onClick={onClick}
-      className={`bg-white border rounded-lg px-5 py-4 cursor-pointer transition-shadow ${
+      className={`relative bg-white border rounded-xl pl-5 pr-6 py-5 cursor-pointer transition-colors overflow-hidden ${
         active
-          ? "border-blue-400 shadow-md ring-1 ring-blue-200"
-          : "border-gray-200 hover:shadow-sm"
+          ? "border-[#1F6C9F]/30 ring-1 ring-[#1F6C9F]/15"
+          : "border-[#EAEAEA] hover:border-[#D8D8D6]"
       }`}
     >
-      <div className="flex items-center gap-2 overflow-hidden">
-        <span className={`text-xs font-bold px-2 py-0.5 rounded ${METHOD_COLOR[op.method] ?? "bg-gray-100 text-gray-600"}`}>
+      <span
+        className={`absolute left-0 top-0 bottom-0 w-0.75 ${tone.solid} ${active ? "opacity-100" : "opacity-40"}`}
+      />
+      <div className="flex items-center gap-2.5 overflow-hidden">
+        <span
+          className={`text-xs font-semibold tracking-wide px-2.5 py-1 rounded-full ${tone.bg} ${tone.text}`}
+        >
           {op.method}
         </span>
-        <code className="truncate text-sm text-gray-700 font-mono">{op.path}</code>
-        {op.tags.map((tag) => (
-          <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
-            {tag}
-          </span>
-        ))}
+        <code className="flex-1 min-w-0 truncate text-base text-[#2F3437] font-mono">
+          {op.path}
+        </code>
+        {op.tags.length > 0 && (
+          <div className="flex items-center gap-1.5 shrink-0">
+            {op.tags.map((tag) => (
+              <span
+                key={tag}
+                className="text-xs uppercase tracking-wide bg-[#F7F6F3] text-gray-500 px-2.5 py-1 rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
-      {/* <p className="text-sm font-medium text-gray-800">{op.summary}</p> */}
       {op.operationId && (
-        <p className="text-xs text-gray-400 mt-1 font-mono">{op.operationId}</p>
+        <p className="text-sm text-gray-400 mt-2 font-mono">{op.operationId}</p>
       )}
     </div>
   );

@@ -1,0 +1,45 @@
+type: object
+properties:
+  id:
+    type: string
+    description: ID sản phẩm
+    readOnly: true
+  provider_id:
+    type: string
+    description: FK tới providers.id
+    readOnly: true
+  provider_product_code:
+    type: string
+    description: Mã sản phẩm tại provider
+  product_name:
+    type: string
+    description: Tên sản phẩm
+  brand:
+    type: string
+    description: Thương hiệu CA
+  product_type:
+    type: string
+    description: DV | OV | EV
+  cert_type:
+    type: string
+    description: SINGLE | WILDCARD | MULTI_DOMAIN | FLEX
+  years_supported:
+    type: string
+    description: Số năm hỗ trợ
+  max_years:
+    type: integer
+    description: Số năm tối đa
+  wholesale_price_usd:
+    type: number
+    description: Giá sỉ USD/năm
+  is_enabled:
+    type: boolean
+    description: Trạng thái bật/tắt
+  display_order:
+    type: integer
+    description: Thứ tự hiển thị
+  updated_at:
+    type: string
+    description: Lần cập nhật gần nhất
+    readOnly: true
+description: Schema `GetProviderProductListDataDataList`.

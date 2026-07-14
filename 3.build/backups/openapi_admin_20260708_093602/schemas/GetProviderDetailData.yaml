@@ -1,0 +1,79 @@
+type: object
+properties:
+  id:
+    type: string
+    description: Primary key nội bộ (UUID v4) — auto generate.
+    readOnly: true
+  code:
+    type: string
+    description: 'Mã provider — admin define lúc tạo (VD: "DAOUSIGN", "THESSLSTORE").
+      UNIQUE, IMMUTABLE sau khi tạo. Dùng để migrate dữ liệu từ old system.'
+  name:
+    type: string
+    description: 'Tên hiển thị provider (VD: "Daousign Vietnam", "TheSSLStore Inc.").'
+  sandbox_base_url:
+    type: string
+    description: Base URL gọi API môi trường sandbox của provider (HTTPS).
+  production_base_url:
+    type: string
+    description: Base URL gọi API môi trường production của provider (HTTPS).
+  sandbox_token:
+    type: string
+    description: Token xác thực với provider ở môi trường sandbox. Lưu trữ MÃ 
+      HÓA AES-256-GCM. Trả về MASKED ("***********4f2a"). Xem full qua API 
+      reveal-token.
+  production_token:
+    type: string
+    description: Token xác thực với provider ở môi trường production. Lưu trữ MÃ
+      HÓA AES-256-GCM. Trả về MASKED. Xem full qua API reveal-token.
+  registered_ip:
+    type: string
+    description: IP đã đăng ký với đối tác để gọi API (VD Daousign yêu cầu 
+      whitelist IP). IPv4 hoặc IPv6.
+  auth_extra:
+    type: string
+    description: 'Thông tin xác thực mở rộng tùy provider (VD Daousign: {"api_id":
+      "..."}, TheSSLStore: {"partner_code": "..."}). Linh hoạt schema.'
+  list_products_endpoint:
+    type: string
+    description: Path tương đối từ base_url để gọi API list-products (VD 
+      "/products/all"). NULL = không hỗ trợ sync.
+  list_products_method:
+    type: string
+    description: 'HTTP method gọi list-products: GET | POST. Default POST.'
+  list_products_request_template:
+    type: string
+    description: Body template với placeholder {{token}}, {{auth_extra.<key>}} —
+      resolve khi gọi provider API.
+  list_products_response_path:
+    type: string
+    description: JSONPath trỏ tới array products trong response (VD 
+      "$.Products", "$").
+  list_products_timeout_seconds:
+    type: integer
+    description: Timeout gọi provider API (giây). Default 30, range [5, 120].
+  is_enabled:
+    type: boolean
+    description: Bật/tắt provider. false = không tham gia routing, không tạo đơn
+      hàng mới.
+  display_order:
+    type: integer
+    description: Thứ tự hiển thị UI (ascending). Mặc định 0.
+  created_at:
+    type: string
+    description: Thời điểm tạo (UTC).
+    readOnly: true
+  updated_at:
+    type: string
+    description: Thời điểm cập nhật gần nhất (UTC).
+    readOnly: true
+  created_by:
+    type: string
+    description: Admin ID người tạo.
+  updated_by:
+    type: string
+    description: Admin ID người cập nhật gần nhất.
+  deleted_at:
+    type: string
+    description: Soft delete timestamp. Null = chưa xóa.
+description: Schema `GetProviderDetailData`.

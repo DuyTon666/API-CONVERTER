@@ -1,0 +1,23 @@
+type: object
+properties:
+  csr:
+    type: string
+    description: CSR PEM đầy đủ. Bắt đầu bằng -----BEGIN CERTIFICATE 
+      REQUEST-----. Dùng trực tiếp làm input cho API submit-csr.
+  private_key:
+    type: string
+    description: Private Key PEM dạng PKCS#8. Chỉ trả về một lần — hệ thống 
+      KHÔNG lưu plaintext. Client phải lưu trữ an toàn ngay lập tức.
+  common_name:
+    type: string
+    description: 'CN được ghi vào CSR. Với Wildcard cert: *.domain.com. Với SINGLE/MULTI_DOMAIN:
+      domain chính của order.'
+  key_type:
+    type: string
+    description: 'Loại khoá đã dùng để sinh CSR: RSA_2048 | RSA_4096 | ECDSA_P256
+      | ECDSA_P384.'
+  source:
+    type: string
+    description: '"sslstore" — CSR được sinh bởi TheSSLStore API. "internal" — CSR
+      được sinh bởi openssl nội bộ (fallback).'
+description: Schema `GenerateCsrForOrderData`.

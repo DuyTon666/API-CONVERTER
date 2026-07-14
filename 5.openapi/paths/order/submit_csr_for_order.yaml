@@ -34,12 +34,12 @@ post:
   - bearerAuth: []
   x-permission: ''
   parameters:
-  - name: id
-    in: path
-    required: true
-    schema:
-      type: integer
-    description: Tham số đường dẫn 'id'.
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID định danh duy nhất của đơn hàng cần nộp CSR.
   responses:
     '200':
       description: Thành công
@@ -47,11 +47,15 @@ post:
         application/json:
           schema:
             allOf:
-            - $ref: ../../components/schemas/common/StandardSuccess.yaml
-            - type: object
-              properties:
-                data:
-                  $ref: ../../components/schemas/order/SubmitCsrForOrderData.yaml
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
+              - type: object
+                properties:
+                  data:
+                    $ref: 
+                      ../../components/schemas/order/SubmitCsrForOrderData.yaml
+                  certificate_id:
+                    type: string
+                    readOnly: true
     '401':
       $ref: ../../components/responses/Unauthorized.yaml
     '403':
@@ -206,15 +210,20 @@ post:
       category: Not Found
       message: Order không tồn tại
     '400':
-    - code: '4701'
-      category: Format
-      message: CSR PEM không hợp lệ (sai format, không parse được)
-    - code: '4702'
-      category: Business
-      message: CN/SAN trong CSR không chứa primary_domain của order
-    - code: '4706'
-      category: Business
-      message: approver_email bắt buộc khi dcv_method=EMAIL nhưng không được cung cấp
-    - code: '4707'
-      category: Business
-      message: san_list chứa wildcard entry (*.domain) — không được phép; wildcard coverage áp dụng tự động theo sản phẩm
+      - code: '4701'
+        category: Format
+        message: CSR PEM không hợp lệ (sai format, không parse được)
+      - code: '4702'
+        category: Business
+        message: CN/SAN trong CSR không chứa primary_domain của order
+      - code: '4706'
+        category: Business
+        message: approver_email bắt buộc khi dcv_method=EMAIL nhưng không được 
+          cung cấp
+      - code: '4707'
+        category: Business
+        message: san_list chứa wildcard entry (*.domain) — không được phép; 
+          wildcard coverage áp dụng tự động theo sản phẩm
+  x-manual-edit-fields:
+    - parameters[name=id].description
+    - responses[200].content.application/json.schema.allOf

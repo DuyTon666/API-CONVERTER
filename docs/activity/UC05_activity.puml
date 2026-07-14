@@ -1,61 +1,57 @@
-@startuml UC05_KiemDuyetXuatYAML
+@startuml UC05_ChinhSuaDuyetNoiDung
 skinparam ActivityBackgroundColor #F8FAFC
 skinparam ActivityBorderColor #94A3B8
 skinparam ArrowColor #64748B
 skinparam ActivityDiamondBackgroundColor #FEF9C3
 skinparam ActivityStartColor #4F46E5
 skinparam ActivityEndColor #4F46E5
+skinparam SwimlaneBorderColor #CBD5E1
 
-title UC05 — Kiểm duyệt & xuất YAML
+title UC05 — Chỉnh sửa & duyệt nội dung
 
 |Người dùng|
 start
-:Truy cập trang review job;
+:Mở Bundle Editor cho 1 module;
 
-|Hệ thống|
-if (Có file flagged?) then (Không)
-  :Hiển thị "Không còn file cần review";
-else (Có)
-  :Hiển thị danh sách file flagged\nkèm lý do cần review;
-endif
-
-|Người dùng|
-:Chọn file muốn xem xét;
-
-|Hệ thống|
-:Mở Monaco Editor\nhiển thị nội dung YAML;
-
-|Người dùng|
-:Đọc và chỉnh sửa YAML\nnếu cần;
-
-|Hệ thống|
-if (YAML hợp lệ?) then (Không)
-  :Hiển thị lỗi inline\nKhông cho approve;
-  stop
-else (Có)
-  :Lưu thay đổi vào\nin-memory job state;
-endif
-
-|Người dùng|
-if (Approve hay Reject?) then (Reject)
+if (Chọn tab nào?) then (Chỉnh sửa nội dung)
+  :Mở operation muốn sửa\n(Form Editor);
   |Hệ thống|
-  :Đánh dấu file là "rejected";
-else (Approve)
+  :Đọc summary/description/parameter/\nschema field description;
+  |Người dùng|
+  :Sửa nội dung, bấm Lưu;
   |Hệ thống|
-  :Đánh dấu file là "done";
+  :Ghi field + marker\nx-manual-edit-fields vào tầng 2;
+  :Ghi field tương ứng vào tầng 3\n(đồng bộ 2 tầng);
+else (YAML thô)
+  |Hệ thống|
+  :Đọc toàn bộ nội dung bundle (tầng 3);
+  |Người dùng|
+  :Sửa trực tiếp trong Monaco Editor\nbấm Lưu;
+  |Hệ thống|
+  if (YAML hợp lệ?) then (Không)
+    :400 BUNDLE_INVALID_YAML\nKhông ghi gì;
+    stop
+  else (Có)
+    :Diff & ghi field thay đổi\n+ marker field-path vào tầng 2;
+    :Ghi verbatim vào tầng 3\n(giữ format gốc);
+  endif
 endif
 
 |Người dùng|
-if (Còn file cần review?) then (Có)
-  :Chọn file tiếp theo;
-  detach
+if (Có xung đột sửa tay khi import lại?) then (Có)
+  :Mở "Xung đột sửa tay khi import lại";
+  |Hệ thống|
+  :Hiển thị operationId/field/\ngiá trị cũ/giá trị mới;
+  |Người dùng|
+  if (Chọn phương án?) then (Giữ bản cũ)
+    |Hệ thống|
+    :Ghi lại old_value\nvào tầng 2 + tầng 3;
+  else (Lấy bản mới)
+    |Hệ thống|
+    :Không đổi gì\nchỉ xóa entry khỏi hàng đợi;
+  endif
 else (Không)
-  :Bấm "Export";
 endif
-
-|Hệ thống|
-:Ghi toàn bộ file đã approve\nra 5.openapi/;
-:Kích hoạt bundle → lint\n(UC09, UC10, UC11);
 
 stop
 @enduml

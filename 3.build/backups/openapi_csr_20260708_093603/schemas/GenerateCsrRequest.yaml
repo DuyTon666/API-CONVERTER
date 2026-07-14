@@ -1,0 +1,39 @@
+type: object
+example:
+  common_name: example.com
+  org_name: Công ty Cổ phần Pavietnam
+  locality: TP. Hồ Chí Minh
+  country: VN
+  email: ssl@pavietnam.vn
+  key_size: 2048
+  signature_algorithm: SHA-2
+properties:
+  common_name:
+    type: string
+    example: example.com
+    description: Trường `common_name`.
+  org_name:
+    type: string
+    example: Công ty Cổ phần Pavietnam
+    description: Trường `org_name`.
+  locality:
+    type: string
+    example: TP. Hồ Chí Minh
+    description: Trường `locality`.
+  country:
+    type: string
+    example: VN
+    description: Trường `country`.
+  email:
+    type: string
+    example: ssl@pavietnam.vn
+    description: Địa chỉ email.
+  key_size:
+    type: integer
+    example: 2048
+    description: Trường `key_size`.
+  signature_algorithm:
+    type: string
+    example: SHA-2
+    description: Trường `signature_algorithm`.
+description: Schema `GenerateCsrRequest`.

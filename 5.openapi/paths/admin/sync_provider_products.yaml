@@ -53,11 +53,18 @@ post:
         application/json:
           schema:
             allOf:
-            - $ref: ../../components/schemas/common/StandardSuccess.yaml
-            - type: object
-              properties:
-                data:
-                  $ref: ../../components/schemas/admin/SyncProviderProductsData.yaml
+              - $ref: ../../components/schemas/common/StandardSuccess.yaml
+              - type: object
+                properties:
+                  data:
+                    $ref: 
+                      ../../components/schemas/admin/SyncProviderProductsData.yaml
+                  provider_id:
+                    type: string
+                    readOnly: true
+                  sync_log_id:
+                    type: string
+                    readOnly: true
     '401':
       $ref: ../../components/responses/Unauthorized.yaml
     '403':

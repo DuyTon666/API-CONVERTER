@@ -1,0 +1,67 @@
+post:
+  summary: Thu hồi đơn hàng theo ID
+  operationId: revokeOrderById
+  description: API cho phép thu hồi một đơn hàng dựa trên ID được cung cấp. Chỉ áp dụng cho các đơn hàng ở trạng thái 
+    hợp lệ và chưa hoàn tất xử lý.
+  tags:
+  - Order
+  security:
+  - bearerAuth: []
+  x-permission: ''
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Tham số đường dẫn 'id'.
+  responses:
+    '200':
+      description: Thành công
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/common/StandardSuccess.yaml"
+          example:
+            success: true
+            data:
+            error:
+    '401':
+      $ref: "../../components/responses/Unauthorized.yaml"
+    '403':
+      $ref: "../../components/responses/Forbidden.yaml"
+    '404':
+      $ref: "../../components/responses/NotFound.yaml"
+    '500':
+      $ref: "../../components/responses/InternalError.yaml"
+    '400':
+      $ref: "../../components/responses/BadRequest.yaml"
+    '422':
+      $ref: "../../components/responses/StandardError422.yaml"
+    '409':
+      $ref: "../../components/responses/Conflict.yaml"
+    '429':
+      $ref: "../../components/responses/TooManyRequests.yaml"
+    '502':
+      $ref: "../../components/responses/BadGateway.yaml"
+  x-error-responses:
+    '429':
+    - code: '4900'
+      category: Rate Limit
+      message: Đã đạt giới hạn revoke_daily_limit lần/ngày — thử lại vào ngày mai
+    '422':
+    - code: '4901'
+      category: State
+      message: Order status không cho phép thu hồi (REVOKED, FAILED, CANCELED, v.v.)
+    - code: '4902'
+      category: State
+      message: Đang có revoke in-progress (REVOKE_QUEUED hoặc REVOKE_PENDING)
+    - code: '4903'
+      category: State
+      message: Không tìm thấy cert ISSUED/PENDING/CSR_READY để thu hồi
+    - code: '4904'
+      category: State
+      message: provider_order_id rỗng — cert chưa được submit lên provider, không thể thu hồi
+    - code: '4905'
+      category: Business
+      message: Cert ISSUED đã quá revoke_max_days_after_issue ngày kể từ issued_at
