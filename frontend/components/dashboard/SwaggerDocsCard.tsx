@@ -1,7 +1,6 @@
 "use client";
 
 import { DocsBuildResult } from "@/types/dashboard";
-import { ErrorAlert } from "./ErrorAlert";
 import {
   countLintIssues,
   getDeployBlockedReason,
@@ -10,7 +9,6 @@ import {
 type Props = {
   docsBuilding: boolean;
   docsResult: DocsBuildResult | null;
-  docsError: string;
   bundleReady: boolean;
   htmlReady: boolean;
   relinting: boolean;
@@ -25,7 +23,6 @@ type Props = {
 export default function SwaggerDocsCard({
   docsBuilding,
   docsResult,
-  docsError,
   bundleReady,
   htmlReady,
   relinting,
@@ -97,7 +94,6 @@ export default function SwaggerDocsCard({
         )}
       </div>
 
-      {docsError && <ErrorAlert message={docsError} className="mb-4" />}
       <div className="flex flex-wrap items-center gap-2 mt-2 mb-4">
         <button
           onClick={onDeploy}

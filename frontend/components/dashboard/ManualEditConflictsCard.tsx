@@ -8,7 +8,6 @@ type Props = {
   loading: boolean;
   error: string;
   resolving: string | null;
-  resolveError: string;
   conflictKey: (c: ManualEditConflict) => string;
   onResolve: (
     conflict: ManualEditConflict,
@@ -21,7 +20,6 @@ export default function ManualEditConflictsCard({
   loading,
   error,
   resolving,
-  resolveError,
   conflictKey,
   onResolve,
 }: Props) {
@@ -40,7 +38,6 @@ export default function ManualEditConflictsCard({
       </p>
 
       {error && <ErrorAlert message={error} className="mb-4" />}
-      {resolveError && <ErrorAlert message={resolveError} className="mb-4" />}
 
       {loading && conflicts.length === 0 && (
         <p className="text-sm text-gray-400">Đang tải...</p>
