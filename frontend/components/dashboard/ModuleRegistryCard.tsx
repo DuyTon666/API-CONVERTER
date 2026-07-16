@@ -10,16 +10,13 @@ type Props = {
   loading: boolean;
   error: string;
   activatingModule: string | null;
-  activateError: string;
   onActivate: (name: string) => void;
   deactivatingModule: string | null;
-  deactivateError: string;
   onDeactivate: (name: string) => void;
   importRunning: boolean;
   importTarget: string | null;
   importModules: ImportModuleProgress[];
   importDone: boolean;
-  importError: string;
   onImport: (moduleName: string | null) => void;
 };
 
@@ -34,16 +31,13 @@ export default function ModuleRegistryCard({
   loading,
   error,
   activatingModule,
-  activateError,
   onActivate,
   deactivatingModule,
-  deactivateError,
   onDeactivate,
   importRunning,
   importTarget,
   importModules,
   importDone,
-  importError,
   onImport,
 }: Props) {
   const mounted = useMounted();
@@ -71,11 +65,6 @@ export default function ModuleRegistryCard({
 
       {loading && <p className="text-sm text-gray-400">Đang tải...</p>}
       {error && <ErrorAlert message={error} />}
-      {activateError && <ErrorAlert message={activateError} className="mb-3" />}
-      {deactivateError && (
-        <ErrorAlert message={deactivateError} className="mb-3" />
-      )}
-      {importError && <ErrorAlert message={importError} className="mb-3" />}
 
       {moduleList &&
         (moduleList.modules.length === 0 ? (

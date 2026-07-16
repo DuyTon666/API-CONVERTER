@@ -22,7 +22,6 @@ import { toast } from "sonner";
 export function useDocsBuilder(backend: string) {
   const [docsBuilding, setDocsBuilding] = useState(false);
   const [docsResult, setDocsResult] = useState<DocsBuildResult | null>(null);
-  const [docsError, setDocsError] = useState("");
   const [docsStatus, setDocsStatus] = useState<DocsStatus | null>(null);
 
   const [bundleContent, setBundleContent] = useState<string | null>(null);
@@ -103,26 +102,24 @@ export function useDocsBuilder(backend: string) {
   };
 
   const handleBuildDocs = async () => {
-    setDocsError("");
     setDocsBuilding(true);
     try {
       const data = await buildDocs(backend);
       setDocsResult(data);
     } catch (e: unknown) {
-      setDocsError(formatFetchError(e));
+      toast.error(formatFetchError(e));
     } finally {
       setDocsBuilding(false);
     }
   };
 
   const handleRelint = async () => {
-    setDocsError("");
     setRelinting(true);
     try {
       const data = await relintDocs(backend);
       setDocsResult(data);
     } catch (e: unknown) {
-      setDocsError(formatFetchError(e));
+      toast.error(formatFetchError(e));
     } finally {
       setRelinting(false);
     }
@@ -248,7 +245,6 @@ export function useDocsBuilder(backend: string) {
   return {
     docsBuilding,
     docsResult,
-    docsError,
     docsStatus,
     bundleContent,
     setBundleContent,

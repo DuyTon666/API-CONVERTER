@@ -1,0 +1,44 @@
+namespace: ticket
+decisions:
+- code: '4102'
+  source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+  incoming_message_key: token khong hop le het han
+  matched_namespace: _global
+  status: conflict
+  incoming_message: Token không hợp lệ / hết hạn
+  existing_message: Token không hợp lệ hoặc đã hết hạn
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Nhân
+    approved_at: '2026-07-15T11:26:25.898184'
+  action: keep_existing
+  applied_at: '2026-07-16T09:32:16.050646'
+- code: '4108'
+  source_file: API Contract - API Yêu cầu đổi nhân viên hỗ trợ (ticket).docx.pdf
+  incoming_message_key: ip khong duoc phep truy cap
+  matched_namespace: _global
+  status: conflict
+  incoming_message: IP không được phép truy cập
+  existing_message: Không có quyền truy cập
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Nhân
+    approved_at: '2026-07-15T11:21:13.346134'
+  action: keep_existing
+  applied_at: '2026-07-16T09:32:16.050697'
+- code: '4463'
+  source_file: API Contract - API phản hồi ticket.pdf
+  incoming_message_key: tao phan hoi that bai
+  matched_namespace: module
+  status: conflict
+  incoming_message: Tạo phản hồi thất bai
+  existing_message: Tạo phản hồi thất bại
+  decision: keep_existing
+  resolution:
+    decision: keep_existing
+    approved_by: Nhân
+    approved_at: '2026-07-15T11:21:14.688020'
+  action: keep_existing
+  applied_at: '2026-07-16T09:32:16.050731'

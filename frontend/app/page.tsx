@@ -5,6 +5,7 @@ import ImportCard from "@/components/dashboard/ImportCard";
 import ScanCard from "@/components/dashboard/ScanCard";
 import SuggestCard from "@/components/dashboard/SuggestCard";
 import ManualEditConflictsCard from "@/components/dashboard/ManualEditConflictsCard";
+import ErrorCodesReviewCard from "@/components/dashboard/ErrorCodesReviewCard";
 import ModuleRegistryCard from "@/components/dashboard/ModuleRegistryCard";
 import SwaggerDocsCard from "@/components/dashboard/SwaggerDocsCard";
 import BundleEditorModal from "@/components/dashboard/BundleEditorModal";
@@ -13,9 +14,7 @@ import StatTiles from "@/components/dashboard/StatTiles";
 import WorkflowStepper, {
   toSteps,
 } from "@/components/dashboard/WorkflowStepper";
-import StepSection, {
-  StepStatus,
-} from "@/components/dashboard/StepSection";
+import StepSection, { StepStatus } from "@/components/dashboard/StepSection";
 import { useActiveStep } from "@/hooks/dashboard/useActiveStep";
 import { useScan } from "@/hooks/dashboard/useScan";
 import { useModuleRegistry } from "@/hooks/dashboard/useModuleRegistry";
@@ -23,6 +22,7 @@ import { useUpload } from "@/hooks/dashboard/useUpload";
 import { useDocsBuilder } from "@/hooks/dashboard/useDocsBuilder";
 import { useSuggestions } from "@/hooks/dashboard/useSuggestions";
 import { useManualEditConflicts } from "@/hooks/dashboard/useManualEditConflicts";
+import { useErrorCodes } from "@/hooks/dashboard/useErrorCodes";
 
 export default function Home() {
   const backend = process.env.NEXT_PUBLIC_API_URL!;
@@ -34,7 +34,6 @@ export default function Home() {
     loading: conflictsLoading,
     error: conflictsError,
     resolving: conflictResolving,
-    resolveError: conflictResolveError,
     conflictKey,
     fetchConflicts,
     handleResolve: handleResolveConflict,
@@ -45,25 +44,32 @@ export default function Home() {
     modulesLoading,
     modulesError,
     activatingModule,
-    activateError,
     handleActivate,
     deactivatingModule,
-    deactivateError,
     handleDeactivate,
     importRunning,
     importTarget,
     importModules,
     importDone,
-    importError,
     handleImport,
     fetchModules,
   } = useModuleRegistry(backend, { onImportDone: fetchConflicts });
 
+  const moduleNames = moduleList?.modules.map((m) => m.name) ?? [];
+
+  const {
+    entriesByModule: errorEntriesByModule,
+    loading: errorEntriesLoading,
+    resolving: errorResolving,
+    applying: errorApplying,
+    fetchAllErrorEntries,
+    handleResolve: handleResolveErrorEntry,
+    handleApply: handleApplyErrorEntries,
+  } = useErrorCodes(backend, moduleNames);
+
   const {
     uploadFiles,
     uploading,
-    uploadError,
-    uploadMessage,
     handleSelectFiles,
     handleRemoveUploadFile,
     handleUpload,
@@ -72,7 +78,6 @@ export default function Home() {
   const {
     docsBuilding,
     docsResult,
-    docsError,
     docsStatus,
     bundleContent,
     setBundleContent,
@@ -107,7 +112,6 @@ export default function Home() {
     approvingMulti,
     applying,
     applyResult,
-    suggestActionError,
     overrideInputs,
     setOverrideInputs,
     approveSkipped,
@@ -127,6 +131,14 @@ export default function Home() {
     fetchDocsStatus();
     fetchConflicts();
   }, []);
+
+  // moduleList chỉ có sau khi fetchModules() ở effect trên tải xong (bất đồng
+  // bộ) — không thể gọi fetchAllErrorEntries ngay trong effect đó vì lúc đó
+  // moduleNames vẫn rỗng. Effect riêng này chạy lại mỗi khi moduleList đổi.
+  useEffect(() => {
+    if (moduleList) fetchAllErrorEntries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moduleList]);
 
   const pendingSuggestions =
     suggestions?.items.filter((i) => i.approval_status === "pending").length ??
@@ -167,7 +179,7 @@ export default function Home() {
             <span className="font-semibold text-gray-900">API Converter</span>
           </div>
           <a
-            href="/swagger"
+            href="/portal"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-center gap-2 px-4 py-1.5 text-sm font-medium bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-all duration-200"
@@ -230,9 +242,18 @@ export default function Home() {
             loading={conflictsLoading}
             error={conflictsError}
             resolving={conflictResolving}
-            resolveError={conflictResolveError}
             conflictKey={conflictKey}
             onResolve={handleResolveConflict}
+          />
+
+          <ErrorCodesReviewCard
+            modules={moduleNames}
+            entriesByModule={errorEntriesByModule}
+            loading={errorEntriesLoading}
+            resolving={errorResolving}
+            applying={errorApplying}
+            onResolve={handleResolveErrorEntry}
+            onApply={handleApplyErrorEntries}
           />
 
           <div>
@@ -246,8 +267,6 @@ export default function Home() {
                 <ImportCard
                   files={uploadFiles}
                   uploading={uploading}
-                  error={uploadError}
-                  message={uploadMessage}
                   onSelectFiles={handleSelectFiles}
                   onRemoveFile={handleRemoveUploadFile}
                   onUpload={handleUpload}
@@ -266,7 +285,6 @@ export default function Home() {
                 suggestions={suggestions}
                 loading={suggestionsLoading}
                 error={suggestionsError}
-                actionError={suggestActionError}
                 suggestRunning={suggestRunning}
                 approving={approving}
                 approvingMulti={approvingMulti}
@@ -295,16 +313,13 @@ export default function Home() {
                 loading={modulesLoading}
                 error={modulesError}
                 activatingModule={activatingModule}
-                activateError={activateError}
                 onActivate={handleActivate}
                 deactivatingModule={deactivatingModule}
-                deactivateError={deactivateError}
                 onDeactivate={handleDeactivate}
                 importRunning={importRunning}
                 importTarget={importTarget}
                 importModules={importModules}
                 importDone={importDone}
-                importError={importError}
                 onImport={handleImport}
               />
             </StepSection>
@@ -319,7 +334,6 @@ export default function Home() {
               <SwaggerDocsCard
                 docsBuilding={docsBuilding}
                 docsResult={docsResult}
-                docsError={docsError}
                 bundleReady={bundleReady}
                 htmlReady={htmlReady}
                 relinting={relinting}

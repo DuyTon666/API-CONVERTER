@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { ManualEditConflict } from "@/types/dashboard";
 import { formatFetchError } from "@/lib/api/client";
 import {
@@ -16,7 +17,6 @@ export function useManualEditConflicts(backend: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [resolving, setResolving] = useState<string | null>(null);
-  const [resolveError, setResolveError] = useState("");
 
   const fetchConflicts = () => {
     setLoading(true);
@@ -34,7 +34,6 @@ export function useManualEditConflicts(backend: string) {
     choice: "keep_old" | "accept_new",
   ) => {
     setResolving(conflictKey(conflict));
-    setResolveError("");
     try {
       await resolveManualEditConflict(
         backend,
@@ -47,7 +46,7 @@ export function useManualEditConflicts(backend: string) {
         prev.filter((c) => conflictKey(c) !== conflictKey(conflict)),
       );
     } catch (e: unknown) {
-      setResolveError(formatFetchError(e));
+      toast.error(formatFetchError(e));
     } finally {
       setResolving(null);
     }
@@ -58,7 +57,6 @@ export function useManualEditConflicts(backend: string) {
     loading,
     error,
     resolving,
-    resolveError,
     conflictKey,
     fetchConflicts,
     handleResolve,

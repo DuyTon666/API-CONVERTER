@@ -12,6 +12,7 @@ OUTPUT_DIR = Path(__file__).parent.parent.parent / "5.openapi"
 DIST_DIR = Path(__file__).parent.parent.parent / "dist"
 CONFIG_DIR = Path(__file__).parent.parent.parent / "4.config"
 SOURCE_DIR = Path(__file__).parent.parent.parent / "1.docs" / "source" / "api_contract"
+REPORTS_DIR = Path(__file__).parent.parent.parent / "3.build" / "reports"
 
 # sys.path là list các thư mục Python sẽ tìm khi gặp "import X" — chèn 2.pipeline/
 # vào đầu list để dòng "from generator.emitter import ..." ngay dưới tìm được module

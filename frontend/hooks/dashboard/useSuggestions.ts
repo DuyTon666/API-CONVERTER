@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { ApplyResult, SkippedApproval, SuggestionsResult } from "@/types/dashboard";
 import { formatFetchError } from "@/lib/api/client";
 import {
@@ -21,7 +22,6 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
   const [approvingMulti, setApprovingMulti] = useState(false);
   const [applying, setApplying] = useState(false);
   const [applyResult, setApplyResult] = useState<ApplyResult | null>(null);
-  const [suggestActionError, setSuggestActionError] = useState("");
   const [overrideInputs, setOverrideInputs] = useState<Record<string, string>>({});
   const [approveSkipped, setApproveSkipped] = useState<SkippedApproval[]>([]);
 
@@ -38,12 +38,11 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
 
   const handleRunSuggest = async () => {
     setSuggestRunning(true);
-    setSuggestActionError("");
     try {
       const data = await runSuggest(backend);
       setSuggestions(data);
     } catch (e: unknown) {
-      setSuggestActionError(formatFetchError(e));
+      toast.error(formatFetchError(e));
     } finally {
       setSuggestRunning(false);
     }
@@ -53,7 +52,6 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
     items: Array<{ file: string; override_module?: string }>,
   ) => {
     setApprovingMulti(true);
-    setSuggestActionError("");
     setApproveSkipped([]);
     try {
       let latestData = suggestions;
@@ -71,7 +69,7 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
       if (latestData) setSuggestions(latestData);
       setApproveSkipped(skipped);
     } catch (e: unknown) {
-      setSuggestActionError(formatFetchError(e));
+      toast.error(formatFetchError(e));
     } finally {
       setApprovingMulti(false);
     }
@@ -87,12 +85,11 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
     key: string,
   ) => {
     setApproving(key);
-    setSuggestActionError("");
     try {
       const data = await approveSuggestion(backend, body);
       setSuggestions(data);
     } catch (e: unknown) {
-      setSuggestActionError(formatFetchError(e));
+      toast.error(formatFetchError(e));
     } finally {
       setApproving(null);
     }
@@ -100,13 +97,12 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
 
   const handleApply = async () => {
     setApplying(true);
-    setSuggestActionError("");
     try {
       const data = await applySuggestionsApi(backend);
       setApplyResult(data);
       await Promise.all([fetchSuggestions(), options.onApplySuccess?.()]);
     } catch (e: unknown) {
-      setSuggestActionError(formatFetchError(e));
+      toast.error(formatFetchError(e));
     } finally {
       setApplying(false);
     }
@@ -121,7 +117,6 @@ export function useSuggestions(backend: string, options: UseSuggestionsOptions =
     approvingMulti,
     applying,
     applyResult,
-    suggestActionError,
     overrideInputs,
     setOverrideInputs,
     approveSkipped,

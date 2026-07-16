@@ -235,3 +235,48 @@ export type SchemaFieldUpdate = {
   path: string;
   description: string;
 };
+
+// 1 entry mã lỗi trong report review — xem 3.build/reports/errors/<module>/error_codes_review.json
+// (backend/services/error_codes.py đọc thẳng file này, không đổi shape).
+export type ErrorReviewEntry = {
+  code: string;
+  status: "new" | "duplicate_ok" | "conflict" | "needs_review" | string;
+  matched_namespace: string | null;
+  source_file: string;
+  incoming: { http_status: string; category: string; message: string };
+  existing_in_map?: { http_status: string; message: string } | null;
+  resolution: {
+    decision: string;
+    approved_by: string;
+    approved_at: string;
+    new_code?: string;
+  } | null;
+  // Thời điểm quyết định thật sự được đẩy vào 4.config/errors/ — lấy từ
+  // review_decisions.yaml, null nếu đã resolve nhưng chưa apply (hoặc chưa
+  // resolve gì cả).
+  applied_at: string | null;
+};
+
+export type ErrorReviewSummary = {
+  total: number;
+  new: number;
+  duplicate_ok: number;
+  conflict: number;
+  needs_review: number;
+  intra_batch_conflict: number;
+  missing_http_status: number;
+};
+
+export type ErrorReviewReport = {
+  summary: ErrorReviewSummary;
+  entries: ErrorReviewEntry[];
+};
+
+// Kết quả POST /errors/{module}/apply — backend regex-parse từ stdout của
+// apply_decisions() (2.pipeline), xem comment trong error_codes.py.
+export type ErrorApplyResult = {
+  applied: number;
+  skipped: number;
+  rejected: number;
+  raw_output: string;
+};

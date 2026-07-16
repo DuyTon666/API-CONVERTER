@@ -25,7 +25,6 @@ type Props = {
   suggestions: SuggestionsResult | null;
   loading: boolean;
   error: string;
-  actionError: string;
   suggestRunning: boolean;
   approving: string | null;
   approvingMulti: boolean;
@@ -71,7 +70,6 @@ export default function SuggestCard({
   suggestions,
   loading,
   error,
-  actionError,
   suggestRunning,
   approving,
   approvingMulti,
@@ -207,7 +205,6 @@ export default function SuggestCard({
         </p>
       )}
 
-      {actionError && <ErrorAlert message={actionError} className="mb-4" />}
       {approveSkipped.length > 0 && (
         <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm space-y-1">
           <p className="font-medium">

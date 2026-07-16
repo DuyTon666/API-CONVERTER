@@ -2,13 +2,10 @@
 
 import { useRef } from "react";
 import { SUPPORTED_EXTENSIONS, formatBytes } from "@/lib/dashboard-format";
-import { ErrorAlert } from "./ErrorAlert";
 
 type Props = {
   files: File[];
   uploading: boolean;
-  error: string;
-  message: string;
   onSelectFiles: (selected: FileList | null) => void;
   onRemoveFile: (index: number) => void;
   onUpload: () => void;
@@ -17,8 +14,6 @@ type Props = {
 export default function ImportCard({
   files,
   uploading,
-  error,
-  message,
   onSelectFiles,
   onRemoveFile,
   onUpload,
@@ -87,13 +82,6 @@ export default function ImportCard({
             </li>
           ))}
         </ul>
-      )}
-
-      {error && <ErrorAlert message={error} className="mt-4" />}
-      {message && (
-        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-          {message}
-        </div>
       )}
 
       <button

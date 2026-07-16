@@ -69,7 +69,11 @@
         "http_status": "401",
         "message": "Token không hợp lệ hoặc đã hết hạn"
       },
-      "resolution": null
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Nhân",
+        "approved_at": "2026-07-15T11:26:25.898184"
+      }
     },
     {
       "code": "4108",
@@ -109,7 +113,11 @@
         "http_status": "401",
         "message": "Không có quyền truy cập"
       },
-      "resolution": null
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Nhân",
+        "approved_at": "2026-07-15T11:21:13.346134"
+      }
     },
     {
       "code": "4200",
@@ -257,7 +265,11 @@
         "http_status": "",
         "message": "Tạo phản hồi thất bại"
       },
-      "resolution": null
+      "resolution": {
+        "decision": "keep_existing",
+        "approved_by": "Nhân",
+        "approved_at": "2026-07-15T11:21:14.688020"
+      }
     },
     {
       "code": "4464",

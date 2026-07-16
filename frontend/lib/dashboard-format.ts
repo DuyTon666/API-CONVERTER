@@ -1,6 +1,6 @@
 import { DocsBuildResult } from "@/types/dashboard";
 
-export const SUPPORTED_EXTENSIONS = [".pdf", ".docx", ".txt", ".md"];
+export const SUPPORTED_EXTENSIONS = [".pdf", ".docx"];
 
 export function isSupportedFile(name: string): boolean {
   const lower = name.toLowerCase();

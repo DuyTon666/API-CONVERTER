@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { ImportModuleProgress, ModuleListResult } from "@/types/dashboard";
 import { formatFetchError } from "@/lib/api/client";
 import {
@@ -22,16 +23,13 @@ export function useModuleRegistry(
   const [modulesLoading, setModulesLoading] = useState(true);
   const [modulesError, setModulesError] = useState("");
   const [activatingModule, setActivatingModule] = useState<string | null>(null);
-  const [activateError, setActivateError] = useState("");
   const [deactivatingModule, setDeactivatingModule] = useState<string | null>(null);
-  const [deactivateError, setDeactivateError] = useState("");
   const [importRunning, setImportRunning] = useState(false);
   const [importTarget, setImportTarget] = useState<string | null>(null);
   const [importModules, setImportModules] = useState<ImportModuleProgress[]>(
     [],
   );
   const [importDone, setImportDone] = useState(false);
-  const [importError, setImportError] = useState("");
 
   const fetchModules = () => {
     setModulesLoading(true);
@@ -45,18 +43,16 @@ export function useModuleRegistry(
   };
   const handleActivate = async (name: string) => {
     setActivatingModule(name);
-    setActivateError("");
     try {
       const data = await activateModule(backend, name);
       setModuleList(data);
     } catch (e: unknown) {
-      setActivateError(formatFetchError(e));
+      toast.error(formatFetchError(e));
     } finally {
       setActivatingModule(null);
     }
   };
   const handleImport = async (moduleName: string | null) => {
-    setImportError("");
     setImportModules([]);
     setImportDone(false);
     setImportRunning(true);
@@ -85,21 +81,20 @@ export function useModuleRegistry(
       es.onerror = () => {
         es.close();
         setImportRunning(false);
-        setImportError("Mất kết nối stream import");
+        toast.error("Mất kết nối stream import");
       };
     } catch (e: unknown) {
-      setImportError(formatFetchError(e));
+      toast.error(formatFetchError(e));
       setImportRunning(false);
     }
   };
   const handleDeactivate = async (name: string) => {
     setDeactivatingModule(name);
-    setDeactivateError("");
     try {
       const data = await deactivateModule(backend, name);
       setModuleList(data);
     } catch (e: unknown) {
-      setDeactivateError(formatFetchError(e));
+      toast.error(formatFetchError(e));
     } finally {
       setDeactivatingModule(null);
     }
@@ -110,16 +105,13 @@ export function useModuleRegistry(
     modulesLoading,
     modulesError,
     activatingModule,
-    activateError,
     handleActivate,
     deactivatingModule,
-    deactivateError,
     handleDeactivate,
     importRunning,
     importTarget,
     importModules,
     importDone,
-    importError,
     handleImport,
     fetchModules,
   };
