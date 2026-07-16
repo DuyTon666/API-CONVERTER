@@ -251,6 +251,10 @@ export type ErrorReviewEntry = {
     approved_at: string;
     new_code?: string;
   } | null;
+  // Thời điểm quyết định thật sự được đẩy vào 4.config/errors/ — lấy từ
+  // review_decisions.yaml, null nếu đã resolve nhưng chưa apply (hoặc chưa
+  // resolve gì cả).
+  applied_at: string | null;
 };
 
 export type ErrorReviewSummary = {

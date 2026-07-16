@@ -70,22 +70,13 @@ export function useErrorCodes(backend: string, modules: string[]) {
       toast.success(
         `Đã áp dụng: ${result.applied} applied · ${result.skipped} skipped · ${result.rejected} rejected`,
       );
+      // Refetch không điều kiện, giống handleResolve/fetchAllErrorEntries —
+      // applied_at (từ review_decisions.yaml) giờ là nguồn sự thật cho "đã
+      // apply chưa", nên không cần tự đoán/xóa state ở đây nữa. Việc ẩn/hiện
+      // card dựa vào applied_at được tính ở ErrorCodesReviewCard, không phải
+      // ở đây.
       const report = await fetchErrorEntries(backend, module);
-      const stillNeedsAction = report.entries.some(
-        (e) => !e.resolution && e.status !== "duplicate_ok",
-      );
-      // report không có cờ "đã apply" để dựa vào — tự suy ra: apply vừa chạy
-      // xong mà không còn entry nào cần duyệt nữa thì coi module này đã xong
-      // việc, bỏ khỏi danh sách hiển thị (không còn gì để làm với nó nữa,
-      // kể cả duplicate_ok cũng chẳng cần xem lại). Còn nếu vẫn còn entry cần
-      // duyệt (report vừa được người khác chạy errors:parse lại có mã mới)
-      // thì vẫn giữ nguyên để người dùng tiếp tục xử lý.
-      setEntriesByModule((prev) => {
-        if (stillNeedsAction) return { ...prev, [module]: report.entries };
-        const next = { ...prev };
-        delete next[module];
-        return next;
-      });
+      setEntriesByModule((prev) => ({ ...prev, [module]: report.entries }));
     } catch (e) {
       toast.error(formatFetchError(e));
     } finally {

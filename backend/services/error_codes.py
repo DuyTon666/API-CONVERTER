@@ -11,7 +11,9 @@ import json
 import re
 from contextlib import redirect_stdout
 
-from core.config import REPORTS_DIR
+import yaml
+
+from core.config import CONFIG_DIR, REPORTS_DIR
 from core.errors import ErrorCode, http_error
 
 
@@ -19,8 +21,45 @@ def _report_path(module: str):
     return REPORTS_DIR / "errors" / module / "error_codes_review.json"
 
 
+def _review_decisions_path(module: str):
+    return CONFIG_DIR / "errors" / "modules" / module / "review_decisions.yaml"
+
+
+def _load_applied_index(module: str) -> dict:
+    """Đọc review_decisions.yaml, trả về {decision_key_id: applied_at} cho
+    các quyết định đã thật sự được đẩy vào 4.config/errors/. Đây là cầu nối
+    còn thiếu giữa report (read side) và config (write side) — key tính lại
+    bằng đúng logic matching đã có trong contract_profile, không viết lại.
+
+    Lưu ý: item trong review_decisions.yaml đã có sẵn code/source_file/
+    incoming_message_key ở dạng phẳng (do save_review_decisions() spread key
+    ra ngoài) — dùng thẳng _decision_key_id(item), KHÔNG bọc qua
+    _entry_decision_key(item) (hàm đó chỉ đúng cho entry thô từ report JSON,
+    có field "incoming" lồng nhau; item trong yaml không có field đó, bọc qua
+    sẽ luôn ra incoming_message_key rỗng)."""
+    from contract_profile.apply_review_decisions import _decision_key_id
+
+    path = _review_decisions_path(module)
+    if not path.exists():
+        return {}
+
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    index = {}
+    for item in data.get("decisions") or []:
+        if not isinstance(item, dict) or not item.get("applied_at"):
+            continue
+        index[_decision_key_id(item)] = item["applied_at"]
+    return index
+
+
 def list_error_entries(module: str) -> dict:
-    """Đọc report review đã có sẵn (entries + summary) — không sinh mới gì."""
+    """Đọc report review đã có sẵn (entries + summary), merge thêm applied_at
+    (None nếu chưa được apply) vào từng entry — không sinh mới gì khác."""
+    from contract_profile.apply_review_decisions import (
+        _decision_key_id,
+        _entry_decision_key,
+    )
+
     path = _report_path(module)
     if not path.exists():
         raise http_error(
@@ -29,7 +68,14 @@ def list_error_entries(module: str) -> dict:
             f"Chưa có report mã lỗi cho module '{module}' — cần chạy "
             "errors:parse trước (người phụ trách 2.pipeline).",
         )
-    return json.loads(path.read_text(encoding="utf-8"))
+    report = json.loads(path.read_text(encoding="utf-8"))
+
+    applied_index = _load_applied_index(module)
+    for entry in report.get("entries", []):
+        key_id = _decision_key_id(_entry_decision_key(entry))
+        entry["applied_at"] = applied_index.get(key_id)
+
+    return report
 
 
 def resolve_error_entry(

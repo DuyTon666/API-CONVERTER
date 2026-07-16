@@ -35,6 +35,14 @@ function statusTone(status: string): string {
   return "bg-gray-100 text-gray-600";
 }
 
+// Một entry còn "việc cần làm" nếu: chưa từng resolve, HOẶC đã resolve nhưng
+// chưa được apply (chưa có applied_at — tức chưa bấm "Xác nhận module" hoặc
+// apply chưa chạy tới entry này). duplicate_ok luôn loại trừ, đúng ngữ nghĩa
+// hiện có của totalNeedsAction.
+function needsAttention(e: ErrorReviewEntry): boolean {
+  return e.status !== "duplicate_ok" && (!e.resolution || !e.applied_at);
+}
+
 export default function ErrorCodesReviewCard({
   modules,
   entriesByModule,
@@ -66,10 +74,16 @@ export default function ErrorCodesReviewCard({
     );
   }, 0);
 
-  // Ẩn card khi chưa module nào có report — không làm rối UI khi chưa ai
-  // chạy errors:parse. Không ẩn theo totalNeedsAction vì entry đã resolve
-  // hết vẫn cần hiện card để bấm "Xác nhận module" (apply).
-  if (!loading && modulesWithReport.length === 0) return null;
+  const hasPendingWork = modulesWithReport.some((m) =>
+    (entriesByModule[m] ?? []).some(needsAttention),
+  );
+
+  // Ẩn card khi không còn gì cần chú ý ở bất kỳ module nào (kể cả trường hợp
+  // chưa module nào có report — modulesWithReport rỗng thì .some() tự false).
+  // "Cần chú ý" = còn entry chưa resolve, HOẶC đã resolve nhưng chưa apply —
+  // tính từ applied_at (dữ liệu thật trên đĩa), không suy đoán, nên card tự
+  // hiện lại đúng lúc có entry/conflict mới, không lệch trước/sau reload.
+  if (!loading && !hasPendingWork) return null;
 
   const activeModule =
     selectedModule && modulesWithReport.includes(selectedModule)
@@ -180,6 +194,11 @@ export default function ErrorCodesReviewCard({
                       {DECISION_LABELS[e.resolution.decision] ??
                         e.resolution.decision}{" "}
                       (bởi {e.resolution.approved_by})
+                    </span>
+                  )}
+                  {e.applied_at && (
+                    <span className="text-xs font-semibold px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
+                      đã áp dụng
                     </span>
                   )}
                 </div>

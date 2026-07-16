@@ -14,9 +14,7 @@ import StatTiles from "@/components/dashboard/StatTiles";
 import WorkflowStepper, {
   toSteps,
 } from "@/components/dashboard/WorkflowStepper";
-import StepSection, {
-  StepStatus,
-} from "@/components/dashboard/StepSection";
+import StepSection, { StepStatus } from "@/components/dashboard/StepSection";
 import { useActiveStep } from "@/hooks/dashboard/useActiveStep";
 import { useScan } from "@/hooks/dashboard/useScan";
 import { useModuleRegistry } from "@/hooks/dashboard/useModuleRegistry";
@@ -181,7 +179,7 @@ export default function Home() {
             <span className="font-semibold text-gray-900">API Converter</span>
           </div>
           <a
-            href="/swagger"
+            href="/portal"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-center gap-2 px-4 py-1.5 text-sm font-medium bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-all duration-200"
