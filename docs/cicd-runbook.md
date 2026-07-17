@@ -2935,7 +2935,7 @@ CI-CD/
 ├── functions/
 │   └── private-must-have-401-403.js # Custom Spectral function
 ├── docs/
-│   ├── CICD-RUNBOOK.md       # This document
+│   ├── cicd-runbook.md       # This document
 │   ├── ci-flow.md
 │   └── setup-cicd.md
 ├── .spectral.js              # Spectral configuration

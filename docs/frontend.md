@@ -1,8 +1,10 @@
 # Frontend — API Converter
 
+> Cập nhật lần cuối: 16/07/2026 — đối chiếu lại trực tiếp với cây thư mục `frontend/` thật trong repo (trước đó tài liệu này vẫn mô tả layout cũ `app/_dashboard/`, đã bị tách ra từ lâu).
+
 ## Tổng quan
 
-Dashboard 1 trang (`app/page.tsx`) cho toàn bộ workflow: import tài liệu → scan → gợi ý/duyệt module → import → build tài liệu Swagger → chỉnh sửa nội dung → review xung đột sửa tay. State được tách thành **6** custom hook (`app/_dashboard/hooks/`), `page.tsx` chỉ compose hook + render layout; các "card" con chỉ render UI + nhận callback qua props.
+Dashboard 1 trang (`app/page.tsx`) cho toàn bộ workflow: import tài liệu → scan → gợi ý/duyệt module → import → build tài liệu Swagger → chỉnh sửa nội dung (form + schema fields) → review mã lỗi nghiệp vụ → review xung đột sửa tay → deploy. State tách thành **9** custom hook (`hooks/dashboard/`), `page.tsx` chỉ compose hook + render layout; các "card" con (`components/dashboard/`) chỉ render UI + nhận callback qua props. Gọi API tách riêng thành `lib/api/dashboard/*.ts`, mỗi file 1 domain.
 
 > Route `app/jobs/[job_id]/` (upload đơn lẻ, luồng cũ) đã bị **xóa** từ lâu — không có nơi nào trong UI link tới nó và không có cách tạo job (`POST /jobs` không tồn tại nữa ở backend).
 
@@ -10,13 +12,15 @@ Dashboard 1 trang (`app/page.tsx`) cho toàn bộ workflow: import tài liệu �
 
 ## Công nghệ
 
-| Công nghệ                                  | Vai trò                                                                                                                       |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| **Next.js**                                | Framework React, App Router                                                                                                   |
-| **React**                                  | UI, state management qua custom hook (`app/_dashboard/hooks/`), không dùng store ngoài                                        |
-| **TypeScript**                             | Type safety                                                                                                                   |
-| **Tailwind CSS**                           | Styling                                                                                                                       |
-| **Monaco Editor** (`@monaco-editor/react`) | `BundleEditor` (tab "YAML thô") dùng editor thường; `AiFixPanel` dùng `DiffEditor` (so sánh gốc/đã sửa, cho sửa tay cả 2 bên) |
+| Công nghệ                                  | Vai trò                                                                                                                                                              |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Next.js** (App Router)                   | Framework React — có cả trang client-only (dashboard) lẫn Server Component (`app/portal/page.tsx`) và Route Handler (`app/api/deploy-docs`, `app/api/create-doc-pr`) |
+| **React**                                  | UI, state qua custom hook (`hooks/dashboard/`), không dùng store ngoài                                                                                               |
+| **TypeScript**                             | Type safety                                                                                                                                                          |
+| **Tailwind CSS**                           | Styling                                                                                                                                                              |
+| **Monaco Editor** (`@monaco-editor/react`) | `BundleEditor` (tab "YAML thô") dùng editor thường; `AiFixPanel` dùng `DiffEditor` (so sánh gốc/đã sửa, cho sửa tay cả 2 bên)                                        |
+| **sonner**                                 | Toast — dùng cho feedback các action async (deploy, resolve/apply mã lỗi...), thay banner inline                                                                     |
+| `components/ui/*` (button, select, tabs)   | UI primitive nhỏ kiểu shadcn, dùng trong `OperationsFormEditor`                                                                                                      |
 
 > Next.js version này có breaking changes — đọc `node_modules/next/dist/docs/` trước khi code (xem `frontend/AGENTS.md`).
 
@@ -27,90 +31,127 @@ Dashboard 1 trang (`app/page.tsx`) cho toàn bộ workflow: import tài liệu �
 ```
 frontend/
 ├── app/
-│   ├── page.tsx                       # Dashboard chính — compose 6 hook + render layout
-│   ├── layout.tsx                     # Root layout, mount MonacoErrorSuppressor
+│   ├── page.tsx                       # Dashboard chính — compose 9 hook + render layout
+│   ├── layout.tsx                     # Root layout, mount MonacoErrorSuppressor + Toaster (sonner)
 │   ├── MonacoErrorSuppressor.tsx      # Nuốt unhandledrejection "cancelation" nội bộ của Monaco (không phải lỗi thật)
 │   ├── globals.css
-│   ├── _dashboard/                    # Các card con của dashboard
-│   │   ├── types.ts                   # Type chung: ScanResult, ModuleListResult, SuggestionsResult, ApplyResult, DocsBuildResult, DocsStatus, ImportModuleProgress, SpectralIssue, RedoclyIssue, ManualEditConflict, AiFixPatch/AiFixUnresolved/AiFixResult/AiFixResolution
-│   │   ├── format.ts                  # formatDate, formatRelativeTime, formatBytes, SUPPORTED_EXTENSIONS, countLintIssues
-│   │   ├── api.ts                     # apiFetch/readErrorDetail/formatFetchError dùng chung cho mọi hook + OperationsFormEditor
-│   │   ├── errorMessages.ts           # ERROR_MESSAGES map (code → chữ hiển thị tuỳ chỉnh) + resolveErrorMessage()
-│   │   ├── ErrorAlert.tsx             # UI báo lỗi dùng chung (thay 9 chỗ <div> trùng lặp)
-│   │   ├── hooks/
-│   │   │   ├── useMounted.ts          # Mount-detection, tránh hydration mismatch
-│   │   │   ├── useScan.ts             # scan result + fetchScan
-│   │   │   ├── useModuleRegistry.ts   # module list, activate/deactivate, import (SSE), nhận onImportDone callback
-│   │   │   ├── useUpload.ts           # upload state, nhận onSuccess callback
-│   │   │   ├── useDocsBuilder.ts      # build/lint/bundle-editor/AI-fix state
-│   │   │   ├── useSuggestions.ts      # suggest/approve/apply, nhận onApplySuccess callback
-│   │   │   └── useManualEditConflicts.ts  # list/resolve xung đột sửa tay khi import lại
-│   │   ├── ImportCard.tsx             # Upload file vào 1.docs/source/api_contract/
-│   │   ├── ScanCard.tsx               # Hiển thị kết quả /modules/scan
-│   │   ├── SuggestCard.tsx            # Gợi ý/duyệt/apply module assignment
-│   │   ├── ModuleRegistryCard.tsx     # Bảng module + activate/deactivate + import (SSE)
-│   │   ├── ManualEditConflictsCard.tsx # Danh sách field bị conflict giữa sửa tay và import lại, nút "Giữ bản cũ"/"Lấy bản mới"
-│   │   ├── SwaggerDocsCard.tsx        # Build/lint/download tài liệu, mở Bundle Editor
-│   │   ├── BundleEditorModal.tsx      # Modal full-screen, 2 tab: Form Editor + YAML thô
-│   │   ├── BundleEditor.tsx           # Wrapper Monaco Editor thường (tab "YAML thô")
-│   │   ├── AiFixPanel.tsx             # Panel riêng (không nằm trong modal) — DiffEditor per-patch, chọn giữ gốc/giữ bản sửa/giữ cả hai, nút "Áp dụng"
-│   │   ├── OperationsFormEditor.tsx   # Tab "Chỉnh sửa nội dung" — sửa summary/description/parameter & response description, có nút AI gợi ý
-│   │   ├── StatTiles.tsx              # 4 ô số liệu tổng quan trên dashboard
-│   │   └── WorkflowStepper.tsx        # Thanh bước scan→suggest→apply→import→docs
+│   ├── api/
+│   │   ├── deploy-docs/route.ts       # POST — commit 5.openapi/** qua GitHub Git Data API + dispatch create-doc-pr.yaml (nút "Deploy tài liệu")
+│   │   └── create-doc-pr/route.ts     # ORPHAN — chỉ dispatch workflow, không commit; không có caller nào trong UI
 │   ├── swagger/
 │   │   ├── page.tsx
-│   │   └── SwaggerView.tsx            # Render Swagger UI từ bundle, có Fuse.js fuzzy search tích hợp vào opsFilter
+│   │   └── SwaggerView.tsx            # Render Swagger UI từ bundle, Fuse.js fuzzy search tích hợp vào opsFilter
 │   └── portal/                        # Developer Portal tự build (KHÔNG link từ nav — xem mục riêng)
 │       ├── page.tsx                   # Server Component — đọc bundle YAML trực tiếp từ đĩa, resolve $ref
 │       ├── PortalSearch.tsx           # Search/filter bằng Fuse.js (client component)
 │       ├── EndpointCard.tsx           # Card hiển thị 1 operation trong list
 │       ├── EndpointDetailDrawer.tsx   # Drawer chi tiết khi click vào 1 operation
-│       └── SchemaViewer.tsx           # Render schema object dạng cây
+│       ├── SchemaViewer.tsx           # Render schema object dạng cây
+│       ├── TryItOut.tsx               # Gọi request thật (fetch trực tiếp từ browser), copy as curl, arm/confirm cho method mutating
+│       ├── theme.ts                   # methodTone/statusTone/categoryTone (màu pastel theo HTTP method/status), MUTATING_METHODS
+│       └── openapi-utils.ts           # generateExample() — sinh JSON mẫu từ schema (đệ quy, hỗ trợ allOf/anyOf/oneOf) cho ô Request body của TryItOut
+├── components/
+│   ├── ui/                            # UI primitive nhỏ (button, select, tabs, sonner Toaster wrapper)
+│   └── dashboard/
+│       ├── ImportCard.tsx             # Upload file vào 1.docs/source/api_contract/
+│       ├── ScanCard.tsx                # Hiển thị kết quả /modules/scan
+│       ├── SuggestCard.tsx             # Gợi ý/duyệt/apply module assignment
+│       ├── ModuleRegistryCard.tsx      # Bảng module + activate/deactivate + import (SSE)
+│       ├── ManualEditConflictsCard.tsx # Danh sách field bị conflict giữa sửa tay và import lại
+│       ├── ErrorCodesReviewCard.tsx    # Review & xác nhận mã lỗi nghiệp vụ (x-error-responses) trước khi ghi 4.config/errors/
+│       ├── SwaggerDocsCard.tsx         # Build/lint/download tài liệu, mở Bundle Editor, nút Deploy
+│       ├── BundleEditorModal.tsx       # Modal full-screen, 2 tab: Form Editor + YAML thô
+│       ├── BundleEditor.tsx            # Wrapper Monaco Editor thường (tab "YAML thô")
+│       ├── AiFixPanel.tsx              # Panel riêng (không nằm trong modal) — DiffEditor per-patch
+│       ├── OperationsFormEditor.tsx    # Tab "Chỉnh sửa nội dung" — sửa summary/description + nhúng SchemaFieldsEditor cho request/response
+│       ├── SchemaFieldsEditor.tsx      # Renderer đệ quy cho 1 SchemaGroup (request/response của 1 operation) — indent theo depth, schema shared hiện disabled
+│       ├── ErrorAlert.tsx              # UI báo lỗi dùng chung
+│       ├── StatTiles.tsx               # Ô số liệu tổng quan trên dashboard
+│       ├── WorkflowStepper.tsx         # Thanh bước sticky (scan→suggest→apply→import→docs)
+│       └── StepSection.tsx             # Timeline dọc giữa trang, cùng ngôn ngữ hình ảnh với WorkflowStepper
+├── hooks/dashboard/
+│   ├── useMounted.ts                  # Mount-detection — tránh SSR/CSR hydration mismatch
+│   ├── useActiveStep.ts               # Scrollspy dùng chung cho WorkflowStepper + StepSection (1 IntersectionObserver)
+│   ├── useScan.ts
+│   ├── useModuleRegistry.ts
+│   ├── useUpload.ts
+│   ├── useDocsBuilder.ts              # build/lint/bundle-editor/AI-fix + deploy state
+│   ├── useSuggestions.ts
+│   ├── useManualEditConflicts.ts
+│   └── useErrorCodes.ts               # Review mã lỗi nghiệp vụ — entriesByModule, resolve/apply
+├── lib/
+│   ├── api/
+│   │   ├── client.ts                  # apiFetch/readErrorDetail/formatFetchError dùng chung mọi hook
+│   │   ├── errorMessages.ts           # ERROR_MESSAGES override map + resolveErrorMessage()
+│   │   └── dashboard/                 # 1 file/domain: docs.ts, modules.ts, operations.ts, schemaFields.ts, suggestions.ts, upload.ts, deploy.ts, errorCodes.ts
+│   ├── dashboard-format.ts            # formatDate/formatRelativeTime/formatBytes, SUPPORTED_EXTENSIONS, isSupportedFile, countLintIssues, getDeployBlockedReason
+│   └── utils.ts                       # cn() (clsx/tailwind-merge) cho components/ui
+├── types/dashboard.ts                 # Toàn bộ type dùng chung: ScanResult, ModuleListResult, DocsBuildResult, ErrorReviewEntry/Report, OperationDataSchemas...
 └── package.json
 ```
 
 ---
 
 ## Dashboard chính — `app/page.tsx`
-### State — 6 custom hook (`app/_dashboard/hooks/`)
+### State — 9 custom hook (`hooks/dashboard/`)
 
-`page.tsx` chỉ gọi 6 hook dưới đây và destructure ra props cho card con — không tự giữ state nào
-khác ngoài giá trị dẫn xuất (`pendingSuggestions`, `activeModules`, `steps`...).
+`page.tsx` chỉ gọi 9 hook dưới đây và destructure ra props cho card con — không tự giữ state nào
+khác ngoài giá trị dẫn xuất (`pendingSuggestions`, `activeModules`, `steps`, `bundleReady`/`htmlReady`...).
 
-| Hook                                           | Owns                                                                                      | Gọi API                                                                                                               |
-| ---------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `useScan(backend)`                             | `scan` / `scanLoading` / `scanError` / `fetchScan`                                        | `GET /modules/scan`                                                                                                   |
-| `useManualEditConflicts(backend)`              | `conflicts` / `loading` / `error` / `resolving` / `resolveError` / `conflictKey`          | `GET /modules/manual-edit-conflicts`, `POST /modules/manual-edit-conflicts/resolve`                                   |
-| `useModuleRegistry(backend, { onImportDone })` | `moduleList`, activate/deactivate state, import state (SSE)                               | `GET /modules`, `POST /modules/{m}/activate`/`deactivate`, `POST /modules/import` + `GET /modules/import/{id}/stream` |
-| `useUpload(backend, { onSuccess })`            | `uploadFiles` / `uploading` / `uploadError` / `uploadMessage`                             | `POST /source/upload`                                                                                                 |
-| `useDocsBuilder(backend)`                      | `docsBuilding` / `docsResult` / `docsStatus` / `bundleContent` + save/relint/AI-fix state | `POST /docs/build`, `/docs/relint`, `/docs/bundle/ai-fix`, `GET`/`PUT /docs/bundle-content`                           |
-| `useSuggestions(backend, { onApplySuccess })`  | `suggestions` / `suggestRunning` / `approving` / `applying` / `applyResult`               | `GET /modules/suggestions`, `POST /modules/suggest`/`suggestions/approve`/`apply`                                     |
+| Hook                                           | Owns                                                                                        | Gọi API                                                                                                               |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `useScan(backend)`                             | `scan` / `scanLoading` / `scanError` / `fetchScan`                                          | `GET /modules/scan`                                                                                                   |
+| `useManualEditConflicts(backend)`              | `conflicts` / `loading` / `error` / `resolving` / `conflictKey`                             | `GET /modules/manual-edit-conflicts`, `POST /modules/manual-edit-conflicts/resolve`                                   |
+| `useModuleRegistry(backend, { onImportDone })` | `moduleList`, activate/deactivate state, import state (SSE)                                 | `GET /modules`, `POST /modules/{m}/activate`/`deactivate`, `POST /modules/import` + `GET /modules/import/{id}/stream` |
+| `useUpload(backend, { onSuccess })`            | `uploadFiles` / `uploading`                                                                 | `POST /source/upload`                                                                                                 |
+| `useDocsBuilder(backend)`                      | `docsBuilding` / `docsResult` / `docsStatus` / `bundleContent` / `deploying` + AI-fix state | `POST /docs/build`, `/docs/relint`, `/docs/bundle/ai-fix`, `GET`/`PUT /docs/bundle-content`, `POST /api/deploy-docs`  |
+| `useSuggestions(backend, { onApplySuccess })`  | `suggestions` / `suggestRunning` / `approving` / `applying` / `applyResult`                 | `GET /modules/suggestions`, `POST /modules/suggest`/`suggestions/approve`/`apply`                                     |
+| `useErrorCodes(backend, modules)`              | `entriesByModule` (per module) / `loading` / `resolving` / `applying`                       | `GET /errors/{module}`, `POST /errors/{module}/resolve`/`apply`                                                       |
+| `useMounted()`                                 | `mounted: boolean`                                                                          | — (không gọi API, chỉ dùng để gate render đầu tiên ở client khớp SSR)                                                 |
+| `useActiveStep(stepIds)`                       | `activeIndex: number`                                                                       | — (chỉ đọc DOM qua `IntersectionObserver`)                                                                            |
 
 `useUpload`, `useSuggestions`, `useModuleRegistry` có phụ thuộc lẫn hook khác — giải quyết bằng
 **callback injection** (`onSuccess`/`onApplySuccess`/`onImportDone` truyền từ `page.tsx`), không
 hook nào import hook khác. `onImportDone` gọi `fetchConflicts()` — vì import xong là lúc xung đột
 sửa tay mới (nếu có) xuất hiện. Nhờ vậy chỉ có đúng 1 instance của mỗi hook, sở hữu bởi `page.tsx`.
 
-Cả 6 hook + `OperationsFormEditor.tsx` dùng chung `apiFetch`/`readErrorDetail`/`formatFetchError`
-từ `app/_dashboard/api.ts` (xem mục **Xử lý lỗi & mã lỗi** phía dưới).
+Mọi hook gọi API dùng chung `apiFetch`/`readErrorDetail`/`formatFetchError` từ `lib/api/client.ts`
+(xem mục **Xử lý lỗi & mã lỗi** phía dưới); mỗi hook import file domain riêng trong `lib/api/dashboard/`
+thay vì gọi `fetch` trực tiếp.
 
 ### Các hàm chính (nằm trong các hook trên)
 
-| Hàm                                                                                      | Gọi API                                             | Mô tả                                                                                                                                                                                                    |
-| ---------------------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetchScan` / `fetchModules` / `fetchSuggestions` / `fetchDocsStatus` / `fetchConflicts` | `GET`                                               | Chạy 1 lần khi mount (`useEffect([])`)                                                                                                                                                                   |
-| `handleUpload`                                                                           | `POST /source/upload`                               | Upload file thô, không convert ngay                                                                                                                                                                      |
-| `handleRunSuggest`                                                                       | `POST /modules/suggest`                             | Chạy phân tích (30–90s)                                                                                                                                                                                  |
-| `handleApprove` / `handleApproveSelected`                                                | `POST /modules/suggestions/approve`                 | Duyệt 1 hoặc nhiều file (mode `file`/`module`/`all`)                                                                                                                                                     |
-| `handleApply`                                                                            | `POST /modules/apply`                               | Copy file đã duyệt vào thư mục module                                                                                                                                                                    |
-| `handleActivate` / `handleDeactivate`                                                    | `POST /modules/{m}/activate` / `deactivate`         | Đổi trạng thái module                                                                                                                                                                                    |
-| `handleImport`                                                                           | `POST /modules/import` + SSE                        | Mở `EventSource`, cập nhật `importModules` theo từng event, đóng khi nhận `event: "done"`, gọi `fetchModules()` + `onImportDone()`                                                                       |
-| `handleBuildDocs` / `handleRelint`                                                       | `POST /docs/build` / `/docs/relint`                 | Build hoặc lint lại                                                                                                                                                                                      |
-| `openBundleEditor`                                                                       | `GET /docs/bundle-content`                          | Mở modal, set `bundleContent`                                                                                                                                                                            |
-| `saveBundle` / `saveAndRelint`                                                           | `PUT /docs/bundle-content` (+ `POST /docs/relint`)  | Lưu bundle YAML thô qua `putBundleContent()` dùng chung; có check `res.ok` và `alert` nếu lỗi                                                                                                            |
-| `handleAiFixBundle`                                                                      | `POST /docs/bundle/ai-fix`                          | Gửi bundle + lỗi lint hiện có, nhận `{patches, unresolved}`, mở `AiFixPanel` (chưa lưu)                                                                                                                  |
-| `applyAiFixResolutions`                                                                  | `PUT /docs/bundle-content` (qua `putBundleContent`) | Ghép từng patch (theo lựa chọn original/fixed/both) vào `bundleContent` từ dòng cuối lên đầu (tránh lệch số dòng), rồi **lưu ngay xuống backend** — bấm "Áp dụng" là lưu luôn, không cần bấm "Lưu" riêng |
-| `handleResolveConflict`                                                                  | `POST /modules/manual-edit-conflicts/resolve`       | Resolve 1 conflict (`keep_old`/`accept_new`), tự xoá khỏi `conflicts` state khi thành công                                                                                                               |
+| Hàm                                                                                      | Gọi API                                            | Mô tả                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetchScan` / `fetchModules` / `fetchSuggestions` / `fetchDocsStatus` / `fetchConflicts` | `GET`                                              | Chạy 1 lần khi mount (`useEffect([])`)                                                                                                                                                                  |
+| `handleUpload`                                                                           | `POST /source/upload`                              | Upload file thô, không convert ngay — `handleSelectFiles` lọc theo `isSupportedFile()` trước khi cho vào danh sách chờ (chặn cả kéo-thả lẫn bypass hộp thoại chọn file)                                 |
+| `handleRunSuggest`                                                                       | `POST /modules/suggest`                            | Chạy phân tích (30–90s)                                                                                                                                                                                 |
+| `handleApprove` / `handleApproveSelected`                                                | `POST /modules/suggestions/approve`                | Duyệt 1 hoặc nhiều file (mode `file`/`module`/`all`)                                                                                                                                                    |
+| `handleApply` (suggestions)                                                              | `POST /modules/apply`                              | Copy file đã duyệt vào thư mục module                                                                                                                                                                   |
+| `handleActivate` / `handleDeactivate`                                                    | `POST /modules/{m}/activate` / `deactivate`        | Đổi trạng thái module                                                                                                                                                                                   |
+| `handleImport`                                                                           | `POST /modules/import` + SSE                       | Mở `EventSource`, cập nhật `importModules` theo từng event, đóng khi nhận `event: "done"`, gọi `fetchModules()` + `onImportDone()`                                                                      |
+| `handleBuildDocs` / `handleRelint`                                                       | `POST /docs/build` / `/docs/relint`                | Build hoặc lint lại                                                                                                                                                                                     |
+| `handleDeploy`                                                                           | `POST /api/deploy-docs`                            | Toast kết quả (luôn hiện, không gate theo field tuỳ chọn nào), rồi `setDocsResult(null)` — bắt buộc phải "Kiểm tra lỗi" lại trước khi bấm Deploy lần nữa, tránh bấm liên tiếp tạo nhiều PR/branch trùng |
+| `openBundleEditor`                                                                       | `GET /docs/bundle-content`                         | Mở modal, set `bundleContent`                                                                                                                                                                           |
+| `saveBundle` / `saveAndRelint`                                                           | `PUT /docs/bundle-content` (+ `POST /docs/relint`) | Lưu bundle YAML thô                                                                                                                                                                                     |
+| `handleAiFixBundle`                                                                      | `POST /docs/bundle/ai-fix`                         | Gửi bundle + lỗi lint hiện có, nhận `{patches, unresolved}`, mở `AiFixPanel` (chưa lưu)                                                                                                                 |
+| `applyAiFixResolutions`                                                                  | `PUT /docs/bundle-content`                         | Ghép từng patch vào `bundleContent` từ dòng cuối lên đầu (tránh lệch số dòng), lưu ngay xuống backend                                                                                                   |
+| `handleResolveConflict`                                                                  | `POST /modules/manual-edit-conflicts/resolve`      | Resolve 1 conflict (`keep_old`/`accept_new`), tự xoá khỏi `conflicts` state khi thành công                                                                                                              |
+| `handleResolveErrorEntry` / `handleApplyErrorEntries`                                    | `POST /errors/{m}/resolve` / `/apply`              | Xem mục **`ErrorCodesReviewCard.tsx`** bên dưới                                                                                                                                                         |
+
+---
+
+## `ErrorCodesReviewCard.tsx` — Review mã lỗi nghiệp vụ
+
+1 card duy nhất (không phải 1 card/module) — bên trong có dropdown chọn module đang xem, danh sách entry của module đó, và badge "N cần duyệt" ở header.
+
+**Nguồn dữ liệu:** report do CLI `errors:parse` (2.pipeline, chạy tay bởi người phụ trách 2.pipeline) sinh ra tại `3.build/reports/errors/<module>/error_codes_review.json`. Mỗi entry có `code`, `status` (`new`/`duplicate_ok`/`conflict`/`needs_review`), `incoming` (nội dung từ tài liệu mới), `existing_in_map` (nếu đã có trong catalog), `resolution` (quyết định đã chọn, null nếu chưa), và `applied_at` (thời điểm quyết định thật sự được đẩy vào `4.config/errors/`, lấy từ `review_decisions.yaml` — null nếu đã resolve nhưng chưa apply).
+
+**Quyết định cho từng entry:** giữ nguyên map cũ / duyệt là mã mới / sửa lại message cũ / đổi sang mã khác — gọi `POST /errors/{module}/resolve`, chỉ ghi `resolution` vào report, **chưa** đẩy vào config chính thức.
+
+**"Xác nhận module" (apply):** gọi `POST /errors/{module}/apply` — đẩy toàn bộ entry đã resolve trong report lên `4.config/errors/global_error_map.yaml` hoặc `modules/<module>/error_catalog.yaml`. Entry chưa resolve tự bị bỏ qua (skipped).
+
+**Ẩn/hiện cả card:** card tự ẩn khi không còn entry nào "cần chú ý" ở bất kỳ module nào — định nghĩa 1 entry còn cần chú ý là: chưa có `resolution`, HOẶC đã có `resolution` nhưng chưa có `applied_at` (đã resolve nhưng chưa bấm Apply); `duplicate_ok` luôn loại trừ. Tính lại mỗi lần render/fetch từ dữ liệu thật (`applied_at`), không phải suy đoán/heuristic lưu riêng — nên card **tự hiện lại đúng lúc** khi report được parse lại và có entry/conflict mới (cùng code, message khác → `applied_at` không khớp → tự động cần chú ý lại), và trạng thái trước/sau reload trang luôn nhất quán.
 
 ---
 
@@ -129,7 +170,7 @@ Modal full-screen, 2 tab:
 ```
 
 - **Tab "Chỉnh sửa nội dung"** (mặc định) → render `OperationsFormEditor`, tự fetch/save, không cần props từ modal
-- **Tab "YAML thô"** → render `BundleEditor` (`./BundleEditor`, Monaco editor thường), dùng `content`/`onChange`/`onSave`/`onSaveAndRelint`/`onAiFix` từ props (điều khiển bởi `page.tsx`)
+- **Tab "YAML thô"** → render `BundleEditor` (Monaco editor thường), dùng `content`/`onChange`/`onSave`/`onSaveAndRelint`/`onAiFix` từ props (điều khiển bởi `page.tsx`)
 - Footer Lưu/Lưu & Kiểm tra/AI tự fix lỗi chỉ hiện ở tab YAML — tab Form có nút riêng trong chính nó
 
 ---
@@ -158,29 +199,33 @@ DiffEditor — chỉ liệt kê để dev tự sửa tay.
 
 ---
 
-## `OperationsFormEditor.tsx`
+## `OperationsFormEditor.tsx` (+ `SchemaFieldsEditor.tsx`)
 
-Form editor cho non-dev — không cần biết YAML.
+Form editor cho non-dev — không cần biết YAML. Mỗi operation collapse thành 1 dòng theo mặc định
+(method/path/summary/% hoàn chỉnh, kiểu Swagger UI) — click để mở form đầy đủ.
 
 **Luồng:**
 
 ```
-Mount → GET /docs/operations → list operations
+Mount → GET /docs/operations + GET /docs/schema-fields (song song) → list operations + data schemas
 Group theo tags, hiển thị card cho mỗi endpoint:
   - Method badge (màu theo HTTP method) + path (read-only) + badge "x% hoàn chỉnh"
   - Input "Tên gọi" (summary)
   - Textarea "Mô tả chi tiết" (description)
   - Input mô tả cho từng parameter (nếu operation có parameters)
   - Input mô tả cho từng response (nếu operation có responses không bị $ref)
-  - Nút "Gợi ý AI" → POST /docs/operations/ai-suggest, chỉ điền field đang trống
+  - SchemaFieldsEditor cho request (nếu có) và response (nếu có) — mô tả từng field trong business schema
+  - Nút "Gợi ý AI" → POST /docs/operations/ai-suggest, chỉ điền field đang trống (cả summary/description lẫn field schema trống, qua dataSchemas payload)
 Edit → đánh dấu dirty (viền vàng, "● chưa lưu")
-[Lưu] → PATCH /docs/operations (chỉ gửi operation đã đổi, kèm parameters/responses)
+[Lưu] → PATCH /docs/operations (operation level) + PATCH /docs/schema-fields (schema field level, nếu có đổi)
 [Lưu & Kiểm tra lại] → Lưu rồi POST /docs/relint, hiện số lỗi
 ```
 
-**Chỉ cho sửa field mô tả (human-readable):** `summary`, `description`, `parameters[].description`, `responses[].description`. Method, path, parameter name/type, schema, response codes, và response dùng `$ref` chung (400/401/404...) hiển thị read-only hoặc bị loại khỏi danh sách sửa — tránh vô tình làm hỏng cấu trúc API hoặc sửa 1 operation làm ảnh hưởng operation khác dùng chung `$ref`.
+**`SchemaFieldsEditor.tsx`** — renderer đệ quy cho 1 `SchemaGroup` (`services/schema_fields.py` phía backend resolve request/response business schema của 1 operation, unwrap `allOf`/`StandardSuccess`, walk `properties` đệ quy). Mỗi field là 1 dòng thụt lề theo độ sâu; schema nào bị dùng chung bởi >1 operation (`shared: true`, ví dụ `UserInfo`) hiện disabled kèm ghi chú — sửa loại schema này chỉ làm được qua tab YAML thô, tránh 1 operation sửa mô tả field làm thay đổi ý nghĩa ở mọi operation khác dùng chung schema đó.
 
-**Badge % hoàn chỉnh:** tính theo tỉ lệ field có mô tả / tổng field cần điền (`2 + số parameters + số responses`), cập nhật real-time khi gõ. Màu: xanh (100%), vàng (50-99%), đỏ (<50%).
+**Chỉ cho sửa field mô tả (human-readable):** `summary`, `description`, `parameters[].description`, `responses[].description`, và `description` của từng field trong schema (không shared). Method, path, parameter name/type, schema type, response codes, và schema `shared: true` hiển thị read-only hoặc bị loại khỏi danh sách sửa.
+
+**Badge % hoàn chỉnh:** tính theo tỉ lệ field có mô tả / tổng field cần điền, cập nhật real-time khi gõ. Màu: xanh (100%), vàng (50-99%), đỏ (<50%).
 
 **Search + filter:** theo path/summary (text) và theo tag (dropdown).
 
@@ -189,12 +234,15 @@ Edit → đánh dấu dirty (viền vàng, "● chưa lưu")
 ## `SwaggerDocsCard.tsx`
 
 ```
-[Build tài liệu Swagger UI]                      ← khi chưa có bundle
+[Build tài liệu Swagger UI]                                              ← khi chưa có bundle
 hoặc
-[Xem / Sửa lỗi bundle] [Kiểm tra lỗi] [Tải HTML] [Tạo lại tài liệu]  ← khi đã có bundle
+[Xem / Sửa lỗi bundle] [Kiểm tra lỗi] [Tải HTML] [Tạo lại tài liệu]      ← khi đã có bundle
+[Deploy tài liệu]                                                        ← luôn hiện, disable theo getDeployBlockedReason()
 ```
 
 Hiển thị kết quả lint (Spectral + Redocly) dạng list, màu đỏ = error, vàng = warning. Nút "Xem / Sửa lỗi bundle" mở `BundleEditorModal`.
+
+**Nút Deploy** — `getDeployBlockedReason()` (`lib/dashboard-format.ts`) chặn theo thứ tự: chưa có bundle → chưa "Kiểm tra lỗi" lần nào (`docsResult` null) → còn lỗi `error` → đang có thao tác khác chạy. Xem mục **Deploy tài liệu** bên dưới cho luồng đầy đủ, và mục **Hydration mismatch** ở "Các điểm kỹ thuật đáng chú ý" cho lý do `bundleReady`/`htmlReady` phải gate qua `mounted`.
 
 ---
 
@@ -207,7 +255,7 @@ Nút theo status:
 - `draft`/`deprecated` → **Activate**
 - `active` → **Import** (riêng module này) + **Deactivate**
 
-Nút "Import tất cả" ở header — disable nếu không có module nào active.
+Nút "Import tất cả" ở header — disable nếu không có module nào active (gate thêm `!mounted` vì `moduleList` fetch qua effect, xem mục hydration).
 
 Khi import chạy: hiện progress bar per-module (`importModules` state), % = `(success+failed+skipped)/total`.
 
@@ -226,10 +274,9 @@ khoảng trắng), 2 nút:
 - **"Giữ bản cũ"** → `POST .../resolve` với `choice: "keep_old"` — ghi giá trị cũ lại tầng 2 + tầng 3.
 - **"Lấy bản mới"** → `choice: "accept_new"` — không đổi gì, chỉ xoá khỏi queue.
 
-Resolve xong, entry tự biến mất khỏi danh sách không cần reload trang (cập nhật state local sau khi
-API trả OK, theo `conflictKey = operationId::field` để biết đúng entry nào đang xử lý — cho phép
-nhiều entry resolve song song không lẫn nhau). Mất kết nối backend giữa lúc bấm nút → hiện lỗi
-"Không thể kết nối tới backend...", nút trở lại bấm được ngay, entry **không** bị xoá khỏi queue.
+Resolve xong, entry tự biến mất khỏi danh sách không cần reload trang. Mất kết nối backend giữa lúc
+bấm nút → hiện lỗi "Không thể kết nối tới backend...", nút trở lại bấm được ngay, entry **không** bị
+xoá khỏi queue.
 
 ---
 
@@ -239,9 +286,15 @@ Bảng suggestion với checkbox chọn nhiều, filter tab Chờ duyệt/Đã d
 
 ---
 
+## `WorkflowStepper.tsx` + `StepSection.tsx` + `useActiveStep`
+
+`WorkflowStepper` là thanh bước sticky ở trên (scan→suggest→apply→import→docs); `StepSection` là timeline dọc bọc quanh từng khối nội dung chính giữa trang. Cả 2 dùng chung 1 `useActiveStep(stepIds)` — 1 `IntersectionObserver` duy nhất theo dõi section nào đang ở đầu viewport (`rootMargin: "-30% 0px -60% 0px"`), tránh 2 nơi tự chạy observer trùng nhau trên cùng tập phần tử, đảm bảo 2 chỗ luôn hiển thị đúng cùng 1 bước "đang active".
+
+---
+
 ## `app/swagger/SwaggerView.tsx`
 
-Trang Developer Portal — render Swagger UI từ `dist/openapi-bundled.yaml`. Tích hợp **Fuse.js** vào search bar mặc định của Swagger UI qua plugin `opsFilter` (không dùng search bar riêng):
+Render Swagger UI từ `dist/openapi-bundled.yaml`. Tích hợp **Fuse.js** vào search bar mặc định của Swagger UI qua plugin `opsFilter` (không dùng search bar riêng):
 
 ```typescript
 keys: [
@@ -254,13 +307,15 @@ keys: [
 threshold: 0.4, ignoreLocation: true, useExtendedSearch: true
 ```
 
-`scripts/build-swagger-ui.js` (build static HTML cho `public/api-docs.html`) dùng cùng approach — plain JS port của plugin này.
+Cũng render bảng `x-error-responses` (mã lỗi nghiệp vụ) lồng vào từng dòng response qua plugin `wrapComponents.response` — đọc `operation.x-error-responses[status]`, chèn `<details>` gấp/mở danh sách mã lỗi ngay dưới response đó.
+
+`scripts/build-swagger-ui.js` (build static HTML cho `public/api-docs.html`, chạy trong `deploy.yaml`/`npm run build:docs`) dùng **cùng approach** cho cả 2 plugin (Fuse.js filter + bảng mã lỗi) — bản JS thuần không qua JSX/React của Next, vì trang static chỉ có React đóng gói sẵn trong `swagger-ui-bundle.js`.
 
 ---
 
 ## `app/portal/` — Developer Portal tự build (⚠ chưa được link tới)
 
-Route `/portal` render 1 giao diện xem API docs **tự thiết kế** (không dùng thư viện Swagger UI), gồm:
+Route `/portal` render 1 giao diện xem API docs **tự thiết kế** (không dùng thư viện Swagger UI):
 
 ```
 ┌──────────────────────────────────────────────┐
@@ -270,12 +325,31 @@ Route `/portal` render 1 giao diện xem API docs **tự thiết kế** (không 
 │  EndpointCard: POST /v1/tickets  "Tạo..."    │
 ├──────────────────────────────────────────────┤
 │  Click 1 card → EndpointDetailDrawer mở:     │
-│    parameters, request/response schema       │
-│    (render qua SchemaViewer dạng cây)         │
+│    parameters, request/response schema        │
+│    (SchemaViewer dạng cây) + panel Try it out │
 └──────────────────────────────────────────────┘
 ```
 
-**Luồng:** `page.tsx` là Server Component — đọc trực tiếp `dist/openapi-bundled.yaml` bằng `fs.readFileSync` lúc render (không qua backend API), tự resolve `$ref` (`resolveRefs()`, đệ quy tối đa 10 cấp), trích operations rồi truyền cho `PortalSearch` (client component) render + search bằng Fuse.js riêng (keys: `operationId`/`summary`/`path`/`tags`/`description`).
+**Luồng:** `page.tsx` là Server Component — đọc trực tiếp `dist/openapi-bundled.yaml` bằng `fs.readFileSync` lúc render (không qua backend API), tự resolve `$ref` (đệ quy tối đa 10 cấp), trích operations rồi truyền cho `PortalSearch` (client component) render + search bằng Fuse.js riêng.
+
+**`TryItOut.tsx`** — panel gọi request thật ngay trong trình duyệt (`fetch()` trực tiếp tới `baseUrl` lấy từ spec `servers`), không qua backend Next.js nào cả:
+- Build URL từ path/query param, header param nhập tay.
+- Method mutating (`POST`/`PUT`/`PATCH`/`DELETE`, theo `MUTATING_METHODS` trong `theme.ts`) phải bấm **2 lần** ("Gửi request" → "Xác nhận gửi (production)") mới thật sự gửi — tránh bấm nhầm gây side-effect thật trên server production.
+- Ô Request body tự sinh JSON mẫu từ schema qua `generateExample()` (`openapi-utils.ts`, đệ quy, hỗ trợ `allOf`/`anyOf`/`oneOf`, format `date-time`, giới hạn độ sâu 5 cấp tránh đệ quy vô hạn khi schema tự tham chiếu).
+- Nút "Copy as curl" — build lại đúng command từ url/headers/body hiện tại.
+- Lỗi mạng/CORS hiện thông báo riêng, không phải lỗi kỹ thuật thô của `fetch`.
+
+---
+
+## Deploy tài liệu (`app/api/deploy-docs/route.ts`)
+
+Nút "Deploy tài liệu" (`SwaggerDocsCard`) → `useDocsBuilder`'s `handleDeploy()` → `deployDocs()` (`lib/api/dashboard/deploy.ts`) → `POST /api/deploy-docs` (Next.js Route Handler, **không** đi qua backend Python).
+
+Route cần 4 biến môi trường (`OPENAPI_DIR`, `GH_DISPATCH_TOKEN`, `GH_OWNER`, `GH_REPO` — xem `docs/setup-local-dev.md`). Luồng: lấy HEAD commit/tree của `baseBranch` ("main"/"develop", mặc định "develop") qua GitHub Git Data API → tính git-blob-SHA1 từng file local trong `OPENAPI_DIR` (chỉ đọc, không phải git checkout) → diff với blob SHA đã có trên remote để tìm file added/modified/deleted dưới `5.openapi/` → nếu không có gì đổi, trả `{ok: true, message: "Không có thay đổi..."}` (không tạo gì cả) → nếu có, tạo blob/tree/commit/ref mới (`auto/update-openapi-<timestamp>`) → dispatch workflow `create-doc-pr.yaml` (bundle lại + mở PR + auto-merge nếu validate pass).
+
+**Toast luôn hiện cho cả 2 nhánh thành công** (`handleDeploy` gọi `toast.success(data.message)` không điều kiện, không gate theo field `branch` tuỳ chọn — sửa lại từ 1 bug cũ khiến nhánh "không có thay đổi" không hiện gì cả). Toast "đã kích hoạt PR" chỉ xác nhận **request gửi thành công** (GitHub nhận dispatch, trả `204`) — không đảm bảo PR đã thật sự tạo/merge, phải tự vào tab Actions/PR trên GitHub để biết kết quả cuối.
+
+**`app/api/create-doc-pr/route.ts`** — route khác, đơn giản hơn (chỉ dispatch workflow, không tự commit) — **không có caller nào trong UI** (orphan), cũng có 1 lỗi nhỏ ở header `Accept` (`application/vn.github+json`, thiếu chữ `d`) — vô hại vì route không dùng tới, nhưng nên sửa nếu sau này hồi sinh route này.
 
 ---
 
@@ -283,13 +357,15 @@ Route `/portal` render 1 giao diện xem API docs **tự thiết kế** (không 
 
 Base URL: `process.env.NEXT_PUBLIC_API_URL` (set trong `frontend/.env.local`).
 
-| Nhóm                  | Endpoint dùng                                                                                                                                                                                |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Scan/Module           | `/modules/scan`, `/modules`, `/modules/{m}/activate`, `/modules/{m}/deactivate`, `/modules/import`, `/modules/import/{id}/stream`                                                            |
-| Suggest               | `/modules/suggestions`, `/modules/suggest`, `/modules/suggestions/approve`, `/modules/apply`                                                                                                 |
-| Source                | `/source/upload`                                                                                                                                                                             |
-| Docs                  | `/docs/build`, `/docs/status`, `/docs/bundle-content` (GET/PUT), `/docs/relint`, `/docs/download-html`, `/docs/operations` (GET/PATCH), `/docs/operations/ai-suggest`, `/docs/bundle/ai-fix` |
-| Manual edit conflicts | `/modules/manual-edit-conflicts` (GET), `/modules/manual-edit-conflicts/resolve` (POST)                                                                                                      |
+| Nhóm                                      | Endpoint dùng                                                                                                                                                                                                                   |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scan/Module                               | `/modules/scan`, `/modules`, `/modules/{m}/activate`, `/modules/{m}/deactivate`, `/modules/import`, `/modules/import/{id}/stream`                                                                                               |
+| Suggest                                   | `/modules/suggestions`, `/modules/suggest`, `/modules/suggestions/approve`, `/modules/apply`                                                                                                                                    |
+| Source                                    | `/source/upload`                                                                                                                                                                                                                |
+| Docs                                      | `/docs/build`, `/docs/status`, `/docs/bundle-content` (GET/PUT), `/docs/relint`, `/docs/download-html`, `/docs/operations` (GET/PATCH), `/docs/operations/ai-suggest`, `/docs/bundle/ai-fix`, `/docs/schema-fields` (GET/PATCH) |
+| Manual edit conflicts                     | `/modules/manual-edit-conflicts` (GET), `/modules/manual-edit-conflicts/resolve` (POST)                                                                                                                                         |
+| Mã lỗi nghiệp vụ                          | `/errors/{module}` (GET), `/errors/{module}/resolve` (POST), `/errors/{module}/apply` (POST)                                                                                                                                    |
+| Deploy (Next.js route, không qua backend) | `/api/deploy-docs` (POST) — gọi thẳng GitHub API                                                                                                                                                                                |
 
 Đây là **toàn bộ** endpoint backend hiện có — không còn route `/jobs/*` nào.
 
@@ -297,7 +373,7 @@ Base URL: `process.env.NEXT_PUBLIC_API_URL` (set trong `frontend/.env.local`).
 
 ## Xử lý lỗi & mã lỗi
 
-`app/_dashboard/api.ts` là điểm tập trung duy nhất cho fetch + parse lỗi, dùng bởi cả 6 hook và
+`lib/api/client.ts` là điểm tập trung duy nhất cho fetch + parse lỗi, dùng bởi mọi hook và
 `OperationsFormEditor.tsx`:
 
 ```typescript
@@ -308,11 +384,11 @@ export function formatFetchError(e: unknown, fallback?): string; // dùng trong 
 
 **Backend trả `detail: {code, message}`** (xem `docs/backend.md` mục Hệ thống mã lỗi).
 `readErrorDetail` đọc `code` + `message` từ đó, đưa qua `resolveErrorMessage(code, message)`
-(`errorMessages.ts`) — nếu `code` có trong `ERROR_MESSAGES` thì hiển thị chữ override, không thì
+(`lib/api/errorMessages.ts`) — nếu `code` có trong `ERROR_MESSAGES` thì hiển thị chữ override, không thì
 fallback về `message` gốc của backend. Lỗi 422 validation của FastAPI (`detail` là `list`) và lỗi
 không parse được JSON đều fallback về `res.statusText`.
 
-**Tự override chữ hiển thị cho 1 mã lỗi** — chỉ cần sửa `app/_dashboard/errorMessages.ts`, không
+**Tự override chữ hiển thị cho 1 mã lỗi** — chỉ cần sửa `lib/api/errorMessages.ts`, không
 cần đụng tới hook hay component nào khác:
 
 ```typescript
@@ -336,29 +412,48 @@ kết nối tới backend, kiểm tra server có đang chạy không" thay vì m
 
 **SSE thay vì polling** — `/modules/import/{id}/stream` dùng `EventSource`, đóng khi nhận `event: "done"` hoặc `onerror`.
 
-**Dynamic import Monaco** — lazy load, `ssr: false` vì Monaco chỉ chạy trên browser, dùng ở cả `BundleEditor.tsx` (editor thường) và `AiFixPanel.tsx` (`DiffEditor`):
+**Dynamic import Monaco** — lazy load, `ssr: false` vì Monaco chỉ chạy trên browser:
 
 ```typescript
 const BundleEditor = dynamic(() => import("./BundleEditor"), { ssr: false });
 const DiffEditor = dynamic(() => import("@monaco-editor/react").then((m) => m.DiffEditor), { ssr: false });
 ```
 
+**Hydration mismatch — pattern `useMounted()` + `!mounted ||`**: bất kỳ giá trị nào ảnh hưởng tới thuộc tính render (đặc biệt `disabled`) mà phụ thuộc dữ liệu fetch qua `useEffect` (chỉ chạy ở client, sau mount) đều có nguy cơ SSR render khác với client — vì server không biết trước kết quả fetch đó, còn client (nếu fetch xong đủ nhanh, ví dụ backend chạy local) có thể đã cập nhật state ngay trước khi React kịp so khớp hydration. React **không tự sửa lại DOM** khi phát hiện mismatch này ("won't be patched up", chỉ cảnh báo Console) — DOM giữ nguyên giá trị server đã render cho tới khi có re-render khác đụng tới, gây hiện tượng nút "trông có vẻ enable" dù logic đã tính disable.
+
+Cách xử lý dùng nhất quán trong dự án: gate giá trị phụ thuộc fetch bằng `mounted` (từ `useMounted()`) sao cho **lần render đầu tiên ở client luôn khớp SSR** (ép về `false`/giá trị mặc định), giá trị thật chỉ áp dụng sau khi mount xong — lúc đó là re-render bình thường (không phải hydration-match), DOM được patch đúng qua reconciliation thường. Áp dụng ở 2 mức tuỳ tình huống:
+- **Gate ngay tại điểm tính giá trị dùng chung nhiều nơi** — ví dụ `bundleReady`/`htmlReady` (`page.tsx`) chỉ có đúng 1 nguồn tính nhưng dùng ở 3+ chỗ trong `SwaggerDocsCard` (badge trạng thái, nhánh chọn nút build, điều kiện disable nút Deploy) → gate 1 lần ở `page.tsx` (`mounted && (...)`), tự đúng cho mọi nơi dùng.
+- **Gate trực tiếp tại `disabled={...}` của từng nút** (kèm `suppressHydrationWarning`) — dùng khi giá trị chỉ ảnh hưởng đúng 1 nút, ví dụ `ModuleRegistryCard`/`SuggestCard` (`!mounted || <điều kiện khác>`).
+
 **`MonacoErrorSuppressor`** (`app/MonacoErrorSuppressor.tsx`, mount trong `layout.tsx` ở root) — nuốt
 `unhandledrejection` có `reason.type === "cancelation"`, lỗi nội bộ vô hại của Monaco khi 1 thao tác
 bị huỷ giữa chừng (vd đóng editor khi đang gõ), không phải lỗi thật cần báo console.
 
-**`useMounted()` pattern** (`app/_dashboard/hooks/useMounted.ts`) — dùng trong `ModuleRegistryCard` và `SuggestCard` để tránh hydration mismatch khi disable button dựa trên state client-only (`suppressHydrationWarning`).
+**`ErrorAlert`** (`components/dashboard/ErrorAlert.tsx`) — UI báo lỗi dùng chung, thay nhiều chỗ `<div>` trùng lặp trước đây; nhận `message` + `className` tuỳ chọn để giữ margin riêng của từng nơi gọi.
 
-**`ErrorAlert`** (`app/_dashboard/ErrorAlert.tsx`) — UI báo lỗi dùng chung, thay 9 chỗ `<div>` trùng lặp trước đây; nhận `message` + `className` tuỳ chọn để giữ margin riêng của từng nơi gọi.
+---
+
+## Muốn thêm 1 card mới thì làm sao
+
+Toàn bộ 9 hook + card hiện có đều theo đúng 1 khuôn — thêm tính năng mới nên theo lại khuôn này thay vì tự nghĩ cách khác. Ví dụ mẫu cụ thể: `useErrorCodes` → `ErrorCodesReviewCard` (feature "Review mã lỗi nghiệp vụ").
+
+1. **Type** (`types/dashboard.ts`) — định nghĩa shape dữ liệu API trả về/nhận vào, ví dụ `ErrorReviewEntry`, `ErrorReviewReport`.
+2. **API wrapper** (`lib/api/dashboard/<tên-domain>.ts`, file mới) — chỉ chứa hàm fetch mỏng, dùng lại `apiFetch`/`readErrorDetail` từ `lib/api/client.ts` — không tự viết `fetch()` thô lại từ đầu. Xem `lib/api/dashboard/errorCodes.ts` làm mẫu (3 hàm: `fetchErrorEntries`/`resolveErrorEntry`/`applyErrorEntries`, mỗi hàm map thẳng 1 endpoint).
+3. **Hook** (`hooks/dashboard/use<TênDomain>.ts`, file mới) — giữ state (`useState`) + các hàm `handleXxx` gọi vào API wrapper ở bước 2, trả ra object `{state..., handleXxx}`. Không tự gọi `fetch` trực tiếp trong hook — luôn qua file ở bước 2.
+4. **Component** (`components/dashboard/<TênDomain>Card.tsx`, file mới) — **chỉ nhận props**, không tự gọi API, không tự giữ state ngoài UI cục bộ thuần render (input đang gõ, checkbox filter...). Toàn bộ state/handler nghiệp vụ đến từ hook ở bước 3 qua props.
+5. **Đăng ký vào `page.tsx`** — gọi hook mới, destructure biến cần, truyền xuống component ở bước 4 qua props, render trong JSX (thường bọc trong `StepSection` nếu nó là 1 bước trong timeline chính, xem cách các `StepSection` hiện có được dùng).
+
+**Nếu card mới cần dữ liệu từ hook khác** (ví dụ cần `moduleNames` từ `useModuleRegistry`) — **không** import hook kia vào hook mới. Chỉ `page.tsx` được gọi tất cả hook; hook nào cần phối hợp thì nhận qua **callback injection** (`onXxx` truyền từ `page.tsx` vào lúc gọi hook, xem cách `useUpload`/`useSuggestions`/`useModuleRegistry` nhận `onSuccess`/`onApplySuccess`/`onImportDone`). Cách này giữ đúng 1 instance của mỗi hook, tránh 2 nơi tự giữ 2 bản state lệch nhau.
 
 ---
 
 ## Thiếu sót hiện tại (Known Gaps)
 
-| Vấn đề                                                  | Ghi chú                                                                                                                       |
-| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Không có nút Publish                                    | Chỉ có "Tải HTML" thủ công, chưa có commit+push tự động                                                                       |
-| Không có auth                                           | Dashboard mở public trong mạng nội bộ                                                                                         |
-| `app/portal/` không được link từ nav                    | Trùng chức năng với `/swagger`, vẫn muốn giữ lại để sau này muốn thay đổi dùng giao diện khác swagger thì gọi nó ra.          |
-| `ManualEditConflictsCard` flash "Đang tải..." lúc mount | UX rough edge nhỏ, chưa fix — xem mục riêng phía trên                                                                         |
-| Chất lượng AI-fix khi batch nhiều operation             | Không phải bug frontend — xem `docs/backend.md` mục AI-fix breadcrumb/parent context + `docs/manual-test-checklist.md` DEF-04 |
+| Vấn đề                                                  | Ghi chú                                                                                                                             |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Không có auth                                           | Dashboard mở public trong mạng nội bộ                                                                                               |
+| `app/portal/` không được link từ nav                    | Trùng chức năng với `/swagger`, vẫn muốn giữ lại (đã có thêm Try it out) để sau này muốn thay đổi dùng giao diện khác thì gọi nó ra |
+| `app/api/create-doc-pr/route.ts` orphan                 | Không caller nào trong UI, header `Accept` sai chính tả (`vn.github+json`) — an toàn để xoá hoặc sửa nếu hồi sinh                   |
+| `ManualEditConflictsCard` flash "Đang tải..." lúc mount | UX rough edge nhỏ, chưa fix                                                                                                         |
+| Deploy chỉ xác nhận "request gửi thành công"            | Không poll lại workflow run/PR để biết kết quả cuối cùng — phải tự kiểm tra trên GitHub                                             |
+| Chất lượng AI-fix khi batch nhiều operation             | Không phải bug frontend — xem `docs/backend.md` mục AI-fix breadcrumb/parent context + `docs/manual-test-checklist.md` DEF-04       |
