@@ -44,7 +44,7 @@ make check
 ```
 In ra Python version, version các package chính (`anthropic`, `python-docx`, `ruamel.yaml`, `chardet`), và xác nhận `ANTHROPIC_API_KEY` đã set chưa.
 
-> **Lưu ý:** `make scan`/`approve`/`run-module`/`run-single`/`run-batch` hiện đang **broken** — các target đó gọi `2.pipeline/pipeline_DOCX.py`, file này đã được chuyển sang `3.build/orphans/` và không còn tồn tại ở path cũ. Dùng `python3 2.pipeline/run_api_import.py <lệnh>` (hoặc alias npm tương ứng, xem README/CLAUDE.md phần Commands) thay thế.
+> **Lưu ý:** `make scan`/`approve`/`run-module`/`run-single`/`run-batch` hiện đang **broken** — các target đó gọi `2.pipeline/pipeline_DOCX.py`, file này đã được chuyển sang `3.build/orphans/` và không còn tồn tại ở path cũ. Dùng `python3 2.pipeline/run_api_import.py <lệnh>` (hoặc alias npm tương ứng) thay thế.
 
 ---
 

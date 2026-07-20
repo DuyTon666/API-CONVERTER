@@ -268,7 +268,7 @@ ci.yaml (trigger: pull_request → main, develop — không lọc theo path, PR 
 
 ## 5. Đọc lỗi Spectral
 
-> Giải thích đầy đủ từng rule (Spectral lẫn Redocly) xem [`docs/conventions/spectral.md`](./conventions/spectral.md) và [`docs/conventions/redocly.md`](./conventions/redocly.md) — mục dưới đây chỉ nêu vài ví dụ thường gặp.
+> Giải thích đầy đủ từng rule (Spectral lẫn Redocly) xem [`docs/guidelines/conventions/spectral.md`](../guidelines/conventions/spectral.md) và [`docs/guidelines/conventions/redocly.md`](../guidelines/conventions/redocly.md) — mục dưới đây chỉ nêu vài ví dụ thường gặp.
 
 ### Cấu trúc một dòng lỗi
 

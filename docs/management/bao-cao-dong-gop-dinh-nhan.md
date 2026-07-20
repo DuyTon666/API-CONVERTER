@@ -14,14 +14,14 @@ Phụ trách toàn bộ phần **ứng dụng** của dự án — **Backend (Fa
 | Cấu hình lint OpenAPI    | 6/7 rule Spectral + toàn bộ redocly.yaml | Tự viết 6/7 custom function rule trong `functions/`, migrate `.spectral.js` → `.spectral.yaml`                                                                                                                      |
 | Tái cấu trúc (refactor)  | 3                                        | Tách hooks frontend, tách router/service backend, đổi cấu trúc thư mục frontend                                                                                                                                     |
 | Bug/lỗi bảo mật đã vá    | 4                                        | Lỗi Monaco raw-YAML editor, mất commit khi deploy, workflow không tự trigger, command injection trong CI                                                                                                            |
-| Tài liệu kỹ thuật        | 11                                       | uc-detail.md + activity/sequence diagram, docs/backend.md, docs/frontend.md, setup-local-dev.md, setup-slack.md, setup-cicd.md, conventions/redocly.md, conventions/spectral.md, oas-diff.md, manual-test-checklist.md |
+| Tài liệu kỹ thuật        | 11                                       | uc-detail.md + activity/sequence diagram, docs/architecture/kien-truc-backend.md, docs/architecture/kien-truc-frontend.md, setup-local-dev.md, setup-slack.md, setup-cicd.md, conventions/redocly.md, conventions/spectral.md, oas-diff.md, manual-test-checklist.md |
 
 
 ## 3. Chi tiết theo từng giai đoạn
 
 ### Giai đoạn 1 — Khởi tạo dự án, nền CI/CD & bộ rule Spectral/Redocly (27/05 – 02/06)
 
-- Gộp 2 phần việc rời rạc (pipeline convert tài liệu + phần CI/CD) thành 1 repo thống nhất: đưa vào `.github/workflows/` (`ci.yaml`, `deploy.yaml`, `diff.yaml`, `validate.yaml`), `.github/pull_request_template.md`, và tài liệu `docs/cicd-runbook.md` (~2800 dòng, quy trình vận hành CI/CD chi tiết). Đây là nền tảng cho toàn bộ pipeline kiểm tra chất lượng OpenAPI spec chạy tự động trên mọi PR trong suốt dự án (Spectral lint + Redocly validate + OAS-diff).
+- Gộp 2 phần việc rời rạc (pipeline convert tài liệu + phần CI/CD) thành 1 repo thống nhất: đưa vào `.github/workflows/` (`ci.yaml`, `deploy.yaml`, `diff.yaml`, `validate.yaml`), `.github/pull_request_template.md`, và tài liệu `docs/devops/cicd-runbook.md` (~2800 dòng, quy trình vận hành CI/CD chi tiết). Đây là nền tảng cho toàn bộ pipeline kiểm tra chất lượng OpenAPI spec chạy tự động trên mọi PR trong suốt dự án (Spectral lint + Redocly validate + OAS-diff).
 - Viết ban đầu `.spectral.js` (rule lint OpenAPI riêng cho dự án, 178 dòng), sau đó migrate toàn bộ sang `.spectral.yaml` (đúng định dạng chuẩn Spectral khuyến nghị), rồi tinh gọn lại (bỏ ~61 dòng lặp) thành bản hiện tại (126 dòng, kế thừa `spectral:oas` ở mức `all` + 14 rule tự viết riêng cho dự án).
 - Tự viết **6/7 custom function rule** trong `functions/` — mỗi rule là 1 file JS kiểm tra 1 quy ước riêng của dự án, không có sẵn trong bộ chuẩn Spectral: `client-id-must-not-be-readonly.js`, `enum-has-description.js`, `has-request-body-must-have-400.js`, `private-must-have-401-403.js`, `property-must-have-description.js`, `server-id-must-be-readonly.js` (rule thứ 7, `has-2xx-response.js`, do bạn Duy bổ sung sau vào 07/07).
 - Viết mới hoàn toàn `redocly.yaml` (23 dòng) — cấu hình validate riêng biệt với Spectral, chạy trên cùng bundle `dist/openapi-bundled.yaml`.
@@ -40,8 +40,8 @@ Phụ trách toàn bộ phần **ứng dụng** của dự án — **Backend (Fa
 
 ### Giai đoạn 4 — Tài liệu hoá Use Case & sơ đồ luồng (15/06 – 16/06)
 
-- Viết `docs/uc-detail.md` (đặc tả chi tiết use case, ~500 dòng) và 9 sơ đồ activity (`docs/activity/UC01..09_activity.puml`) mô tả luồng xử lý từng use case chính của hệ thống.
-- Bổ sung tiếp 8 sơ đồ sequence (`docs/sequence/UC01..08_sequence.puml`) và `docs/diagram-guide.md` hướng dẫn cách đọc/tạo sơ đồ — dùng làm tài liệu tham chiếu khi cần giải thích luồng xử lý cho người ngoài team.
+- Viết `docs/architecture/uc-detail.md` (đặc tả chi tiết use case, ~500 dòng) và 9 sơ đồ activity (`docs/architecture/diagrams/activity/UC01..09_activity.puml`) mô tả luồng xử lý từng use case chính của hệ thống.
+- Bổ sung tiếp 8 sơ đồ sequence (`docs/architecture/diagrams/sequence/UC01..08_sequence.puml`) và `docs/architecture/diagram-guide.md` hướng dẫn cách đọc/tạo sơ đồ — dùng làm tài liệu tham chiếu khi cần giải thích luồng xử lý cho người ngoài team.
 
 ### Giai đoạn 5 — Form Editor cho người dùng không rành kỹ thuật (18/06)
 
@@ -80,7 +80,7 @@ Phụ trách toàn bộ phần **ứng dụng** của dự án — **Backend (Fa
 ### Giai đoạn 11 — Tái cấu trúc cấu trúc thư mục Frontend & xử lý xung đột merge (02/07 – 05/07)
 
 - Đổi cấu trúc thư mục frontend sang dạng hiện tại (`hooks/dashboard/`, `components/dashboard/`, `lib/api/dashboard/`), tách khỏi cách tổ chức co-located `app/_dashboard/` trước đó.
-- Xử lý xung đột merge phát sinh khi gộp nhánh song song với phần việc CI/CD (`docs/cicd-runbook.md`, `backend/pyrightconfig.json`).
+- Xử lý xung đột merge phát sinh khi gộp nhánh song song với phần việc CI/CD (`docs/devops/cicd-runbook.md`, `backend/pyrightconfig.json`).
 
 ### Giai đoạn 12 — Vá 3 lỗi trong pipeline CI/CD deploy (06/07)
 
@@ -97,8 +97,8 @@ Phụ trách toàn bộ phần **ứng dụng** của dự án — **Backend (Fa
 
 ### Giai đoạn 14 — Tài liệu kiến trúc & tài liệu vận hành (09/07 – 17/07)
 
-- Viết `docs/setup-cicd.md`, cập nhật `docs/backend.md`/`docs/frontend.md` theo đúng cấu trúc code hiện tại (sau các đợt tái cấu trúc ở giai đoạn 7, 10, 11).
-- Viết `docs/conventions/spectral.md` và `docs/conventions/redocly.md` — giải thích chi tiết từng rule đang cấu hình (14 rule tự viết trong `.spectral.yaml`, cấu hình `redocly.yaml`), rule đó check gì, khi nào fail, cách sửa — dùng làm tài liệu tham chiếu khi cần chỉnh sửa hoặc thêm rule mới sau này.
+- Viết `docs/devops/setup-cicd.md`, cập nhật `docs/architecture/kien-truc-backend.md`/`docs/architecture/kien-truc-frontend.md` theo đúng cấu trúc code hiện tại (sau các đợt tái cấu trúc ở giai đoạn 7, 10, 11).
+- Viết `docs/guidelines/conventions/spectral.md` và `docs/guidelines/conventions/redocly.md` — giải thích chi tiết từng rule đang cấu hình (14 rule tự viết trong `.spectral.yaml`, cấu hình `redocly.yaml`), rule đó check gì, khi nào fail, cách sửa — dùng làm tài liệu tham chiếu khi cần chỉnh sửa hoặc thêm rule mới sau này.
 - Chuẩn bị tài liệu phục vụ báo cáo/bàn giao.
 
 ### Giai đoạn 15 — Tính năng Error Code Review (15/07 – 16/07)

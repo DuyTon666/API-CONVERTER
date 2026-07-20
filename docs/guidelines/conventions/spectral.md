@@ -1,6 +1,6 @@
 # Spectral — `.spectral.yaml`
 
-> Giải thích chi tiết từng rule đang bật trong `.spectral.yaml` (gốc repo) — rule đó check gì, khi nào fail, và cách sửa. Không lặp lại quy trình chạy lint (`npm run lint`/`lint:spectral`) — xem `docs/setup-cicd.md` mục 3-4 cho phần đó.
+> Giải thích chi tiết từng rule đang bật trong `.spectral.yaml` (gốc repo) — rule đó check gì, khi nào fail, và cách sửa. Không lặp lại quy trình chạy lint (`npm run lint`/`lint:spectral`) — xem `docs/devops/setup-cicd.md` mục 3-4 cho phần đó.
 
 ## Chạy ở đâu
 
@@ -70,7 +70,7 @@ responses:
 ### `server-id-must-be-readonly` — severity `error`
 
 **Given:** `responses['200'].content` (toàn bộ media type trong response 200)
-**Check** (`functions/server-id-must-be-readonly.js`): đệ quy qua mọi `properties` trong schema response (kể cả lồng qua `properties` con hoặc `array.items`, và có xử lý riêng nếu schema là `allOf`), tìm field có tên là ID (`id`, hoặc kết thúc bằng `_id`/`Id` — hàm `isIdField()`). Field ID nào **không** có `readOnly: true` → lỗi. Đây là cơ chế tự động hoá cho quy tắc "server-managed field phải readOnly" (nhắc trong CLAUDE.md/PR checklist), áp dụng cho **mọi** field có tên giống ID, không chỉ riêng `id`.
+**Check** (`functions/server-id-must-be-readonly.js`): đệ quy qua mọi `properties` trong schema response (kể cả lồng qua `properties` con hoặc `array.items`, và có xử lý riêng nếu schema là `allOf`), tìm field có tên là ID (`id`, hoặc kết thúc bằng `_id`/`Id` — hàm `isIdField()`). Field ID nào **không** có `readOnly: true` → lỗi. Đây là cơ chế tự động hoá cho quy tắc "server-managed field phải readOnly" (nhắc trong PR checklist), áp dụng cho **mọi** field có tên giống ID, không chỉ riêng `id`.
 
 ```yaml
 # ❌ Lỗi — service_id trong response 200 thiếu readOnly
@@ -125,7 +125,7 @@ properties:
 | `operation-with-id-must-have-404`  | `warn`   | operation của path có `{...}` (regex match), chỉ 4 method `get/put/patch/delete` | `truthy`  | Phải có `responses.404`                                                                                    |
 | `info-must-have-contact`           | `info`   | `$.info`                                       | `truthy`       | Object `info` phải có field `contact`                                                                     |
 | `delete-must-have-204`             | `warn`   | mọi operation `DELETE`                          | `truthy`       | Phải có `responses.204`                                                                                    |
-| `operation-must-have-tags`         | `warn`   | mọi operation                                   | `schema`       | Field `tags` phải là array có ít nhất 1 phần tử (`minItems: 1`) — chỉ yêu cầu **có tag**, không yêu cầu đúng 1 tag (khác Redocly `operation-singular-tag`, xem `docs/conventions/redocly.md`) |
+| `operation-must-have-tags`         | `warn`   | mọi operation                                   | `schema`       | Field `tags` phải là array có ít nhất 1 phần tử (`minItems: 1`) — chỉ yêu cầu **có tag**, không yêu cầu đúng 1 tag (khác Redocly `operation-singular-tag`, xem `docs/guidelines/conventions/redocly.md`) |
 
 **Lưu ý `operation-id-verb-noun`:** regex chỉ kiểm tra hình thức camelCase (`^[a-z][a-zA-Z0-9]+$`), **không** thật sự parse xem chữ đầu có phải động từ hay không (`tickets` vẫn khớp regex dù không phải verb) — phần "phải bắt đầu bằng động từ" trong message lỗi là quy ước, cần reviewer tự để ý thêm, Spectral không tự bắt được.
 
@@ -139,4 +139,4 @@ properties:
 | `warn`   | Không                             | Nên fix trước khi request review, không bắt buộc |
 | `info`   | Không                             | Chỉ `info-must-have-contact` — mang tính gợi ý |
 
-Xem `docs/setup-cicd.md` mục 4/7 cho cách CI dùng kết quả lint này để block/không-block merge.
+Xem `docs/devops/setup-cicd.md` mục 4/7 cho cách CI dùng kết quả lint này để block/không-block merge.

@@ -1,6 +1,6 @@
 # Redocly — `redocly.yaml`
 
-> Giải thích chi tiết từng rule đang cấu hình trong `redocly.yaml` (gốc repo) — rule đó check gì, khi nào fail, và cách sửa. Không lặp lại quy trình chạy validate (`npm run validate`/`validate:api`) — xem `docs/setup-cicd.md` mục 3-4 cho phần đó.
+> Giải thích chi tiết từng rule đang cấu hình trong `redocly.yaml` (gốc repo) — rule đó check gì, khi nào fail, và cách sửa. Không lặp lại quy trình chạy validate (`npm run validate`/`validate:api`) — xem `docs/devops/setup-cicd.md` mục 3-4 cho phần đó.
 
 ## Chạy ở đâu
 
@@ -42,7 +42,7 @@ extends:
 | `no-ambiguous-paths`        | `error`                | Path template có thể match nhầm request của path khác (khác `no-identical-paths` — đây là overlap từng phần, không hẳn giống hệt nhau) |
 | `no-empty-servers`          | `error`                | `servers` không được là mảng rỗng nếu có khai báo — khai `servers: []` thì lỗi (không khai `servers` gì cả lại không bị bắt bởi rule này) |
 | `operation-summary`         | `error`                | Mọi operation phải có `summary` |
-| `operation-2xx-response`    | `error`                | Mọi operation phải có ít nhất 1 response mã `2xx` — **áp dụng cho mọi method** (GET/PUT/PATCH/DELETE...), rộng hơn rule tương tự bên Spectral (`post-must-have-2xx` chỉ áp cho `POST`, xem `docs/conventions/spectral.md`) |
+| `operation-2xx-response`    | `error`                | Mọi operation phải có ít nhất 1 response mã `2xx` — **áp dụng cho mọi method** (GET/PUT/PATCH/DELETE...), rộng hơn rule tương tự bên Spectral (`post-must-have-2xx` chỉ áp cho `POST`, xem `docs/guidelines/conventions/spectral.md`) |
 | `operation-operationId`     | `error`                | Mọi operation phải có `operationId` |
 | `operation-singular-tag`    | `error`                | Mỗi operation phải có **đúng 1** tag — không phải "ít nhất 1" |
 
@@ -63,4 +63,4 @@ Bộ `recommended` của Redocly còn có rất nhiều rule khác không bị o
 | `error`  | Có — toàn bộ rule bị override trong bảng trên đều là `error`                        |
 | Mặc định của `recommended` (không override) | Tuỳ rule — phần lớn là `warn`, xem link Redocly rules reference nếu cần biết chính xác |
 
-Xem `docs/setup-cicd.md` mục 4/7 cho cách CI dùng kết quả validate này để block/không-block merge.
+Xem `docs/devops/setup-cicd.md` mục 4/7 cho cách CI dùng kết quả validate này để block/không-block merge.
