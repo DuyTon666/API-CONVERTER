@@ -173,7 +173,7 @@ def run(content: str, spectral: list[dict], redocly: list[dict]) -> dict:
                     "source": "redocly",
                     "code": issue.get("ruleId", ""),
                     "message": issue.get("message", ""),
-                    "reason": "Không xác định được vị trí (thiếu line/column) — cần sửa tay",
+                    "reason": "Không xác định được vị trí (thiếu line/column) - cần sửa tay",
                 }
             )
             continue
