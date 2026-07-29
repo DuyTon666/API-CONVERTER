@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ImportModuleProgress, ModuleListResult } from "@/types/dashboard";
 import { formatFetchError } from "@/lib/api/client";
+import { mergeImportProgress } from "@/lib/dashboard-import-progress";
 import {
   activateModule,
   deactivateModule,
@@ -71,12 +72,9 @@ export function useModuleRegistry(
           options.onImportDone?.();
           return;
         }
-        setImportModules((prev) => {
-          const exists = prev.find((m) => m.name === payload.name);
-          if (exists)
-            return prev.map((m) => (m.name === payload.name ? payload : m));
-          return [...prev, payload];
-        });
+        setImportModules((prev) =>
+          mergeImportProgress(prev, payload as ImportModuleProgress),
+        );
       };
       es.onerror = () => {
         es.close();

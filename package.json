@@ -36,7 +36,8 @@
     "merge:openapi": "python3 6.path_stub/generate_path_stubs.py --merge",
     "verify:stats": "python3 2.pipeline/run_api_import.py list-modules",
     "verify:py:errors": "python3 -m py_compile 2.pipeline/contract_profile/run_error_parser.py 2.pipeline/contract_profile/operation_map_builder.py 2.pipeline/enrichers/enrich_errors.py",
-    "test:backend": "cd backend && python -m pytest"
+    "test:backend": "cd backend && python -m pytest",
+    "test:frontend": "cd frontend && npm run test"
   },
   "repository": {
     "type": "git",

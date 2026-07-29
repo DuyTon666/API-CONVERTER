@@ -9,7 +9,7 @@ import {
 
 // Key dùng để biết đúng conflict nào đang được resolve, vì có thể hiện nhiều
 // conflict cùng lúc (giống "approving" trong useSuggestions.ts).
-function conflictKey(c: ManualEditConflict): string {
+export function conflictKey(c: ManualEditConflict): string {
   return `${c.kind}:${c.entityId}::${c.field}`;
 }
 export function useManualEditConflicts(backend: string) {

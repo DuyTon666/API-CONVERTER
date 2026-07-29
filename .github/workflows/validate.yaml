@@ -33,6 +33,13 @@ jobs:
       - name: Test Backend
         run: npm run test:backend
 
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Test Frontend
+        run: npm run test:frontend
+
       - name: Run Spectral Rule
         run: npm run lint
 

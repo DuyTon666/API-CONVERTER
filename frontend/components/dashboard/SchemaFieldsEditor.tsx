@@ -46,26 +46,23 @@ export default function SchemaFieldsEditor({
             return (
               <div
                 key={field.path}
-                className="flex items-center gap-2"
+                className="space-y-1"
                 style={{ paddingLeft: field.depth * 16 }}
               >
-                <code
-                  className="text-xs text-gray-500 font-mono w-40 shrink-0 truncate"
-                  title={field.label}
-                >
+                <code className="block text-xs text-gray-500 font-mono wrap-break-word">
                   {field.label}
                   {field.readOnly && (
                     <span className="ml-1 text-gray-400">(chỉ đọc)</span>
                   )}
                 </code>
-                <input
-                  type="text"
+                <textarea
                   value={value}
                   onChange={(e) =>
                     onChange(group.schemaName, field.path, e.target.value)
                   }
                   placeholder="Mô tả field..."
-                  className={`flex-1 px-3 py-1 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
+                  rows={2}
+                  className={`w-full px-3 py-1.5 border rounded-lg text-sm resize-y focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
                     !value ? "border-red-300 bg-red-50" : "border-gray-200"
                   }`}
                 />
