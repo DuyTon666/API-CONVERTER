@@ -7,6 +7,7 @@ import traceback
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Literal
 
 from core.config import CONFIG_DIR
@@ -140,6 +141,27 @@ async def stream_events(job: ImportJob):
         await asyncio.sleep(0.5)
 
 
+# Backup tầng 2 (paths/schemas) của 1 module trước khi pipeline có thể ghi đè.
+# Tên thư mục kèm UUID ngắn — trước đây chỉ dùng timestamp giây (strftime), nên
+# 2 lần import rất sát nhau cho cùng module (cùng giây) tạo trùng tên backup_dir,
+# lần copytree() thứ 2 ném FileExistsError, bị try/except ở nơi gọi nuốt lặng lẽ:
+# backup của lần import thứ 2 mất luôn, không ai biết (DEF-01,
+# docs/guidelines/manual-test-checklist.md). Thêm UUID loại bỏ hẳn khả năng
+# trùng tên, không phụ thuộc độ chính xác của đồng hồ hệ thống.
+def _backup_layer2(
+    base_backup_dir: Path, module_name: str, paths_dir: Path, schemas_dir: Path
+) -> Path | None:
+    if not paths_dir.exists() and not schemas_dir.exists():
+        return None
+    ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_dir = base_backup_dir / f"openapi_{module_name}_{ts}_{uuid.uuid4().hex[:8]}"
+    if paths_dir.exists():
+        shutil.copytree(paths_dir, backup_dir / "paths")
+    if schemas_dir.exists():
+        shutil.copytree(schemas_dir, backup_dir / "schemas")
+    return backup_dir
+
+
 def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
     """Chạy cmd_import theo từng module để có thể báo tiến trình per-module qua SSE."""
     import yaml as _yaml
@@ -211,18 +233,12 @@ def _run_import_job(job_id: str, module_filter: str | None = None) -> None:
             # Backup tầng 2 trước khi pipeline có thể ghi đè — bọc try/except
             # riêng, lỗi backup (disk đầy...) không được chặn import tiếp tục chạy.
             try:
-                if paths_dir.exists() or schemas_dir_m.exists():
-                    ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                    backup_dir = (
-                        CONFIG_DIR.parent
-                        / "3.build"
-                        / "backups"
-                        / f"openapi_{m['name']}_{ts}"
-                    )
-                    if paths_dir.exists():
-                        shutil.copytree(paths_dir, backup_dir / "paths")
-                    if schemas_dir_m.exists():
-                        shutil.copytree(schemas_dir_m, backup_dir / "schemas")
+                _backup_layer2(
+                    CONFIG_DIR.parent / "3.build" / "backups",
+                    m["name"],
+                    paths_dir,
+                    schemas_dir_m,
+                )
             except Exception:
                 traceback.print_exc()
 

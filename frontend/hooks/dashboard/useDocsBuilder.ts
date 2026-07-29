@@ -17,6 +17,11 @@ import {
   saveBundleContent,
 } from "@/lib/api/dashboard/docs";
 import { deployDocs } from "@/lib/api/dashboard/deploy";
+import {
+  buildDefaultAiFixResolutions,
+  buildEmptyAiFixMessage,
+  mergeAiFixPatches,
+} from "@/lib/dashboard-ai-fix";
 import { toast } from "sonner";
 
 export function useDocsBuilder(backend: string) {
@@ -50,27 +55,11 @@ export function useDocsBuilder(backend: string) {
   // validate loại hết, trông như "gọi lại không sửa được gì".
   const applyAiFixResolutions = async (editedPatches: AiFixPatch[]) => {
     if (bundleContent === null) return;
-    const lines = bundleContent.split("\n");
-    const sorted = [...editedPatches].sort(
-      (a, b) => b.start_line - a.start_line,
+    const merged = mergeAiFixPatches(
+      bundleContent,
+      editedPatches,
+      aiFixResolutions,
     );
-
-    for (const patch of sorted) {
-      const resolution = aiFixResolutions[patch.id] ?? "fixed";
-      const replacement =
-        resolution === "original"
-          ? patch.original_text
-          : resolution === "both"
-            ? `${patch.original_text}\n${patch.fixed_text}`
-            : patch.fixed_text;
-      lines.splice(
-        patch.start_line,
-        patch.end_line - patch.start_line + 1,
-        ...replacement.split("\n"),
-      );
-    }
-
-    const merged = lines.join("\n");
     setBundleContent(merged);
     closeAiFixPanel();
 
@@ -205,21 +194,17 @@ export function useDocsBuilder(backend: string) {
         docsResult?.spectral ?? [],
         docsResult?.redocly ?? [],
       );
-      if (data.patches.length === 0) {
-        alert(
-          data.unresolved.length > 0
-            ? "AI không xác định được vị trí lỗi nào để sửa — cần sửa tay."
-            : "Không có lỗi nào để sửa",
-        );
+      const emptyMessage = buildEmptyAiFixMessage(
+        data.patches,
+        data.unresolved,
+      );
+      if (emptyMessage) {
+        toast.error(emptyMessage);
         return;
       }
       setAiFixPatches(data.patches);
       setAiFixUnresolved(data.unresolved);
-      setAiFixResolutions(
-        Object.fromEntries(
-          data.patches.map((p) => [p.id, "fixed" as AiFixResolution]),
-        ),
-      );
+      setAiFixResolutions(buildDefaultAiFixResolutions(data.patches));
       setShowAiFixPanel(true);
     } catch (e) {
       alert("Lỗi AI fix: " + formatFetchError(e));

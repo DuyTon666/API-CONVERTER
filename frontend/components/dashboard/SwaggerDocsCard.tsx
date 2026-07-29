@@ -99,6 +99,7 @@ export default function SwaggerDocsCard({
           onClick={onDeploy}
           disabled={deploying || deployBlockedReason !== null}
           title={deployBlockedReason ?? undefined}
+          suppressHydrationWarning
           className="px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
         >
           {deploying ? "Đang deploy..." : "Deploy tài liệu"}

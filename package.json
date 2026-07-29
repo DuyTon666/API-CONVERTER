@@ -11,7 +11,6 @@
     "bundle:api": "redocly bundle 5.openapi/openapi.yaml -o dist/openapi-bundled.yaml",
     "build:docs": "node scripts/build-swagger-ui.js",
     "build:docs:redocly": "redocly build-docs dist/openapi-bundled.yaml --output public/api-docs-redocly.html",
-    
     "scan": "python3 2.pipeline/run_api_import.py scan",
     "suggest:module": "python3 2.pipeline/run_api_import.py suggest-root",
     "review:suggest": "python3 2.pipeline/run_api_import.py review-suggestions",
@@ -21,9 +20,7 @@
     "list:module": "python3 2.pipeline/run_api_import.py list-modules",
     "endpoints:duplicates": "python3 2.pipeline/import_flow/endpoint_duplicates.py",
     "activate:module": "python3 2.pipeline/run_api_import.py activate-module",
-
     "convert:api": "python3 2.pipeline/run_api_import.py import",
-
     "errors:parse": "python3 2.pipeline/run_api_import.py parse-errors",
     "errors:conflicts": "python3 2.pipeline/contract_profile/error_conflicts.py",
     "errors:review": "python3 2.pipeline/contract_profile/error_review_assistant.py",
@@ -33,15 +30,14 @@
     "errors:build-map": "python3 2.pipeline/run_api_import.py build-operation-map",
     "errors:enrich": "python3 2.pipeline/run_api_import.py enrich-errors",
     "enrich:errors": "python3 2.pipeline/run_api_import.py enrich-errors",
-
     "side-effects:enrich": "cd 2.pipeline && python3 -m enrichers.side_effects.enricher",
     "side-effects:dry-run": "cd 2.pipeline && python3 -m enrichers.side_effects.enricher --dry-run",
-
     "gen:path-stubs": "python3 6.path_stub/generate_path_stubs.py",
     "merge:openapi": "python3 6.path_stub/generate_path_stubs.py --merge",
-
     "verify:stats": "python3 2.pipeline/run_api_import.py list-modules",
-    "verify:py:errors": "python3 -m py_compile 2.pipeline/contract_profile/run_error_parser.py 2.pipeline/contract_profile/operation_map_builder.py 2.pipeline/enrichers/enrich_errors.py"
+    "verify:py:errors": "python3 -m py_compile 2.pipeline/contract_profile/run_error_parser.py 2.pipeline/contract_profile/operation_map_builder.py 2.pipeline/enrichers/enrich_errors.py",
+    "test:backend": "cd backend && python -m pytest",
+    "test:frontend": "cd frontend && npm run test"
   },
   "repository": {
     "type": "git",

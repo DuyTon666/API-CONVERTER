@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { isSupportedFile, SUPPORTED_EXTENSIONS } from "@/lib/dashboard-format";
+import { partitionFiles } from "@/lib/dashboard-format";
 import { toast } from "sonner";
 import { formatFetchError } from "@/lib/api/client";
 import { uploadSourceFiles } from "@/lib/api/dashboard/upload";
@@ -14,18 +14,10 @@ export function useUpload(backend: string, options: UseUploadOptions = {}) {
 
   const handleSelectFiles = (selected: FileList | null) => {
     if (!selected) return;
-
     const incoming = Array.from(selected);
-    const supported = incoming.filter((f) => isSupportedFile(f.name));
-    const rejected = incoming.filter((f) => !isSupportedFile(f.name));
-
-    if (rejected.length > 0) {
-      toast.error(`Bỏ qua ${rejected.length} file sai định dạng (chỉ nhân ${SUPPORTED_EXTENSIONS.join("/")}):
-      ${rejected.map((f) => f.name).join(", ")}`);
-    }
-    if (supported.length > 0) {
-      setUploadFiles((prev) => [...prev, ...supported]);
-    }
+    const { supported, rejectedMessage } = partitionFiles(incoming);
+    if (rejectedMessage) toast.error(rejectedMessage);
+    if (supported.length > 0) setUploadFiles((prev) => [...prev, ...supported]);
   };
 
   const handleRemoveUploadFile = (index: number) => {

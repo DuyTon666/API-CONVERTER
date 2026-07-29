@@ -26,6 +26,7 @@ pydantic_core==2.46.4
 pypdfium2==5.9.0
 python-docx==1.2.0
 python-dotenv==1.2.2
+pytest==9.1.1
 python-multipart==0.0.30
 PyYAML==6.0.3
 ruamel.yaml==0.19.1

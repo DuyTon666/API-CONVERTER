@@ -7,6 +7,20 @@ export function isSupportedFile(name: string): boolean {
   return SUPPORTED_EXTENSIONS.some((ext) => lower.endsWith(ext));
 }
 
+// Tách file hợp lệ/không hợp lệ khi chọn/kéo-thả upload — dùng chung bởi useUpload.ts.
+export function partitionFiles<T extends { name: string }>(
+  files: T[],
+): { supported: T[]; rejected: T[]; rejectedMessage: string | null } {
+  const supported = files.filter((f) => isSupportedFile(f.name));
+  const rejected = files.filter((f) => !isSupportedFile(f.name));
+  const rejectedMessage =
+    rejected.length > 0
+      ? `Bỏ qua ${rejected.length} file sai định dạng (chỉ nhân ${SUPPORTED_EXTENSIONS.join("/")}):
+      ${rejected.map((f) => f.name).join(", ")}`
+      : null;
+  return { supported, rejected, rejectedMessage };
+}
+
 export function countLintIssues(result: DocsBuildResult): {
   error: number;
   warn: number;

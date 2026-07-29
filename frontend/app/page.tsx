@@ -23,11 +23,13 @@ import { useDocsBuilder } from "@/hooks/dashboard/useDocsBuilder";
 import { useSuggestions } from "@/hooks/dashboard/useSuggestions";
 import { useManualEditConflicts } from "@/hooks/dashboard/useManualEditConflicts";
 import { useErrorCodes } from "@/hooks/dashboard/useErrorCodes";
+import { useMounted } from "@/hooks/dashboard/useMounted";
 
 export default function Home() {
   const backend = process.env.NEXT_PUBLIC_API_URL!;
 
   const { scan, scanLoading, scanError, fetchScan } = useScan(backend);
+  const mounted = useMounted();
 
   const {
     conflicts,
@@ -148,8 +150,9 @@ export default function Home() {
   const unassignedFiles = scan?.unassigned.length ?? 0;
 
   const bundleReady =
-    docsResult?.bundle_ready ?? docsStatus?.bundle_ready ?? false;
-  const htmlReady = docsResult?.html_ready ?? docsStatus?.html_ready ?? false;
+    mounted && (docsResult?.bundle_ready ?? docsStatus?.bundle_ready ?? false);
+  const htmlReady =
+    mounted && (docsResult?.html_ready ?? docsStatus?.html_ready ?? false);
 
   const steps = toSteps([
     { id: "card-import", label: "Nguồn" },
